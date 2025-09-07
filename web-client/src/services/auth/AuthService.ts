@@ -33,7 +33,8 @@ const useAuth = create<AuthState>()(
           const response = await apiService.login({ email, password });
           
           if (response.success && response.data) {
-            const { token, user } = response.data;
+            const { tokens, user } = response.data;
+            const token = tokens?.accessToken;
             
             // Transform user data to match frontend interface
             const userData = {
@@ -73,7 +74,8 @@ const useAuth = create<AuthState>()(
           const response = await apiService.register(userData);
           
           if (response.success && response.data) {
-            const { token, user } = response.data;
+            const { tokens, user } = response.data;
+            const token = tokens?.accessToken;
             
             // Transform user data to match frontend interface
             const transformedUser = {
