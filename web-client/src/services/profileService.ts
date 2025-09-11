@@ -90,7 +90,7 @@ class ProfileService {
   }
 
   // Update user profile and settings
-  async updateProfile(profileData: UserProfileData): Promise<any> {
+  async updateProfile(profileData: UserProfileData): Promise<UserProfileData> {
     const response = await this.api.put('/api/v1/users/profile', profileData);
     return response.data;
   }
