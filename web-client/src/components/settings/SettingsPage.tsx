@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   User,
   Settings as SettingsIcon,
@@ -15,21 +15,39 @@ import {
   Shield,
   Mail,
   Eye,
-  Save
+  Save,
+  Plus,
+  X,
+  Upload
 } from 'lucide-react';
+import profileService, { UserProfileData } from '../../services/profileService';
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState('profile');
-  const [settings, setSettings] = useState({
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState('');
+  const [newItem, setNewItem] = useState('');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [settings, setSettings] = useState<UserProfileData>({
     profile: {
-      name: 'Sarah Johnson',
-      email: 'sarah.j@example.com',
-      photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80'
+      name: '',
+      email: '',
+      photo: null
     },
     preferences: {
       language: 'English',
       currency: 'USD',
-      timezone: 'America/New_York'
+      timezone: 'UTC'
     },
     notifications: {
       dealAlerts: true,
@@ -43,12 +61,143 @@ const SettingsPage = () => {
       marketing: true
     },
     travel: {
-      preferredDestinations: ['Europe', 'Asia'],
-      accommodationType: ['Hotel', 'Resort'],
-      activities: ['Cultural', 'Adventure'],
-      dietary: ['Vegetarian']
+      preferredDestinations: [],
+      accommodationType: [],
+      activities: [],
+      dietary: []
     }
   });
+
+  // Load user profile on component mount
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const profileData = await profileService.getProfile();
+        setSettings(profileData);
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  // Fonctions pour les modales
+  const openModal = (type: string) => {
+    setModalType(type);
+    setNewItem('');
+    setShowModal(true);
+  };
+
+  const addItem = () => {
+    if (!newItem.trim()) return;
+
+    const updatedSettings = { ...settings };
+    switch (modalType) {
+      case 'destinations':
+        updatedSettings.travel.preferredDestinations.push(newItem.trim());
+        break;
+      case 'accommodation':
+        updatedSettings.travel.accommodationType.push(newItem.trim());
+        break;
+      case 'activities':
+        updatedSettings.travel.activities.push(newItem.trim());
+        break;
+      case 'dietary':
+        updatedSettings.travel.dietary.push(newItem.trim());
+        break;
+    }
+    
+    setSettings(updatedSettings);
+    setShowModal(false);
+    setNewItem('');
+  };
+
+  const removeItem = (type: string, index: number) => {
+    const updatedSettings = { ...settings };
+    switch (type) {
+      case 'destinations':
+        updatedSettings.travel.preferredDestinations.splice(index, 1);
+        break;
+      case 'accommodation':
+        updatedSettings.travel.accommodationType.splice(index, 1);
+        break;
+      case 'activities':
+        updatedSettings.travel.activities.splice(index, 1);
+        break;
+      case 'dietary':
+        updatedSettings.travel.dietary.splice(index, 1);
+        break;
+    }
+    setSettings(updatedSettings);
+  };
+
+  // Fonction pour redimensionner l'image
+  const resizeImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        const MAX_SIZE = 200;
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = (height * MAX_SIZE) / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = (width * MAX_SIZE) / height;
+            height = MAX_SIZE;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        resolve(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  // Fonction pour changer l'avatar
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner une image');
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      const resizedImage = await resizeImage(file);
+      
+      // Upload the image to the server and store the returned URL/ID in settings
+      const uploadedPhotoUrl = await profileService.uploadPhoto(resizedImage);
+      setSettings(prev => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          photo: uploadedPhotoUrl
+        }
+      }));
+      
+    } catch (error) {
+      console.error('Erreur lors du redimensionnement:', error);
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
 
   const sections = [
     { id: 'profile', label: 'Profile', icon: User },
@@ -58,10 +207,43 @@ const SettingsPage = () => {
     { id: 'travel', label: 'Travel Preferences', icon: Globe }
   ];
 
-  const handleSave = () => {
-    // Handle saving settings
-    console.log('Saving settings:', settings);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const updatedData = await profileService.updateProfile(settings);
+      // Update the local state with the response from the server
+      if (updatedData.profile || updatedData.preferences || updatedData.notifications || updatedData.privacy || updatedData.travel) {
+        setSettings({
+          profile: updatedData.profile || settings.profile,
+          preferences: updatedData.preferences || settings.preferences,
+          notifications: updatedData.notifications || settings.notifications,
+          privacy: updatedData.privacy || settings.privacy,
+          travel: updatedData.travel || settings.travel
+        });
+      }
+      
+      // Afficher le toast de succès
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      // You could add an error toast/notification here
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your settings...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -72,10 +254,15 @@ const SettingsPage = () => {
             <h1 className="text-2xl font-bold">Settings</h1>
             <button
               onClick={handleSave}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+              disabled={saving}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Save className="w-4 h-4" />
-              Save Changes
+              {saving ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {saving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
 
@@ -113,13 +300,29 @@ const SettingsPage = () => {
                 <h2 className="text-lg font-semibold mb-4">Profile Photo</h2>
                 <div className="flex items-center gap-6">
                   <img
-                    src={settings.profile.photo}
+                    src={settings.profile.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80'}
                     alt="Profile"
                     className="w-24 h-24 rounded-full object-cover"
                   />
                   <div>
-                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                      Change Photo
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleAvatarChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <button 
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={avatarUploading}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                    >
+                      {avatarUploading ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                      {avatarUploading ? 'Uploading...' : 'Change Photo'}
                     </button>
                   </div>
                 </div>
@@ -240,7 +443,10 @@ const SettingsPage = () => {
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Security</h2>
                 <div className="space-y-4">
-                  <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <button 
+                    onClick={() => setShowPasswordModal(true)}
+                    className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
                     <span className="font-medium">Change Password</span>
                     <Shield className="w-5 h-5 text-gray-400" />
                   </button>
@@ -369,17 +575,27 @@ const SettingsPage = () => {
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Preferred Destinations</h2>
                 <div className="flex flex-wrap gap-2">
-                  {settings.travel.preferredDestinations.map((destination) => (
+                  {settings.travel.preferredDestinations.map((destination, index) => (
                     <span
-                      key={destination}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1"
+                      key={index}
+                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
                     >
                       <MapPin className="w-4 h-4" />
                       {destination}
+                      <button
+                        onClick={() => removeItem('destinations', index)}
+                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   ))}
-                  <button className="px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500">
-                    + Add Destination
+                  <button 
+                    onClick={() => openModal('destinations')}
+                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add Destination
                   </button>
                 </div>
               </div>
@@ -388,17 +604,27 @@ const SettingsPage = () => {
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Accommodation Preferences</h2>
                 <div className="flex flex-wrap gap-2">
-                  {settings.travel.accommodationType.map((type) => (
+                  {settings.travel.accommodationType.map((type, index) => (
                     <span
-                      key={type}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1"
+                      key={index}
+                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
                     >
                       <Hotel className="w-4 h-4" />
                       {type}
+                      <button
+                        onClick={() => removeItem('accommodation', index)}
+                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   ))}
-                  <button className="px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500">
-                    + Add Type
+                  <button 
+                    onClick={() => openModal('accommodation')}
+                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add Type
                   </button>
                 </div>
               </div>
@@ -407,17 +633,27 @@ const SettingsPage = () => {
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Activity Interests</h2>
                 <div className="flex flex-wrap gap-2">
-                  {settings.travel.activities.map((activity) => (
+                  {settings.travel.activities.map((activity, index) => (
                     <span
-                      key={activity}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1"
+                      key={index}
+                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
                     >
                       <Heart className="w-4 h-4" />
                       {activity}
+                      <button
+                        onClick={() => removeItem('activities', index)}
+                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   ))}
-                  <button className="px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500">
-                    + Add Interest
+                  <button 
+                    onClick={() => openModal('activities')}
+                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add Interest
                   </button>
                 </div>
               </div>
@@ -426,17 +662,27 @@ const SettingsPage = () => {
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Dietary Preferences</h2>
                 <div className="flex flex-wrap gap-2">
-                  {settings.travel.dietary.map((diet) => (
+                  {settings.travel.dietary.map((diet, index) => (
                     <span
-                      key={diet}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1"
+                      key={index}
+                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
                     >
                       <Utensils className="w-4 h-4" />
                       {diet}
+                      <button
+                        onClick={() => removeItem('dietary', index)}
+                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   ))}
-                  <button className="px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500">
-                    + Add Preference
+                  <button 
+                    onClick={() => openModal('dietary')}
+                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add Preference
                   </button>
                 </div>
               </div>
@@ -444,6 +690,145 @@ const SettingsPage = () => {
           )}
         </div>
       </div>
+
+      {/* Modal pour ajouter un item */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                Add {modalType === 'destinations' ? 'Destination' : 
+                     modalType === 'accommodation' ? 'Accommodation Type' :
+                     modalType === 'activities' ? 'Activity Interest' :
+                     'Dietary Preference'}
+              </h3>
+              <button 
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={newItem}
+                onChange={(e) => setNewItem(e.target.value)}
+                placeholder={`Enter ${modalType === 'destinations' ? 'destination' :
+                                    modalType === 'accommodation' ? 'accommodation type' :
+                                    modalType === 'activities' ? 'activity' :
+                                    'dietary preference'}...`}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                onKeyPress={(e) => e.key === 'Enter' && addItem()}
+                autoFocus
+              />
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={addItem}
+                  disabled={!newItem.trim()}
+                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal pour changer le mot de passe */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Change Password</h3>
+              <button 
+                onClick={() => {
+                  setShowPasswordModal(false);
+                  setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                />
+              </div>
+              {passwordData.newPassword && passwordData.confirmPassword && passwordData.newPassword !== passwordData.confirmPassword && (
+                <p className="text-red-500 text-sm">Passwords do not match</p>
+              )}
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    // TODO: Implémenter le changement de mot de passe
+                    setShowPasswordModal(false);
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                  }}
+                  disabled={!passwordData.currentPassword || !passwordData.newPassword || passwordData.newPassword !== passwordData.confirmPassword}
+                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Change Password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast de notification */}
+      {showToast && (
+        <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in">
+          <div className="w-2 h-2 bg-white rounded-full"></div>
+          <span>Profile saved successfully!</span>
+        </div>
+      )}
     </div>
   );
 };
