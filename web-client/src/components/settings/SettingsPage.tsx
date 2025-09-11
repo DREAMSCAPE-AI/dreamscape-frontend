@@ -182,12 +182,13 @@ const SettingsPage = () => {
     try {
       const resizedImage = await resizeImage(file);
       
-      // Stocker l'image en base64 dans les settings
+      // Upload the image to the server and store the returned URL/ID in settings
+      const uploadedPhotoUrl = await profileService.uploadPhoto(resizedImage);
       setSettings(prev => ({
         ...prev,
         profile: {
           ...prev.profile,
-          photo: resizedImage
+          photo: uploadedPhotoUrl
         }
       }));
       
