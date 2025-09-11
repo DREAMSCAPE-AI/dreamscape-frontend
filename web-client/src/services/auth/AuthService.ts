@@ -95,8 +95,11 @@ const useAuth = create<AuthState>()(
           } else {
             throw new Error(response.message || 'Registration failed');
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error('Signup error:', error);
+          if (error?.response?.data) {
+            throw error;
+          }
           throw new Error(error instanceof Error ? error.message : 'Registration failed');
         }
       },

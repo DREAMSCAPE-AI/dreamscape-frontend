@@ -35,8 +35,13 @@ export default function AuthPage() {
     try {
       await signup(name, email, password);
       navigate('/dashboard/interchangeable');
-    } catch (err) {
-      if (err instanceof Error) {
+    } catch (err: any) {
+      if (err?.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+        const validationErrors = err.response.data.errors.map((error: any) => error.msg).join(', ');
+        setError(validationErrors);
+      } else if (err?.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('Failed to create account. Please try again.');
