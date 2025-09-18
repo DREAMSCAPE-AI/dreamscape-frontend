@@ -26,7 +26,6 @@ jobs:
         with:
           node-version: 18
           cache: npm
-          cache-dependency-path: ${{ matrix.component }}/package-lock.json
 
       - name: Check if component exists
         id: check_component
@@ -74,7 +73,6 @@ jobs:
         with:
           node-version: 18
           cache: npm
-          cache-dependency-path: ${{ matrix.component }}/package-lock.json
 
       - name: Check if component exists
         id: check_component
@@ -146,7 +144,6 @@ jobs:
         with:
           node-version: 18
           cache: npm
-          cache-dependency-path: ${{ matrix.component }}/package-lock.json
 
       - name: Check if component exists
         id: check_component
