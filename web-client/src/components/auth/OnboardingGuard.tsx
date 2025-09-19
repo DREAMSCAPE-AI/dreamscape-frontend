@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useOnboardingStore from '@/store/onboardingStore';
+import { useAuth } from '@/services/auth/AuthService';
 
 interface OnboardingGuardProps {
   children: React.ReactNode;
@@ -12,16 +13,30 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
   requireOnboarding = true
 }) => {
   const location = useLocation();
+  const { isAuthenticated, user } = useAuth();
+  const [authChecked, setAuthChecked] = useState(false);
   const {
     initializeOnboarding,
     getOnboardingStatus,
     isLoading
   } = useOnboardingStore();
 
-  // Initialize onboarding data
+  // Check if auth is stable before proceeding
   useEffect(() => {
-    initializeOnboarding();
-  }, [initializeOnboarding]);
+    // Small delay to ensure auth state is stable
+    const timer = setTimeout(() => {
+      setAuthChecked(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Initialize onboarding data only after auth is checked and user is authenticated
+  useEffect(() => {
+    if (authChecked && isAuthenticated) {
+      initializeOnboarding();
+    }
+  }, [authChecked, isAuthenticated, initializeOnboarding]);
 
   // Don't block if we're already on onboarding pages or auth pages
   const exemptPaths = ['/onboarding', '/auth', '/settings-demo'];

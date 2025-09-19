@@ -6,11 +6,11 @@ import type {
   OnboardingResponse
 } from '@/types/onboarding';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
 
 // Create axios instance with default config
 const onboardingAPI = axios.create({
-  baseURL: `${API_BASE_URL}/api/v1/users`,
+  baseURL: `${API_BASE_URL}/users`,
   headers: {
     'Content-Type': 'application/json',
   },
