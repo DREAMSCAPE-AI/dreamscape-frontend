@@ -6,7 +6,7 @@ import type {
   OnboardingResponse
 } from '@/types/onboarding';
 
-const API_BASE_URL = import.meta.env.USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
+const API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
 
 // Create axios instance with default config
 const onboardingAPI = axios.create({
@@ -18,7 +18,16 @@ const onboardingAPI = axios.create({
 
 // Add auth token to requests if available
 onboardingAPI.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
+  // Try to get token from Zustand store first, fallback to localStorage
+  let token = null;
+  try {
+    const authState = JSON.parse(localStorage.getItem('auth-storage') || '{}');
+    token = authState.state?.token;
+  } catch {
+    // Fallback to direct localStorage access
+    token = localStorage.getItem('auth_token');
+  }
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -32,9 +41,20 @@ onboardingAPI.interceptors.response.use(
     console.error('Onboarding API Error:', error);
 
     if (error.response?.status === 401) {
-      // Handle unauthorized - redirect to login
+      // Handle unauthorized - clear both possible token locations
       localStorage.removeItem('auth_token');
-      window.location.href = '/auth';
+      try {
+        const authState = JSON.parse(localStorage.getItem('auth-storage') || '{}');
+        if (authState.state) {
+          authState.state.token = null;
+          authState.state.isAuthenticated = false;
+          authState.state.user = null;
+          localStorage.setItem('auth-storage', JSON.stringify(authState));
+        }
+      } catch {
+        // If parsing fails, remove the entire auth storage
+        localStorage.removeItem('auth-storage');
+      }
     }
 
     return Promise.reject(error);

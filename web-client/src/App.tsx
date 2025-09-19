@@ -21,8 +21,6 @@ import SettingsPage from '@/pages/settings';
 import SupportPage from '@/pages/support';
 import ProfileSetup from '@/components/profile/ProfileSetup';
 import OnboardingPage from '@/pages/onboarding';
-import SettingsDemo from '@/pages/settings-demo';
-import OnboardingWorkflowDemo from '@/pages/onboarding-workflow-demo';
 import OnboardingGuard from '@/components/auth/OnboardingGuard';
 import RootLayout from '@/layouts/RootLayout';
 
@@ -33,7 +31,6 @@ import AirportsPage from '@/pages/airports';
 import AirlinesPage from '@/pages/airlines';
 import TransfersPage from '@/pages/transfers';
 import InsightsPage from '@/pages/insights';
-import DashboardDemo from '@/components/demo/DashboardDemo';
 import UnifiedDashboardPage from '@/pages/dashboard/unified';
 import InterchangeableDashboardPage from '@/pages/dashboard/interchangeable';
 
@@ -47,8 +44,6 @@ function App() {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/profile/setup" element={<ProfileSetup />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/settings-demo" element={<SettingsDemo />} />
-            <Route path="/onboarding-workflow-demo" element={<OnboardingWorkflowDemo />} />
             <Route path="/hotels" element={<HotelsPage />} />
             <Route path="/flights" element={<FlightsPage />} />
             <Route path="/map" element={<MapPage />} />
@@ -89,7 +84,6 @@ function App() {
             <Route path="/airlines" element={<AirlinesPage />} />
             <Route path="/transfers" element={<TransfersPage />} />
             <Route path="/insights" element={<InsightsPage />} />
-            <Route path="/dashboard/demo" element={<DashboardDemo />} />
           </Route>
         </Routes>
       </ErrorBoundary>

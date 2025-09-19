@@ -23,31 +23,29 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
 
   // Check if auth is stable before proceeding
   useEffect(() => {
-    // Small delay to ensure auth state is stable
-    const timer = setTimeout(() => {
+    // Check auth state without artificial delay
+    if (isAuthenticated !== null) {
       setAuthChecked(true);
-    }, 100);
+    }
+  }, [isAuthenticated]);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Initialize onboarding data only after auth is checked and user is authenticated
+  // Initialize onboarding data only after auth is confirmed and user is authenticated
   useEffect(() => {
-    if (authChecked && isAuthenticated) {
+    if (authChecked && isAuthenticated && user) {
       initializeOnboarding();
     }
-  }, [authChecked, isAuthenticated, initializeOnboarding]);
+  }, [authChecked, isAuthenticated, user, initializeOnboarding]);
 
   // Don't block if we're already on onboarding pages or auth pages
-  const exemptPaths = ['/onboarding', '/auth', '/settings-demo'];
+  const exemptPaths = ['/onboarding', '/auth'];
   const isExemptPath = exemptPaths.some(path => location.pathname.startsWith(path));
 
   if (isExemptPath) {
     return <>{children}</>;
   }
 
-  // Show loading state while checking onboarding status
-  if (isLoading) {
+  // Show loading state while checking auth or onboarding status
+  if (!authChecked || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
@@ -57,6 +55,11 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
         </div>
       </div>
     );
+  }
+
+  // If not authenticated, don't show anything (let auth system handle)
+  if (!isAuthenticated) {
+    return null;
   }
 
   if (!requireOnboarding) {
