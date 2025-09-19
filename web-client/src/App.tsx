@@ -20,6 +20,10 @@ import DashboardPage from '@/pages/dashboard';
 import SettingsPage from '@/pages/settings';
 import SupportPage from '@/pages/support';
 import ProfileSetup from '@/components/profile/ProfileSetup';
+import OnboardingPage from '@/pages/onboarding';
+import SettingsDemo from '@/pages/settings-demo';
+import OnboardingWorkflowDemo from '@/pages/onboarding-workflow-demo';
+import OnboardingGuard from '@/components/auth/OnboardingGuard';
 import RootLayout from '@/layouts/RootLayout';
 
 // New API Component Pages
@@ -42,6 +46,9 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/profile/setup" element={<ProfileSetup />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/settings-demo" element={<SettingsDemo />} />
+            <Route path="/onboarding-workflow-demo" element={<OnboardingWorkflowDemo />} />
             <Route path="/hotels" element={<HotelsPage />} />
             <Route path="/flights" element={<FlightsPage />} />
             <Route path="/map" element={<MapPage />} />
@@ -53,10 +60,26 @@ function App() {
             <Route path="/activities/:id" element={<ActivityPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/planner" element={<PlannerPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/dashboard/unified" element={<UnifiedDashboardPage />} />
-            <Route path="/dashboard/interchangeable" element={<InterchangeableDashboardPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/dashboard" element={
+              <OnboardingGuard>
+                <DashboardPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/dashboard/unified" element={
+              <OnboardingGuard>
+                <UnifiedDashboardPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/dashboard/interchangeable" element={
+              <OnboardingGuard>
+                <InterchangeableDashboardPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/settings" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <SettingsPage />
+              </OnboardingGuard>
+            } />
             <Route path="/support" element={<SupportPage />} />
             
             {/* New API Component Routes */}
