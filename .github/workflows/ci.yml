@@ -112,8 +112,12 @@ jobs:
               fi
               ;;
             "panorama")
-              if npm test --if-present -- --coverage --watchAll=false; then
-                echo "✅ Tests passed for ${{ matrix.component }}"
+              if jq -e '.scripts.test' package.json > /dev/null 2>&1; then
+                if npm test -- --coverage --watchAll=false; then
+                  echo "✅ Tests passed for ${{ matrix.component }}"
+                else
+                  echo "❌ Tests failed for ${{ matrix.component }}"
+                fi
               else
                 echo "⚠️ No test script found for ${{ matrix.component }}"
               fi
