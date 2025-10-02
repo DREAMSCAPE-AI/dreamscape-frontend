@@ -33,7 +33,7 @@ jobs:
       - name: Detect changed components
         id: changes
         run: |
-          # Détecter les composants modifiés
+          # Detect modified components
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             base_sha="${{ github.event.pull_request.base.sha }}"
             head_sha="${{ github.event.pull_request.head.sha }}"
