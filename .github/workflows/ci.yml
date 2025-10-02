@@ -28,14 +28,9 @@ jobs:
 
       - name: Check if component exists
         id: check_component
-        run: |
-          if [ -f "${{ matrix.component }}/package.json" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "✅ Component ${{ matrix.component }} found"
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Component ${{ matrix.component }} not found, skipping"
-          fi
+        uses: ./.github/actions/check-component-exists
+        with:
+          component: ${{ matrix.component }}
 
       - name: Install dependencies
         if: steps.check_component.outputs.exists == 'true'
