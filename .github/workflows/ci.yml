@@ -34,11 +34,12 @@ jobs:
         id: changes
         run: |
           # Detect modified components
+          null_sha='0000000000000000000000000000000000000000'
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             base_sha="${{ github.event.pull_request.base.sha }}"
             head_sha="${{ github.event.pull_request.head.sha }}"
           else
-            if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            if [ "${{ github.event.before }}" = "$null_sha" ]; then
               # First push of the branch
               base_sha="$(git rev-parse HEAD~1 2>/dev/null || echo "HEAD")"
             else
