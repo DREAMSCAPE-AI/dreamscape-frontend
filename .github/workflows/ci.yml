@@ -172,7 +172,7 @@ jobs:
               body: comment
             });
 
-  # Agrégateur pour les branch protection rules
+  # Aggregator for branch protection rules
   test:
     name: CI Tests
     runs-on: ubuntu-latest
