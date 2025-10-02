@@ -39,7 +39,7 @@ jobs:
             head_sha="${{ github.event.pull_request.head.sha }}"
           else
             if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
-              # Premier push de la branche
+              # First push of the branch
               base_sha="$(git rev-parse HEAD~1 2>/dev/null || echo "HEAD")"
             else
               base_sha="${{ github.event.before }}"
