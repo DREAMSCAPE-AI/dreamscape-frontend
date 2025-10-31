@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import { useAuth } from '@/services/auth/AuthService';
+import { onboardingService } from '@/services/onboardingService';
 import { AlertCircle } from 'lucide-react';
 
 export default function AuthPage() {
@@ -17,7 +18,23 @@ export default function AuthPage() {
     setError(null);
     try {
       await login(email, password);
-      navigate('/dashboard/interchangeable');
+
+      // Check onboarding status to determine where to redirect
+      try {
+        const progress = await onboardingService.getProgress();
+
+        // If onboarding is completed (100%), go to home
+        if (progress && progress.progressPercentage === 100) {
+          navigate('/');
+        } else {
+          // Otherwise, go to onboarding
+          navigate('/onboarding');
+        }
+      } catch (onboardingError) {
+        // If we can't check onboarding status, default to onboarding page
+        console.log('Could not check onboarding status, redirecting to onboarding');
+        navigate('/onboarding');
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -34,7 +51,9 @@ export default function AuthPage() {
     setError(null);
     try {
       await signup(name, email, password);
-      navigate('/dashboard/interchangeable');
+
+      // After signup, always go to onboarding (new user)
+      navigate('/onboarding');
     } catch (err: any) {
       if (err?.response?.data?.errors && Array.isArray(err.response.data.errors)) {
         const validationErrors = err.response.data.errors.map((error: any) => error.msg).join(', ');

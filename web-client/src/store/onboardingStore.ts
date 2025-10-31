@@ -115,8 +115,19 @@ const useOnboardingStore = create<OnboardingState>()(
             // If no profile exists, create one
             const { progress } = get();
             if (!progress) {
-              await onboardingService.initializeProfile();
-              await get().loadProfile();
+              try {
+                await onboardingService.initializeProfile();
+                await get().loadProfile();
+              } catch (initError: any) {
+                // If profile already exists (409), just reload to get the existing one
+                if (initError?.response?.status === 409) {
+                  console.log('Onboarding profile already exists, loading existing profile');
+                  await get().loadProfile();
+                } else {
+                  // Re-throw other errors
+                  throw initError;
+                }
+              }
             }
           } catch (error) {
             console.error('Failed to initialize onboarding:', error);
@@ -137,7 +148,7 @@ const useOnboardingStore = create<OnboardingState>()(
 
             // Determine current step based on progress
             let currentStepIndex = 0;
-            if (progress.completedSteps.length > 0) {
+            if (progress && progress.completedSteps && progress.completedSteps.length > 0) {
               // Find the first incomplete step
               currentStepIndex = ONBOARDING_STEPS.findIndex(
                 step => !progress.completedSteps.includes(step.id)

@@ -322,7 +322,7 @@ const OnboardingWizard: React.FC = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Étape {currentStepIndex + 1} sur {ONBOARDING_STEPS.length} •{' '}
-              {progress?.completedSteps.length || 0} étapes complétées
+              {progress?.completedSteps?.length || 0} étapes complétées
             </p>
             {!canProceed && currentStep.required && (
               <p className="text-sm text-red-600 mt-1">

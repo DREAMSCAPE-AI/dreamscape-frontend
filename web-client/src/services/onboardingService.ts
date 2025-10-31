@@ -69,7 +69,12 @@ export const onboardingService = {
     try {
       const response = await onboardingAPI.get<OnboardingResponse>('/onboarding');
       return response.data.profile || null;
-    } catch (error) {
+    } catch (error: any) {
+      // If profile doesn't exist yet (404), return null instead of throwing
+      if (error?.response?.status === 404) {
+        console.log('No onboarding profile found');
+        return null;
+      }
       console.error('Failed to fetch onboarding profile:', error);
       throw new Error('Impossible de récupérer votre profil. Veuillez réessayer.');
     }
@@ -91,11 +96,16 @@ export const onboardingService = {
   /**
    * Get onboarding progress information
    */
-  async getProgress(): Promise<OnboardingProgressResponse> {
+  async getProgress(): Promise<OnboardingProgressResponse | null> {
     try {
       const response = await onboardingAPI.get<OnboardingProgressResponse>('/onboarding/progress');
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
+      // If profile doesn't exist yet (404), return null
+      if (error?.response?.status === 404) {
+        console.log('No onboarding progress found');
+        return null;
+      }
       console.error('Failed to fetch onboarding progress:', error);
       throw new Error('Impossible de récupérer votre progression. Veuillez réessayer.');
     }
@@ -136,9 +146,20 @@ export const onboardingService = {
         isComplete: false
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
+      // If profile already exists (409), get the existing one instead
+      if (error?.response?.status === 409) {
+        console.log('Profile already exists, fetching existing profile');
+        const existingProfile = await this.getCurrentProfile();
+        const progress = await this.getProgress();
+        return {
+          profile: existingProfile,
+          progress,
+          message: 'Profile already exists'
+        };
+      }
       console.error('Failed to initialize onboarding profile:', error);
-      throw new Error('Impossible d\'initialiser votre profil. Veuillez réessayer.');
+      throw error;
     }
   }
 };

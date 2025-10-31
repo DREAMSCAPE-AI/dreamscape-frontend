@@ -68,12 +68,12 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
 
   const onboardingStatus = getOnboardingStatus();
 
-  // Redirect to onboarding if not completed and not skipped
-  if (onboardingStatus === 'not_started' || onboardingStatus === 'skipped') {
+  // Redirect to onboarding if not completed
+  if (onboardingStatus === 'not_started' || onboardingStatus === 'in_progress') {
     return <Navigate to="/onboarding" replace state={{ from: location.pathname }} />;
   }
 
-  // Allow access to the protected content
+  // Allow access if onboarding is completed or skipped
   return <>{children}</>;
 };
 
