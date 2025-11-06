@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Heart, Globe, Calendar, DollarSign, Users, ArrowRight, Check } from 'lucide-react';
 
-interface OnboardingFlowProps {
-  onComplete: (preferences: UserPreferences) => void;
-}
-
-interface UserPreferences {
+export interface UserPreferences {
   travelStyle: string[];
   interests: string[];
   budget: {
@@ -16,6 +12,10 @@ interface UserPreferences {
   travelDuration: string[];
   accessibility: string[];
   sustainability: boolean;
+}
+
+interface OnboardingFlowProps {
+  onComplete: (preferences: UserPreferences) => void;
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {

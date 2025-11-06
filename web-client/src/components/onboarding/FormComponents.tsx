@@ -160,18 +160,44 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
     onChange([minVal, newMax]);
   };
 
+  // Calculate percentage positions for visual display
+  const minPercent = ((minVal - min) / (max - min)) * 100;
+  const maxPercent = ((maxVal - min) / (max - min)) * 100;
+
   return (
-    <div className={`space-y-4 ${className}`}>
-      <div className="flex justify-between items-center">
-        <span className="text-sm font-medium text-gray-700">
-          {formatLabel(minVal)}
-        </span>
-        <span className="text-sm font-medium text-gray-700">
-          {formatLabel(maxVal)}
-        </span>
+    <div className={`space-y-6 ${className}`}>
+      {/* Display Values */}
+      <div className="flex justify-between items-center mb-2">
+        <div className="text-center">
+          <div className="text-xs font-medium text-gray-600 mb-1">Minimum</div>
+          <div className="text-lg font-semibold text-blue-600">
+            {formatLabel(minVal)}
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="text-xs font-medium text-gray-600 mb-1">Maximum</div>
+          <div className="text-lg font-semibold text-blue-600">
+            {formatLabel(maxVal)}
+          </div>
+        </div>
       </div>
 
-      <div className="relative">
+      {/* Dual Range Slider */}
+      <div className="relative pt-1 pb-6">
+        {/* Track Background */}
+        <div className="absolute w-full h-2 bg-gray-200 rounded-full" style={{ top: '0.5rem' }} />
+
+        {/* Active Track */}
+        <div
+          className="absolute h-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
+          style={{
+            left: `${minPercent}%`,
+            right: `${100 - maxPercent}%`,
+            top: '0.5rem'
+          }}
+        />
+
+        {/* Min Slider */}
         <input
           type="range"
           min={min}
@@ -179,8 +205,13 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
           step={step}
           value={minVal}
           onChange={handleMinChange}
-          className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+          className="range-slider-thumb absolute w-full pointer-events-none"
+          style={{
+            zIndex: minVal > max - (max - min) / 2 ? 5 : 3
+          }}
         />
+
+        {/* Max Slider */}
         <input
           type="range"
           min={min}
@@ -188,13 +219,17 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
           step={step}
           value={maxVal}
           onChange={handleMaxChange}
-          className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+          className="range-slider-thumb absolute w-full pointer-events-none"
+          style={{
+            zIndex: 4
+          }}
         />
       </div>
 
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <label className="block text-xs font-medium text-gray-700 mb-1">
+      {/* Number Inputs */}
+      <div className="grid grid-cols-2 gap-4 mt-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Minimum
           </label>
           <input
@@ -203,12 +238,17 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
             max={maxVal - step}
             step={step}
             value={minVal}
-            onChange={(e) => onChange([Number(e.target.value), maxVal])}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              if (val >= min && val < maxVal) {
+                onChange([val, maxVal]);
+              }
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        <div className="flex-1">
-          <label className="block text-xs font-medium text-gray-700 mb-1">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Maximum
           </label>
           <input
@@ -217,11 +257,74 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
             max={max}
             step={step}
             value={maxVal}
-            onChange={(e) => onChange([minVal, Number(e.target.value)])}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              if (val <= max && val > minVal) {
+                onChange([minVal, val]);
+              }
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
       </div>
+
+      <style jsx>{`
+        .range-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          background: transparent;
+          pointer-events: none;
+          height: 2rem;
+        }
+
+        .range-slider-thumb::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 1.25rem;
+          height: 1.25rem;
+          border-radius: 50%;
+          background: white;
+          border: 3px solid #3b82f6;
+          cursor: pointer;
+          pointer-events: auto;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+          transition: all 0.2s ease;
+        }
+
+        .range-slider-thumb::-webkit-slider-thumb:hover {
+          transform: scale(1.1);
+          border-color: #2563eb;
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .range-slider-thumb::-webkit-slider-thumb:active {
+          transform: scale(1.15);
+          border-color: #1d4ed8;
+        }
+
+        .range-slider-thumb::-moz-range-thumb {
+          width: 1.25rem;
+          height: 1.25rem;
+          border-radius: 50%;
+          background: white;
+          border: 3px solid #3b82f6;
+          cursor: pointer;
+          pointer-events: auto;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+          transition: all 0.2s ease;
+        }
+
+        .range-slider-thumb::-moz-range-thumb:hover {
+          transform: scale(1.1);
+          border-color: #2563eb;
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .range-slider-thumb::-moz-range-thumb:active {
+          transform: scale(1.15);
+          border-color: #1d4ed8;
+        }
+      `}</style>
     </div>
   );
 };

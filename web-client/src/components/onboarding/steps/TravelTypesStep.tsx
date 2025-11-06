@@ -21,36 +21,6 @@ const TravelTypesStep: React.FC = () => {
 
   const travelTypeGroups = [
     {
-      title: 'Voyages personnels',
-      icon: <Heart className="w-5 h-5" />,
-      types: [
-        {
-          id: TravelType.LEISURE,
-          title: 'Loisirs',
-          description: 'Détente, vacances, plaisir',
-          icon: '🏖️'
-        },
-        {
-          id: TravelType.ROMANTIC,
-          title: 'Romantique',
-          description: 'Lune de miel, anniversaire, couple',
-          icon: '💕'
-        },
-        {
-          id: TravelType.FAMILY,
-          title: 'Famille',
-          description: 'Voyages avec enfants, famille élargie',
-          icon: '👨‍👩‍👧‍👦'
-        },
-        {
-          id: TravelType.SOLO,
-          title: 'Solo',
-          description: 'Voyage en solitaire, introspection',
-          icon: '🚶‍♀️'
-        }
-      ]
-    },
-    {
       title: 'Voyages d\'expérience',
       icon: <Mountain className="w-5 h-5" />,
       types: [
@@ -67,21 +37,45 @@ const TravelTypesStep: React.FC = () => {
           icon: '🏛️'
         },
         {
+          id: TravelType.RELAXATION,
+          title: 'Détente',
+          description: 'Repos, relaxation, vacances tranquilles',
+          icon: '🏖️'
+        },
+        {
           id: TravelType.WELLNESS,
           title: 'Bien-être',
           description: 'Spa, yoga, détox, santé',
           icon: '🧘‍♀️'
         },
         {
-          id: TravelType.ECO_TOURISM,
-          title: 'Écotourisme',
-          description: 'Nature, durabilité, environnement',
+          id: TravelType.NATURE,
+          title: 'Nature',
+          description: 'Parcs, wildlife, écotourisme',
           icon: '🌿'
         }
       ]
     },
     {
-      title: 'Voyages professionnels',
+      title: 'Voyages personnels',
+      icon: <Heart className="w-5 h-5" />,
+      types: [
+        {
+          id: TravelType.ROMANTIC,
+          title: 'Romantique',
+          description: 'Lune de miel, anniversaire, couple',
+          icon: '💕'
+        },
+        {
+          id: TravelType.FAMILY,
+          title: 'Famille',
+          description: 'Voyages avec enfants, famille élargie',
+          icon: '👨‍👩‍👧‍👦'
+        }
+      ]
+    },
+    {
+      title: 'Voyages professionnels & éducatifs',
       icon: <Briefcase className="w-5 h-5" />,
       types: [
         {
@@ -99,50 +93,56 @@ const TravelTypesStep: React.FC = () => {
       ]
     },
     {
-      title: 'Voyages spécialisés',
+      title: 'Voyages par thème',
       icon: <Camera className="w-5 h-5" />,
       types: [
         {
-          id: TravelType.SPORTS,
-          title: 'Sports',
-          description: 'Événements sportifs, compétitions',
-          icon: '⚽'
+          id: TravelType.CULINARY,
+          title: 'Gastronomie',
+          description: 'Découvertes culinaires, restaurants',
+          icon: '🍽️'
         },
         {
-          id: TravelType.RELIGIOUS,
-          title: 'Religieux',
-          description: 'Pèlerinages, sites spirituels',
-          icon: '🕊️'
+          id: TravelType.SHOPPING,
+          title: 'Shopping',
+          description: 'Boutiques, marchés, achats',
+          icon: '🛍️'
         },
         {
-          id: TravelType.MEDICAL,
-          title: 'Médical',
-          description: 'Soins médicaux, tourisme santé',
-          icon: '🏥'
+          id: TravelType.NIGHTLIFE,
+          title: 'Vie nocturne',
+          description: 'Bars, clubs, sorties',
+          icon: '🎉'
+        },
+        {
+          id: TravelType.HISTORICAL,
+          title: 'Historique',
+          description: 'Sites historiques, monuments',
+          icon: '🏰'
         }
       ]
     },
     {
-      title: 'Voyages par budget',
+      title: 'Voyages par destination',
       icon: <Users className="w-5 h-5" />,
       types: [
         {
-          id: TravelType.LUXURY,
-          title: 'Luxe',
-          description: 'Expériences haut de gamme, service premium',
-          icon: '💎'
+          id: TravelType.URBAN,
+          title: 'Urbain',
+          description: 'Grandes villes, métropoles',
+          icon: '🏙️'
         },
         {
-          id: TravelType.BUDGET,
-          title: 'Budget',
-          description: 'Voyages économiques, backpacking',
-          icon: '🎒'
+          id: TravelType.BEACH,
+          title: 'Plage',
+          description: 'Côtes, îles, stations balnéaires',
+          icon: '🏖️'
         },
         {
-          id: TravelType.GROUP,
-          title: 'Groupe',
-          description: 'Voyages organisés, circuits',
-          icon: '👥'
+          id: TravelType.MOUNTAIN,
+          title: 'Montagne',
+          description: 'Altitude, ski, randonnée',
+          icon: '⛰️'
         }
       ]
     }
@@ -247,14 +247,17 @@ const TravelTypesStep: React.FC = () => {
                 {selectedTypes.includes(TravelType.CULTURAL) && (
                   <li>• Visites guidées et expériences culturelles</li>
                 )}
-                {selectedTypes.includes(TravelType.LUXURY) && (
-                  <li>• Hôtels 5 étoiles et services premium</li>
-                )}
                 {selectedTypes.includes(TravelType.FAMILY) && (
                   <li>• Activités family-friendly et hébergements adaptés</li>
                 )}
                 {selectedTypes.includes(TravelType.WELLNESS) && (
                   <li>• Spas, centres de bien-être et retraites santé</li>
+                )}
+                {selectedTypes.includes(TravelType.CULINARY) && (
+                  <li>• Expériences gastronomiques et cours de cuisine</li>
+                )}
+                {selectedTypes.includes(TravelType.BEACH) && (
+                  <li>• Destinations balnéaires et activités nautiques</li>
                 )}
               </ul>
             </div>

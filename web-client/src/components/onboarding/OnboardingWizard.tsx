@@ -10,6 +10,10 @@ import ProgressIndicator from './ProgressIndicator';
 import DestinationsStep from './steps/DestinationsStep';
 import BudgetStep from './steps/BudgetStep';
 import TravelTypesStep from './steps/TravelTypesStep';
+import StyleComfortStep from './steps/StyleComfortStep';
+import AccommodationStep from './steps/AccommodationStep';
+import TransportStep from './steps/TransportStep';
+import ActivitiesStep from './steps/ActivitiesStep';
 
 // Placeholder components for remaining steps
 const PlaceholderStep: React.FC<{ stepId: string; title: string; icon: string }> = ({ stepId, title, icon }) => (
@@ -94,34 +98,50 @@ const OnboardingWizard: React.FC = () => {
     }
   };
 
+  // Handle complete onboarding
+  const handleCompleteOnboarding = async () => {
+    const success = await completeOnboarding();
+    if (success) {
+      // Update localStorage to mark onboarding as completed
+      try {
+        const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
+        if (authStorage.state?.user) {
+          authStorage.state.user.onboardingCompleted = true;
+          authStorage.state.user.onboardingCompletedAt = new Date().toISOString();
+          localStorage.setItem('auth-storage', JSON.stringify(authStorage));
+        }
+      } catch (error) {
+        console.error('Failed to update auth storage:', error);
+      }
+
+      // Small delay to ensure state is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Redirect to dashboard after successful completion
+      const returnPath = (location.state as any)?.from || '/dashboard';
+      navigate(returnPath, { replace: true });
+
+      // Force a page reload to ensure all guards recognize the completed status
+      window.location.href = returnPath;
+    }
+  };
+
   const renderStepContent = () => {
     switch (currentStep.id) {
       case 'destinations':
         return <DestinationsStep />;
       case 'budget':
         return <BudgetStep />;
-      case 'travel-types':
+      case 'travel_types':
         return <TravelTypesStep />;
-      case 'style-comfort':
-        return <PlaceholderStep stepId="style-comfort" title="Style de voyage" icon="🎭" />;
+      case 'style_comfort':
+        return <StyleComfortStep />;
       case 'accommodation':
-        return <PlaceholderStep stepId="accommodation" title="Hébergement" icon="🏨" />;
+        return <AccommodationStep />;
       case 'transport':
-        return <PlaceholderStep stepId="transport" title="Transport" icon="🚁" />;
+        return <TransportStep />;
       case 'activities':
-        return <PlaceholderStep stepId="activities" title="Activités" icon="🎯" />;
-      case 'travel-groups':
-        return <PlaceholderStep stepId="travel-groups" title="Groupes de voyage" icon="👥" />;
-      case 'constraints':
-        return <PlaceholderStep stepId="constraints" title="Contraintes" icon="⚠️" />;
-      case 'timing':
-        return <PlaceholderStep stepId="timing" title="Timing" icon="📅" />;
-      case 'duration':
-        return <PlaceholderStep stepId="duration" title="Durée" icon="⏰" />;
-      case 'experience':
-        return <PlaceholderStep stepId="experience" title="Expérience" icon="🎓" />;
-      case 'review':
-        return <PlaceholderStep stepId="review" title="Finalisation" icon="✅" />;
+        return <ActivitiesStep />;
       default:
         return <PlaceholderStep stepId={currentStep.id} title={currentStep.title} icon={currentStep.icon} />;
     }
@@ -273,7 +293,7 @@ const OnboardingWizard: React.FC = () => {
             {/* Next/Complete Button */}
             {isLastStep ? (
               <button
-                onClick={completeOnboarding}
+                onClick={handleCompleteOnboarding}
                 disabled={!canProceed || isSaving}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
                   canProceed && !isSaving

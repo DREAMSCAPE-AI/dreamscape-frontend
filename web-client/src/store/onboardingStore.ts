@@ -88,10 +88,16 @@ const useOnboardingStore = create<OnboardingState>()(
               return !!profile.preferredDestinations;
             case 'budget':
               return !!profile.globalBudgetRange && !!profile.budgetFlexibility;
-            case 'travel-types':
+            case 'travel_types':
               return profile.travelTypes && profile.travelTypes.length > 0;
-            case 'style-comfort':
+            case 'style_comfort':
               return !!profile.travelStyle && !!profile.comfortLevel;
+            case 'accommodation':
+              return profile.accommodationTypes && profile.accommodationTypes.length > 0 && !!profile.accommodationLevel;
+            case 'transport':
+              return profile.transportModes && profile.transportModes.length > 0 && !!profile.cabinClassPreference;
+            case 'activities':
+              return !!profile.activityLevel; // Activity types are optional, level is required
             case 'review':
               return true; // Always allow on review step
             default:
@@ -198,7 +204,7 @@ const useOnboardingStore = create<OnboardingState>()(
             await onboardingService.saveStep({
               step: currentStep.id,
               data: stepData,
-              isCompleted: get().getCanProceed()
+              markCompleted: true  // Always mark as completed when saving
             });
 
             // Reload progress to get updated state
@@ -278,14 +284,18 @@ const useOnboardingStore = create<OnboardingState>()(
             // Complete the onboarding
             await onboardingService.completeOnboarding();
 
-            // Reload to get final state
-            await get().loadProfile();
+            // Mark as completed locally
+            set({
+              profile: { ...get().profile, isComplete: true },
+              progress: { ...get().progress, progressPercentage: 100 } as any
+            });
 
-            // Navigate to success or redirect
-            // This could trigger a navigation event
+            // Navigation will be handled by the component
+            return true;
           } catch (error) {
             console.error('Failed to complete onboarding:', error);
             set({ error: error instanceof Error ? error.message : 'Erreur de finalisation' });
+            return false;
           } finally {
             set({ isSaving: false });
           }
@@ -330,7 +340,8 @@ const useOnboardingStore = create<OnboardingState>()(
           const state = get();
 
           if (state.isSkipped) return 'skipped';
-          if (state.progress?.progressPercentage === 100) return 'completed';
+          // Check both profile.isComplete and progressPercentage
+          if (state.profile?.isComplete || state.progress?.progressPercentage === 100) return 'completed';
           if (state.progress && state.progress.completedSteps.length > 0) return 'in_progress';
           return 'not_started';
         },
@@ -347,9 +358,9 @@ const useOnboardingStore = create<OnboardingState>()(
                 globalBudgetRange: profile.globalBudgetRange,
                 budgetFlexibility: profile.budgetFlexibility
               };
-            case 'travel-types':
+            case 'travel_types':
               return { travelTypes: profile.travelTypes };
-            case 'style-comfort':
+            case 'style_comfort':
               return {
                 travelStyle: profile.travelStyle,
                 comfortLevel: profile.comfortLevel
@@ -357,16 +368,16 @@ const useOnboardingStore = create<OnboardingState>()(
             case 'accommodation':
               return {
                 accommodationTypes: profile.accommodationTypes,
-                accommodationBudgetRange: profile.accommodationBudgetRange
+                accommodationLevel: profile.accommodationLevel
               };
             case 'transport':
               return {
-                preferredAirlines: profile.preferredAirlines,
-                cabinClassPreferences: profile.cabinClassPreferences
+                transportModes: profile.transportModes,
+                cabinClassPreference: profile.cabinClassPreference
               };
             case 'activities':
               return {
-                preferredActivities: profile.preferredActivities,
+                activityTypes: profile.activityTypes,
                 activityLevel: profile.activityLevel
               };
             case 'travel-groups':

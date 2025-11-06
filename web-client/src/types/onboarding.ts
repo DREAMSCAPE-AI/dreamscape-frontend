@@ -1,39 +1,34 @@
-// Enums matching backend
+// Enums matching backend - STRICTLY ALIGNED WITH PRISMA SCHEMA
 export enum TravelType {
-  LEISURE = 'LEISURE',
-  BUSINESS = 'BUSINESS',
   ADVENTURE = 'ADVENTURE',
   CULTURAL = 'CULTURAL',
-  ROMANTIC = 'ROMANTIC',
+  RELAXATION = 'RELAXATION',
+  BUSINESS = 'BUSINESS',
   FAMILY = 'FAMILY',
-  SOLO = 'SOLO',
-  GROUP = 'GROUP',
-  LUXURY = 'LUXURY',
-  BUDGET = 'BUDGET',
-  ECO_TOURISM = 'ECO_TOURISM',
+  ROMANTIC = 'ROMANTIC',
   WELLNESS = 'WELLNESS',
   EDUCATIONAL = 'EDUCATIONAL',
-  RELIGIOUS = 'RELIGIOUS',
-  MEDICAL = 'MEDICAL',
-  SPORTS = 'SPORTS'
+  CULINARY = 'CULINARY',
+  SHOPPING = 'SHOPPING',
+  NIGHTLIFE = 'NIGHTLIFE',
+  NATURE = 'NATURE',
+  URBAN = 'URBAN',
+  BEACH = 'BEACH',
+  MOUNTAIN = 'MOUNTAIN',
+  HISTORICAL = 'HISTORICAL'
 }
 
 export enum TravelStyle {
-  LUXURY = 'LUXURY',
-  COMFORT = 'COMFORT',
-  STANDARD = 'STANDARD',
-  BUDGET = 'BUDGET',
-  BACKPACKER = 'BACKPACKER',
-  BUSINESS = 'BUSINESS',
-  FAMILY_FRIENDLY = 'FAMILY_FRIENDLY'
+  PLANNED = 'PLANNED',
+  SPONTANEOUS = 'SPONTANEOUS',
+  MIXED = 'MIXED'
 }
 
 export enum ComfortLevel {
-  LUXURY = 'LUXURY',
-  HIGH_COMFORT = 'HIGH_COMFORT',
-  STANDARD = 'STANDARD',
   BASIC = 'BASIC',
-  MINIMAL = 'MINIMAL'
+  STANDARD = 'STANDARD',
+  PREMIUM = 'PREMIUM',
+  LUXURY = 'LUXURY'
 }
 
 export enum AccommodationType {
@@ -54,9 +49,8 @@ export enum AccommodationType {
 export enum ActivityLevel {
   LOW = 'LOW',
   MODERATE = 'MODERATE',
-  ACTIVE = 'ACTIVE',
-  VERY_ACTIVE = 'VERY_ACTIVE',
-  EXTREME = 'EXTREME'
+  HIGH = 'HIGH',
+  VERY_HIGH = 'VERY_HIGH'
 }
 
 export enum TravelGroupType {
@@ -89,26 +83,21 @@ export enum TravelExperienceLevel {
 }
 
 export enum RiskTolerance {
-  VERY_LOW = 'VERY_LOW',
-  LOW = 'LOW',
+  CONSERVATIVE = 'CONSERVATIVE',
   MODERATE = 'MODERATE',
-  HIGH = 'HIGH',
-  VERY_HIGH = 'VERY_HIGH'
+  ADVENTUROUS = 'ADVENTUROUS'
 }
 
 export enum BudgetFlexibility {
   STRICT = 'STRICT',
-  SOMEWHAT_FLEXIBLE = 'SOMEWHAT_FLEXIBLE',
   FLEXIBLE = 'FLEXIBLE',
   VERY_FLEXIBLE = 'VERY_FLEXIBLE'
 }
 
 export enum DateFlexibility {
-  FIXED_DATES = 'FIXED_DATES',
-  FLEXIBLE_WEEK = 'FLEXIBLE_WEEK',
-  FLEXIBLE_MONTH = 'FLEXIBLE_MONTH',
-  FLEXIBLE_SEASON = 'FLEXIBLE_SEASON',
-  VERY_FLEXIBLE = 'VERY_FLEXIBLE'
+  FLEXIBLE = 'FLEXIBLE',
+  SEMI_FLEXIBLE = 'SEMI_FLEXIBLE',
+  FIXED = 'FIXED'
 }
 
 export enum CabinClass {
@@ -196,7 +185,7 @@ export interface TravelOnboardingProfile {
 export interface OnboardingStepRequest {
   step: string;
   data: Partial<TravelOnboardingProfile>;
-  isCompleted: boolean;
+  markCompleted: boolean;
 }
 
 export interface OnboardingProgressResponse {
@@ -241,7 +230,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     order: 2
   },
   {
-    id: 'travel-types',
+    id: 'travel_types',
     title: 'Types de voyage',
     description: 'Quels types de voyages vous intéressent ?',
     icon: '✈️',
@@ -249,11 +238,11 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     order: 3
   },
   {
-    id: 'style-comfort',
+    id: 'style_comfort',
     title: 'Style de voyage',
     description: 'Quel est votre style de voyage ?',
     icon: '🎭',
-    required: true,
+    required: false,
     order: 4
   },
   {
@@ -261,15 +250,15 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     title: 'Hébergement',
     description: 'Vos préférences d\'hébergement',
     icon: '🏨',
-    required: false,
+    required: true,
     order: 5
   },
   {
     id: 'transport',
     title: 'Transport',
     description: 'Vos préférences de transport',
-    icon: '🚁',
-    required: false,
+    icon: '✈️',
+    required: true,
     order: 6
   },
   {
@@ -279,53 +268,5 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     icon: '🎯',
     required: false,
     order: 7
-  },
-  {
-    id: 'travel-groups',
-    title: 'Groupes de voyage',
-    description: 'Avec qui voyagez-vous généralement ?',
-    icon: '👥',
-    required: false,
-    order: 8
-  },
-  {
-    id: 'constraints',
-    title: 'Contraintes',
-    description: 'Restrictions alimentaires et besoins spéciaux',
-    icon: '⚠️',
-    required: false,
-    order: 9
-  },
-  {
-    id: 'timing',
-    title: 'Timing',
-    description: 'Quand préférez-vous voyager ?',
-    icon: '📅',
-    required: false,
-    order: 10
-  },
-  {
-    id: 'duration',
-    title: 'Durée',
-    description: 'Durée habituelle de vos voyages',
-    icon: '⏰',
-    required: false,
-    order: 11
-  },
-  {
-    id: 'experience',
-    title: 'Expérience',
-    description: 'Votre niveau d\'expérience de voyage',
-    icon: '🎓',
-    required: false,
-    order: 12
-  },
-  {
-    id: 'review',
-    title: 'Finalisation',
-    description: 'Révision et confirmation',
-    icon: '✅',
-    required: true,
-    order: 13
   }
 ];

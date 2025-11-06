@@ -10,7 +10,21 @@ const BudgetStep: React.FC = () => {
   const { profile, updateProfile } = useOnboardingStore();
 
   const budgetRange = profile.globalBudgetRange || { min: 1000, max: 5000, currency: 'EUR' };
-  const budgetFlexibility = profile.budgetFlexibility;
+  const budgetFlexibility = profile.budgetFlexibility || BudgetFlexibility.STRICT;
+
+  // Initialize with default values if not set
+  React.useEffect(() => {
+    if (!profile.globalBudgetRange) {
+      updateProfile({
+        globalBudgetRange: { min: 1000, max: 5000, currency: 'EUR' }
+      });
+    }
+    if (!profile.budgetFlexibility) {
+      updateProfile({
+        budgetFlexibility: BudgetFlexibility.STRICT
+      });
+    }
+  }, []);
 
   const handleBudgetRangeChange = (range: [number, number]) => {
     updateProfile({
@@ -92,16 +106,10 @@ const BudgetStep: React.FC = () => {
       description: 'Je ne peux pas dépasser mon budget'
     },
     {
-      value: BudgetFlexibility.SOMEWHAT_FLEXIBLE,
-      label: 'Légèrement flexible',
-      icon: '📊',
-      description: 'Je peux dépasser de 10-20% pour une belle opportunité'
-    },
-    {
       value: BudgetFlexibility.FLEXIBLE,
       label: 'Flexible',
       icon: '📈',
-      description: 'Je peux dépasser de 30-50% pour un voyage exceptionnel'
+      description: 'Je peux dépasser de 20-30% pour un voyage exceptionnel'
     },
     {
       value: BudgetFlexibility.VERY_FLEXIBLE,
