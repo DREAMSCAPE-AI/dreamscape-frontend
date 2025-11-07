@@ -22,9 +22,9 @@ const PlaceholderStep: React.FC<{ stepId: string; title: string; icon: string }>
     <div className="text-6xl mb-4">{icon}</div>
     <h2 className="text-2xl font-semibold text-gray-900 mb-4">{title}</h2>
     <p className="text-gray-600 mb-6">Cette étape est en cours de développement.</p>
-    <div className="bg-blue-50 rounded-lg p-4">
-      <p className="text-sm text-blue-800">
-        Step ID: <code className="font-mono bg-blue-100 px-2 py-1 rounded">{stepId}</code>
+    <div className="bg-orange-50 rounded-lg p-4">
+      <p className="text-sm text-orange-800">
+        Step ID: <code className="font-mono bg-orange-100 px-2 py-1 rounded">{stepId}</code>
       </p>
     </div>
   </div>
@@ -145,9 +145,9 @@ const OnboardingWizard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Chargement de votre profil</h2>
           <p className="text-gray-600">Préparation de votre questionnaire personnalisé...</p>
         </div>
@@ -156,7 +156,7 @@ const OnboardingWizard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
       {/* Progress Indicator */}
       <ProgressIndicator
         currentStepIndex={currentStepIndex}
@@ -293,7 +293,7 @@ const OnboardingWizard: React.FC = () => {
                 disabled={!canProceed || isSaving}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
                   canProceed && !isSaving
-                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:opacity-90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
@@ -315,7 +315,7 @@ const OnboardingWizard: React.FC = () => {
                 disabled={!canProceed || isSaving}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
                   canProceed && !isSaving
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:opacity-90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
@@ -356,7 +356,7 @@ const OnboardingWizard: React.FC = () => {
               Ce questionnaire nous aide à personnaliser vos recommandations de voyage.
               Toutes vos réponses peuvent être modifiées plus tard.
             </p>
-            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            <button className="text-orange-500 hover:text-orange-600 text-sm font-medium">
               Contactez notre support
             </button>
           </div>

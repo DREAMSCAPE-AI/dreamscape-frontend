@@ -131,7 +131,7 @@ const ActivitiesStep: React.FC = () => {
         {/* Activity Types */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-blue-600" />
+            <Activity className="w-5 h-5 text-orange-500" />
             Types d'activités
           </h3>
           <p className="text-gray-600 text-sm mb-4">

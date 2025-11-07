@@ -122,7 +122,7 @@ const AccommodationStep: React.FC = () => {
         {/* Accommodation Types */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Hotel className="w-5 h-5 text-blue-600" />
+            <Hotel className="w-5 h-5 text-orange-500" />
             Types d'hébergement
           </h3>
           <p className="text-gray-600 text-sm mb-4">
@@ -161,7 +161,7 @@ const AccommodationStep: React.FC = () => {
                 onClick={() => handleLevelChange(option.value)}
                 className={`p-4 rounded-lg border-2 text-center transition-all ${
                   accommodationLevel === option.value
-                    ? 'border-blue-500 bg-blue-50'
+                    ? 'border-orange-500 bg-orange-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
                 whileHover={{ scale: 1.02 }}
@@ -169,12 +169,12 @@ const AccommodationStep: React.FC = () => {
               >
                 <div className="text-2xl mb-2">{option.icon}</div>
                 <div className={`font-medium ${
-                  accommodationLevel === option.value ? 'text-blue-900' : 'text-gray-900'
+                  accommodationLevel === option.value ? 'text-orange-900' : 'text-gray-900'
                 }`}>
                   {option.label}
                 </div>
                 <div className={`text-xs ${
-                  accommodationLevel === option.value ? 'text-blue-700' : 'text-gray-600'
+                  accommodationLevel === option.value ? 'text-orange-700' : 'text-gray-600'
                 }`}>
                   {option.description}
                 </div>
@@ -188,10 +188,10 @@ const AccommodationStep: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-blue-50 rounded-lg p-4"
+            className="bg-orange-50 rounded-lg p-4"
           >
-            <h4 className="font-medium text-blue-900 mb-2">Vos préférences d'hébergement</h4>
-            <div className="space-y-1 text-sm text-blue-800">
+            <h4 className="font-medium text-orange-900 mb-2">Vos préférences d'hébergement</h4>
+            <div className="space-y-1 text-sm text-orange-800">
               <p>
                 <strong>{selectedTypes.length}</strong> type(s) sélectionné(s)
               </p>

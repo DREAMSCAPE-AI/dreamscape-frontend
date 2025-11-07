@@ -76,7 +76,7 @@ const DestinationsStep: React.FC = () => {
         {/* Destinations visitées ou préférées */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-blue-600" />
+            <MapPin className="w-5 h-5 text-orange-500" />
             Destinations visitées ou préférées
           </h3>
           <p className="text-gray-600 text-sm mb-4">
@@ -103,7 +103,7 @@ const DestinationsStep: React.FC = () => {
                       onClick={() => addQuickDestination(destination)}
                       className={`px-3 py-1 rounded-full text-sm transition-colors ${
                         currentDestinations.includes(destination)
-                          ? 'bg-blue-100 text-blue-800 border border-blue-300'
+                          ? 'bg-orange-100 text-orange-800 border border-orange-300'
                           : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
                       }`}
                       whileHover={{ scale: 1.05 }}
@@ -123,7 +123,7 @@ const DestinationsStep: React.FC = () => {
         {/* Bucket list */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
-            <Globe className="w-5 h-5 text-purple-600" />
+            <Globe className="w-5 h-5 text-pink-500" />
             Liste de rêve (Bucket List)
           </h3>
           <p className="text-gray-600 text-sm mb-4">
@@ -173,17 +173,17 @@ const DestinationsStep: React.FC = () => {
                   }}
                   className={`p-4 rounded-lg border-2 text-center transition-all ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-orange-500 bg-orange-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="text-2xl mb-2">{type.icon}</div>
-                  <div className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+                  <div className={`font-medium ${isSelected ? 'text-orange-900' : 'text-gray-900'}`}>
                     {type.label}
                   </div>
-                  <div className={`text-xs ${isSelected ? 'text-blue-700' : 'text-gray-600'}`}>
+                  <div className={`text-xs ${isSelected ? 'text-orange-700' : 'text-gray-600'}`}>
                     {type.desc}
                   </div>
                 </motion.button>
@@ -197,10 +197,10 @@ const DestinationsStep: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-blue-50 rounded-lg p-4"
+            className="bg-orange-50 rounded-lg p-4"
           >
-            <h4 className="font-medium text-blue-900 mb-2">Résumé de vos préférences</h4>
-            <div className="space-y-1 text-sm text-blue-800">
+            <h4 className="font-medium text-orange-900 mb-2">Résumé de vos préférences</h4>
+            <div className="space-y-1 text-sm text-orange-800">
               {currentDestinations.length > 0 && (
                 <p><strong>{currentDestinations.length}</strong> destinations visitées/préférées</p>
               )}

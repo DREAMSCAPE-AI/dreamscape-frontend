@@ -88,7 +88,7 @@ const StyleComfortStep: React.FC = () => {
         {/* Travel Style */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-blue-600" />
+            <Sparkles className="w-5 h-5 text-orange-500" />
             Style de planification
           </h3>
           <p className="text-gray-600 text-sm mb-4">
@@ -125,10 +125,10 @@ const StyleComfortStep: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-blue-50 rounded-lg p-4"
+          className="bg-orange-50 rounded-lg p-4"
         >
-          <h4 className="font-medium text-blue-900 mb-2">Votre profil de voyage</h4>
-          <div className="space-y-1 text-sm text-blue-800">
+          <h4 className="font-medium text-orange-900 mb-2">Votre profil de voyage</h4>
+          <div className="space-y-1 text-sm text-orange-800">
             <p>
               Style : <strong>{styleOptions.find(s => s.value === travelStyle)?.label || 'Non défini'}</strong>
             </p>

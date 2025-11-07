@@ -33,7 +33,7 @@ const OnboardingPrompt: React.FC<OnboardingPromptProps> = ({ className = '' }) =
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -10, scale: 0.95 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className={`relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow-lg overflow-hidden ${className}`}
+        className={`relative bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg shadow-lg overflow-hidden ${className}`}
       >
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -66,7 +66,7 @@ const OnboardingPrompt: React.FC<OnboardingPromptProps> = ({ className = '' }) =
                 <h3 className="font-semibold text-lg">
                   {isSkipped ? 'Personnalisez votre expérience' : 'Continuez votre profil'}
                 </h3>
-                <p className="text-blue-100 text-sm">
+                <p className="text-orange-100 text-sm">
                   {isSkipped
                     ? 'Complétez votre profil pour des recommandations sur mesure'
                     : `${Math.round(completionPercentage)}% complété - Quelques minutes suffisent`
@@ -76,24 +76,24 @@ const OnboardingPrompt: React.FC<OnboardingPromptProps> = ({ className = '' }) =
             </div>
 
             <div className="space-y-3">
-              <div className="text-sm text-blue-100">
+              <div className="text-sm text-orange-100">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-1.5 h-1.5 bg-blue-200 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-orange-200 rounded-full"></div>
                   <span>Recommandations de destinations personnalisées</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-1.5 h-1.5 bg-blue-200 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-orange-200 rounded-full"></div>
                   <span>Suggestions d'activités adaptées à vos goûts</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-200 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-orange-200 rounded-full"></div>
                   <span>Offres exclusives selon votre budget</span>
                 </div>
               </div>
 
               <Link
                 to="/onboarding"
-                className="inline-flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors text-sm"
+                className="inline-flex items-center gap-2 bg-white text-orange-500 px-4 py-2 rounded-lg font-medium hover:bg-orange-50 transition-colors text-sm"
               >
                 <Settings className="w-4 h-4" />
                 {isSkipped ? 'Commencer le questionnaire' : 'Continuer le questionnaire'}

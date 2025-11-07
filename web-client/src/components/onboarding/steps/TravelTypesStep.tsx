@@ -159,18 +159,18 @@ const TravelTypesStep: React.FC = () => {
     >
       <div className="space-y-8">
         {/* Progress indicator */}
-        <div className="bg-blue-50 rounded-lg p-4">
+        <div className="bg-orange-50 rounded-lg p-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-blue-900">
+            <span className="text-sm font-medium text-orange-900">
               {getSelectedCount()} type(s) sélectionné(s)
             </span>
-            <span className="text-sm text-blue-700">
+            <span className="text-sm text-orange-700">
               Minimum recommandé : {getRecommendedMinimum()}
             </span>
           </div>
-          <div className="w-full bg-blue-200 rounded-full h-2">
+          <div className="w-full bg-orange-200 rounded-full h-2">
             <motion.div
-              className="bg-blue-600 h-2 rounded-full"
+              className="bg-orange-500 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{
                 width: `${Math.min((getSelectedCount() / getRecommendedMinimum()) * 100, 100)}%`

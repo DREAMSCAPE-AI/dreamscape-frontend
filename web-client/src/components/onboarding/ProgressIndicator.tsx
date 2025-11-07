@@ -26,13 +26,13 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             <span className="text-sm font-medium text-gray-600">
               Étape {currentStepIndex + 1} sur {totalSteps}
             </span>
-            <span className="text-sm font-medium text-blue-600">
+            <span className="text-sm font-medium text-orange-500">
               {Math.round(progressPercentage)}% complété
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <motion.div
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full"
+              className="bg-gradient-to-r from-orange-500 to-pink-500 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progressPercentage}%` }}
               transition={{ duration: 0.5, ease: "easeOut" }}
@@ -49,9 +49,9 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                   onClick={() => onStepClick?.(index)}
                   className={`w-3 h-3 rounded-full transition-colors ${
                     index === currentStepIndex
-                      ? 'bg-blue-600'
+                      ? 'bg-orange-500'
                       : completedSteps.includes(step.id)
-                      ? 'bg-green-500'
+                      ? 'bg-pink-500'
                       : 'bg-gray-300'
                   }`}
                   disabled={!onStepClick}
@@ -65,7 +65,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                 <div
                   className={`w-3 h-3 rounded-full ${
                     currentStepIndex >= totalSteps - 1
-                      ? 'bg-blue-600'
+                      ? 'bg-orange-500'
                       : 'bg-gray-300'
                   }`}
                 />
@@ -83,9 +83,9 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                 onClick={() => onStepClick?.(index)}
                 className={`flex items-center justify-center min-w-12 h-12 rounded-full text-lg transition-all duration-200 ${
                   index === currentStepIndex
-                    ? 'bg-blue-600 text-white shadow-lg scale-110'
+                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg scale-110'
                     : completedSteps.includes(step.id)
-                    ? 'bg-green-500 text-white hover:bg-green-600'
+                    ? 'bg-pink-500 text-white hover:bg-pink-600'
                     : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
                 } ${onStepClick ? 'cursor-pointer' : 'cursor-default'}`}
                 disabled={!onStepClick}
@@ -101,9 +101,9 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
               <div className="ml-3 min-w-0 flex-1">
                 <div className={`font-medium text-sm ${
                   index === currentStepIndex
-                    ? 'text-blue-600'
+                    ? 'text-orange-500'
                     : completedSteps.includes(step.id)
-                    ? 'text-green-600'
+                    ? 'text-pink-500'
                     : 'text-gray-500'
                 }`}>
                   {step.title}

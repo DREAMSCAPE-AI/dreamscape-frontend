@@ -168,7 +168,7 @@ const BudgetStep: React.FC = () => {
         {/* Budget Range */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-blue-600" />
+            <Wallet className="w-5 h-5 text-orange-500" />
             Budget par voyage (tout compris)
           </h3>
 
@@ -190,8 +190,8 @@ const BudgetStep: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             className={`p-4 rounded-lg border-2 ${
               getCurrentCategory().color === 'green' ? 'border-green-200 bg-green-50' :
-              getCurrentCategory().color === 'blue' ? 'border-blue-200 bg-blue-50' :
-              getCurrentCategory().color === 'purple' ? 'border-purple-200 bg-purple-50' :
+              getCurrentCategory().color === 'blue' ? 'border-orange-200 bg-orange-50' :
+              getCurrentCategory().color === 'purple' ? 'border-pink-200 bg-pink-50' :
               'border-yellow-200 bg-yellow-50'
             }`}
           >
@@ -200,16 +200,16 @@ const BudgetStep: React.FC = () => {
               <div>
                 <h4 className={`font-semibold ${
                   getCurrentCategory().color === 'green' ? 'text-green-900' :
-                  getCurrentCategory().color === 'blue' ? 'text-blue-900' :
-                  getCurrentCategory().color === 'purple' ? 'text-purple-900' :
+                  getCurrentCategory().color === 'blue' ? 'text-orange-900' :
+                  getCurrentCategory().color === 'purple' ? 'text-pink-900' :
                   'text-yellow-900'
                 }`}>
                   {getCurrentCategory().label}
                 </h4>
                 <p className={`text-sm ${
                   getCurrentCategory().color === 'green' ? 'text-green-700' :
-                  getCurrentCategory().color === 'blue' ? 'text-blue-700' :
-                  getCurrentCategory().color === 'purple' ? 'text-purple-700' :
+                  getCurrentCategory().color === 'blue' ? 'text-orange-700' :
+                  getCurrentCategory().color === 'purple' ? 'text-pink-700' :
                   'text-yellow-700'
                 }`}>
                   {getCurrentCategory().description}
@@ -222,7 +222,7 @@ const BudgetStep: React.FC = () => {
         {/* Budget Flexibility */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-purple-600" />
+            <TrendingUp className="w-5 h-5 text-pink-500" />
             Flexibilité budgétaire
           </h3>
           <p className="text-gray-600 text-sm mb-4">
@@ -256,7 +256,7 @@ const BudgetStep: React.FC = () => {
                   <div className="text-2xl mb-2">{item.icon}</div>
                   <div className="font-medium text-gray-900">{item.category}</div>
                   <div className="text-sm text-gray-600">{item.percentage}%</div>
-                  <div className="text-lg font-semibold text-blue-600">
+                  <div className="text-lg font-semibold text-orange-500">
                     {formatCurrency(amount)}
                   </div>
                 </div>
@@ -269,10 +269,10 @@ const BudgetStep: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-blue-50 rounded-lg p-4"
+          className="bg-orange-50 rounded-lg p-4"
         >
-          <h4 className="font-medium text-blue-900 mb-2">Résumé de votre budget</h4>
-          <div className="space-y-1 text-sm text-blue-800">
+          <h4 className="font-medium text-orange-900 mb-2">Résumé de votre budget</h4>
+          <div className="space-y-1 text-sm text-orange-800">
             <p>
               Budget habituel : <strong>{formatCurrency(budgetRange.min)} - {formatCurrency(budgetRange.max)}</strong>
             </p>
