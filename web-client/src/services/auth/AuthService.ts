@@ -9,6 +9,8 @@ interface User {
   role: 'admin' | 'user';
   username?: string;
   isVerified?: boolean;
+  onboardingCompleted?: boolean;
+  onboardingCompletedAt?: string;
 }
 
 interface AuthState {
@@ -19,6 +21,7 @@ interface AuthState {
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 
@@ -122,6 +125,12 @@ const useAuth = create<AuthState>()(
       },
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
+      },
+      updateUser: (updates: Partial<User>) => {
+        const { user } = get();
+        if (user) {
+          set({ user: { ...user, ...updates } });
+        }
       }
     }),
     {

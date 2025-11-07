@@ -7,14 +7,14 @@ import type {
   OnboardingResponse
 } from './types';
 
-const API_BASE_URL = import.meta.env.VITE_USER_SERVICE_URL;
+const API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL;
 
 class OnboardingService {
   private api: AxiosInstance;
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${API_BASE_URL}/v1/users/onboarding`,
+      baseURL: `${API_BASE_URL}/users/onboarding`,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',

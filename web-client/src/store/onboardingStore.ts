@@ -154,7 +154,7 @@ const useOnboardingStore = create<OnboardingState>()(
 
             // Determine current step based on progress
             let currentStepIndex = 0;
-            if (progress && progress.completedSteps && progress.completedSteps.length > 0) {
+            if (progress?.completedSteps && progress.completedSteps.length > 0) {
               // Find the first incomplete step
               currentStepIndex = ONBOARDING_STEPS.findIndex(
                 step => !progress.completedSteps.includes(step.id)
@@ -281,6 +281,9 @@ const useOnboardingStore = create<OnboardingState>()(
             // Save current step first
             await get().saveCurrentStep();
 
+            // Add a small delay to avoid rate limiting (429)
+            await new Promise(resolve => setTimeout(resolve, 500));
+
             // Complete the onboarding
             await onboardingService.completeOnboarding();
 
@@ -292,9 +295,20 @@ const useOnboardingStore = create<OnboardingState>()(
 
             // Navigation will be handled by the component
             return true;
-          } catch (error) {
+          } catch (error: any) {
             console.error('Failed to complete onboarding:', error);
-            set({ error: error instanceof Error ? error.message : 'Erreur de finalisation' });
+
+            // Handle specific error cases
+            let errorMessage = 'Erreur de finalisation';
+            if (error?.response?.status === 429) {
+              errorMessage = 'Trop de requêtes. Veuillez patienter quelques secondes avant de réessayer.';
+            } else if (error?.response?.status >= 500) {
+              errorMessage = 'Erreur serveur. Veuillez réessayer dans quelques instants.';
+            } else if (error instanceof Error) {
+              errorMessage = error.message;
+            }
+
+            set({ error: errorMessage });
             return false;
           } finally {
             set({ isSaving: false });
@@ -340,9 +354,20 @@ const useOnboardingStore = create<OnboardingState>()(
           const state = get();
 
           if (state.isSkipped) return 'skipped';
+
+          // Check localStorage first - if user completed onboarding, trust that
+          try {
+            const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
+            if (authStorage.state?.user?.onboardingCompleted === true) {
+              return 'completed';
+            }
+          } catch (error) {
+            console.error('Failed to check auth storage for onboarding status:', error);
+          }
+
           // Check both profile.isComplete and progressPercentage
           if (state.profile?.isComplete || state.progress?.progressPercentage === 100) return 'completed';
-          if (state.progress && state.progress.completedSteps.length > 0) return 'in_progress';
+          if (state.progress?.completedSteps && state.progress.completedSteps.length > 0) return 'in_progress';
           return 'not_started';
         },
 

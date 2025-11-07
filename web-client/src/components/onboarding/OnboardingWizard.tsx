@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, RotateCcw, Check, AlertCircle, Loader2, X, ArrowRight } from 'lucide-react';
 import { ONBOARDING_STEPS } from '@/types/onboarding';
 import useOnboardingStore from '@/store/onboardingStore';
+import { useAuth } from '@/services/auth/AuthService';
 import ProgressIndicator from './ProgressIndicator';
 
 // Import step components
@@ -32,6 +33,7 @@ const PlaceholderStep: React.FC<{ stepId: string; title: string; icon: string }>
 const OnboardingWizard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { updateUser } = useAuth();
 
   const {
     currentStepIndex,
@@ -102,19 +104,13 @@ const OnboardingWizard: React.FC = () => {
   const handleCompleteOnboarding = async () => {
     const success = await completeOnboarding();
     if (success) {
-      // Update localStorage to mark onboarding as completed
-      try {
-        const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
-        if (authStorage.state?.user) {
-          authStorage.state.user.onboardingCompleted = true;
-          authStorage.state.user.onboardingCompletedAt = new Date().toISOString();
-          localStorage.setItem('auth-storage', JSON.stringify(authStorage));
-        }
-      } catch (error) {
-        console.error('Failed to update auth storage:', error);
-      }
+      // Update user in auth store to mark onboarding as completed
+      updateUser({
+        onboardingCompleted: true,
+        onboardingCompletedAt: new Date().toISOString()
+      });
 
-      // Small delay to ensure state is updated
+      // Small delay to ensure state is persisted
       await new Promise(resolve => setTimeout(resolve, 100));
 
       // Redirect to dashboard after successful completion
