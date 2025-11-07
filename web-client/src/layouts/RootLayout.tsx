@@ -14,16 +14,18 @@ export default function RootLayout() {
     navigate('/');
   };
 
-  // Don't show header/footer on auth pages
+  // Don't show header/footer on auth and onboarding pages
   const isAuthPage = location.pathname === '/auth';
+  const isOnboardingPage = location.pathname.startsWith('/onboarding');
+  const hideHeaderFooter = isAuthPage || isOnboardingPage;
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!isAuthPage && <Header isLoggedIn={isAuthenticated} onLogout={handleLogout} />}
+      {!hideHeaderFooter && <Header isLoggedIn={isAuthenticated} onLogout={handleLogout} />}
       <div className="flex-grow">
         <Outlet />
       </div>
-      {!isAuthPage && <Footer />}
+      {!hideHeaderFooter && <Footer />}
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
+import { useAuth } from '@/services/auth/AuthService';
 
 // Pages
 import HomePage from '@/pages/index';
@@ -34,9 +35,22 @@ import InsightsPage from '@/pages/insights';
 import UnifiedDashboardPage from '@/pages/dashboard/unified';
 import InterchangeableDashboardPage from '@/pages/dashboard/interchangeable';
 
+// Auth checker component that runs on app mount
+function AuthChecker() {
+  const { checkAuth } = useAuth();
+
+  useEffect(() => {
+    // Check if stored token is still valid on app mount
+    checkAuth();
+  }, [checkAuth]);
+
+  return null;
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <AuthChecker />
       <ErrorBoundary>
         <Routes>
           <Route element={<RootLayout />}>

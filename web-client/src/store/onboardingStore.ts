@@ -152,6 +152,30 @@ const useOnboardingStore = create<OnboardingState>()(
               onboardingService.getProgress()
             ]);
 
+            console.log('[OnboardingStore] Loaded from backend:', {
+              profileComplete: profile?.isComplete,
+              progressPercentage: progress?.progressPercentage,
+              completedSteps: progress?.completedSteps
+            });
+
+            // CRITICAL: If backend says onboarding is complete, sync with auth store
+            if (progress?.progressPercentage === 100 || profile?.isComplete) {
+              console.log('[OnboardingStore] Backend says onboarding is COMPLETE, syncing to auth store');
+
+              // Update the auth store to mark onboarding as completed
+              try {
+                const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
+                if (authStorage.state?.user) {
+                  authStorage.state.user.onboardingCompleted = true;
+                  authStorage.state.user.onboardingCompletedAt = new Date().toISOString();
+                  localStorage.setItem('auth-storage', JSON.stringify(authStorage));
+                  console.log('[OnboardingStore] ✓ Updated user.onboardingCompleted = true in localStorage');
+                }
+              } catch (error) {
+                console.error('[OnboardingStore] Failed to update auth storage:', error);
+              }
+            }
+
             // Determine current step based on progress
             let currentStepIndex = 0;
             if (progress?.completedSteps && progress.completedSteps.length > 0) {
@@ -359,6 +383,7 @@ const useOnboardingStore = create<OnboardingState>()(
           try {
             const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
             if (authStorage.state?.user?.onboardingCompleted === true) {
+              console.log('[OnboardingStatus] User has onboardingCompleted flag in localStorage');
               return 'completed';
             }
           } catch (error) {
@@ -366,8 +391,22 @@ const useOnboardingStore = create<OnboardingState>()(
           }
 
           // Check both profile.isComplete and progressPercentage
-          if (state.profile?.isComplete || state.progress?.progressPercentage === 100) return 'completed';
-          if (state.progress?.completedSteps && state.progress.completedSteps.length > 0) return 'in_progress';
+          if (state.profile?.isComplete) {
+            console.log('[OnboardingStatus] Profile is marked as complete');
+            return 'completed';
+          }
+
+          if (state.progress?.progressPercentage === 100) {
+            console.log('[OnboardingStatus] Progress is 100%');
+            return 'completed';
+          }
+
+          if (state.progress?.completedSteps && state.progress.completedSteps.length > 0) {
+            console.log('[OnboardingStatus] In progress -', state.progress.completedSteps.length, 'steps completed');
+            return 'in_progress';
+          }
+
+          console.log('[OnboardingStatus] Not started');
           return 'not_started';
         },
 
