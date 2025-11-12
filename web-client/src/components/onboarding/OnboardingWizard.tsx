@@ -145,18 +145,16 @@ const OnboardingWizard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Chargement de votre profil</h2>
-          <p className="text-gray-600">Préparation de votre questionnaire personnalisé...</p>
-        </div>
+      <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
+        <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Chargement de votre profil</h2>
+        <p className="text-gray-600">Préparation de votre questionnaire personnalisé...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
       {/* Progress Indicator */}
       <ProgressIndicator
         currentStepIndex={currentStepIndex}
@@ -165,18 +163,18 @@ const OnboardingWizard: React.FC = () => {
       />
 
       {/* Skip Onboarding Banner */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-2xl mx-auto px-4 py-3">
+      <div className="bg-orange-50 border-b border-orange-100">
+        <div className="px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-700">
                 Vous pouvez passer ce questionnaire et explorer DreamScape immédiatement
               </div>
             </div>
             <button
               onClick={handleSkipOnboarding}
               disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 text-orange-600 hover:text-orange-800 hover:bg-orange-100 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
             >
               <span>Passer l'onboarding</span>
               <ArrowRight className="w-4 h-4" />
@@ -186,7 +184,7 @@ const OnboardingWizard: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="px-8 py-6 max-h-[70vh] overflow-y-auto">
         {/* Error Banner */}
         <AnimatePresence>
           {error && (
@@ -194,7 +192,7 @@ const OnboardingWizard: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="max-w-2xl mx-auto mb-6 bg-red-50 border border-red-200 rounded-lg p-4"
+              className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4"
             >
               <div className="flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
@@ -217,7 +215,7 @@ const OnboardingWizard: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4"
+            className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4"
           >
             <div className="flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-yellow-600" />
@@ -242,7 +240,7 @@ const OnboardingWizard: React.FC = () => {
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="max-w-2xl mx-auto mt-8">
+        <div className="mt-6">
           <div className="flex items-center justify-between">
             {/* Previous Button */}
             <button
@@ -335,7 +333,7 @@ const OnboardingWizard: React.FC = () => {
           </div>
 
           {/* Progress Summary */}
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <p className="text-sm text-gray-600">
               Étape {currentStepIndex + 1} sur {ONBOARDING_STEPS.length} •{' '}
               {progress?.completedSteps?.length || 0} étapes complétées
@@ -349,14 +347,14 @@ const OnboardingWizard: React.FC = () => {
         </div>
 
         {/* Help Section */}
-        <div className="max-w-2xl mx-auto mt-12 text-center">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Besoin d'aide ?</h3>
-            <p className="text-gray-600 text-sm mb-4">
+        <div className="mt-8 text-center">
+          <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+            <h3 className="font-semibold text-gray-900 mb-2 text-sm">Besoin d'aide ?</h3>
+            <p className="text-gray-600 text-xs mb-3">
               Ce questionnaire nous aide à personnaliser vos recommandations de voyage.
               Toutes vos réponses peuvent être modifiées plus tard.
             </p>
-            <button className="text-orange-500 hover:text-orange-600 text-sm font-medium">
+            <button className="text-orange-500 hover:text-orange-600 text-xs font-medium">
               Contactez notre support
             </button>
           </div>
