@@ -4,8 +4,8 @@ import type {
   OnboardingProgress,
   StepUpdateData,
   CreateOnboardingProfileData,
-  OnboardingResponse
-} from './types';
+  OnboardingServiceResponse
+} from '@/types/onboarding';
 
 const API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL;
 
@@ -54,7 +54,7 @@ class OnboardingService {
   /**
    * Get user's onboarding profile
    */
-  async getProfile(): Promise<OnboardingResponse<OnboardingProfile>> {
+  async getProfile(): Promise<OnboardingServiceResponse<OnboardingProfile>> {
     try {
       const response = await this.api.get('/');
       return response.data;
@@ -69,7 +69,7 @@ class OnboardingService {
   /**
    * Create new onboarding profile
    */
-  async createProfile(data?: CreateOnboardingProfileData): Promise<OnboardingResponse<OnboardingProfile>> {
+  async createProfile(data?: CreateOnboardingProfileData): Promise<OnboardingServiceResponse<OnboardingProfile>> {
     try {
       const response = await this.api.post('/', data || {});
       return response.data;
@@ -84,7 +84,7 @@ class OnboardingService {
   /**
    * Update a specific onboarding step
    */
-  async updateStep(stepData: StepUpdateData): Promise<OnboardingResponse<OnboardingProfile>> {
+  async updateStep(stepData: StepUpdateData): Promise<OnboardingServiceResponse<OnboardingProfile>> {
     try {
       const response = await this.api.put('/step', stepData);
       return response.data;
@@ -99,7 +99,7 @@ class OnboardingService {
   /**
    * Get onboarding progress
    */
-  async getProgress(): Promise<OnboardingResponse<OnboardingProgress>> {
+  async getProgress(): Promise<OnboardingServiceResponse<OnboardingProgress>> {
     try {
       const response = await this.api.get('/progress');
       return response.data;
@@ -114,7 +114,7 @@ class OnboardingService {
   /**
    * Mark onboarding as completed
    */
-  async completeOnboarding(): Promise<OnboardingResponse<{ message: string; user: any }>> {
+  async completeOnboarding(): Promise<OnboardingServiceResponse<{ message: string; user: any }>> {
     try {
       const response = await this.api.post('/complete');
       return response.data;
@@ -129,7 +129,7 @@ class OnboardingService {
   /**
    * Delete onboarding profile (reset)
    */
-  async resetProfile(): Promise<OnboardingResponse<{ message: string }>> {
+  async resetProfile(): Promise<OnboardingServiceResponse<{ message: string }>> {
     try {
       const response = await this.api.delete('/');
       return response.data;
