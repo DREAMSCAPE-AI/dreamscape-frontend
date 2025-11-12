@@ -47,6 +47,3 @@ coverage/
 
 # Docker
 .dockerignore
-
-# CLAUDE
-CLAUDE.md
