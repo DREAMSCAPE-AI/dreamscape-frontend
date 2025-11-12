@@ -36,7 +36,8 @@ import UnifiedDashboardPage from '@/pages/dashboard/unified';
 import InterchangeableDashboardPage from '@/pages/dashboard/interchangeable';
 
 // Auth checker component that runs on app mount
-function AuthChecker() {
+// Memoized to prevent unnecessary re-renders
+const AuthChecker = React.memo(() => {
   const { checkAuth } = useAuth();
 
   useEffect(() => {
@@ -45,7 +46,7 @@ function AuthChecker() {
   }, [checkAuth]);
 
   return null;
-}
+});
 
 function App() {
   return (

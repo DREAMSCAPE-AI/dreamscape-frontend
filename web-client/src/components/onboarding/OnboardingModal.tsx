@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, AlertTriangle } from 'lucide-react';
 import OnboardingFlow from './OnboardingFlow';
 import type { UserPreferences } from './OnboardingFlow';
+import ErrorBoundary from '@/components/shared/ErrorBoundary';
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -44,8 +45,32 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onComplete, o
             <X className="w-6 h-6 text-gray-600" />
           </button>
 
-          {/* OnboardingFlow */}
-          <OnboardingFlow onComplete={onComplete} />
+          {/* OnboardingFlow wrapped in ErrorBoundary */}
+          <ErrorBoundary
+            fallback={
+              <div className="min-h-screen flex items-center justify-center p-4">
+                <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full text-center">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <AlertTriangle className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Une erreur est survenue
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Impossible de charger l'onboarding. Vous pouvez réessayer plus tard depuis vos paramètres.
+                  </p>
+                  <button
+                    onClick={onCancel}
+                    className="w-full px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors font-medium"
+                  >
+                    Retour à l'accueil
+                  </button>
+                </div>
+              </div>
+            }
+          >
+            <OnboardingFlow onComplete={onComplete} />
+          </ErrorBoundary>
         </div>
       </div>
 

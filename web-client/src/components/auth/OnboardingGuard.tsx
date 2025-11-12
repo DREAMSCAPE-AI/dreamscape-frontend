@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useOnboardingStore from '@/store/onboardingStore';
 import { useAuth } from '@/services/auth/AuthService';
+import { ROUTES, ONBOARDING_EXEMPT_ROUTES } from '@/constants/routes';
 
 interface OnboardingGuardProps {
   children: React.ReactNode;
@@ -23,8 +24,8 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
 
   // Check if auth is stable before proceeding
   useEffect(() => {
-    // Check auth state without artificial delay
-    if (isAuthenticated !== null) {
+    // Check auth state - ensure it's not null or undefined before proceeding
+    if (isAuthenticated !== null && isAuthenticated !== undefined) {
       setAuthChecked(true);
     }
   }, [isAuthenticated]);
@@ -36,9 +37,10 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
     }
   }, [authChecked, isAuthenticated, user, initializeOnboarding]);
 
-  // Don't block if we're already on onboarding pages or auth pages
-  const exemptPaths = ['/onboarding', '/auth'];
-  const isExemptPath = exemptPaths.some(path => location.pathname.startsWith(path));
+  // Don't block if we're already on exempt pages (onboarding, auth, settings)
+  const isExemptPath = ONBOARDING_EXEMPT_ROUTES.some(path =>
+    location.pathname === path || location.pathname.startsWith(path)
+  );
 
   if (isExemptPath) {
     return <>{children}</>;
@@ -70,7 +72,7 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
 
   // Redirect to onboarding if not completed
   if (onboardingStatus === 'not_started' || onboardingStatus === 'in_progress') {
-    return <Navigate to="/onboarding" replace state={{ from: location.pathname }} />;
+    return <Navigate to={ROUTES.ONBOARDING} replace state={{ from: location.pathname }} />;
   }
 
   // Allow access if onboarding is completed or skipped
