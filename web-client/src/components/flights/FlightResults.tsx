@@ -69,13 +69,13 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
   return (
     <div className="space-y-6">
       {flights.map((flight) => {
-        const firstSegment = flight.itineraries[0]?.segments[0];
+        const firstSegment = flight.itineraries[0]?.segments?.[0];
         if (!firstSegment) return null;
 
         const co2Emissions = calculateCO2Emissions(firstSegment);
         const airlineName = airlineService.getAirlineName(firstSegment.carrierCode);
         const airlineLogo = airlineService.getAirlineLogo(firstSegment.carrierCode);
-        const aircraftType = airlineService.getAircraftType(firstSegment.aircraft.code);
+        const aircraftType = airlineService.getAircraftType(firstSegment.aircraft?.code);
         const amenities = getFlightAmenities(firstSegment.carrierCode);
 
         return (
@@ -187,7 +187,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
                       <div>•</div>
                       <div className="flex items-center gap-1">
                         <Shield className="w-4 h-4" />
-                        <span>{flight.pricingOptions.fareType[0]}</span>
+                        <span>{flight.pricingOptions?.fareType?.[0]}</span>
                       </div>
                       <div>•</div>
                       <div className="flex items-center gap-1">

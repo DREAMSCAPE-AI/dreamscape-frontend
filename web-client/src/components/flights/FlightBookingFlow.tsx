@@ -7,8 +7,8 @@ import SeatSelection, { SelectedSeat } from './SeatSelection';
 import MealSelection, { SelectedMeal } from './MealSelection';
 import BaggageSelection, { SelectedBaggage } from './BaggageSelection';
 import PassengerInfo from './PassengerInfo';
-import ApiService from '../../services/api';
-import type { FlightOffer, UIFlightSearchParams } from '../../services/api/types';
+import ApiService from '@/services/api/APIService';
+import type { FlightOffer, UIFlightSearchParams } from '@/services/api/types';
 
 type BookingStep = 'search' | 'results' | 'details' | 'seats' | 'meals' | 'baggage' | 'passengers' | 'payment';
 
@@ -50,7 +50,7 @@ const FlightBookingFlow: React.FC = () => {
       });
 
       // Transform Amadeus response to our FlightOffer format
-      const flights: FlightOffer[] = result.data?.map((offer: any) => ({
+      const flights: FlightOffer[] = result?.map((offer: any) => ({
         id: offer.id,
         source: offer.source,
         instantTicketingRequired: offer.instantTicketingRequired,
