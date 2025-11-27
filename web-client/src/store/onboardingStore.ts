@@ -1,10 +1,9 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { onboardingService } from '@/services/onboardingService';
+import { onboardingService } from '@/services/onboarding/onboardingService';
 import type {
   TravelOnboardingProfile,
   OnboardingProgressResponse,
-  ONBOARDING_STEPS,
   OnboardingStep
 } from '@/types/onboarding';
 import { ONBOARDING_STEPS } from '@/types/onboarding';
@@ -121,18 +120,11 @@ const useOnboardingStore = create<OnboardingState>()(
             // If no profile exists, create one
             const { progress } = get();
             if (!progress) {
-              try {
-                await onboardingService.initializeProfile();
+              const response = await onboardingService.createProfile();
+              if (response.success) {
                 await get().loadProfile();
-              } catch (initError: any) {
-                // If profile already exists (409), just reload to get the existing one
-                if (initError?.response?.status === 409) {
-                  console.log('Onboarding profile already exists, loading existing profile');
-                  await get().loadProfile();
-                } else {
-                  // Re-throw other errors
-                  throw initError;
-                }
+              } else {
+                throw new Error(response.error || 'Erreur d\'initialisation');
               }
             }
           } catch (error) {
@@ -147,19 +139,27 @@ const useOnboardingStore = create<OnboardingState>()(
           set({ isLoading: true, error: null });
 
           try {
-            const [profile, progress] = await Promise.all([
-              onboardingService.getCurrentProfile(),
+            const [profileResponse, progressResponse] = await Promise.all([
+              onboardingService.getProfile(),
               onboardingService.getProgress()
             ]);
 
+            // Handle potential errors from the new service
+            if (!profileResponse.success && !progressResponse.success) {
+              throw new Error(profileResponse.error || progressResponse.error || 'Erreur de chargement');
+            }
+
+            const profile = profileResponse.data?.stepData || {};
+            const progress = progressResponse.data;
+
             console.log('[OnboardingStore] Loaded from backend:', {
-              profileComplete: profile?.isComplete,
+              profileComplete: profileResponse.data?.isCompleted,
               progressPercentage: progress?.progressPercentage,
               completedSteps: progress?.completedSteps
             });
 
             // CRITICAL: If backend says onboarding is complete, sync with auth store
-            if (progress?.progressPercentage === 100 || profile?.isComplete) {
+            if (progress?.progressPercentage === 100 || profileResponse.data?.isCompleted) {
               console.log('[OnboardingStore] Backend says onboarding is COMPLETE, syncing to auth store');
 
               // Update the auth store to mark onboarding as completed
@@ -192,7 +192,12 @@ const useOnboardingStore = create<OnboardingState>()(
 
             set({
               profile: profile || {},
-              progress,
+              progress: progress ? {
+                totalSteps: progress.totalSteps,
+                completedSteps: progress.completedSteps,
+                currentStep: progress.currentStep,
+                progressPercentage: progress.progressPercentage
+              } : null,
               currentStepIndex,
               hasUnsavedChanges: false
             });
@@ -225,17 +230,26 @@ const useOnboardingStore = create<OnboardingState>()(
             // Extract data relevant to current step
             const stepData = get().getStepData(currentStep.id);
 
-            await onboardingService.saveStep({
+            const response = await onboardingService.updateStep({
               step: currentStep.id,
               data: stepData,
               markCompleted: true  // Always mark as completed when saving
             });
 
+            if (!response.success) {
+              throw new Error(response.error || 'Erreur de sauvegarde');
+            }
+
             // Reload progress to get updated state
-            const progress = await onboardingService.getProgress();
+            const progressResponse = await onboardingService.getProgress();
 
             set({
-              progress,
+              progress: progressResponse.data ? {
+                totalSteps: progressResponse.data.totalSteps,
+                completedSteps: progressResponse.data.completedSteps,
+                currentStep: progressResponse.data.currentStep,
+                progressPercentage: progressResponse.data.progressPercentage
+              } : null,
               hasUnsavedChanges: false
             });
           } catch (error) {
@@ -309,7 +323,11 @@ const useOnboardingStore = create<OnboardingState>()(
             await new Promise(resolve => setTimeout(resolve, 500));
 
             // Complete the onboarding
-            await onboardingService.completeOnboarding();
+            const response = await onboardingService.completeOnboarding();
+
+            if (!response.success) {
+              throw new Error(response.error || 'Erreur de finalisation');
+            }
 
             // Mark as completed locally
             set({
@@ -343,7 +361,11 @@ const useOnboardingStore = create<OnboardingState>()(
           set({ isLoading: true, error: null });
 
           try {
-            await onboardingService.resetProfile();
+            const response = await onboardingService.resetProfile();
+
+            if (!response.success) {
+              throw new Error(response.error || 'Erreur de réinitialisation');
+            }
 
             // Reset local state
             set({
