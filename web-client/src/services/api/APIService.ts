@@ -183,7 +183,7 @@ class APIService {
     return data.data;
   }
 
-  async searchAirports(params: { latitude: number; longitude: number; radius?: number }): Promise<any[]> {
+  async searchAirports(params: { keyword: string }): Promise<any[]> {
     const { data } = await this.api.get(ENDPOINTS.locations.airports, { params });
     return data.data;
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee } from 'lucide-react';
-import type { FlightOffer } from '../../services/api/types';
-import airlineService from '../../services/airlineService';
+import type { FlightOffer } from '@/services/api/types';
+import airlineService from '@/services/airlineService';
 
 interface FlightResultsProps {
   flights: FlightOffer[];
@@ -69,13 +69,17 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
   return (
     <div className="space-y-6">
       {flights.map((flight) => {
-        const firstSegment = flight.itineraries[0]?.segments[0];
+        // Validate flight data structure
+        if (!flight.itineraries || flight.itineraries.length === 0) return null;
+        if (!flight.itineraries[0].segments || flight.itineraries[0].segments.length === 0) return null;
+
+        const firstSegment = flight.itineraries[0].segments[0];
         if (!firstSegment) return null;
 
         const co2Emissions = calculateCO2Emissions(firstSegment);
         const airlineName = airlineService.getAirlineName(firstSegment.carrierCode);
         const airlineLogo = airlineService.getAirlineLogo(firstSegment.carrierCode);
-        const aircraftType = airlineService.getAircraftType(firstSegment.aircraft.code);
+        const aircraftType = airlineService.getAircraftType(firstSegment.aircraft?.code);
         const amenities = getFlightAmenities(firstSegment.carrierCode);
 
         return (
@@ -180,14 +184,18 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
 
                     {/* Aircraft & Additional Info */}
                     <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Plane className="w-4 h-4" />
-                        <span>{aircraftType}</span>
-                      </div>
-                      <div>•</div>
+                      {firstSegment.aircraft?.code && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <Plane className="w-4 h-4" />
+                            <span>{aircraftType}</span>
+                          </div>
+                          <div>•</div>
+                        </>
+                      )}
                       <div className="flex items-center gap-1">
                         <Shield className="w-4 h-4" />
-                        <span>{flight.pricingOptions.fareType[0]}</span>
+                        <span>{flight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY'}</span>
                       </div>
                       <div>•</div>
                       <div className="flex items-center gap-1">

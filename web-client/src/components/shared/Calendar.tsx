@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface CalendarProps {
   onSelect: (date: Date) => void;
@@ -15,7 +15,6 @@ const Calendar: React.FC<CalendarProps> = ({
   maxDate
 }) => {
   const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
-  const [isOpen, setIsOpen] = useState(false);
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -25,18 +24,9 @@ const Calendar: React.FC<CalendarProps> = ({
     return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
   const handleDateSelect = (day: number) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
     onSelect(newDate);
-    setIsOpen(false);
   };
 
   const handlePrevMonth = () => {
@@ -60,7 +50,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="h-8" />);
+      days.push(<div key={`empty-${i}`} className="h-10 w-10" />);
     }
 
     // Add cells for each day of the month
@@ -75,9 +65,9 @@ const Calendar: React.FC<CalendarProps> = ({
           onClick={() => !isDisabled && handleDateSelect(day)}
           disabled={isDisabled}
           className={`
-            h-8 w-8 rounded-full flex items-center justify-center text-sm
-            ${isDisabled ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-orange-50 hover:text-orange-500'}
-            ${isSelected ? 'bg-orange-500 text-white hover:bg-orange-600' : ''}
+            h-10 w-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors
+            ${isDisabled ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-orange-50 hover:text-orange-600 text-gray-700'}
+            ${isSelected ? 'bg-orange-500 text-white hover:bg-orange-600 hover:text-white' : ''}
           `}
         >
           {day}
@@ -89,50 +79,36 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-      >
-        <CalendarIcon className="w-5 h-5 text-gray-400" />
-        <span className="text-gray-700">
-          {selectedDate ? formatDate(selectedDate) : 'Select date'}
-        </span>
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-2 p-4 bg-white rounded-xl shadow-lg z-50">
-          <div className="flex items-center justify-between mb-4">
-            <button
-              onClick={handlePrevMonth}
-              className="p-1 hover:bg-gray-100 rounded-full"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <div className="font-medium">
-              {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-            </div>
-            <button
-              onClick={handleNextMonth}
-              className="p-1 hover:bg-gray-100 rounded-full"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-1 mb-2">
-            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-              <div key={day} className="h-8 flex items-center justify-center text-xs text-gray-500">
-                {day}
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 gap-1">
-            {renderCalendar()}
-          </div>
+    <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-5 min-w-[320px]">
+      <div className="flex items-center justify-between mb-5">
+        <button
+          onClick={handlePrevMonth}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <ChevronLeft className="w-5 h-5 text-gray-600" />
+        </button>
+        <div className="font-semibold text-gray-900 text-base">
+          {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
         </div>
-      )}
+        <button
+          onClick={handleNextMonth}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <ChevronRight className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-7 gap-2 mb-3">
+        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+          <div key={day} className="h-10 flex items-center justify-center text-xs font-semibold text-gray-500 uppercase">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-2">
+        {renderCalendar()}
+      </div>
     </div>
   );
 };
