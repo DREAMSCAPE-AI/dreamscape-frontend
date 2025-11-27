@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Globe, Plus } from 'lucide-react';
+import { MapPin, Globe, Plus } from 'lucide-react';
 import OnboardingStepWrapper from '../OnboardingStepWrapper';
 import { TagInput } from '../FormComponents';
 import useOnboardingStore from '@/store/onboardingStore';
 
 const DestinationsStep: React.FC = () => {
   const { profile, updateProfile } = useOnboardingStore();
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Popular destinations by category
   const destinationCategories = {

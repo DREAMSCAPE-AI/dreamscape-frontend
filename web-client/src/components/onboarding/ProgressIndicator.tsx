@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Circle, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ONBOARDING_STEPS } from '@/types/onboarding';
 

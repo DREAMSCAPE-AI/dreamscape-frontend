@@ -91,7 +91,8 @@ export enum RiskTolerance {
 export enum BudgetFlexibility {
   STRICT = 'STRICT',
   FLEXIBLE = 'FLEXIBLE',
-  VERY_FLEXIBLE = 'VERY_FLEXIBLE'
+  VERY_FLEXIBLE = 'VERY_FLEXIBLE',
+  SOMEWHAT_FLEXIBLE= 'SOMEWHAT_FLEXIBLE'
 }
 
 export enum DateFlexibility {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plane, Train, Car } from 'lucide-react';
+import { Plane, Car } from 'lucide-react';
 import OnboardingStepWrapper from '../OnboardingStepWrapper';
 import { SelectableCard } from '../FormComponents';
 import useOnboardingStore from '@/store/onboardingStore';

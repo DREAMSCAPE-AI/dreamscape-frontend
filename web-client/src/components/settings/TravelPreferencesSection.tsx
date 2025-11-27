@@ -8,7 +8,6 @@ import {
   Hotel,
   Activity,
   Users,
-  Clock,
   Settings,
   ExternalLink,
   ChevronRight,
@@ -18,10 +17,7 @@ import {
 import useOnboardingStore from '@/store/onboardingStore';
 import {
   TravelType,
-  AccommodationType,
-  BudgetFlexibility,
-  TravelStyle,
-  ComfortLevel
+  BudgetFlexibility
 } from '@/types/onboarding';
 
 const TravelPreferencesSection: React.FC = () => {
@@ -46,22 +42,22 @@ const TravelPreferencesSection: React.FC = () => {
   // Helper functions to display enum values in French
   const formatTravelType = (type: TravelType): string => {
     const translations: Record<TravelType, string> = {
-      [TravelType.LEISURE]: 'Loisirs',
       [TravelType.BUSINESS]: 'Affaires',
       [TravelType.ADVENTURE]: 'Aventure',
       [TravelType.CULTURAL]: 'Culturel',
+      [TravelType.RELAXATION]: 'Relaxation',
+      [TravelType.CULINARY]: 'Culinaire',
+      [TravelType.SHOPPING]: 'Shopping',
+      [TravelType.NIGHTLIFE]: 'Nuit',
+      [TravelType.NATURE]: 'Nature',
+      [TravelType.URBAN]: 'Ville',
+      [TravelType.BEACH]: 'Plage',
+      [TravelType.MOUNTAIN]: 'Montagne',
+      [TravelType.HISTORICAL]: 'Historique',
       [TravelType.ROMANTIC]: 'Romantique',
       [TravelType.FAMILY]: 'Famille',
-      [TravelType.SOLO]: 'Solo',
-      [TravelType.GROUP]: 'Groupe',
-      [TravelType.LUXURY]: 'Luxe',
-      [TravelType.BUDGET]: 'Budget',
-      [TravelType.ECO_TOURISM]: 'Écotourisme',
       [TravelType.WELLNESS]: 'Bien-être',
-      [TravelType.EDUCATIONAL]: 'Éducatif',
-      [TravelType.RELIGIOUS]: 'Religieux',
-      [TravelType.MEDICAL]: 'Médical',
-      [TravelType.SPORTS]: 'Sports'
+      [TravelType.EDUCATIONAL]: 'Éducatif'
     };
     return translations[type] || type;
   };

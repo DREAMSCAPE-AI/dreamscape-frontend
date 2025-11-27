@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Hotel } from 'lucide-react';
 import OnboardingStepWrapper from '../OnboardingStepWrapper';
-import { SelectableCard, RadioGroup } from '../FormComponents';
+import { RadioGroup } from '../FormComponents';
 import { TravelStyle, ComfortLevel } from '@/types/onboarding';
 import useOnboardingStore from '@/store/onboardingStore';
 
