@@ -80,7 +80,7 @@ const FlightBookingFlow: React.FC = () => {
                     carrierCode: offer.airline.code,
                     number: offer.id,
                     aircraft: {
-                      code: 'UNKNOWN'
+                      code: offer.aircraft || ''
                     },
                     duration: offer.duration,
                     id: offer.id,
@@ -102,7 +102,31 @@ const FlightBookingFlow: React.FC = () => {
               includedCheckedBagsOnly: offer.baggageAllowance?.checkedBags === 0
             },
             validatingAirlineCodes: [offer.airline.code],
-            travelerPricings: []
+            travelerPricings: [
+              {
+                travelerId: '1',
+                fareOption: 'STANDARD',
+                travelerType: 'ADULT',
+                price: {
+                  currency: offer.price.currency,
+                  total: String(offer.price.total),
+                  base: String(offer.price.total),
+                  fees: [],
+                  grandTotal: String(offer.price.total)
+                },
+                fareDetailsBySegment: [
+                  {
+                    segmentId: offer.id,
+                    cabin: offer.cabinClass || 'ECONOMY',
+                    fareBasis: 'STANDARD',
+                    class: 'Y',
+                    includedCheckedBags: {
+                      quantity: offer.baggageAllowance?.checkedBags || 0
+                    }
+                  }
+                ]
+              }
+            ]
           } as FlightOffer;
         }
 

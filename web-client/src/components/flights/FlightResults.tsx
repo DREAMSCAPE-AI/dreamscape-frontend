@@ -184,14 +184,18 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
 
                     {/* Aircraft & Additional Info */}
                     <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Plane className="w-4 h-4" />
-                        <span>{aircraftType}</span>
-                      </div>
-                      <div>•</div>
+                      {firstSegment.aircraft?.code && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <Plane className="w-4 h-4" />
+                            <span>{aircraftType}</span>
+                          </div>
+                          <div>•</div>
+                        </>
+                      )}
                       <div className="flex items-center gap-1">
                         <Shield className="w-4 h-4" />
-                        <span>{flight.pricingOptions?.fareType?.[0]}</span>
+                        <span>{flight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY'}</span>
                       </div>
                       <div>•</div>
                       <div className="flex items-center gap-1">
