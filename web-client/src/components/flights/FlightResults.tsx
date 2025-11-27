@@ -1,7 +1,7 @@
 import React from 'react';
 import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee } from 'lucide-react';
-import type { FlightOffer } from '../../services/api/types';
-import airlineService from '../../services/airlineService';
+import type { FlightOffer } from '@/services/api/types';
+import airlineService from '@/services/airlineService';
 
 interface FlightResultsProps {
   flights: FlightOffer[];
@@ -69,7 +69,11 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
   return (
     <div className="space-y-6">
       {flights.map((flight) => {
-        const firstSegment = flight.itineraries[0]?.segments?.[0];
+        // Validate flight data structure
+        if (!flight.itineraries || flight.itineraries.length === 0) return null;
+        if (!flight.itineraries[0].segments || flight.itineraries[0].segments.length === 0) return null;
+
+        const firstSegment = flight.itineraries[0].segments[0];
         if (!firstSegment) return null;
 
         const co2Emissions = calculateCO2Emissions(firstSegment);

@@ -49,21 +49,86 @@ const FlightBookingFlow: React.FC = () => {
         max: params.max || 250
       });
 
-      // Transform Amadeus response to our FlightOffer format
-      const flights: FlightOffer[] = result?.map((offer: any) => ({
-        id: offer.id,
-        source: offer.source,
-        instantTicketingRequired: offer.instantTicketingRequired,
-        nonHomogeneous: offer.nonHomogeneous,
-        oneWay: offer.oneWay,
-        lastTicketingDate: offer.lastTicketingDate,
-        numberOfBookableSeats: offer.numberOfBookableSeats,
-        itineraries: offer.itineraries,
-        price: offer.price,
-        pricingOptions: offer.pricingOptions,
-        validatingAirlineCodes: offer.validatingAirlineCodes,
-        travelerPricings: offer.travelerPricings
-      })) || [];
+      // Transform API response to our FlightOffer format
+      const flights: FlightOffer[] = result?.map((offer: any) => {
+        // Check if this is the simplified format from our backend
+        if (offer.departure && offer.arrival && offer.airline) {
+          // Transform simplified format to FlightOffer format
+          return {
+            id: offer.id,
+            source: 'BACKEND',
+            instantTicketingRequired: false,
+            nonHomogeneous: false,
+            oneWay: !params.returnDate,
+            lastTicketingDate: offer.departure.time,
+            numberOfBookableSeats: offer.availableSeats || 9,
+            itineraries: [
+              {
+                duration: offer.duration,
+                segments: [
+                  {
+                    departure: {
+                      iataCode: offer.departure.airport,
+                      terminal: offer.departure.terminal,
+                      at: offer.departure.time
+                    },
+                    arrival: {
+                      iataCode: offer.arrival.airport,
+                      terminal: offer.arrival.terminal,
+                      at: offer.arrival.time
+                    },
+                    carrierCode: offer.airline.code,
+                    number: offer.id,
+                    aircraft: {
+                      code: 'UNKNOWN'
+                    },
+                    duration: offer.duration,
+                    id: offer.id,
+                    numberOfStops: offer.stops || 0,
+                    blacklistedInEU: false
+                  }
+                ]
+              }
+            ],
+            price: {
+              currency: offer.price.currency,
+              total: String(offer.price.total),
+              base: String(offer.price.total),
+              fees: [],
+              grandTotal: String(offer.price.total)
+            },
+            pricingOptions: {
+              fareType: [offer.cabinClass || 'ECONOMY'],
+              includedCheckedBagsOnly: offer.baggageAllowance?.checkedBags === 0
+            },
+            validatingAirlineCodes: [offer.airline.code],
+            travelerPricings: []
+          } as FlightOffer;
+        }
+
+        // Otherwise, assume it's already in FlightOffer format (Amadeus direct response)
+        return {
+          id: offer.id,
+          source: offer.source,
+          instantTicketingRequired: offer.instantTicketingRequired,
+          nonHomogeneous: offer.nonHomogeneous,
+          oneWay: offer.oneWay,
+          lastTicketingDate: offer.lastTicketingDate,
+          numberOfBookableSeats: offer.numberOfBookableSeats,
+          itineraries: offer.itineraries,
+          price: offer.price,
+          pricingOptions: offer.pricingOptions,
+          validatingAirlineCodes: offer.validatingAirlineCodes,
+          travelerPricings: offer.travelerPricings
+        } as FlightOffer;
+      })
+      // Filter out invalid flights with missing or empty itineraries/segments
+      .filter((flight: FlightOffer) => {
+        return flight.itineraries &&
+               flight.itineraries.length > 0 &&
+               flight.itineraries[0].segments &&
+               flight.itineraries[0].segments.length > 0;
+      }) || [];
 
       setSearchResults(flights);
       setCurrentStep('results');
