@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  User, 
-  Menu, 
-  Heart, 
-  Bell, 
-  ChevronDown, 
+import {
+  User,
+  Menu,
+  Heart,
+  Bell,
+  ChevronDown,
   LogOut,
   Settings,
   HelpCircle,
@@ -33,6 +33,23 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDiscoverMenu, setShowDiscoverMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   const handleLogout = () => {
     setShowUserMenu(false);
@@ -174,7 +191,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   <span className="text-xs bg-orange-100 text-orange-600 px-1.5 rounded-full">2</span>
                 </button>
 
-                <div className="relative">
+                <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center gap-2 text-gray-700"
@@ -190,6 +207,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         to="/dashboard"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <User className="w-4 h-4" />
                         <span>Profile</span>
@@ -197,6 +215,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         to="/planner"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <Route className="w-4 h-4" />
                         <span>My Trips</span>
@@ -204,6 +223,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         to="/settings"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <Settings className="w-4 h-4" />
                         <span>Settings</span>
@@ -211,6 +231,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         to="/support"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <HelpCircle className="w-4 h-4" />
                         <span>Help</span>

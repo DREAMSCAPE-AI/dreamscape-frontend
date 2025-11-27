@@ -9,6 +9,8 @@ interface User {
   role: 'admin' | 'user';
   username?: string;
   isVerified?: boolean;
+  onboardingCompleted?: boolean;
+  onboardingCompletedAt?: string;
 }
 
 interface AuthState {
@@ -19,6 +21,7 @@ interface AuthState {
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 
@@ -31,11 +34,17 @@ const useAuth = create<AuthState>()(
       login: async (email: string, password: string) => {
         try {
           const response = await apiService.login({ email, password });
-          
+
           if (response.success && response.data) {
             const { tokens, user } = response.data;
             const token = tokens?.accessToken;
-            
+
+            // Debug: Log what backend returned
+            console.log('[AuthService] Login - Backend user data:', {
+              onboardingCompleted: user.onboardingCompleted,
+              onboardingCompletedAt: user.onboardingCompletedAt
+            });
+
             // Transform user data to match frontend interface
             const userData = {
               id: user.id,
@@ -43,13 +52,20 @@ const useAuth = create<AuthState>()(
               email: user.email,
               role: user.role === 'ADMIN' ? 'admin' as const : 'user' as const,
               username: user.username,
-              isVerified: user.isVerified
+              isVerified: user.isVerified,
+              onboardingCompleted: user.onboardingCompleted,
+              onboardingCompletedAt: user.onboardingCompletedAt
             };
-            
-            set({ 
-              user: userData, 
-              token, 
-              isAuthenticated: true 
+
+            console.log('[AuthService] Login - Transformed user:', {
+              onboardingCompleted: userData.onboardingCompleted,
+              onboardingCompletedAt: userData.onboardingCompletedAt
+            });
+
+            set({
+              user: userData,
+              token,
+              isAuthenticated: true
             });
           } else {
             throw new Error(response.message || 'Login failed');
@@ -84,7 +100,9 @@ const useAuth = create<AuthState>()(
               email: user.email,
               role: user.role === 'ADMIN' ? 'admin' as const : 'user' as const,
               username: user.username,
-              isVerified: user.isVerified
+              isVerified: user.isVerified,
+              onboardingCompleted: user.onboardingCompleted,
+              onboardingCompletedAt: user.onboardingCompletedAt
             };
             
             set({ 
@@ -122,6 +140,12 @@ const useAuth = create<AuthState>()(
       },
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
+      },
+      updateUser: (updates: Partial<User>) => {
+        const { user } = get();
+        if (user) {
+          set({ user: { ...user, ...updates } });
+        }
       }
     }),
     {
