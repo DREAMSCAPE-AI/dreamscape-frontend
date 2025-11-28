@@ -118,10 +118,20 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
   }, []);
 
   const handleDateChange = ({ startDate, endDate }: { startDate: Date | null; endDate: Date | null }) => {
+    // Format dates to YYYY-MM-DD format for Amadeus API
+    // Use local timezone to avoid date shifting issues
+    const formatDate = (date: Date | null): string => {
+      if (!date) return '';
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     setSearchParams({
       ...searchParams,
-      checkInDate: startDate ? startDate.toISOString().split('T')[0] : '',
-      checkOutDate: endDate ? endDate.toISOString().split('T')[0] : ''
+      checkInDate: formatDate(startDate),
+      checkOutDate: formatDate(endDate)
     });
   };
 
