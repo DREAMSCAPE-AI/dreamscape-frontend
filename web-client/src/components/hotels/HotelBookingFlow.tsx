@@ -23,35 +23,12 @@ const HotelBookingFlow: React.FC = () => {
     try {
       const result = await ApiService.searchHotels(params);
 
-      // Transform Amadeus response to our HotelOffer format with enhanced image handling
-      const hotels: HotelOffer[] = await Promise.all(
-        (result.data || []).map(async (offer: any) => {
+      // Transform Amadeus response to our HotelOffer format
+      const hotels: HotelOffer[] = (result.data || []).map((offer: any) => {
           const hotelId = offer.hotel?.hotelId || offer.id || Math.random().toString();
-          
-          // Try to get additional images from the dedicated images endpoint
-          let additionalImages: any[] = [];
-          try {
-            const imageResult = await ApiService.getHotelImages(hotelId, {
-              adults: params.adults,
-              roomQuantity: params.roomQuantity,
-              checkInDate: params.checkInDate,
-              checkOutDate: params.checkOutDate
-            });
-            additionalImages = imageResult.data?.[0]?.hotel?.media || [];
-          } catch (imageError) {
-            console.warn('Could not fetch additional images for hotel:', hotelId, imageError);
-          }
 
-          // Combine original media with additional images, removing duplicates
-          const originalMedia = offer.hotel?.media || [];
-          const allMedia = [...originalMedia];
-          
-          // Add additional images if they don't already exist
-          additionalImages.forEach((img: any) => {
-            if (!allMedia.some((existing: any) => existing.uri === img.uri)) {
-              allMedia.push(img);
-            }
-          });
+          // Use media from the search response directly
+          const originalMedia = offer.hotel?.media || offer.media || [];
 
           // Fallback images if no media available
           const fallbackImages = [
@@ -68,7 +45,7 @@ const HotelBookingFlow: React.FC = () => {
             rating: offer.hotel?.rating || '3',
             description: offer.hotel?.description || { text: 'A comfortable hotel stay with modern amenities and excellent service.', lang: 'en' },
             amenities: offer.hotel?.amenities || ['WIFI', 'RESTAURANT'],
-            media: allMedia.length > 0 ? allMedia : fallbackImages,
+            media: originalMedia.length > 0 ? originalMedia : fallbackImages,
             price: {
               currency: offer.offers?.[0]?.price?.currency || 'USD',
               total: offer.offers?.[0]?.price?.total || '150',
@@ -88,8 +65,7 @@ const HotelBookingFlow: React.FC = () => {
               description: { text: 'Comfortable room with modern amenities', lang: 'en' }
             }
           };
-        })
-      );
+        });
 
       setSearchResults(hotels);
       setCurrentStep('results');
