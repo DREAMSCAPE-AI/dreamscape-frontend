@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(tasklist)",
+      "Bash(findstr:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(npm run build:*)",
+      "Bash(for file in TravelTypesStep.tsx StyleComfortStep.tsx TransportStep.tsx ActivitiesStep.tsx AccommodationStep.tsx)",
+      "Bash(do sed -i 's/text-blue-600/text-orange-500/g; s/text-blue-800/text-orange-800/g; s/text-blue-900/text-orange-900/g; s/text-blue-700/text-orange-700/g; s/bg-blue-50/bg-orange-50/g; s/bg-blue-100/bg-orange-100/g; s/bg-blue-600/bg-orange-500/g; s/border-blue-200/border-orange-200/g; s/border-blue-300/border-orange-300/g; s/border-blue-500/border-orange-500/g; s/hover:bg-blue-700/hover:opacity-90/g' \"$file\")",
+      "Bash(done)",
+      "Bash(gh pr list:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

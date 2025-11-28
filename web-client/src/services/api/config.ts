@@ -1,6 +1,8 @@
+const VOYAGE_API_BASE_URL = import.meta.env.VOYAGE_SERVICE_API_BASE_URL || 'http://localhost:3003/api';
+
 // API Base Configuration
 export const API_CONFIG = {
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3003/api',
+  baseURL: VOYAGE_API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

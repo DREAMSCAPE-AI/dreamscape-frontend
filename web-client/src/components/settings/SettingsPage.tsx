@@ -20,15 +20,13 @@ import {
   X,
   Upload
 } from 'lucide-react';
-import profileService, { UserProfileData } from '../../services/profileService';
+import profileService, { UserProfileData } from '@/services/profileService';
+import TravelPreferencesSection from './TravelPreferencesSection';
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState('profile');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState('');
-  const [newItem, setNewItem] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -60,12 +58,6 @@ const SettingsPage = () => {
       dataSharing: false,
       marketing: true
     },
-    travel: {
-      preferredDestinations: [],
-      accommodationType: [],
-      activities: [],
-      dietary: []
-    }
   });
 
   // Load user profile on component mount
@@ -84,55 +76,6 @@ const SettingsPage = () => {
     loadProfile();
   }, []);
 
-  // Fonctions pour les modales
-  const openModal = (type: string) => {
-    setModalType(type);
-    setNewItem('');
-    setShowModal(true);
-  };
-
-  const addItem = () => {
-    if (!newItem.trim()) return;
-
-    const updatedSettings = { ...settings };
-    switch (modalType) {
-      case 'destinations':
-        updatedSettings.travel.preferredDestinations.push(newItem.trim());
-        break;
-      case 'accommodation':
-        updatedSettings.travel.accommodationType.push(newItem.trim());
-        break;
-      case 'activities':
-        updatedSettings.travel.activities.push(newItem.trim());
-        break;
-      case 'dietary':
-        updatedSettings.travel.dietary.push(newItem.trim());
-        break;
-    }
-    
-    setSettings(updatedSettings);
-    setShowModal(false);
-    setNewItem('');
-  };
-
-  const removeItem = (type: string, index: number) => {
-    const updatedSettings = { ...settings };
-    switch (type) {
-      case 'destinations':
-        updatedSettings.travel.preferredDestinations.splice(index, 1);
-        break;
-      case 'accommodation':
-        updatedSettings.travel.accommodationType.splice(index, 1);
-        break;
-      case 'activities':
-        updatedSettings.travel.activities.splice(index, 1);
-        break;
-      case 'dietary':
-        updatedSettings.travel.dietary.splice(index, 1);
-        break;
-    }
-    setSettings(updatedSettings);
-  };
 
   // Fonction pour redimensionner l'image
   const resizeImage = (file: File): Promise<string> => {
@@ -212,13 +155,12 @@ const SettingsPage = () => {
     try {
       const updatedData = await profileService.updateProfile(settings);
       // Update the local state with the response from the server
-      if (updatedData.profile || updatedData.preferences || updatedData.notifications || updatedData.privacy || updatedData.travel) {
+      if (updatedData.profile || updatedData.preferences || updatedData.notifications || updatedData.privacy) {
         setSettings({
           profile: updatedData.profile || settings.profile,
           preferences: updatedData.preferences || settings.preferences,
           notifications: updatedData.notifications || settings.notifications,
-          privacy: updatedData.privacy || settings.privacy,
-          travel: updatedData.travel || settings.travel
+          privacy: updatedData.privacy || settings.privacy
         });
       }
       
@@ -570,123 +512,7 @@ const SettingsPage = () => {
 
           {/* Travel Preferences */}
           {activeSection === 'travel' && (
-            <div className="space-y-6">
-              {/* Destinations */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Preferred Destinations</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.preferredDestinations.map((destination, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <MapPin className="w-4 h-4" />
-                      {destination}
-                      <button
-                        onClick={() => removeItem('destinations', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('destinations')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Destination
-                  </button>
-                </div>
-              </div>
-
-              {/* Accommodation */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Accommodation Preferences</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.accommodationType.map((type, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <Hotel className="w-4 h-4" />
-                      {type}
-                      <button
-                        onClick={() => removeItem('accommodation', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('accommodation')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Type
-                  </button>
-                </div>
-              </div>
-
-              {/* Activities */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Activity Interests</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.activities.map((activity, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <Heart className="w-4 h-4" />
-                      {activity}
-                      <button
-                        onClick={() => removeItem('activities', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('activities')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Interest
-                  </button>
-                </div>
-              </div>
-
-              {/* Dietary Preferences */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Dietary Preferences</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.dietary.map((diet, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <Utensils className="w-4 h-4" />
-                      {diet}
-                      <button
-                        onClick={() => removeItem('dietary', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('dietary')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Preference
-                  </button>
-                </div>
-              </div>
-            </div>
+            <TravelPreferencesSection />
           )}
         </div>
       </div>

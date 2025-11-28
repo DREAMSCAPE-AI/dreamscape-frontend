@@ -5,9 +5,10 @@ import { mealService, type MealOption } from '../../services/mealService';
 
 interface MealSelectionProps {
   flight: FlightOffer;
+  returnFlight?: FlightOffer | null;
   passengers: number;
   onBack: () => void;
-  onContinue: (selectedMeals: SelectedMeal[]) => void;
+  onContinue: (selectedMeals: SelectedMeal[], returnSelectedMeals?: SelectedMeal[]) => void;
 }
 
 export interface SelectedMeal {
@@ -21,60 +22,83 @@ export interface SelectedMeal {
 
 const MealSelection: React.FC<MealSelectionProps> = ({
   flight,
+  returnFlight,
   passengers,
   onBack,
   onContinue
 }) => {
   const [selectedMeals, setSelectedMeals] = useState<SelectedMeal[]>([]);
+  const [returnSelectedMeals, setReturnSelectedMeals] = useState<SelectedMeal[]>([]);
   const [currentPassenger, setCurrentPassenger] = useState(0);
   const [currentSegment, setCurrentSegment] = useState(0);
   const [mealOptions, setMealOptions] = useState<MealOption[][]>([]);
+  const [returnMealOptions, setReturnMealOptions] = useState<MealOption[][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSelectingReturnMeals, setIsSelectingReturnMeals] = useState(false);
 
   // Load meal options from API
   useEffect(() => {
     const loadMealOptions = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
-        const optionsPromises = flight.itineraries[0].segments.map(async (segment) => {
-          const duration = segment.duration ?? 'PT2H';
-          const durationMatch = /PT(\d+)H(\d+)?M?/.exec(duration);
-          const hours = parseInt(durationMatch?.[1] ?? '2');
-          const minutes = parseInt(durationMatch?.[2] ?? '0');
-          const totalMinutes = hours * 60 + minutes;
-          
-          // Only fetch meals for flights longer than 2 hours
-          if (totalMinutes < 120) return [];
+        // Helper function to load meals for a flight
+        const loadFlightMeals = async (targetFlight: FlightOffer) => {
+          const optionsPromises = targetFlight.itineraries[0].segments.map(async (segment) => {
+            const duration = segment.duration ?? 'PT2H';
+            const durationMatch = /PT(\d+)H(\d+)?M?/.exec(duration);
+            const hours = parseInt(durationMatch?.[1] ?? '2');
+            const minutes = parseInt(durationMatch?.[2] ?? '0');
+            const totalMinutes = hours * 60 + minutes;
 
-          const params = {
-            airlineCode: segment.carrierCode,
-            flightDuration: totalMinutes,
-            departureCode: segment.departure.iataCode,
-            arrivalCode: segment.arrival.iataCode,
-            cabinClass: 'economy' // Could be dynamic based on booking class
-          };
+            // Only fetch meals for flights longer than 2 hours
+            if (totalMinutes < 120) return [];
 
-          return await mealService.getMealsForFlight(params);
-        });
+            const params = {
+              airlineCode: segment.carrierCode,
+              flightDuration: totalMinutes,
+              departureCode: segment.departure.iataCode,
+              arrivalCode: segment.arrival.iataCode,
+              cabinClass: 'economy' // Could be dynamic based on booking class
+            };
 
-        const allOptions = await Promise.all(optionsPromises);
+            return await mealService.getMealsForFlight(params);
+          });
+
+          return await Promise.all(optionsPromises);
+        };
+
+        // Load outbound flight meals
+        const allOptions = await loadFlightMeals(flight);
         setMealOptions(allOptions);
+
+        // Load return flight meals if exists
+        if (returnFlight) {
+          const returnOptions = await loadFlightMeals(returnFlight);
+          setReturnMealOptions(returnOptions);
+        }
       } catch (err) {
         console.error('Failed to load meal options:', err);
         setError('Failed to load meal options. Please try again.');
-        
+
         // Fallback to empty arrays for each segment
         setMealOptions(flight.itineraries[0].segments.map(() => []));
+        if (returnFlight) {
+          setReturnMealOptions(returnFlight.itineraries[0].segments.map(() => []));
+        }
       } finally {
         setLoading(false);
       }
     };
 
     loadMealOptions();
-  }, [flight]);
+  }, [flight, returnFlight]);
+
+  const getActiveFlight = (): FlightOffer => {
+    return isSelectingReturnMeals && returnFlight ? returnFlight : flight;
+  };
 
   const handleMealSelect = (meal: MealOption) => {
     const newSelection: SelectedMeal = {
@@ -86,19 +110,42 @@ const MealSelection: React.FC<MealSelectionProps> = ({
       dietary: meal.dietary
     };
 
-    setSelectedMeals(prev => [
-      ...prev.filter(m => !(m.passengerId === currentPassenger && m.segmentIndex === currentSegment)),
-      newSelection
-    ]);
+    if (isSelectingReturnMeals) {
+      setReturnSelectedMeals(prev => [
+        ...prev.filter(m => !(m.passengerId === currentPassenger && m.segmentIndex === currentSegment)),
+        newSelection
+      ]);
+    } else {
+      setSelectedMeals(prev => [
+        ...prev.filter(m => !(m.passengerId === currentPassenger && m.segmentIndex === currentSegment)),
+        newSelection
+      ]);
+    }
   };
 
   const getSelectedMeal = (passengerId: number, segmentIndex: number) => {
-    return selectedMeals.find(m => m.passengerId === passengerId && m.segmentIndex === segmentIndex);
+    const activeMeals = isSelectingReturnMeals ? returnSelectedMeals : selectedMeals;
+    return activeMeals.find(m => m.passengerId === passengerId && m.segmentIndex === segmentIndex);
   };
 
-  const totalPrice = selectedMeals.reduce((sum, meal) => sum + meal.price, 0);
-  const currentSegmentInfo = flight.itineraries[0].segments[currentSegment];
-  const currentMealOptions = mealOptions[currentSegment] || [];
+  const handleContinue = () => {
+    if (returnFlight && !isSelectingReturnMeals) {
+      // Switch to return flight meal selection
+      setIsSelectingReturnMeals(true);
+      setCurrentSegment(0);
+      setCurrentPassenger(0);
+    } else {
+      // Proceed to next step
+      onContinue(selectedMeals, returnFlight ? returnSelectedMeals : undefined);
+    }
+  };
+
+  const totalPrice = selectedMeals.reduce((sum, meal) => sum + meal.price, 0) +
+                     returnSelectedMeals.reduce((sum, meal) => sum + meal.price, 0);
+  const activeFlight = getActiveFlight();
+  const currentSegmentInfo = activeFlight.itineraries[0].segments[currentSegment];
+  const activeMealOptions = isSelectingReturnMeals ? returnMealOptions : mealOptions;
+  const currentMealOptions = activeMealOptions[currentSegment] || [];
 
   // Check if meals are available for this segment
   const mealsAvailable = currentMealOptions.length > 0;
@@ -107,18 +154,41 @@ const MealSelection: React.FC<MealSelectionProps> = ({
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white p-6">
-        <h2 className="text-2xl font-bold">Select Your Meals</h2>
+        <h2 className="text-2xl font-bold">
+          {isSelectingReturnMeals ? 'Select Your Return Flight Meals' : 'Select Your Meals'}
+        </h2>
         <p className="mt-2 opacity-90">
           Choose meal preferences for passenger {currentPassenger + 1} of {passengers}
         </p>
       </div>
 
       <div className="p-6">
+        {/* Round-trip flight indicator */}
+        {returnFlight && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-2">
+                  <div className={`px-4 py-2 rounded-lg font-medium ${!isSelectingReturnMeals ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                    Vol aller
+                  </div>
+                  <div className={`px-4 py-2 rounded-lg font-medium ${isSelectingReturnMeals ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                    Vol retour
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-600">
+                {isSelectingReturnMeals ? 'Sélectionnez vos repas pour le vol retour' : 'Sélectionnez vos repas pour le vol aller'}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Flight Segment Selector */}
-        {flight.itineraries[0].segments.length > 1 && (
+        {activeFlight.itineraries[0].segments.length > 1 && (
           <div className="mb-6">
             <div className="flex space-x-2">
-              {flight.itineraries[0].segments.map((segment, index) => (
+              {activeFlight.itineraries[0].segments.map((segment, index) => (
                 <button
                   key={`${segment.departure.iataCode}-${segment.arrival.iataCode}-${index}`}
                   onClick={() => setCurrentSegment(index)}
@@ -300,21 +370,42 @@ const MealSelection: React.FC<MealSelectionProps> = ({
             </div>
 
             {/* Selected Meals Summary */}
-            {selectedMeals.length > 0 && (
+            {(selectedMeals.length > 0 || returnSelectedMeals.length > 0) && (
               <div className="mt-6 p-4 bg-orange-50 rounded-lg">
                 <h4 className="font-semibold mb-2">Selected Meals</h4>
                 <div className="space-y-2">
-                  {selectedMeals.map((meal) => (
-                    <div key={`${meal.passengerId}-${meal.segmentIndex}-${meal.mealName}`} className="flex justify-between text-sm">
-                      <span>
-                        Passenger {meal.passengerId + 1} - {meal.mealName}
-                        {flight.itineraries[0].segments.length > 1 && ` (Segment ${meal.segmentIndex + 1})`}
-                      </span>
-                      <span className="font-medium">
-                        {meal.price > 0 ? `+$${meal.price}` : 'Included'}
-                      </span>
-                    </div>
-                  ))}
+                  {selectedMeals.length > 0 && (
+                    <>
+                      <div className="text-xs font-semibold text-orange-700 uppercase mt-2">Outbound Flight</div>
+                      {selectedMeals.map((meal) => (
+                        <div key={`outbound-${meal.passengerId}-${meal.segmentIndex}-${meal.mealName}`} className="flex justify-between text-sm">
+                          <span>
+                            Passenger {meal.passengerId + 1} - {meal.mealName}
+                            {flight.itineraries[0].segments.length > 1 && ` (Segment ${meal.segmentIndex + 1})`}
+                          </span>
+                          <span className="font-medium">
+                            {meal.price > 0 ? `+$${meal.price}` : 'Included'}
+                          </span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                  {returnSelectedMeals.length > 0 && (
+                    <>
+                      <div className="text-xs font-semibold text-orange-700 uppercase mt-2">Return Flight</div>
+                      {returnSelectedMeals.map((meal) => (
+                        <div key={`return-${meal.passengerId}-${meal.segmentIndex}-${meal.mealName}`} className="flex justify-between text-sm">
+                          <span>
+                            Passenger {meal.passengerId + 1} - {meal.mealName}
+                            {returnFlight && returnFlight.itineraries[0].segments.length > 1 && ` (Segment ${meal.segmentIndex + 1})`}
+                          </span>
+                          <span className="font-medium">
+                            {meal.price > 0 ? `+$${meal.price}` : 'Included'}
+                          </span>
+                        </div>
+                      ))}
+                    </>
+                  )}
                   {totalPrice > 0 && (
                     <div className="border-t pt-2 flex justify-between font-semibold">
                       <span>Total Meal Fees:</span>
@@ -342,12 +433,12 @@ const MealSelection: React.FC<MealSelectionProps> = ({
             <ChevronLeft className="w-5 h-5 mr-2" />
             Back to Seats
           </button>
-          
+
           <button
-            onClick={() => onContinue(selectedMeals)}
+            onClick={handleContinue}
             className="flex items-center px-8 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors"
           >
-            Continue to Baggage
+            {returnFlight && !isSelectingReturnMeals ? 'Continue to Return Flight Meals' : 'Continue to Baggage'}
             <ChevronRight className="w-5 h-5 ml-2" />
           </button>
         </div>

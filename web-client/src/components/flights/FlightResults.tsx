@@ -1,14 +1,25 @@
 import React from 'react';
-import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee } from 'lucide-react';
-import type { FlightOffer } from '../../services/api/types';
-import airlineService from '../../services/airlineService';
+import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee, Loader } from 'lucide-react';
+import type { FlightOffer } from '@/services/api/types';
+import airlineService from '@/services/airlineService';
 
 interface FlightResultsProps {
   flights: FlightOffer[];
   onSelect: (flight: FlightOffer) => void;
+  totalResults: number;
+  hasMore: boolean;
+  onLoadMore: () => void;
+  loadingMore: boolean;
 }
 
-const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
+const FlightResults: React.FC<FlightResultsProps> = ({
+  flights,
+  onSelect,
+  totalResults,
+  hasMore,
+  onLoadMore,
+  loadingMore
+}) => {
   const formatDuration = (duration: string) => {
     // Convert ISO duration to readable format
     const hours = duration.match(/(\d+)H/)?.[1] || '0';
@@ -69,13 +80,17 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
   return (
     <div className="space-y-6">
       {flights.map((flight) => {
-        const firstSegment = flight.itineraries[0]?.segments[0];
+        // Validate flight data structure
+        if (!flight.itineraries || flight.itineraries.length === 0) return null;
+        if (!flight.itineraries[0].segments || flight.itineraries[0].segments.length === 0) return null;
+
+        const firstSegment = flight.itineraries[0].segments[0];
         if (!firstSegment) return null;
 
         const co2Emissions = calculateCO2Emissions(firstSegment);
         const airlineName = airlineService.getAirlineName(firstSegment.carrierCode);
         const airlineLogo = airlineService.getAirlineLogo(firstSegment.carrierCode);
-        const aircraftType = airlineService.getAircraftType(firstSegment.aircraft.code);
+        const aircraftType = airlineService.getAircraftType(firstSegment.aircraft?.code);
         const amenities = getFlightAmenities(firstSegment.carrierCode);
 
         return (
@@ -180,14 +195,18 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
 
                     {/* Aircraft & Additional Info */}
                     <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Plane className="w-4 h-4" />
-                        <span>{aircraftType}</span>
-                      </div>
-                      <div>•</div>
+                      {firstSegment.aircraft?.code && (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <Plane className="w-4 h-4" />
+                            <span>{aircraftType}</span>
+                          </div>
+                          <div>•</div>
+                        </>
+                      )}
                       <div className="flex items-center gap-1">
                         <Shield className="w-4 h-4" />
-                        <span>{flight.pricingOptions.fareType[0]}</span>
+                        <span>{flight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY'}</span>
                       </div>
                       <div>•</div>
                       <div className="flex items-center gap-1">
@@ -269,14 +288,35 @@ const FlightResults: React.FC<FlightResultsProps> = ({ flights, onSelect }) => {
         );
       })}
 
-      {flights.length === 0 && (
+      {/* Load More Button (SNCF-style pagination) */}
+      {hasMore && flights.length > 0 && (
+        <div className="flex justify-center pt-6">
+          <button
+            onClick={onLoadMore}
+            disabled={loadingMore}
+            className="px-8 py-3 bg-white border-2 border-orange-500 text-orange-500 rounded-xl hover:bg-orange-50 transition-colors font-semibold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {loadingMore ? (
+              <>
+                <Loader className="w-5 h-5 animate-spin" />
+                Chargement...
+              </>
+            ) : (
+              'Afficher les vols suivants'
+            )}
+          </button>
+        </div>
+      )}
+
+      {/* Empty State - No Results Found */}
+      {flights.length === 0 && totalResults === 0 && (
         <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Plane className="w-10 h-10 text-gray-400" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Flights Found</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucun vol trouvé</h3>
           <p className="text-gray-600 max-w-md mx-auto">
-            We couldn't find any flights matching your criteria. Try adjusting your search parameters or selecting different dates.
+            Nous n'avons trouvé aucun vol correspondant à vos critères. Essayez d'ajuster vos paramètres de recherche ou de sélectionner d'autres dates.
           </p>
         </div>
       )}

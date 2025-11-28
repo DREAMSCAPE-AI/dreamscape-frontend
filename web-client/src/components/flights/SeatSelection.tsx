@@ -5,9 +5,10 @@ import ApiService from '../../services/api';
 
 interface SeatSelectionProps {
   flight: FlightOffer;
+  returnFlight?: FlightOffer | null;
   passengers: number;
   onBack: () => void;
-  onContinue: (selectedSeats: SelectedSeat[]) => void;
+  onContinue: (selectedSeats: SelectedSeat[], returnSelectedSeats?: SelectedSeat[]) => void;
 }
 
 export interface SelectedSeat {
@@ -66,49 +67,70 @@ interface Seat {
 
 const SeatSelection: React.FC<SeatSelectionProps> = ({
   flight,
+  returnFlight,
   passengers,
   onBack,
   onContinue
 }) => {
   const [currentSegment, setCurrentSegment] = useState(0);
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
+  const [returnSelectedSeats, setReturnSelectedSeats] = useState<SelectedSeat[]>([]);
   const [currentPassenger, setCurrentPassenger] = useState(0);
   const [seatMaps, setSeatMaps] = useState<AmadeusSeatMap[]>([]);
+  const [returnSeatMaps, setReturnSeatMaps] = useState<AmadeusSeatMap[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSelectingReturnSeats, setIsSelectingReturnSeats] = useState(false);
 
   // Fetch real seat map from Amadeus API
   useEffect(() => {
-    const fetchSeatMap = async () => {
+    const fetchSeatMaps = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
+        // Fetch outbound flight seat map
         const response = await ApiService.getSeatMap({
           flightOfferId: flight.id
         });
-        
+
         if (response.data && Array.isArray(response.data)) {
           setSeatMaps(response.data);
         } else {
           throw new Error('Invalid seat map data received');
         }
+
+        // Fetch return flight seat map if exists
+        if (returnFlight) {
+          const returnResponse = await ApiService.getSeatMap({
+            flightOfferId: returnFlight.id
+          });
+
+          if (returnResponse.data && Array.isArray(returnResponse.data)) {
+            setReturnSeatMaps(returnResponse.data);
+          } else {
+            throw new Error('Invalid return seat map data received');
+          }
+        }
       } catch (error) {
         console.error('Failed to fetch seat map:', error);
         setError('Failed to load seat map. Using fallback seat layout.');
-        // Generate fallback seat map
-        setSeatMaps(generateFallbackSeatMap());
+        // Generate fallback seat maps
+        setSeatMaps(generateFallbackSeatMap(flight));
+        if (returnFlight) {
+          setReturnSeatMaps(generateFallbackSeatMap(returnFlight));
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSeatMap();
-  }, [flight.id]);
+    fetchSeatMaps();
+  }, [flight.id, returnFlight?.id]);
 
   // Generate fallback seat map when API fails
-  const generateFallbackSeatMap = (): AmadeusSeatMap[] => {
-    return flight.itineraries[0].segments.map((segment, index) => {
+  const generateFallbackSeatMap = (targetFlight: FlightOffer): AmadeusSeatMap[] => {
+    return targetFlight.itineraries[0].segments.map((segment, index) => {
       const aircraftType = segment.aircraft?.code || 'A320';
       const seats: AmadeusSeat[] = [];
       
@@ -172,7 +194,7 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
 
       return {
         type: 'seat-map',
-        flightOfferId: flight.id,
+        flightOfferId: targetFlight.id,
         segmentId: `${index}`,
         carrierCode: segment.carrierCode,
         number: segment.number,
@@ -236,14 +258,20 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
 
   // Get seats for current segment
   const getCurrentSeats = (): Seat[] => {
-    if (!seatMaps[currentSegment]) return [];
-    
-    return seatMaps[currentSegment].deck.seats.map(convertAmadeusSeat);
+    const activeSeatMaps = isSelectingReturnSeats ? returnSeatMaps : seatMaps;
+    if (!activeSeatMaps[currentSegment]) return [];
+
+    return activeSeatMaps[currentSegment].deck.seats.map(convertAmadeusSeat);
+  };
+
+  // Get active flight based on selection state
+  const getActiveFlight = (): FlightOffer => {
+    return isSelectingReturnSeats && returnFlight ? returnFlight : flight;
   };
 
   const handleSeatSelect = (seat: Seat) => {
     if (seat.status !== 'available') return;
-    
+
     const newSelection: SelectedSeat = {
       passengerId: currentPassenger,
       seatNumber: seat.number,
@@ -251,14 +279,21 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
       price: seat.price,
       segment: currentSegment
     };
-    
-    // Remove any existing selection for this passenger and segment
-    const updatedSeats = selectedSeats.filter(
-      s => !(s.passengerId === currentPassenger && s.segment === currentSegment)
-    );
-    
-    setSelectedSeats([...updatedSeats, newSelection]);
-    
+
+    if (isSelectingReturnSeats) {
+      // Handle return flight seat selection
+      const updatedSeats = returnSelectedSeats.filter(
+        s => !(s.passengerId === currentPassenger && s.segment === currentSegment)
+      );
+      setReturnSelectedSeats([...updatedSeats, newSelection]);
+    } else {
+      // Handle outbound flight seat selection
+      const updatedSeats = selectedSeats.filter(
+        s => !(s.passengerId === currentPassenger && s.segment === currentSegment)
+      );
+      setSelectedSeats([...updatedSeats, newSelection]);
+    }
+
     // Move to next passenger if not the last one
     if (currentPassenger < passengers - 1) {
       setCurrentPassenger(currentPassenger + 1);
@@ -267,11 +302,12 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
 
   const getSeatStatus = (seat: Seat): 'available' | 'occupied' | 'selected' | 'blocked' => {
     if (seat.status === 'occupied') return 'occupied';
-    
-    const isSelected = selectedSeats.some(
+
+    const activeSeats = isSelectingReturnSeats ? returnSelectedSeats : selectedSeats;
+    const isSelected = activeSeats.some(
       s => s.seatNumber === seat.number && s.segment === currentSegment
     );
-    
+
     return isSelected ? 'selected' : 'available';
   };
 
@@ -288,13 +324,30 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
   };
 
   const getTotalPrice = () => {
-    return selectedSeats.reduce((total, seat) => total + seat.price, 0);
+    const outboundTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0);
+    const returnTotal = returnSelectedSeats.reduce((total, seat) => total + seat.price, 0);
+    return outboundTotal + returnTotal;
   };
 
   const canContinue = () => {
-    // Check if all passengers have seats selected for all segments
-    const requiredSelections = passengers * flight.itineraries[0].segments.length;
-    return selectedSeats.length === requiredSelections;
+    const activeFlight = getActiveFlight();
+    const activeSeats = isSelectingReturnSeats ? returnSelectedSeats : selectedSeats;
+
+    // Check if all passengers have seats selected for all segments of current flight
+    const requiredSelections = passengers * activeFlight.itineraries[0].segments.length;
+    return activeSeats.length === requiredSelections;
+  };
+
+  const handleContinue = () => {
+    if (returnFlight && !isSelectingReturnSeats) {
+      // Switch to return flight seat selection
+      setIsSelectingReturnSeats(true);
+      setCurrentSegment(0);
+      setCurrentPassenger(0);
+    } else {
+      // Proceed to next step
+      onContinue(selectedSeats, returnFlight ? returnSelectedSeats : undefined);
+    }
   };
 
   if (loading) {
@@ -310,16 +363,41 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
     );
   }
 
-  const currentSeatMap = seatMaps[currentSegment];
+  const activeFlight = getActiveFlight();
+  const activeSeatMaps = isSelectingReturnSeats ? returnSeatMaps : seatMaps;
+  const currentSeatMap = activeSeatMaps[currentSegment];
   const seats = getCurrentSeats();
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="bg-white rounded-2xl shadow-lg p-8">
+        {/* Round-trip flight indicator */}
+        {returnFlight && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-2">
+                  <div className={`px-4 py-2 rounded-lg font-medium ${!isSelectingReturnSeats ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                    Vol aller
+                  </div>
+                  <div className={`px-4 py-2 rounded-lg font-medium ${isSelectingReturnSeats ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                    Vol retour
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-600">
+                {isSelectingReturnSeats ? 'Sélectionnez vos sièges pour le vol retour' : 'Sélectionnez vos sièges pour le vol aller'}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Your Seats</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            {isSelectingReturnSeats ? 'Select Your Return Flight Seats' : 'Select Your Seats'}
+          </h2>
           <p className="text-gray-600">
-            Choose seats for {passengers} passenger{passengers > 1 ? 's' : ''} on your flight
+            Choose seats for {passengers} passenger{passengers > 1 ? 's' : ''} on your {isSelectingReturnSeats ? 'return ' : ''}flight
           </p>
           {error && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -329,7 +407,7 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
         </div>
 
         {/* Flight Segment Navigation */}
-        {flight.itineraries[0].segments.length > 1 && (
+        {activeFlight.itineraries[0].segments.length > 1 && (
           <div className="mb-6">
             <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
               <button
@@ -340,23 +418,23 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
                 <ChevronLeft className="w-4 h-4" />
                 Previous Segment
               </button>
-              
+
               <div className="text-center">
                 <h3 className="font-semibold text-gray-900">
-                  Segment {currentSegment + 1} of {flight.itineraries[0].segments.length}
+                  Segment {currentSegment + 1} of {activeFlight.itineraries[0].segments.length}
                 </h3>
                 {currentSeatMap && (
                   <p className="text-sm text-gray-600">
-                    {flight.itineraries[0].segments[currentSegment].departure.iataCode} → {flight.itineraries[0].segments[currentSegment].arrival.iataCode}
+                    {activeFlight.itineraries[0].segments[currentSegment].departure.iataCode} → {activeFlight.itineraries[0].segments[currentSegment].arrival.iataCode}
                     {' • '}{currentSeatMap.carrierCode} {currentSeatMap.number}
                     {' • '}{currentSeatMap.aircraft.code}
                   </p>
                 )}
               </div>
-              
+
               <button
-                onClick={() => setCurrentSegment(Math.min(flight.itineraries[0].segments.length - 1, currentSegment + 1))}
-                disabled={currentSegment === flight.itineraries[0].segments.length - 1}
+                onClick={() => setCurrentSegment(Math.min(activeFlight.itineraries[0].segments.length - 1, currentSegment + 1))}
+                disabled={currentSegment === activeFlight.itineraries[0].segments.length - 1}
                 className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
               >
                 Next Segment
@@ -475,20 +553,40 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
         </div>
 
         {/* Selected Seats Summary */}
-        {selectedSeats.length > 0 && (
+        {(selectedSeats.length > 0 || returnSelectedSeats.length > 0) && (
           <div className="mb-6 p-4 bg-blue-50 rounded-lg">
             <h3 className="font-semibold text-blue-900 mb-2">Selected Seats</h3>
             <div className="space-y-1">
-              {selectedSeats.map((seat, index) => (
-                <div key={index} className="flex justify-between text-sm">
-                  <span>
-                    Passenger {seat.passengerId + 1} - Segment {seat.segment + 1}: {seat.seatNumber}
-                  </span>
-                  <span className="font-medium">
-                    {seat.price > 0 ? `$${seat.price}` : 'Free'}
-                  </span>
-                </div>
-              ))}
+              {selectedSeats.length > 0 && (
+                <>
+                  <div className="text-xs font-semibold text-blue-700 uppercase mt-2">Outbound Flight</div>
+                  {selectedSeats.map((seat, index) => (
+                    <div key={`outbound-${index}`} className="flex justify-between text-sm">
+                      <span>
+                        Passenger {seat.passengerId + 1} - Segment {seat.segment + 1}: {seat.seatNumber}
+                      </span>
+                      <span className="font-medium">
+                        {seat.price > 0 ? `$${seat.price}` : 'Free'}
+                      </span>
+                    </div>
+                  ))}
+                </>
+              )}
+              {returnSelectedSeats.length > 0 && (
+                <>
+                  <div className="text-xs font-semibold text-blue-700 uppercase mt-2">Return Flight</div>
+                  {returnSelectedSeats.map((seat, index) => (
+                    <div key={`return-${index}`} className="flex justify-between text-sm">
+                      <span>
+                        Passenger {seat.passengerId + 1} - Segment {seat.segment + 1}: {seat.seatNumber}
+                      </span>
+                      <span className="font-medium">
+                        {seat.price > 0 ? `$${seat.price}` : 'Free'}
+                      </span>
+                    </div>
+                  ))}
+                </>
+              )}
               <div className="border-t border-blue-200 pt-2 mt-2">
                 <div className="flex justify-between font-semibold text-blue-900">
                   <span>Total Seat Fees:</span>
@@ -507,16 +605,16 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
           >
             Back to Flight Details
           </button>
-          
+
           <button
-            onClick={() => onContinue(selectedSeats)}
+            onClick={handleContinue}
             disabled={!canContinue()}
             className="px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Continue to Meals
+            {returnFlight && !isSelectingReturnSeats ? 'Continue to Return Flight Seats' : 'Continue to Meals'}
             {!canContinue() && (
               <span className="ml-2 text-xs">
-                ({selectedSeats.length}/{passengers * flight.itineraries[0].segments.length} selected)
+                ({(isSelectingReturnSeats ? returnSelectedSeats : selectedSeats).length}/{passengers * activeFlight.itineraries[0].segments.length} selected)
               </span>
             )}
           </button>

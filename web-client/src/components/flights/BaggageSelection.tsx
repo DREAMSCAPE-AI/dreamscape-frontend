@@ -3,8 +3,9 @@ import { ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
 
 interface BaggageSelectionProps {
   passengers: number;
+  hasReturnFlight?: boolean;
   onBack: () => void;
-  onContinue: (selectedBaggage: SelectedBaggage[]) => void;
+  onContinue: (selectedBaggage: SelectedBaggage[], returnSelectedBaggage?: SelectedBaggage[]) => void;
 }
 
 export interface SelectedBaggage {
@@ -31,11 +32,14 @@ interface BaggageOption {
 
 const BaggageSelection: React.FC<BaggageSelectionProps> = ({
   passengers,
+  hasReturnFlight,
   onBack,
   onContinue
 }) => {
   const [selectedBaggage, setSelectedBaggage] = useState<SelectedBaggage[]>([]);
+  const [returnSelectedBaggage, setReturnSelectedBaggage] = useState<SelectedBaggage[]>([]);
   const [currentPassenger, setCurrentPassenger] = useState(0);
+  const [isSelectingReturnBaggage, setIsSelectingReturnBaggage] = useState(false);
 
   // Generate baggage options based on flight class and airline
   const baggageOptions: BaggageOption[] = [
@@ -126,7 +130,8 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
   ];
 
   const getBaggageQuantity = (passengerId: number, baggageId: string): number => {
-    const baggage = selectedBaggage.find(
+    const activeBaggage = isSelectingReturnBaggage ? returnSelectedBaggage : selectedBaggage;
+    const baggage = activeBaggage.find(
       b => b.passengerId === passengerId && b.description === baggageOptions.find(opt => opt.id === baggageId)?.description
     );
     return baggage?.quantity ?? 0;
@@ -135,14 +140,17 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
   const updateBaggageQuantity = (option: BaggageOption, quantity: number) => {
     if (quantity < 0 || quantity > option.maxQuantity) return;
 
-    const existingIndex = selectedBaggage.findIndex(
+    const setActiveBaggage = isSelectingReturnBaggage ? setReturnSelectedBaggage : setSelectedBaggage;
+    const activeBaggage = isSelectingReturnBaggage ? returnSelectedBaggage : selectedBaggage;
+
+    const existingIndex = activeBaggage.findIndex(
       b => b.passengerId === currentPassenger && b.description === option.description
     );
 
     if (quantity === 0) {
       // Remove baggage if quantity is 0
       if (existingIndex !== -1) {
-        setSelectedBaggage(prev => prev.filter((_, index) => index !== existingIndex));
+        setActiveBaggage(prev => prev.filter((_, index) => index !== existingIndex));
       }
     } else {
       const newBaggage: SelectedBaggage = {
@@ -156,22 +164,35 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
 
       if (existingIndex !== -1) {
         // Update existing baggage
-        setSelectedBaggage(prev => prev.map((item, index) => 
+        setActiveBaggage(prev => prev.map((item, index) =>
           index === existingIndex ? newBaggage : item
         ));
       } else {
         // Add new baggage
-        setSelectedBaggage(prev => [...prev, newBaggage]);
+        setActiveBaggage(prev => [...prev, newBaggage]);
       }
     }
   };
 
+  const handleContinue = () => {
+    if (hasReturnFlight && !isSelectingReturnBaggage) {
+      // Switch to return flight baggage selection
+      setIsSelectingReturnBaggage(true);
+      setCurrentPassenger(0);
+    } else {
+      // Proceed to next step
+      onContinue(selectedBaggage, hasReturnFlight ? returnSelectedBaggage : undefined);
+    }
+  };
+
   const getTotalPrice = () => {
-    return selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0);
+    return selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0) +
+           returnSelectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0);
   };
 
   const getTotalWeight = (passengerId: number) => {
-    return selectedBaggage
+    const activeBaggage = isSelectingReturnBaggage ? returnSelectedBaggage : selectedBaggage;
+    return activeBaggage
       .filter(b => b.passengerId === passengerId)
       .reduce((sum, baggage) => sum + (baggage.weight * baggage.quantity), 0);
   };
@@ -188,13 +209,36 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white p-6">
-        <h2 className="text-2xl font-bold">Manage Your Baggage</h2>
+        <h2 className="text-2xl font-bold">
+          {isSelectingReturnBaggage ? 'Manage Your Return Flight Baggage' : 'Manage Your Baggage'}
+        </h2>
         <p className="mt-2 opacity-90">
           Add extra baggage for passenger {currentPassenger + 1} of {passengers}
         </p>
       </div>
 
       <div className="p-6">
+        {/* Round-trip flight indicator */}
+        {hasReturnFlight && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-2">
+                  <div className={`px-4 py-2 rounded-lg font-medium ${!isSelectingReturnBaggage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                    Vol aller
+                  </div>
+                  <div className={`px-4 py-2 rounded-lg font-medium ${isSelectingReturnBaggage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                    Vol retour
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-600">
+                {isSelectingReturnBaggage ? 'Sélectionnez vos bagages pour le vol retour' : 'Sélectionnez vos bagages pour le vol aller'}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Passenger Selector */}
         <div className="mb-6">
           <div className="flex space-x-2">
@@ -226,7 +270,7 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
             <div className="text-right">
               <p className="text-sm text-gray-600">Additional Fees</p>
               <p className="font-semibold text-lg">
-                ${selectedBaggage.filter(b => b.passengerId === currentPassenger).reduce((sum, b) => sum + b.price, 0)}
+                ${(isSelectingReturnBaggage ? returnSelectedBaggage : selectedBaggage).filter(b => b.passengerId === currentPassenger).reduce((sum, b) => sum + b.price, 0)}
               </p>
             </div>
           </div>
@@ -321,27 +365,53 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
         </div>
 
         {/* All Passengers Summary */}
-        {selectedBaggage.length > 0 && (
+        {(selectedBaggage.length > 0 || returnSelectedBaggage.length > 0) && (
           <div className="mb-6 p-4 bg-orange-50 rounded-lg">
             <h4 className="font-semibold mb-3">Baggage Summary - All Passengers</h4>
             <div className="space-y-2">
-              {Array.from({ length: passengers }, (_, passengerIndex) => {
-                const passengerBaggage = selectedBaggage.filter(b => b.passengerId === passengerIndex);
-                if (passengerBaggage.length === 0) return null;
-                
-                return (
-                  <div key={`passenger-${passengerIndex}`} className="border-b border-orange-200 pb-2 mb-2 last:border-b-0 last:pb-0 last:mb-0">
-                    <h5 className="font-medium text-sm mb-1">Passenger {passengerIndex + 1}</h5>
-                    {passengerBaggage.map((baggage, index) => (
-                      <div key={`${passengerIndex}-${baggage.description}-${index}`} className="flex justify-between text-sm text-gray-700">
-                        <span>{baggage.description} x{baggage.quantity}</span>
-                        <span>${baggage.price}</span>
+              {selectedBaggage.length > 0 && (
+                <>
+                  <div className="text-xs font-semibold text-orange-700 uppercase mt-2">Outbound Flight</div>
+                  {Array.from({ length: passengers }, (_, passengerIndex) => {
+                    const passengerBaggage = selectedBaggage.filter(b => b.passengerId === passengerIndex);
+                    if (passengerBaggage.length === 0) return null;
+
+                    return (
+                      <div key={`outbound-passenger-${passengerIndex}`} className="border-b border-orange-200 pb-2 mb-2 last:border-b-0 last:pb-0 last:mb-0">
+                        <h5 className="font-medium text-sm mb-1">Passenger {passengerIndex + 1}</h5>
+                        {passengerBaggage.map((baggage, index) => (
+                          <div key={`outbound-${passengerIndex}-${baggage.description}-${index}`} className="flex justify-between text-sm text-gray-700">
+                            <span>{baggage.description} x{baggage.quantity}</span>
+                            <span>${baggage.price}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                );
-              })}
-              
+                    );
+                  })}
+                </>
+              )}
+              {returnSelectedBaggage.length > 0 && (
+                <>
+                  <div className="text-xs font-semibold text-orange-700 uppercase mt-2">Return Flight</div>
+                  {Array.from({ length: passengers }, (_, passengerIndex) => {
+                    const passengerBaggage = returnSelectedBaggage.filter(b => b.passengerId === passengerIndex);
+                    if (passengerBaggage.length === 0) return null;
+
+                    return (
+                      <div key={`return-passenger-${passengerIndex}`} className="border-b border-orange-200 pb-2 mb-2 last:border-b-0 last:pb-0 last:mb-0">
+                        <h5 className="font-medium text-sm mb-1">Passenger {passengerIndex + 1}</h5>
+                        {passengerBaggage.map((baggage, index) => (
+                          <div key={`return-${passengerIndex}-${baggage.description}-${index}`} className="flex justify-between text-sm text-gray-700">
+                            <span>{baggage.description} x{baggage.quantity}</span>
+                            <span>${baggage.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+
               <div className="border-t border-orange-300 pt-2 flex justify-between font-semibold">
                 <span>Total Baggage Fees:</span>
                 <span>${getTotalPrice()}</span>
@@ -371,12 +441,12 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
             <ChevronLeft className="w-5 h-5 mr-2" />
             Back to Meals
           </button>
-          
+
           <button
-            onClick={() => onContinue(selectedBaggage)}
+            onClick={handleContinue}
             className="flex items-center px-8 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors"
           >
-            Continue to Passenger Info
+            {hasReturnFlight && !isSelectingReturnBaggage ? 'Continue to Return Flight Baggage' : 'Continue to Passenger Info'}
             <ChevronRight className="w-5 h-5 ml-2" />
           </button>
         </div>
