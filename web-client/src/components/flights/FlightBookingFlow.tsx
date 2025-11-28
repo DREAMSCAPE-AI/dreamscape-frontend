@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import FlightSearch from './FlightSearch';
 import FlightResults from './FlightResults';
+import FlightResultsToolbar from './FlightResultsToolbar';
 import FlightDetails from './FlightDetails';
 import SeatSelection, { SelectedSeat } from './SeatSelection';
 import MealSelection, { SelectedMeal } from './MealSelection';
@@ -9,6 +10,16 @@ import BaggageSelection, { SelectedBaggage } from './BaggageSelection';
 import PassengerInfo from './PassengerInfo';
 import ApiService from '@/services/api/APIService';
 import type { FlightOffer, UIFlightSearchParams } from '@/services/api/types';
+import type { SortOption, FilterState, PaginationState } from '@/types/flights';
+import {
+  getFlightPrice,
+  getDepartureTime,
+  getNumberOfStops,
+  parseDuration,
+  isInPriceRange,
+  isInDepartureTimeRange,
+  matchesStopsFilter
+} from '@/utils/flightUtils';
 
 type BookingStep = 'search' | 'results' | 'details' | 'seats' | 'meals' | 'baggage' | 'passengers' | 'payment';
 
@@ -17,6 +28,9 @@ const FlightBookingFlow: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('search');
   const [searchResults, setSearchResults] = useState<FlightOffer[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<FlightOffer | null>(null);
+  const [selectedReturnFlight, setSelectedReturnFlight] = useState<FlightOffer | null>(null);
+  const [isRoundTrip, setIsRoundTrip] = useState(false);
+  const [isSelectingReturnFlight, setIsSelectingReturnFlight] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<SelectedMeal[]>([]);
   const [selectedBaggage, setSelectedBaggage] = useState<SelectedBaggage[]>([]);
@@ -24,11 +38,176 @@ const FlightBookingFlow: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Sorting, Filtering, and Pagination State
+  const [sortOption, setSortOption] = useState<SortOption>('departure-asc');
+  const [filters, setFilters] = useState<FilterState>({
+    priceMin: undefined,
+    priceMax: undefined,
+    stops: [],
+    departureTimeRanges: []
+  });
+  const [pagination, setPagination] = useState<PaginationState>({
+    currentPage: 0,
+    pageSize: 10,
+    hasMore: false
+  });
+  const [filteredAndSortedResults, setFilteredAndSortedResults] = useState<FlightOffer[]>([]);
+  const [displayedResults, setDisplayedResults] = useState<FlightOffer[]>([]);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Helper Functions for Filtering and Sorting
+  const applyFilters = (flights: FlightOffer[], currentFilters: FilterState): FlightOffer[] => {
+    return flights.filter(flight => {
+      // Price filter
+      const price = getFlightPrice(flight);
+      if (!isInPriceRange(price, currentFilters.priceMin, currentFilters.priceMax)) {
+        return false;
+      }
+
+      // Stops filter (only if filter is active)
+      if (currentFilters.stops.length > 0) {
+        const stops = getNumberOfStops(flight);
+        if (!matchesStopsFilter(stops, currentFilters.stops)) {
+          return false;
+        }
+      }
+
+      // Departure time filter (only if filter is active)
+      if (currentFilters.departureTimeRanges.length > 0) {
+        const departureTime = getDepartureTime(flight);
+        if (!isInDepartureTimeRange(departureTime, currentFilters.departureTimeRanges)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  };
+
+  const applySorting = (flights: FlightOffer[], currentSortOption: SortOption): FlightOffer[] => {
+    const sorted = [...flights]; // Create copy to avoid mutating original
+
+    switch (currentSortOption) {
+      case 'departure-asc':
+        return sorted.sort((a, b) =>
+          getDepartureTime(a).getTime() - getDepartureTime(b).getTime()
+        );
+
+      case 'departure-desc':
+        return sorted.sort((a, b) =>
+          getDepartureTime(b).getTime() - getDepartureTime(a).getTime()
+        );
+
+      case 'price-asc':
+        return sorted.sort((a, b) =>
+          getFlightPrice(a) - getFlightPrice(b)
+        );
+
+      case 'price-desc':
+        return sorted.sort((a, b) =>
+          getFlightPrice(b) - getFlightPrice(a)
+        );
+
+      case 'duration-asc':
+        return sorted.sort((a, b) => {
+          const durationA = parseDuration(a.itineraries[0].duration);
+          const durationB = parseDuration(b.itineraries[0].duration);
+          return durationA - durationB;
+        });
+
+      case 'duration-desc':
+        return sorted.sort((a, b) => {
+          const durationA = parseDuration(a.itineraries[0].duration);
+          const durationB = parseDuration(b.itineraries[0].duration);
+          return durationB - durationA;
+        });
+
+      default:
+        return sorted;
+    }
+  };
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+
+    // Simulate 1-2 second delay for UX
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setPagination(prev => ({
+      ...prev,
+      currentPage: prev.currentPage + 1
+    }));
+
+    setLoadingMore(false);
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      priceMin: undefined,
+      priceMax: undefined,
+      stops: [],
+      departureTimeRanges: []
+    });
+  };
+
+  // Effect 1: Apply filters and sorting when dependencies change
+  useEffect(() => {
+    if (searchResults.length === 0) {
+      setFilteredAndSortedResults([]);
+      setDisplayedResults([]);
+      return;
+    }
+
+    // Step 1: Apply filters
+    const filtered = applyFilters(searchResults, filters);
+
+    // Step 2: Apply sorting
+    const sorted = applySorting(filtered, sortOption);
+
+    // Step 3: Update filtered/sorted results
+    setFilteredAndSortedResults(sorted);
+
+    // Step 4: Reset pagination to page 0 when filters or sort changes
+    setPagination({ currentPage: 0, pageSize: 10, hasMore: sorted.length > 10 });
+  }, [searchResults, filters, sortOption]);
+
+  // Effect 2: Update displayed results when pagination changes
+  useEffect(() => {
+    const startIndex = 0;
+    const endIndex = (pagination.currentPage + 1) * pagination.pageSize;
+    const displayed = filteredAndSortedResults.slice(startIndex, endIndex);
+
+    setDisplayedResults(displayed);
+
+    // Update hasMore flag
+    setPagination(prev => ({
+      ...prev,
+      hasMore: endIndex < filteredAndSortedResults.length
+    }));
+  }, [filteredAndSortedResults, pagination.currentPage, pagination.pageSize]);
+
   // Real flight search function using Amadeus API
   const handleSearch = async (params: UIFlightSearchParams) => {
+    // Detect if this is a round-trip search
+    const roundTrip = !!(params.returnDate);
+    setIsRoundTrip(roundTrip);
+    setIsSelectingReturnFlight(false);
+    setSelectedFlight(null);
+    setSelectedReturnFlight(null);
+
+    // Reset filters and sort to defaults on new search
+    setSortOption('departure-asc');
+    setFilters({
+      priceMin: undefined,
+      priceMax: undefined,
+      stops: [],
+      departureTimeRanges: []
+    });
+    setPagination({ currentPage: 0, pageSize: 10, hasMore: false });
+
     setLoading(true);
     setError(null);
-    
+
     // Update passenger count from search params
     const totalPassengers = params.adults + (params.children || 0) + (params.infants || 0);
     setPassengerCount(totalPassengers);
@@ -165,12 +344,30 @@ const FlightBookingFlow: React.FC = () => {
   };
 
   const handleFlightSelect = (flight: FlightOffer) => {
-    setSelectedFlight(flight);
-    setCurrentStep('details');
+    if (isRoundTrip && !isSelectingReturnFlight) {
+      // For round-trip: selecting outbound flight
+      setSelectedFlight(flight);
+      setCurrentStep('details');
+    } else if (isRoundTrip && isSelectingReturnFlight) {
+      // For round-trip: selecting return flight
+      setSelectedReturnFlight(flight);
+      setCurrentStep('details');
+    } else {
+      // For one-way: just selecting the flight
+      setSelectedFlight(flight);
+      setCurrentStep('details');
+    }
   };
 
   const handleFlightAccept = () => {
-    setCurrentStep('seats');
+    if (isRoundTrip && !isSelectingReturnFlight && !selectedReturnFlight) {
+      // Round-trip: outbound flight accepted, now select return flight
+      setIsSelectingReturnFlight(true);
+      setCurrentStep('results');
+    } else {
+      // Either one-way, or round-trip with both flights selected
+      setCurrentStep('seats');
+    }
   };
 
   return (
@@ -229,16 +426,58 @@ const FlightBookingFlow: React.FC = () => {
                 loading={loading}
                 error={error}
               />
+              {/* Round-trip indicator */}
+              {isRoundTrip && (
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0">
+                      {isSelectingReturnFlight ? (
+                        <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          2
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          1
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-blue-900 font-semibold">
+                        {isSelectingReturnFlight
+                          ? 'Sélectionnez votre vol retour'
+                          : 'Sélectionnez votre vol aller'}
+                      </p>
+                      {selectedFlight && isSelectingReturnFlight && (
+                        <p className="text-blue-700 text-sm">
+                          Vol aller sélectionné - Continuez avec le vol retour
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              <FlightResultsToolbar
+                sortOption={sortOption}
+                onSortChange={setSortOption}
+                filters={filters}
+                onFilterChange={setFilters}
+                onResetFilters={handleResetFilters}
+                totalResults={filteredAndSortedResults.length}
+              />
               <FlightResults
-                flights={searchResults}
+                flights={displayedResults}
                 onSelect={handleFlightSelect}
+                totalResults={filteredAndSortedResults.length}
+                hasMore={pagination.hasMore}
+                onLoadMore={handleLoadMore}
+                loadingMore={loadingMore}
               />
             </div>
           )}
 
-          {currentStep === 'details' && selectedFlight && (
+          {currentStep === 'details' && (
             <FlightDetails
-              flight={selectedFlight}
+              flight={isSelectingReturnFlight && selectedReturnFlight ? selectedReturnFlight : selectedFlight!}
               onClose={() => setCurrentStep('results')}
               onBack={() => setCurrentStep('results')}
               onAccept={handleFlightAccept}
@@ -248,10 +487,12 @@ const FlightBookingFlow: React.FC = () => {
           {currentStep === 'seats' && selectedFlight && (
             <SeatSelection
               flight={selectedFlight}
+              returnFlight={selectedReturnFlight}
               passengers={passengerCount}
               onBack={() => setCurrentStep('details')}
-              onContinue={(seats) => {
+              onContinue={(seats, returnSeats) => {
                 setSelectedSeats(seats);
+                // TODO: Store return seats when implemented
                 setCurrentStep('meals');
               }}
             />
@@ -260,10 +501,12 @@ const FlightBookingFlow: React.FC = () => {
           {currentStep === 'meals' && selectedFlight && (
             <MealSelection
               flight={selectedFlight}
+              returnFlight={selectedReturnFlight}
               passengers={passengerCount}
               onBack={() => setCurrentStep('seats')}
-              onContinue={(meals) => {
+              onContinue={(meals, returnMeals) => {
                 setSelectedMeals(meals);
+                // TODO: Store return meals when implemented
                 setCurrentStep('baggage');
               }}
             />
@@ -272,9 +515,11 @@ const FlightBookingFlow: React.FC = () => {
           {currentStep === 'baggage' && selectedFlight && (
             <BaggageSelection
               passengers={passengerCount}
+              hasReturnFlight={!!selectedReturnFlight}
               onBack={() => setCurrentStep('meals')}
-              onContinue={(baggage) => {
+              onContinue={(baggage, returnBaggage) => {
                 setSelectedBaggage(baggage);
+                // TODO: Store return baggage when implemented
                 setCurrentStep('passengers');
               }}
             />
