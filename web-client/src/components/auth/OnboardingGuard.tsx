@@ -22,22 +22,18 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
     isLoading
   } = useOnboardingStore();
 
-  // Check if auth is stable before proceeding
   useEffect(() => {
-    // Check auth state - ensure it's not null or undefined before proceeding
     if (isAuthenticated !== null && isAuthenticated !== undefined) {
       setAuthChecked(true);
     }
   }, [isAuthenticated]);
 
-  // Initialize onboarding data only after auth is confirmed and user is authenticated
   useEffect(() => {
     if (authChecked && isAuthenticated && user) {
       initializeOnboarding();
     }
   }, [authChecked, isAuthenticated, user, initializeOnboarding]);
 
-  // Don't block if we're already on exempt pages (onboarding, auth, settings)
   const isExemptPath = ONBOARDING_EXEMPT_ROUTES.some(path =>
     location.pathname === path || location.pathname.startsWith(path)
   );
@@ -59,7 +55,6 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
     );
   }
 
-  // If not authenticated, don't show anything (let auth system handle)
   if (!isAuthenticated) {
     return null;
   }
@@ -70,12 +65,10 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
 
   const onboardingStatus = getOnboardingStatus();
 
-  // Redirect to onboarding if not completed
   if (onboardingStatus === 'not_started' || onboardingStatus === 'in_progress') {
     return <Navigate to={ROUTES.ONBOARDING} replace state={{ from: location.pathname }} />;
   }
 
-  // Allow access if onboarding is completed or skipped
   return <>{children}</>;
 };
 
