@@ -1,0 +1,75 @@
+# Dockerfile production pour DreamScape Gateway
+# API Gateway with TypeScript + Express + http-proxy-middleware
+# Multi-stage build optimized for production
+
+# === Stage 1: Build Environment ===
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ && apk upgrade --no-cache
+
+# Copy package files
+COPY gateway/package*.json ./
+COPY gateway/tsconfig.json ./
+
+# Install all dependencies (including dev for build)
+RUN npm install && npm cache clean --force
+
+# Copy source code
+COPY gateway/src ./src
+
+# Build TypeScript application
+RUN npm run build
+
+# Remove dev dependencies
+RUN npm prune --production && rm -rf /tmp/* /root/.npm
+
+# === Stage 2: Production Runtime ===
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apk add --no-cache dumb-init curl && \
+    apk upgrade --no-cache && \
+    rm -rf /var/cache/apk/*
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S -D -H -u 1001 -h /app -s /sbin/nologin -G nodejs -g nodejs nodejs
+
+# Copy built application and production dependencies from builder
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/package.json ./
+
+# Copy nginx and supervisor configs if they exist
+COPY --chown=nodejs:nodejs gateway/nginx ./nginx 2>/dev/null || true
+COPY --chown=nodejs:nodejs gateway/supervisor ./supervisor 2>/dev/null || true
+COPY --chown=nodejs:nodejs gateway/scripts ./scripts 2>/dev/null || true
+
+# Create necessary directories
+RUN mkdir -p /app/logs && chown -R nodejs:nodejs /app
+
+# Switch to non-root user
+USER nodejs
+
+# Expose gateway port
+EXPOSE 4000
+
+# Environment variables
+ENV NODE_ENV=production \
+    PORT=4000 \
+    NODE_OPTIONS="--max-old-space-size=512"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:4000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Use dumb-init to handle signals
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the gateway
+CMD ["node", "dist/server.js"]

@@ -1,0 +1,93 @@
+# Dockerfile production pour web-client
+# Multi-stage build pour optimiser la taille de l'image
+# Stack: Vite + React 18 + TypeScript + Tailwind CSS
+
+# === Stage de build ===
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copier les fichiers de configuration
+COPY web-client/package*.json ./
+COPY web-client/tsconfig*.json ./
+COPY web-client/vite.config.ts ./
+COPY web-client/tailwind.config.js ./
+COPY web-client/postcss.config.js ./
+COPY web-client/index.html ./
+
+# Installer les dépendances
+RUN npm ci --legacy-peer-deps
+
+# Copier le code source
+COPY web-client/src ./src
+COPY web-client/public ./public 2>/dev/null || true
+
+# Build de production Vite
+ENV NODE_ENV=production
+RUN npm run build
+
+# === Stage de production avec nginx ===
+FROM nginx:alpine
+
+# Copier la configuration nginx personnalisée pour React SPA avec routing
+RUN echo 'server { \
+    listen 80; \
+    server_name _; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    \
+    # Compression gzip \
+    gzip on; \
+    gzip_vary on; \
+    gzip_min_length 1024; \
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/json application/javascript; \
+    \
+    # API proxy vers le gateway \
+    location /api/ { \
+        proxy_pass http://gateway:4000/; \
+        proxy_http_version 1.1; \
+        proxy_set_header Upgrade $http_upgrade; \
+        proxy_set_header Connection "upgrade"; \
+        proxy_set_header Host $host; \
+        proxy_set_header X-Real-IP $remote_addr; \
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+        proxy_set_header X-Forwarded-Proto $scheme; \
+        proxy_cache_bypass $http_upgrade; \
+    } \
+    \
+    # React Router - Toutes les routes SPA \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+        add_header Cache-Control "no-cache"; \
+    } \
+    \
+    # Optimisation pour les assets statiques \
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ { \
+        expires 1y; \
+        add_header Cache-Control "public, immutable"; \
+    } \
+    \
+    # Assets Vite avec hash \
+    location /assets/ { \
+        expires 1y; \
+        add_header Cache-Control "public, immutable"; \
+    } \
+    \
+    # Security headers \
+    add_header X-Frame-Options "SAMEORIGIN" always; \
+    add_header X-Content-Type-Options "nosniff" always; \
+    add_header X-XSS-Protection "1; mode=block" always; \
+}' > /etc/nginx/conf.d/default.conf
+
+# Copier les fichiers buildés depuis le stage builder
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Exposer le port 80
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
+  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+
+# Nginx démarre automatiquement en foreground
+CMD ["nginx", "-g", "daemon off;"]
