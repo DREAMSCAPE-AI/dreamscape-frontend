@@ -39,13 +39,6 @@ const useAuth = create<AuthState>()(
             const { tokens, user } = response.data;
             const token = tokens?.accessToken;
 
-            // Debug: Log what backend returned
-            console.log('[AuthService] Login - Backend user data:', {
-              onboardingCompleted: user.onboardingCompleted,
-              onboardingCompletedAt: user.onboardingCompletedAt
-            });
-
-            // Transform user data to match frontend interface
             const userData = {
               id: user.id,
               name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
@@ -56,11 +49,6 @@ const useAuth = create<AuthState>()(
               onboardingCompleted: user.onboardingCompleted,
               onboardingCompletedAt: user.onboardingCompletedAt
             };
-
-            console.log('[AuthService] Login - Transformed user:', {
-              onboardingCompleted: userData.onboardingCompleted,
-              onboardingCompletedAt: userData.onboardingCompletedAt
-            });
 
             set({
               user: userData,
@@ -93,7 +81,6 @@ const useAuth = create<AuthState>()(
             const { tokens, user } = response.data;
             const token = tokens?.accessToken;
             
-            // Transform user data to match frontend interface
             const transformedUser = {
               id: user.id,
               name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,

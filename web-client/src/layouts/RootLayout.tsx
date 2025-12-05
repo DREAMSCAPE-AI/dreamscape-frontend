@@ -11,10 +11,16 @@ export default function RootLayout() {
 
   const handleLogout = () => {
     logout();
+
+    try {
+      localStorage.removeItem('dreamscape-onboarding');
+    } catch (error) {
+      console.error('[RootLayout] Failed to clear onboarding store:', error);
+    }
+
     navigate('/');
   };
 
-  // Don't show header/footer on auth pages only
   const isAuthPage = location.pathname === '/auth';
   const hideHeaderFooter = isAuthPage;
 

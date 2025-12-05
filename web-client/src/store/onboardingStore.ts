@@ -9,7 +9,6 @@ import type {
 import { ONBOARDING_STEPS } from '@/types/onboarding';
 
 interface OnboardingState {
-  // State
   profile: TravelOnboardingProfile;
   progress: OnboardingProgressResponse | null;
   currentStepIndex: number;
@@ -19,14 +18,12 @@ interface OnboardingState {
   hasUnsavedChanges: boolean;
   isSkipped: boolean;
 
-  // Computed selectors
   getCurrentStep: () => OnboardingStep;
   getIsFirstStep: () => boolean;
   getIsLastStep: () => boolean;
   getCanProceed: () => boolean;
   getCompletionPercentage: () => number;
 
-  // Actions
   initializeOnboarding: () => Promise<void>;
   loadProfile: () => Promise<void>;
   updateProfile: (updates: Partial<TravelOnboardingProfile>) => void;
@@ -47,7 +44,6 @@ const useOnboardingStore = create<OnboardingState>()(
   devtools(
     persist(
       (set, get) => ({
-        // Initial state
         profile: {},
         progress: null,
         currentStepIndex: 0,
@@ -57,7 +53,6 @@ const useOnboardingStore = create<OnboardingState>()(
         hasUnsavedChanges: false,
         isSkipped: false,
 
-        // Computed selectors
         getCurrentStep: () => {
           const state = get();
           return ONBOARDING_STEPS[state.currentStepIndex] || ONBOARDING_STEPS[0];
@@ -78,10 +73,8 @@ const useOnboardingStore = create<OnboardingState>()(
           const currentStep = state.getCurrentStep();
           const { profile } = state;
 
-          // Allow proceeding if step is not required or has data
           if (!currentStep.required) return true;
 
-          // Check if current step has required data
           switch (currentStep.id) {
             case 'destinations':
               return !!profile.preferredDestinations;
@@ -96,9 +89,9 @@ const useOnboardingStore = create<OnboardingState>()(
             case 'transport':
               return profile.transportModes && profile.transportModes.length > 0 && !!profile.cabinClassPreference;
             case 'activities':
-              return !!profile.activityLevel; // Activity types are optional, level is required
+              return !!profile.activityLevel;
             case 'review':
-              return true; // Always allow on review step
+              return true;
             default:
               return true;
           }
@@ -109,15 +102,12 @@ const useOnboardingStore = create<OnboardingState>()(
           return state.progress?.progressPercentage || 0;
         },
 
-        // Actions
         async initializeOnboarding() {
           set({ isLoading: true, error: null });
 
           try {
-            // Try to load existing profile first
             await get().loadProfile();
 
-            // If no profile exists, create one
             const { progress } = get();
             if (!progress) {
               const response = await onboardingService.createProfile();
@@ -144,7 +134,6 @@ const useOnboardingStore = create<OnboardingState>()(
               onboardingService.getProgress()
             ]);
 
-            // Handle potential errors from the new service
             if (!profileResponse.success && !progressResponse.success) {
               throw new Error(profileResponse.error || progressResponse.error || 'Erreur de chargement');
             }
@@ -152,39 +141,26 @@ const useOnboardingStore = create<OnboardingState>()(
             const profile = profileResponse.data?.stepData || {};
             const progress = progressResponse.data;
 
-            console.log('[OnboardingStore] Loaded from backend:', {
-              profileComplete: profileResponse.data?.isCompleted,
-              progressPercentage: progress?.progressPercentage,
-              completedSteps: progress?.completedSteps
-            });
-
-            // CRITICAL: If backend says onboarding is complete, sync with auth store
             if (progress?.progressPercentage === 100 || profileResponse.data?.isCompleted) {
-              console.log('[OnboardingStore] Backend says onboarding is COMPLETE, syncing to auth store');
 
-              // Update the auth store to mark onboarding as completed
               try {
                 const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
                 if (authStorage.state?.user) {
                   authStorage.state.user.onboardingCompleted = true;
                   authStorage.state.user.onboardingCompletedAt = new Date().toISOString();
                   localStorage.setItem('auth-storage', JSON.stringify(authStorage));
-                  console.log('[OnboardingStore] ✓ Updated user.onboardingCompleted = true in localStorage');
                 }
               } catch (error) {
                 console.error('[OnboardingStore] Failed to update auth storage:', error);
               }
             }
 
-            // Determine current step based on progress
             let currentStepIndex = 0;
             if (progress?.completedSteps && progress.completedSteps.length > 0) {
-              // Find the first incomplete step
               currentStepIndex = ONBOARDING_STEPS.findIndex(
                 step => !progress.completedSteps.includes(step.id)
               );
 
-              // If all steps completed, go to review step
               if (currentStepIndex === -1) {
                 currentStepIndex = ONBOARDING_STEPS.length - 1;
               }
@@ -227,20 +203,18 @@ const useOnboardingStore = create<OnboardingState>()(
           set({ isSaving: true, error: null });
 
           try {
-            // Extract data relevant to current step
             const stepData = get().getStepData(currentStep.id);
 
             const response = await onboardingService.updateStep({
               step: currentStep.id,
               data: stepData,
-              markCompleted: true  // Always mark as completed when saving
+              markCompleted: true
             });
 
             if (!response.success) {
               throw new Error(response.error || 'Erreur de sauvegarde');
             }
 
-            // Reload progress to get updated state
             const progressResponse = await onboardingService.getProgress();
 
             set({
@@ -271,7 +245,6 @@ const useOnboardingStore = create<OnboardingState>()(
             return;
           }
 
-          // Save current step before proceeding
           await get().saveCurrentStep();
 
           if (!isLastStep) {
@@ -316,31 +289,25 @@ const useOnboardingStore = create<OnboardingState>()(
           set({ isSaving: true, error: null });
 
           try {
-            // Save current step first
             await get().saveCurrentStep();
 
-            // Add a small delay to avoid rate limiting (429)
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            // Complete the onboarding
             const response = await onboardingService.completeOnboarding();
 
             if (!response.success) {
               throw new Error(response.error || 'Erreur de finalisation');
             }
 
-            // Mark as completed locally
             set({
               profile: { ...get().profile, isComplete: true },
               progress: { ...get().progress, progressPercentage: 100 } as any
             });
 
-            // Navigation will be handled by the component
             return true;
           } catch (error: any) {
             console.error('Failed to complete onboarding:', error);
 
-            // Handle specific error cases
             let errorMessage = 'Erreur de finalisation';
             if (error?.response?.status === 429) {
               errorMessage = 'Trop de requêtes. Veuillez patienter quelques secondes avant de réessayer.';
@@ -367,7 +334,6 @@ const useOnboardingStore = create<OnboardingState>()(
               throw new Error(response.error || 'Erreur de réinitialisation');
             }
 
-            // Reset local state
             set({
               profile: {},
               progress: null,
@@ -375,7 +341,6 @@ const useOnboardingStore = create<OnboardingState>()(
               hasUnsavedChanges: false
             });
 
-            // Reinitialize
             await get().initializeOnboarding();
           } catch (error) {
             console.error('Failed to reset onboarding:', error);
@@ -401,38 +366,30 @@ const useOnboardingStore = create<OnboardingState>()(
 
           if (state.isSkipped) return 'skipped';
 
-          // Check localStorage first - if user completed onboarding, trust that
           try {
             const authStorage = JSON.parse(localStorage.getItem('auth-storage') || '{}');
             if (authStorage.state?.user?.onboardingCompleted === true) {
-              console.log('[OnboardingStatus] User has onboardingCompleted flag in localStorage');
               return 'completed';
             }
           } catch (error) {
-            console.error('Failed to check auth storage for onboarding status:', error);
+            console.error('[OnboardingStatus] Failed to check auth storage:', error);
           }
 
-          // Check both profile.isComplete and progressPercentage
           if (state.profile?.isComplete) {
-            console.log('[OnboardingStatus] Profile is marked as complete');
             return 'completed';
           }
 
           if (state.progress?.progressPercentage === 100) {
-            console.log('[OnboardingStatus] Progress is 100%');
             return 'completed';
           }
 
           if (state.progress?.completedSteps && state.progress.completedSteps.length > 0) {
-            console.log('[OnboardingStatus] In progress -', state.progress.completedSteps.length, 'steps completed');
             return 'in_progress';
           }
 
-          console.log('[OnboardingStatus] Not started');
           return 'not_started';
         },
 
-        // Helper method to extract step-specific data
         getStepData(stepId: string): Partial<TravelOnboardingProfile> {
           const { profile } = get();
 
