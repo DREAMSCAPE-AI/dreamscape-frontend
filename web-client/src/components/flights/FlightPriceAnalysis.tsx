@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TrendingUp, DollarSign, Calendar, Plane, AlertCircle, Sparkles, ArrowRight, ArrowDown, ArrowUp } from 'lucide-react';
 import DateRangePicker from '../shared/DateRangePicker';
 import Dropdown from '../shared/Dropdown';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface PriceAnalysis {
   currentPrice: number;
@@ -44,7 +44,7 @@ const FlightPriceAnalysis = () => {
       }
 
       // Use the dedicated flight price analysis API
-      const response = await ApiService.getFlightPriceAnalysis({
+      const response = await voyageService.getFlightPriceAnalysis({
         originIataCode: origin,
         destinationIataCode: destination,
         departureDate: departureDate.toISOString().split('T')[0],
@@ -83,7 +83,7 @@ const FlightPriceAnalysis = () => {
         setAnalysis(analysis);
       } else {
         // Fallback to destinations API if price analysis is not available
-        const fallbackResponse = await ApiService.searchFlightDestinations({
+        const fallbackResponse = await voyageService.searchFlightDestinations({
           origin: origin,
           maxPrice: 2000,
           departureDate: departureDate?.toISOString().split('T')[0]
@@ -150,7 +150,7 @@ const FlightPriceAnalysis = () => {
 
       const pricePromises = dates.map(async (date) => {
         try {
-          const response = await ApiService.searchFlightDestinations({
+          const response = await voyageService.searchFlightDestinations({
             origin: origin,
             maxPrice: 2000,
             departureDate: date.toISOString().split('T')[0]

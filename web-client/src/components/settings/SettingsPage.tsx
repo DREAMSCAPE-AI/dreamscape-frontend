@@ -20,7 +20,7 @@ import {
   X,
   Upload
 } from 'lucide-react';
-import profileService, { UserProfileData } from '@/services/profileService';
+import { profileService, UserProfileData } from '@/services/profile';
 import TravelPreferencesSection from './TravelPreferencesSection';
 
 const SettingsPage = () => {

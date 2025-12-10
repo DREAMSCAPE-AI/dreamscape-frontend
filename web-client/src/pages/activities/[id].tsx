@@ -14,7 +14,7 @@ import {
   Camera,
   Info
 } from 'lucide-react';
-import apiService from '@/services/api';
+import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
 
 interface ActivityDetail {
@@ -94,7 +94,7 @@ export default function ActivityDetailPage() {
       let activityData: ActivityDetail | null = null;
 
       try {
-        const response = await apiService.getActivityById(activityId);
+        const response = await voyageService.getActivityById(activityId);
         if (response && response.data) {
           activityData = response.data;
         }

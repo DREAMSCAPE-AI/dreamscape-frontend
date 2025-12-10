@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Car, MapPin, Clock, Users, Search, Loader2, CheckCircle, CreditCard } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface TransferOffer {
   type: string;
@@ -105,7 +105,7 @@ const TransferBookingSystem: React.FC = () => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const response = await ApiService.searchTransfers(searchParams);
+      const response = await voyageService.searchTransfers(searchParams);
       
       if (response.data && response.data.length > 0) {
         setTransfers(response.data);
@@ -222,7 +222,7 @@ const TransferBookingSystem: React.FC = () => {
         }
       };
 
-      const response = await ApiService.createTransferBooking(bookingData);
+      const response = await voyageService.createTransferBooking(bookingData);
       setBookingResult(response.data);
       setBookingStep('confirmed');
     } catch (error) {

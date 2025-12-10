@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Clock, Users } from 'lucide-react';
-import apiService from '@/services/api';
+import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
 
 interface Experience {
@@ -69,7 +69,7 @@ export default function ExperiencesPage() {
             await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 second delay
           }
 
-          const response = await apiService.searchActivities({
+          const response = await voyageService.searchActivities({
             latitude: getCoordinates(cityCode).lat,
             longitude: getCoordinates(cityCode).lng,
             radius: 50

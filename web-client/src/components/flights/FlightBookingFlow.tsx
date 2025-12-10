@@ -8,7 +8,7 @@ import SeatSelection, { SelectedSeat } from './SeatSelection';
 import MealSelection, { SelectedMeal } from './MealSelection';
 import BaggageSelection, { SelectedBaggage } from './BaggageSelection';
 import PassengerInfo from './PassengerInfo';
-import ApiService from '@/services/api/APIService';
+import voyageService from '@/services/api/VoyageService';
 import type { FlightOffer, UIFlightSearchParams } from '@/services/api/types';
 import type { SortOption, FilterState, PaginationState } from '@/types/flights';
 import {
@@ -214,7 +214,7 @@ const FlightBookingFlow: React.FC = () => {
     
     try {
       // Map UI params to API params
-      const result = await ApiService.searchFlights({
+      const result = await voyageService.searchFlights({
         originLocationCode: params.origin,
         destinationLocationCode: params.destination,
         departureDate: params.departureDate,
@@ -229,7 +229,7 @@ const FlightBookingFlow: React.FC = () => {
       });
 
       // Transform API response to our FlightOffer format
-      const flights: FlightOffer[] = result?.map((offer: any) => {
+      const flights: FlightOffer[] = result?.data.map((offer: any) => {
         // Check if this is the simplified format from our backend
         if (offer.departure && offer.arrival && offer.airline) {
           // Transform simplified format to FlightOffer format

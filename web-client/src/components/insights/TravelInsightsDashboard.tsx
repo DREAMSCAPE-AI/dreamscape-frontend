@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, TrendingUp, MapPin, Loader2, Lightbulb, Target } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface TripPurpose {
   subType: string;
@@ -62,7 +62,7 @@ const TravelInsightsDashboard: React.FC = () => {
     try {
       // Fetch trip purpose prediction
       try {
-        const purposeResponse = await ApiService.predictTripPurpose(predictionParams);
+        const purposeResponse = await voyageService.predictTripPurpose(predictionParams);
         if (purposeResponse.data) {
           setTripPurpose(purposeResponse.data);
         }
@@ -80,7 +80,7 @@ const TravelInsightsDashboard: React.FC = () => {
 
       // Fetch travel recommendations
       try {
-        const recommendationsResponse = await ApiService.getTravelRecommendations(recommendationParams);
+        const recommendationsResponse = await voyageService.getTravelRecommendations(recommendationParams);
         if (recommendationsResponse.data) {
           setRecommendations(recommendationsResponse.data);
         }

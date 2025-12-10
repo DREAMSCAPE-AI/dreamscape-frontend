@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 import imageService from '../../services/imageService';
 
 interface Destination {
@@ -48,7 +48,7 @@ export default function DestinationPage() {
         
         // First try to search by the ID as-is (could be an airport code)
         try {
-          locationResult = await ApiService.searchLocations({
+          locationResult = await voyageService.searchLocations({
             keyword: id,
             subType: 'CITY'
           });
@@ -60,7 +60,7 @@ export default function DestinationPage() {
         if (!locationResult?.data || locationResult.data.length === 0) {
           try {
             const formattedName = id.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
-            locationResult = await ApiService.searchLocations({
+            locationResult = await voyageService.searchLocations({
               keyword: formattedName,
               subType: 'CITY'
             });
@@ -87,7 +87,7 @@ export default function DestinationPage() {
           const cityName = airportCodeMappings[id.toUpperCase()];
           if (cityName) {
             try {
-              locationResult = await ApiService.searchLocations({
+              locationResult = await voyageService.searchLocations({
                 keyword: cityName,
                 subType: 'CITY'
               });
@@ -112,7 +112,7 @@ export default function DestinationPage() {
           let activities = [];
           if (location.geoCode) {
             try {
-              const activitiesResult = await ApiService.searchActivities({
+              const activitiesResult = await voyageService.searchActivities({
                 latitude: location.geoCode.latitude,
                 longitude: location.geoCode.longitude,
                 radius: 20

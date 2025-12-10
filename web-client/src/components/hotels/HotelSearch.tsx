@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, Users, Search, Minus, Plus, ChevronDown } from 'lucide-react';
 import DateRangePicker from '../shared/DateRangePicker';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 import type { HotelSearchParams } from '../../services/api/types';
 
 interface HotelSearchProps {
@@ -77,7 +77,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
       locationTimeoutRef.current = window.setTimeout(async () => {
         setLocationLoading(true);
         try {
-          const response = await ApiService.searchLocations({
+          const response = await voyageService.searchLocations({
             keyword: locationQuery,
             subType: 'CITY'
           });

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Clock, Users, Filter, Calendar, DollarSign } from 'lucide-react';
-import apiService from '@/services/api';
+import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
 
 interface Activity {
@@ -102,7 +102,7 @@ export default function ActivitiesPage() {
           ...(selectedCategory !== 'all' && { categories: [selectedCategory] })
         };
 
-        const response = await apiService.searchActivities(searchParams);
+        const response = await voyageService.searchActivities(searchParams);
         
         if (response && response.data && response.data.length > 0) {
           fetchedActivities = response.data.map((activity: any, index: number) => ({
