@@ -90,24 +90,44 @@ export default function ActivityDetailPage() {
       setLoading(true);
       setError(null);
 
-      // Try to fetch from API first
       let activityData: ActivityDetail | null = null;
 
       try {
         const response = await voyageService.getActivityById(activityId);
         if (response && response.data) {
-          activityData = response.data;
+          activityData = {
+            id: response.data.id,
+            name: response.data.name,
+            description: response.data.description,
+            location: response.data.location,
+            rating: response.data.rating,
+            reviewCount: response.data.reviewCount,
+            duration: response.data.duration,
+            groupSize: response.data.groupSize,
+            price: response.data.price,
+            images: response.data.images || [],
+            category: response.data.category,
+            tags: response.data.tags || [],
+            highlights: response.data.highlights || [],
+            includes: response.data.includes || [],
+            excludes: response.data.excludes || [],
+            meetingPoint: response.data.meetingPoint,
+            languages: response.data.languages || ['English'],
+            difficulty: response.data.difficulty,
+            ageRestriction: response.data.ageRestriction,
+            availability: response.data.availability,
+            bookingInfo: response.data.bookingInfo,
+            reviews: response.data.reviews || []
+          };
         }
       } catch (apiError) {
         console.warn('API failed, using fallback data:', apiError);
       }
 
-      // If no API data, create fallback activity
       if (!activityData) {
         activityData = await generateFallbackActivity(activityId);
       }
 
-      // Fetch images if not available
       if (activityData.images.length === 0) {
         try {
           const images = await Promise.all([

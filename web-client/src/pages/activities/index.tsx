@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Search, MapPin, Star, Clock, Users, Filter, Calendar, DollarSign } from 'lucide-react';
 import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
@@ -41,12 +41,13 @@ interface Activity {
 
 export default function ActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('Paris'); // Default to Paris
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All Activities' },
@@ -67,24 +68,35 @@ export default function ActivitiesPage() {
     'Rome', 'Barcelona', 'Amsterdam', 'Singapore'
   ];
 
-  useEffect(() => {
-    fetchActivities();
-  }, [selectedLocation, selectedCategory]);
+  // Remove automatic fetching on mount - only fetch when user searches
+  // useEffect(() => {
+  //   fetchActivities();
+  // }, [selectedLocation, selectedCategory]);
 
   const fetchActivities = async () => {
     try {
       setLoading(true);
       setError(null);
+      setHasSearched(true);
 
-      // Check cache first
+      // Debug mode - set to true to see detailed logs
+      const DEBUG_MODE = false;
+
+      if (DEBUG_MODE) {
+        console.log('🚀 fetchActivities called');
+        console.log('📍 selectedLocation:', selectedLocation);
+        console.log('🏷️ selectedCategory:', selectedCategory);
+      }
+
       const cacheKey = `activities_${selectedLocation}_${selectedCategory}`;
       const cachedData = localStorage.getItem(cacheKey);
       const cacheTimestamp = localStorage.getItem(`${cacheKey}_time`);
-      const cacheExpiry = 30 * 60 * 1000; // 30 minutes
+      const cacheExpiry = 30 * 60 * 1000;
 
       if (cachedData && cacheTimestamp) {
         const age = Date.now() - parseInt(cacheTimestamp);
         if (age < cacheExpiry) {
+          if (DEBUG_MODE) console.log('✨ Using cached data');
           setActivities(JSON.parse(cachedData));
           setLoading(false);
           return;
@@ -93,66 +105,109 @@ export default function ActivitiesPage() {
 
       let fetchedActivities: Activity[] = [];
 
-      // Try to fetch from Amadeus API
       try {
         const searchParams = {
           latitude: getLocationCoordinates(selectedLocation).latitude,
           longitude: getLocationCoordinates(selectedLocation).longitude,
-          radius: 20,
-          ...(selectedCategory !== 'all' && { categories: [selectedCategory] })
+          radius: 20
         };
 
+        if (DEBUG_MODE) {
+          console.log('🔍 Searching activities with params:', searchParams);
+          console.log('🌍 Selected location:', selectedLocation);
+        }
+
         const response = await voyageService.searchActivities(searchParams);
-        
+
+        if (DEBUG_MODE) {
+          console.log('📡 API Response:', response);
+          console.log('📊 Response data length:', response?.data?.length);
+        }
+
+        // Debug log to see the API response structure
         if (response && response.data && response.data.length > 0) {
-          fetchedActivities = response.data.map((activity: any, index: number) => ({
-            id: activity.id || `activity-${index}`,
-            name: activity.name || 'Unnamed Activity',
-            description: activity.description || activity.shortDescription || 'Experience this amazing activity',
-            shortDescription: activity.shortDescription || activity.description?.substring(0, 150) + '...' || 'Discover something new',
-            location: {
-              name: activity.geoCode?.address?.cityName || selectedLocation || 'Unknown Location',
-              address: activity.geoCode?.address?.lines?.join(', ') || 'Address not available',
-              coordinates: activity.geoCode ? {
-                latitude: activity.geoCode.latitude,
-                longitude: activity.geoCode.longitude
-              } : undefined
-            },
-            rating: typeof activity.rating === 'number' ? activity.rating : 
-                    typeof activity.rating === 'string' ? parseFloat(activity.rating) || (4.0 + Math.random() * 1.0) :
-                    (4.0 + Math.random() * 1.0),
-            reviewCount: activity.reviewCount || Math.floor(Math.random() * 500) + 50,
-            duration: activity.duration || getDurationByCategory(selectedCategory),
-            groupSize: activity.groupSize || 'Up to 20 people',
-            price: {
-              amount: activity.price?.amount || (Math.floor(Math.random() * 200) + 30),
-              currency: activity.price?.currency || 'USD',
-              formatted: activity.price?.formatted || `$${Math.floor(Math.random() * 200) + 30}`
-            },
-            images: activity.pictures ? activity.pictures.map((pic: any) => pic.url) : [],
-            category: activity.category || selectedCategory,
-            tags: activity.tags || getTagsByCategory(selectedCategory),
-            availability: {
-              available: activity.available !== false,
-              nextAvailable: activity.nextAvailable
-            },
-            bookingInfo: {
-              instantConfirmation: activity.bookingInfo?.instantConfirmation !== false,
-              freeCancellation: activity.bookingInfo?.freeCancellation !== false,
-              cancellationPolicy: activity.bookingInfo?.cancellationPolicy || 'Free cancellation up to 24 hours before'
+          if (DEBUG_MODE) {
+            console.log('✅ First activity from API:', JSON.stringify(response.data[0], null, 2));
+          }
+
+          fetchedActivities = response.data.map((activity: any) => {
+            // Clean description text - remove HTML tags
+            const cleanDescription = (text: string) => {
+              if (!text) return '';
+              return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            };
+
+            const description = cleanDescription(activity.description || '');
+            const shortDescription = description.length > 120 ? description.substring(0, 120) + '...' : description;
+
+            // Extract location name properly
+            // The API returns coordinates in location.name, so we need to use selectedLocation instead
+            let locationName = 'Unknown Location';
+
+            // Check if location.name contains coordinates (format: "48.8639, 2.3616")
+            const apiLocationName = activity.location?.name || '';
+            const isCoordinates = /^[\d\.\,\s\-]+$/.test(apiLocationName);
+
+            if (isCoordinates && selectedLocation) {
+              // Use the selected location from the dropdown
+              locationName = selectedLocation;
+            } else if (!isCoordinates && apiLocationName) {
+              // Use the API location name if it's not coordinates
+              locationName = apiLocationName;
+            } else if (selectedLocation) {
+              // Fallback to selected location
+              locationName = selectedLocation;
             }
-          }));
+
+            return {
+              id: activity.id,
+              name: activity.name || 'Untitled Activity',
+              description,
+              shortDescription,
+              location: {
+                name: locationName,
+                address: activity.location?.address || activity.meetingPoint || '',
+                coordinates: activity.location?.coordinates || {
+                  latitude: activity.location?.coordinates?.latitude || 0,
+                  longitude: activity.location?.coordinates?.longitude || 0
+                }
+              },
+              rating: activity.rating || 4.0 + Math.random() * 1.0,
+              reviewCount: activity.reviewCount || Math.floor(Math.random() * 300) + 50,
+              duration: activity.duration || '2-3 hours',
+              groupSize: activity.groupSize || 'Up to 20 people',
+              price: {
+                amount: activity.price?.amount || 0,
+                currency: activity.price?.currencyCode || 'USD',
+                formatted: activity.price?.amount ? `$${activity.price.amount}` : 'Price on request'
+              },
+              images: activity.pictures || activity.images || [],
+              category: activity.category || 'SIGHTSEEING',
+              tags: activity.tags || ['Experience', 'Popular'],
+              availability: {
+                available: true,
+                nextAvailable: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+              },
+              bookingInfo: {
+                instantConfirmation: true,
+                freeCancellation: true,
+                cancellationPolicy: 'Free cancellation up to 24 hours before the activity'
+              }
+            };
+          });
+        } else {
+          if (DEBUG_MODE) console.log('⚠️ No data in response or empty array');
         }
       } catch (apiError) {
-        console.warn('Amadeus API failed, using fallback data:', apiError);
+        console.error('❌ Amadeus API failed:', apiError);
+        if (DEBUG_MODE) console.error('Error details:', JSON.stringify(apiError, null, 2));
       }
 
-      // If no API data, use enhanced fallback data
       if (fetchedActivities.length === 0) {
+        if (DEBUG_MODE) console.log('🔄 Using fallback activities');
         fetchedActivities = await generateFallbackActivities(selectedLocation, selectedCategory);
       }
 
-      // Add images to activities
       for (const activity of fetchedActivities) {
         if (activity.images.length === 0) {
           try {
@@ -170,16 +225,13 @@ export default function ActivitiesPage() {
       }
 
       setActivities(fetchedActivities);
-
-      // Cache the results
       localStorage.setItem(cacheKey, JSON.stringify(fetchedActivities));
       localStorage.setItem(`${cacheKey}_time`, Date.now().toString());
 
     } catch (error) {
       console.error('Error fetching activities:', error);
       setError('Failed to load activities. Please try again later.');
-      
-      // Use fallback data on error
+
       const fallbackActivities = await generateFallbackActivities(selectedLocation, selectedCategory);
       setActivities(fallbackActivities);
     } finally {
@@ -332,7 +384,7 @@ export default function ActivitiesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white py-16">
+      <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white py-16 mt-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -352,6 +404,11 @@ export default function ActivitiesPage() {
                     placeholder="Search activities..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        fetchActivities();
+                      }
+                    }}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
                   />
                 </div>
@@ -368,53 +425,61 @@ export default function ActivitiesPage() {
                     ))}
                   </select>
                 </div>
+                <button
+                  onClick={fetchActivities}
+                  disabled={loading}
+                  className="px-8 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Searching...' : 'Search'}
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters Section */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-600" />
-              <span className="font-medium text-gray-700">Filters:</span>
-            </div>
-            
-            {/* Category Filter */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            >
-              {categories.map(category => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+      {/* Filters and Results Section */}
+      {hasSearched && (
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex items-center gap-2">
+                <Filter className="w-5 h-5 text-gray-600" />
+                <span className="font-medium text-gray-700">Filters:</span>
+              </div>
 
-            {/* Price Range */}
-            <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-gray-600" />
-              <span className="text-sm text-gray-600">Price:</span>
-              <input
-                type="range"
-                min="0"
-                max="1000"
-                value={priceRange.max}
-                onChange={(e) => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}
-                className="w-24"
-              />
-              <span className="text-sm text-gray-600">Up to ${priceRange.max}</span>
+              {/* Category Filter */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              >
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Price Range */}
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-gray-600" />
+                <span className="text-sm text-gray-600">Price:</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1000"
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}
+                  className="w-24"
+                />
+                <span className="text-sm text-gray-600">Up to ${priceRange.max}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Results */}
-        {loading ? (
+          {/* Results */}
+          {loading ? (
           <div className="flex justify-center items-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
           </div>
@@ -581,7 +646,8 @@ export default function ActivitiesPage() {
             )}
           </>
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
