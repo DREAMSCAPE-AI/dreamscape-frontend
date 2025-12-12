@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import healthRoutes from './routes/health';
+import metricsRoutes from './routes/metrics'; // INFRA-013.2
+import { metricsMiddleware } from './middleware/metricsMiddleware'; // INFRA-013.2
 
 const app = express();
 const PORT = process.env.GATEWAY_PORT || 3000;
@@ -22,9 +24,17 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Metrics collection middleware - INFRA-013.2
+// Must be before routes to capture all requests
+app.use(metricsMiddleware);
+
 // Health check routes - INFRA-013.1
 app.use('/health', healthRoutes);
 app.use('/api/health', healthRoutes); // Alternative path for consistency
+
+// Metrics endpoint - INFRA-013.2
+// This should be accessible to Prometheus but ideally not publicly
+app.use('/metrics', metricsRoutes);
 
 // API Documentation endpoint
 app.get('/docs', (req, res) => {

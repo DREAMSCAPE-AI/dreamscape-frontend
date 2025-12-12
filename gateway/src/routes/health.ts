@@ -3,7 +3,6 @@ import {
   HealthChecker,
   ComponentType,
   HealthStatus,
-  createExternalAPICheck,
 } from '../../../../dreamscape-services/shared/health';
 
 const router = Router();
@@ -13,55 +12,212 @@ const router = Router();
  * Gateway Service health checks
  */
 const createHealthChecker = () => {
-  const checks = [];
-
-  // Check Auth Service
   const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:3001';
-  checks.push({
-    name: 'Auth Service',
-    type: ComponentType.INTERNAL_SERVICE,
-    critical: true,
-    timeout: 3000,
-    check: createExternalAPICheck(`${authServiceUrl}/health/live`, 'Auth Service', {
-      timeout: 3000,
-    }),
-  });
-
-  // Check User Service
   const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:3002';
-  checks.push({
-    name: 'User Service',
-    type: ComponentType.INTERNAL_SERVICE,
-    critical: true,
-    timeout: 3000,
-    check: createExternalAPICheck(`${userServiceUrl}/health/live`, 'User Service', {
-      timeout: 3000,
-    }),
-  });
-
-  // Check Voyage Service
   const voyageServiceUrl = process.env.VOYAGE_SERVICE_URL || 'http://localhost:3003';
-  checks.push({
-    name: 'Voyage Service',
-    type: ComponentType.INTERNAL_SERVICE,
-    critical: false, // Non-critical, can be degraded
-    timeout: 3000,
-    check: createExternalAPICheck(`${voyageServiceUrl}/health/live`, 'Voyage Service', {
-      timeout: 3000,
-    }),
-  });
-
-  // Check AI Service if configured
   const aiServiceUrl = process.env.AI_SERVICE_URL;
+
+  const checks = [
+    // Check Auth Service - CRITICAL
+    {
+      name: 'Auth Service',
+      type: ComponentType.INTERNAL_SERVICE,
+      critical: true,
+      timeout: 3000,
+      check: async () => {
+        try {
+          const startTime = Date.now();
+          const response = await fetch(`${authServiceUrl}/health/live`, {
+            method: 'GET',
+            signal: AbortSignal.timeout(3000),
+          });
+          const responseTime = Date.now() - startTime;
+
+          if (response.ok) {
+            return {
+              status: HealthStatus.HEALTHY,
+              message: 'Auth Service is accessible',
+              details: {
+                url: `${authServiceUrl}/health/live`,
+                statusCode: response.status,
+                responseTime,
+              },
+            };
+          }
+
+          return {
+            status: HealthStatus.DEGRADED,
+            message: 'Auth Service returned non-OK status',
+            details: {
+              url: `${authServiceUrl}/health/live`,
+              statusCode: response.status,
+              responseTime,
+            },
+          };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          return {
+            status: HealthStatus.UNHEALTHY,
+            message: `Auth Service check failed: ${errorMessage}`,
+            details: {
+              url: `${authServiceUrl}/health/live`,
+              error: errorMessage,
+            },
+          };
+        }
+      },
+    },
+
+    // Check User Service - CRITICAL
+    {
+      name: 'User Service',
+      type: ComponentType.INTERNAL_SERVICE,
+      critical: true,
+      timeout: 3000,
+      check: async () => {
+        try {
+          const startTime = Date.now();
+          const response = await fetch(`${userServiceUrl}/health/live`, {
+            method: 'GET',
+            signal: AbortSignal.timeout(3000),
+          });
+          const responseTime = Date.now() - startTime;
+
+          if (response.ok) {
+            return {
+              status: HealthStatus.HEALTHY,
+              message: 'User Service is accessible',
+              details: {
+                url: `${userServiceUrl}/health/live`,
+                statusCode: response.status,
+                responseTime,
+              },
+            };
+          }
+
+          return {
+            status: HealthStatus.DEGRADED,
+            message: 'User Service returned non-OK status',
+            details: {
+              url: `${userServiceUrl}/health/live`,
+              statusCode: response.status,
+              responseTime,
+            },
+          };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          return {
+            status: HealthStatus.UNHEALTHY,
+            message: `User Service check failed: ${errorMessage}`,
+            details: {
+              url: `${userServiceUrl}/health/live`,
+              error: errorMessage,
+            },
+          };
+        }
+      },
+    },
+
+    // Check Voyage Service - NON-CRITICAL
+    {
+      name: 'Voyage Service',
+      type: ComponentType.INTERNAL_SERVICE,
+      critical: false,
+      timeout: 3000,
+      check: async () => {
+        try {
+          const startTime = Date.now();
+          const response = await fetch(`${voyageServiceUrl}/health/live`, {
+            method: 'GET',
+            signal: AbortSignal.timeout(3000),
+          });
+          const responseTime = Date.now() - startTime;
+
+          if (response.ok) {
+            return {
+              status: HealthStatus.HEALTHY,
+              message: 'Voyage Service is accessible',
+              details: {
+                url: `${voyageServiceUrl}/health/live`,
+                statusCode: response.status,
+                responseTime,
+              },
+            };
+          }
+
+          return {
+            status: HealthStatus.DEGRADED,
+            message: 'Voyage Service returned non-OK status',
+            details: {
+              url: `${voyageServiceUrl}/health/live`,
+              statusCode: response.status,
+              responseTime,
+            },
+          };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          return {
+            status: HealthStatus.DEGRADED,
+            message: `Voyage Service check failed: ${errorMessage}`,
+            details: {
+              url: `${voyageServiceUrl}/health/live`,
+              error: errorMessage,
+            },
+          };
+        }
+      },
+    },
+  ];
+
+  // Add AI Service check if configured
   if (aiServiceUrl) {
     checks.push({
       name: 'AI Service',
       type: ComponentType.INTERNAL_SERVICE,
-      critical: false, // Non-critical, can be degraded
+      critical: false,
       timeout: 3000,
-      check: createExternalAPICheck(`${aiServiceUrl}/health/live`, 'AI Service', {
-        timeout: 3000,
-      }),
+      check: async () => {
+        try {
+          const startTime = Date.now();
+          const response = await fetch(`${aiServiceUrl}/health/live`, {
+            method: 'GET',
+            signal: AbortSignal.timeout(3000),
+          });
+          const responseTime = Date.now() - startTime;
+
+          if (response.ok) {
+            return {
+              status: HealthStatus.HEALTHY,
+              message: 'AI Service is accessible',
+              details: {
+                url: `${aiServiceUrl}/health/live`,
+                statusCode: response.status,
+                responseTime,
+              },
+            };
+          }
+
+          return {
+            status: HealthStatus.DEGRADED,
+            message: 'AI Service returned non-OK status',
+            details: {
+              url: `${aiServiceUrl}/health/live`,
+              statusCode: response.status,
+              responseTime,
+            },
+          };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          return {
+            status: HealthStatus.DEGRADED,
+            message: `AI Service check failed: ${errorMessage}`,
+            details: {
+              url: `${aiServiceUrl}/health/live`,
+              error: errorMessage,
+            },
+          };
+        }
+      },
     });
   }
 
