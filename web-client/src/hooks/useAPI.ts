@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import apiService from '../services/api/APIService';
+import voyageService from '../services/api/VoyageService';
 import type { APIError } from '../services/api/types';
 
 interface APIState<T> {
@@ -39,7 +39,7 @@ export function useFlightSearch() {
   const { execute, ...state } = useAPI();
   
   const searchFlights = useCallback((params) => {
-    return execute(() => apiService.searchFlights(params));
+    return execute(() => voyageService.searchFlights(params));
   }, [execute]);
 
   return {
@@ -52,7 +52,7 @@ export function useHotelSearch() {
   const { execute, ...state } = useAPI();
   
   const searchHotels = useCallback((params) => {
-    return execute(() => apiService.searchHotels(params));
+    return execute(() => voyageService.searchHotels(params));
   }, [execute]);
 
   return {
@@ -65,7 +65,7 @@ export function useExperienceSearch() {
   const { execute, ...state } = useAPI();
   
   const searchExperiences = useCallback((params) => {
-    return execute(() => apiService.searchExperiences(params));
+    return execute(() => voyageService.searchActivities(params));
   }, [execute]);
 
   return {
@@ -78,7 +78,7 @@ export function useTransferSearch() {
   const { execute, ...state } = useAPI();
   
   const searchTransfers = useCallback((params) => {
-    return execute(() => apiService.searchTransfers(params));
+    return execute(() => voyageService.searchTransfers(params));
   }, [execute]);
 
   return {
@@ -91,11 +91,11 @@ export function useMarketInsights() {
   const { execute, ...state } = useAPI();
   
   const getMostTraveled = useCallback(() => {
-    return execute(() => apiService.getMostTraveledDestinations());
+    return execute(() => voyageService.getMostTraveledDestinations());
   }, [execute]);
 
   const getMostBooked = useCallback(() => {
-    return execute(() => apiService.getMostBookedDestinations());
+    return execute(() => voyageService.getMostBookedDestinations());
   }, [execute]);
 
   return {

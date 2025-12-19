@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import type { FlightOffer } from '../../services/api/types';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface SeatSelectionProps {
   flight: FlightOffer;
@@ -90,7 +90,7 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
         setError(null);
 
         // Fetch outbound flight seat map
-        const response = await ApiService.getSeatMap({
+        const response = await voyageService.getSeatMap({
           flightOfferId: flight.id
         });
 
@@ -102,7 +102,7 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
 
         // Fetch return flight seat map if exists
         if (returnFlight) {
-          const returnResponse = await ApiService.getSeatMap({
+          const returnResponse = await voyageService.getSeatMap({
             flightOfferId: returnFlight.id
           });
 

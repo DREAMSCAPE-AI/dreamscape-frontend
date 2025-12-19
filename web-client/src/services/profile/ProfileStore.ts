@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ProfileState, UserProfile } from './types';
 
-export const useProfileStore = create<ProfileState>()(
+const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
       profile: null,
@@ -26,3 +26,5 @@ export const useProfileStore = create<ProfileState>()(
     }
   )
 );
+
+export default useProfileStore;

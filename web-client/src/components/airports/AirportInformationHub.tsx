@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, Plane, TrendingUp, Search, Loader2, Navigation } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface AirportPerformance {
   onTime: number;
@@ -59,7 +59,7 @@ const AirportInformationHub: React.FC = () => {
       
       // Fetch airport performance
       try {
-        const performanceResponse = await ApiService.getAirportOnTimePerformance({
+        const performanceResponse = await voyageService.getAirportOnTimePerformance({
           airportCode: selectedAirport,
           date: today
         });
@@ -80,7 +80,7 @@ const AirportInformationHub: React.FC = () => {
 
       // Fetch airport routes
       try {
-        const routesResponse = await ApiService.getAirportRoutes({
+        const routesResponse = await voyageService.getAirportRoutes({
           departureAirportCode: selectedAirport,
           max: 20
         });
@@ -103,7 +103,7 @@ const AirportInformationHub: React.FC = () => {
 
       // Fetch nearest airports
       try {
-        const nearestResponse = await ApiService.getNearestRelevantAirports({
+        const nearestResponse = await voyageService.getNearestRelevantAirports({
           latitude: userLocation.lat,
           longitude: userLocation.lng,
           radius: 500,

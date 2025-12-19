@@ -245,6 +245,33 @@ export interface ExperienceSearchParams {
   };
 }
 
+export interface FlightDestinationParams {
+  origin: string;
+  maxPrice?: number;
+  departureDate?: string;
+}
+
+export interface ActivitySearchParams {
+  latitude: number;
+  longitude: number;
+  radius?: number;
+  north?: number;
+  west?: number;
+  south?: number;
+  east?: number;
+  locationName?: string; // City/location name for better location display
+}
+
+export interface LocationSearchParams {
+  keyword: string;
+  subType?: string;
+  countryCode?: string;
+}
+
+export interface AirportSearchParams {
+  keyword: string;
+}
+
 // UI Component Types (for frontend forms)
 export interface UIFlightSearchParams {
   origin: string;
