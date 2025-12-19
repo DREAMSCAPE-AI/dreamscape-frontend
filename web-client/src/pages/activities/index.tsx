@@ -43,7 +43,7 @@ export default function ActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('Paris'); // Default to Paris
+  const [selectedLocation, setSelectedLocation] = useState(''); // Empty by default - user must select
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [error, setError] = useState<string | null>(null);
@@ -63,9 +63,15 @@ export default function ActivitiesPage() {
     { id: 'WELLNESS', name: 'Wellness' }
   ];
 
-  const popularLocations = [
-    'Paris', 'London', 'New York', 'Tokyo', 'Dubai', 'Bangkok',
-    'Rome', 'Barcelona', 'Amsterdam', 'Singapore'
+  // Amadeus Test API supported cities (these will return real test data)
+  const testApiSupportedCities = [
+    'Paris', 'London', 'Barcelona', 'Berlin',
+    'New York', 'San Francisco', 'Dallas', 'Bangalore'
+  ];
+
+  // Additional cities (NOT supported in test, may return Paris data or empty results)
+  const otherCities = [
+    'Tokyo', 'Dubai', 'Bangkok', 'Rome', 'Amsterdam', 'Singapore'
   ];
 
   // Remove automatic fetching on mount - only fetch when user searches
@@ -88,126 +94,185 @@ export default function ActivitiesPage() {
         console.log('🏷️ selectedCategory:', selectedCategory);
       }
 
-      const cacheKey = `activities_${selectedLocation}_${selectedCategory}`;
-      const cachedData = localStorage.getItem(cacheKey);
-      const cacheTimestamp = localStorage.getItem(`${cacheKey}_time`);
-      const cacheExpiry = 30 * 60 * 1000;
-
-      if (cachedData && cacheTimestamp) {
-        const age = Date.now() - parseInt(cacheTimestamp);
-        if (age < cacheExpiry) {
-          if (DEBUG_MODE) console.log('✨ Using cached data');
-          setActivities(JSON.parse(cachedData));
-          setLoading(false);
-          return;
-        }
-      }
-
       let fetchedActivities: Activity[] = [];
 
-      try {
-        const searchParams = {
-          latitude: getLocationCoordinates(selectedLocation).latitude,
-          longitude: getLocationCoordinates(selectedLocation).longitude,
-          radius: 20
-        };
+      // If "All Locations" is selected, fetch from all 8 supported test cities
+      if (!selectedLocation || selectedLocation === '') {
+        console.log('🌍 Searching in ALL supported test cities');
 
-        if (DEBUG_MODE) {
-          console.log('🔍 Searching activities with params:', searchParams);
-          console.log('🌍 Selected location:', selectedLocation);
+        // Fetch activities from all 8 supported cities in parallel
+        const citySearchPromises = testApiSupportedCities.map(async (city) => {
+          try {
+            const searchParams = {
+              latitude: getLocationCoordinates(city).latitude,
+              longitude: getLocationCoordinates(city).longitude,
+              radius: 20,
+              locationName: city
+            };
+
+            const response = await voyageService.searchActivities(searchParams);
+            return response.data || [];
+          } catch (error) {
+            console.error(`Failed to fetch activities for ${city}:`, error);
+            return [];
+          }
+        });
+
+        // Wait for all city searches to complete
+        const allCityResults = await Promise.all(citySearchPromises);
+
+        // Flatten all results into one array
+        fetchedActivities = allCityResults.flat();
+
+        console.log(`✅ Found ${fetchedActivities.length} total activities across all cities`);
+      } else {
+        // Single city search
+        const cacheKey = `activities_${selectedLocation}_${selectedCategory}`;
+
+        // Check cache but don't store large amounts of data
+        const cachedData = sessionStorage.getItem(cacheKey);
+        const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_time`);
+        const cacheExpiry = 10 * 60 * 1000;
+
+        if (cachedData && cacheTimestamp) {
+          const age = Date.now() - parseInt(cacheTimestamp);
+          if (age < cacheExpiry) {
+            if (DEBUG_MODE) console.log('✨ Using cached data');
+            try {
+              setActivities(JSON.parse(cachedData));
+              setLoading(false);
+              return;
+            } catch (parseError) {
+              console.warn('Failed to parse cached data, fetching fresh data');
+              sessionStorage.removeItem(cacheKey);
+              sessionStorage.removeItem(`${cacheKey}_time`);
+            }
+          }
         }
 
-        const response = await voyageService.searchActivities(searchParams);
+        try {
+          const searchParams = {
+            latitude: getLocationCoordinates(selectedLocation).latitude,
+            longitude: getLocationCoordinates(selectedLocation).longitude,
+            radius: 20,
+            locationName: selectedLocation
+          };
 
-        if (DEBUG_MODE) {
-          console.log('📡 API Response:', response);
-          console.log('📊 Response data length:', response?.data?.length);
-        }
-
-        // Debug log to see the API response structure
-        if (response && response.data && response.data.length > 0) {
           if (DEBUG_MODE) {
-            console.log('✅ First activity from API:', JSON.stringify(response.data[0], null, 2));
+            console.log('🔍 Searching activities with params:', searchParams);
+            console.log('🌍 Search location:', selectedLocation);
           }
 
-          fetchedActivities = response.data.map((activity: any) => {
-            // Clean description text - remove HTML tags
-            const cleanDescription = (text: string) => {
-              if (!text) return '';
-              return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-            };
+          const response = await voyageService.searchActivities(searchParams);
 
-            const description = cleanDescription(activity.description || '');
-            const shortDescription = description.length > 120 ? description.substring(0, 120) + '...' : description;
+          if (DEBUG_MODE) {
+            console.log('📡 API Response:', response);
+            console.log('📊 Response data length:', response?.data?.length);
+          }
 
-            // Extract location name properly
-            // The API returns coordinates in location.name, so we need to use selectedLocation instead
-            let locationName = 'Unknown Location';
-
-            // Check if location.name contains coordinates (format: "48.8639, 2.3616")
-            const apiLocationName = activity.location?.name || '';
-            const isCoordinates = /^[\d\.\,\s\-]+$/.test(apiLocationName);
-
-            if (isCoordinates && selectedLocation) {
-              // Use the selected location from the dropdown
-              locationName = selectedLocation;
-            } else if (!isCoordinates && apiLocationName) {
-              // Use the API location name if it's not coordinates
-              locationName = apiLocationName;
-            } else if (selectedLocation) {
-              // Fallback to selected location
-              locationName = selectedLocation;
+          // Debug log to see the API response structure
+          if (response && response.data && response.data.length > 0) {
+            if (DEBUG_MODE) {
+              console.log('✅ First activity from API:', JSON.stringify(response.data[0], null, 2));
             }
 
-            return {
-              id: activity.id,
-              name: activity.name || 'Untitled Activity',
-              description,
-              shortDescription,
-              location: {
-                name: locationName,
-                address: activity.location?.address || activity.meetingPoint || '',
-                coordinates: activity.location?.coordinates || {
-                  latitude: activity.location?.coordinates?.latitude || 0,
-                  longitude: activity.location?.coordinates?.longitude || 0
-                }
-              },
-              rating: activity.rating || 4.0 + Math.random() * 1.0,
-              reviewCount: activity.reviewCount || Math.floor(Math.random() * 300) + 50,
-              duration: activity.duration || '2-3 hours',
-              groupSize: activity.groupSize || 'Up to 20 people',
-              price: {
-                amount: activity.price?.amount || 0,
-                currency: activity.price?.currencyCode || 'USD',
-                formatted: activity.price?.amount ? `$${activity.price.amount}` : 'Price on request'
-              },
-              images: activity.pictures || activity.images || [],
-              category: activity.category || 'SIGHTSEEING',
-              tags: activity.tags || ['Experience', 'Popular'],
-              availability: {
-                available: true,
-                nextAvailable: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-              },
-              bookingInfo: {
-                instantConfirmation: true,
-                freeCancellation: true,
-                cancellationPolicy: 'Free cancellation up to 24 hours before the activity'
+            fetchedActivities = response.data.map((activity: any) => {
+              // Clean description text - remove HTML tags
+              const cleanDescription = (text: string) => {
+                if (!text) return '';
+                return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+              };
+
+              const description = cleanDescription(activity.description || '');
+              const shortDescription = description.length > 120 ? description.substring(0, 120) + '...' : description;
+
+              // Extract location name properly
+              // The API returns coordinates in location.name, so we need to use selectedLocation instead
+              let locationName = 'Unknown Location';
+
+              // Check if location.name contains coordinates (format: "48.8639, 2.3616")
+              const apiLocationName = activity.location?.name || '';
+              const isCoordinates = /^[\d\.\,\s\-]+$/.test(apiLocationName);
+
+              if (isCoordinates && selectedLocation) {
+                // Use the selected location from the dropdown
+                locationName = selectedLocation;
+              } else if (!isCoordinates && apiLocationName) {
+                // Use the API location name if it's not coordinates
+                locationName = apiLocationName;
+              } else if (selectedLocation) {
+                // Fallback to selected location
+                locationName = selectedLocation;
               }
-            };
-          });
-        } else {
-          if (DEBUG_MODE) console.log('⚠️ No data in response or empty array');
+
+              return {
+                id: activity.id,
+                name: activity.name || 'Untitled Activity',
+                description,
+                shortDescription,
+                location: {
+                  name: locationName,
+                  address: activity.location?.address || activity.meetingPoint || '',
+                  coordinates: activity.location?.coordinates || {
+                    latitude: activity.location?.coordinates?.latitude || 0,
+                    longitude: activity.location?.coordinates?.longitude || 0
+                  }
+                },
+                rating: activity.rating || 4.0 + Math.random() * 1.0,
+                reviewCount: activity.reviewCount || Math.floor(Math.random() * 300) + 50,
+                duration: activity.duration || '2-3 hours',
+                groupSize: activity.groupSize || 'Up to 20 people',
+                price: {
+                  amount: activity.price?.amount || 0,
+                  currency: activity.price?.currencyCode || 'USD',
+                  formatted: activity.price?.amount ? `$${activity.price.amount}` : 'Price on request'
+                },
+                images: activity.pictures || activity.images || [],
+                category: activity.category || 'SIGHTSEEING',
+                tags: activity.tags || ['Experience', 'Popular'],
+                availability: {
+                  available: true,
+                  nextAvailable: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                },
+                bookingInfo: {
+                  instantConfirmation: true,
+                  freeCancellation: true,
+                  cancellationPolicy: 'Free cancellation up to 24 hours before the activity'
+                }
+              };
+            });
+          } else {
+            if (DEBUG_MODE) console.log('⚠️ No data in response or empty array');
+          }
+        } catch (apiError) {
+          console.error('❌ Amadeus API failed for single city:', apiError);
+          if (DEBUG_MODE) console.error('Error details:', JSON.stringify(apiError, null, 2));
         }
-      } catch (apiError) {
-        console.error('❌ Amadeus API failed:', apiError);
-        if (DEBUG_MODE) console.error('Error details:', JSON.stringify(apiError, null, 2));
+
+        // Only cache if data is reasonable size (< 100 activities to avoid quota issues)
+        if (fetchedActivities.length > 0 && fetchedActivities.length <= 100) {
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(fetchedActivities));
+            sessionStorage.setItem(`${cacheKey}_time`, Date.now().toString());
+          } catch (storageError) {
+            console.warn('Failed to cache activities (quota exceeded), continuing without cache');
+            // Clear old cache to free up space
+            try {
+              sessionStorage.clear();
+            } catch (e) {
+              // Ignore if clear fails
+            }
+          }
+        }
       }
 
+      // If no activities found, use fallback
       if (fetchedActivities.length === 0) {
         if (DEBUG_MODE) console.log('🔄 Using fallback activities');
-        fetchedActivities = await generateFallbackActivities(selectedLocation, selectedCategory);
+        fetchedActivities = await generateFallbackActivities(selectedLocation || 'Paris', selectedCategory);
       }
 
+      // Fetch images for activities without images
       for (const activity of fetchedActivities) {
         if (activity.images.length === 0) {
           try {
@@ -225,14 +290,12 @@ export default function ActivitiesPage() {
       }
 
       setActivities(fetchedActivities);
-      localStorage.setItem(cacheKey, JSON.stringify(fetchedActivities));
-      localStorage.setItem(`${cacheKey}_time`, Date.now().toString());
 
     } catch (error) {
       console.error('Error fetching activities:', error);
       setError('Failed to load activities. Please try again later.');
 
-      const fallbackActivities = await generateFallbackActivities(selectedLocation, selectedCategory);
+      const fallbackActivities = await generateFallbackActivities(selectedLocation || 'Paris', selectedCategory);
       setActivities(fallbackActivities);
     } finally {
       setLoading(false);
@@ -240,15 +303,24 @@ export default function ActivitiesPage() {
   };
 
   const getLocationCoordinates = (location: string) => {
+    // Use Amadeus Test API coordinates for the 8 supported cities
+    // Source: https://github.com/amadeus4dev/data-collection/blob/master/data/tours.md
     const coordinates: { [key: string]: { latitude: number; longitude: number } } = {
-      'Paris': { latitude: 48.8566, longitude: 2.3522 },
-      'London': { latitude: 51.5074, longitude: -0.1278 },
-      'New York': { latitude: 40.7128, longitude: -74.0060 },
+      // ✅ Amadeus Test API supported cities (use exact coordinates)
+      'Paris': { latitude: 48.91, longitude: 2.25 },
+      'London': { latitude: 51.520180, longitude: -0.169882 },
+      'Barcelona': { latitude: 41.42, longitude: 2.11 },
+      'Berlin': { latitude: 52.541755, longitude: 13.354201 },
+      'New York': { latitude: 40.792027, longitude: -74.058204 },
+      'San Francisco': { latitude: 37.810980, longitude: -122.483716 },
+      'Dallas': { latitude: 32.806993, longitude: -96.836857 },
+      'Bangalore': { latitude: 13.023577, longitude: 77.536856 },
+
+      // ⚠️ Cities NOT supported in Test API (will return Paris data or empty)
       'Tokyo': { latitude: 35.6762, longitude: 139.6503 },
       'Dubai': { latitude: 25.2048, longitude: 55.2708 },
       'Bangkok': { latitude: 13.7563, longitude: 100.5018 },
       'Rome': { latitude: 41.9028, longitude: 12.4964 },
-      'Barcelona': { latitude: 41.3851, longitude: 2.1734 },
       'Amsterdam': { latitude: 52.3676, longitude: 4.9041 },
       'Singapore': { latitude: 1.3521, longitude: 103.8198 }
     };
@@ -420,9 +492,16 @@ export default function ActivitiesPage() {
                     className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white"
                   >
                     <option value="">All Locations</option>
-                    {popularLocations.map(location => (
-                      <option key={location} value={location}>{location}</option>
-                    ))}
+                    <optgroup label="✅ Test API Supported Cities">
+                      {testApiSupportedCities.map(location => (
+                        <option key={location} value={location}>{location}</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="⚠️ Other Cities (Limited Test Data)">
+                      {otherCities.map(location => (
+                        <option key={location} value={location}>{location}</option>
+                      ))}
+                    </optgroup>
                   </select>
                 </div>
                 <button

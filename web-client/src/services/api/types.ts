@@ -259,6 +259,7 @@ export interface ActivitySearchParams {
   west?: number;
   south?: number;
   east?: number;
+  locationName?: string; // City/location name for better location display
 }
 
 export interface LocationSearchParams {
