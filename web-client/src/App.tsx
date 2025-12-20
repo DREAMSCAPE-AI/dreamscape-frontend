@@ -11,6 +11,7 @@ import FlightsPage from '@/pages/flights';
 import MapPage from '@/pages/map';
 import DestinationPage from '@/pages/destination/[id]';
 import DestinationsPage from '@/pages/destinations';
+import VRViewerPage from '@/pages/vr/[id]';
 import ExperiencesPage from '@/pages/experiences';
 import ExperiencePage from '@/pages/experiences/[id]';
 import ActivitiesPage from '@/pages/activities';
@@ -64,6 +65,7 @@ function App() {
             <Route path="/map" element={<MapPage />} />
             <Route path="/destinations" element={<DestinationsPage />} />
             <Route path="/destination/:id" element={<DestinationPage />} />
+            <Route path="/vr/:id" element={<VRViewerPage />} />
             <Route path="/experiences" element={<ExperiencesPage />} />
             <Route path="/experiences/:id" element={<ExperiencePage />} />
             <Route path="/activities" element={<ActivitiesPage />} />
