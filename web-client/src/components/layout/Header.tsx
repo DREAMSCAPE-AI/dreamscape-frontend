@@ -22,6 +22,7 @@ import {
   Wrench
 } from 'lucide-react';
 import Logo from './Logo';
+import { CartButton } from '@/components/cart';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -75,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
 
   return (
     <header className="fixed w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-6 lg:px-8">
         <nav className="flex items-center justify-between h-20">
           {/* Left Section */}
           <div className="flex items-center gap-8">
@@ -181,14 +182,23 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <>
-                <button className="hidden md:flex items-center gap-1 text-gray-700 hover:text-orange-500">
-                  <Heart className="w-5 h-5" />
-                  <span className="text-xs bg-orange-100 text-orange-600 px-1.5 rounded-full">3</span>
+                {/* Shopping Cart */}
+                <CartButton />
+
+                {/* Favorites */}
+                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                  <Heart className="w-6 h-6" />
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    3
+                  </span>
                 </button>
 
-                <button className="hidden md:flex items-center gap-1 text-gray-700 hover:text-orange-500">
-                  <Bell className="w-5 h-5" />
-                  <span className="text-xs bg-orange-100 text-orange-600 px-1.5 rounded-full">2</span>
+                {/* Notifications */}
+                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                  <Bell className="w-6 h-6" />
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    2
+                  </span>
                 </button>
 
                 <div className="relative" ref={userMenuRef}>

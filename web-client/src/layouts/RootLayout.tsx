@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { CartDrawer } from '@/components/cart';
 import { useAuth } from '@/services/auth/AuthService';
 
 export default function RootLayout() {
@@ -31,6 +32,7 @@ export default function RootLayout() {
         <Outlet />
       </div>
       {!hideHeaderFooter && <Footer />}
+      <CartDrawer />
     </div>
   );
 }

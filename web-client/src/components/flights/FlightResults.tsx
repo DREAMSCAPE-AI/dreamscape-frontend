@@ -1,7 +1,8 @@
 import React from 'react';
-import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee, Loader } from 'lucide-react';
+import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee, Loader, ShoppingCart } from 'lucide-react';
 import type { FlightOffer } from '@/services/api/types';
 import airlineService from '@/services/airlineService';
+import { useCartStore } from '@/store/cartStore';
 
 interface FlightResultsProps {
   flights: FlightOffer[];
@@ -20,6 +21,44 @@ const FlightResults: React.FC<FlightResultsProps> = ({
   onLoadMore,
   loadingMore
 }) => {
+  const { addToCart, isLoading: cartLoading } = useCartStore();
+
+  // TODO: Replace with actual user ID from auth
+  const TEMP_USER_ID = 'user-123';
+
+  const handleAddToCart = async (flight: FlightOffer) => {
+    if (!flight.itineraries || flight.itineraries.length === 0) return;
+
+    const firstSegment = flight.itineraries[0].segments[0];
+    if (!firstSegment) return;
+
+    try {
+      await addToCart({
+        userId: TEMP_USER_ID,
+        type: 'FLIGHT',
+        itemId: flight.id,
+        itemData: {
+          type: 'flight',
+          flightNumber: firstSegment.number,
+          airline: airlineService.getAirlineName(firstSegment.carrierCode),
+          origin: firstSegment.departure.iataCode,
+          destination: firstSegment.arrival.iataCode,
+          departureTime: firstSegment.departure.at,
+          arrivalTime: firstSegment.arrival.at,
+          cabinClass: flight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY',
+          passengers: {
+            adults: 1, // TODO: Get from search params
+          },
+        },
+        quantity: 1,
+        price: parseFloat(flight.price.total),
+        currency: flight.price.currency,
+      });
+    } catch (error) {
+      console.error('Failed to add flight to cart:', error);
+      alert('Failed to add flight to cart. Please try again.');
+    }
+  };
   const formatDuration = (duration: string) => {
     // Convert ISO duration to readable format
     const hours = duration.match(/(\d+)H/)?.[1] || '0';
@@ -232,12 +271,22 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={() => onSelect(flight)}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold shadow-lg"
-                  >
-                    Select Flight
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => handleAddToCart(flight)}
+                      disabled={cartLoading}
+                      className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                      Add to Cart
+                    </button>
+                    <button
+                      onClick={() => onSelect(flight)}
+                      className="w-full px-6 py-3 bg-white border-2 border-orange-500 text-orange-500 rounded-xl hover:bg-orange-50 transition-colors font-semibold"
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
