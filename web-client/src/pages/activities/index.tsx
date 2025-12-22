@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Search, MapPin, Star, Clock, Users, Filter, Calendar, DollarSign } from 'lucide-react';
+import { Search, MapPin, Star, Clock, Users, Filter, Calendar, DollarSign, ShoppingCart } from 'lucide-react';
 import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
+import { useCartStore } from '@/store/cartStore';
 
 interface Activity {
   id: string;
@@ -40,6 +41,7 @@ interface Activity {
 }
 
 export default function ActivitiesPage() {
+  const { addToCart, isLoading: cartLoading } = useCartStore();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,6 +50,35 @@ export default function ActivitiesPage() {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+
+  // TODO: Replace with actual user ID from auth
+  const TEMP_USER_ID = 'user-123';
+
+  const handleAddToCart = async (activity: Activity) => {
+    try {
+      await addToCart({
+        userId: TEMP_USER_ID,
+        type: 'ACTIVITY',
+        itemId: activity.id,
+        itemData: {
+          type: 'activity',
+          name: activity.name,
+          location: activity.location.name,
+          date: activity.availability.nextAvailable || new Date().toISOString(),
+          duration: activity.duration,
+          participants: 1, // Number of participants
+          description: activity.description,
+          imageUrl: activity.images[0],
+        },
+        quantity: 1,
+        price: activity.price.amount,
+        currency: activity.price.currency,
+      });
+    } catch (error) {
+      console.error('Failed to add activity to cart:', error);
+      alert('Failed to add activity to cart. Please try again.');
+    }
+  };
 
   const categories = [
     { id: 'all', name: 'All Activities' },
@@ -688,16 +719,26 @@ export default function ActivitiesPage() {
                       )}
                     </div>
 
-                    {/* Book Button */}
-                    <button
-                      className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-2 px-4 rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium"
-                      onClick={() => {
-                        // Navigate to activity detail page or booking flow
-                        window.location.href = `/activities/${activity.id}`;
-                      }}
-                    >
-                      View Details & Book
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => handleAddToCart(activity)}
+                        disabled={cartLoading}
+                        className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-2 px-4 rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                        Add to Cart
+                      </button>
+                      <button
+                        className="w-full bg-white border-2 border-orange-500 text-orange-500 py-2 px-4 rounded-lg hover:bg-orange-50 transition-colors font-medium"
+                        onClick={() => {
+                          // Navigate to activity detail page
+                          window.location.href = `/activities/${activity.id}`;
+                        }}
+                      >
+                        View Details
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
