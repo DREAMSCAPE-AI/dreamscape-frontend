@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock } from 'lucide-react';
 import voyageService from '../../services/api/VoyageService';
 import imageService from '../../services/imageService';
+import QRCodeDisplay from '../../components/vr/QRCodeDisplay';
 
 interface Destination {
   id: string;
@@ -310,6 +311,12 @@ export default function DestinationPage() {
           <button className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
             <Share2 className="w-5 h-5 text-white" />
           </button>
+          <div className="ml-2">
+            <QRCodeDisplay
+              destinationId={id || 'unknown'}
+              expirationMinutes={10}
+            />
+          </div>
         </div>
       </div>
 
