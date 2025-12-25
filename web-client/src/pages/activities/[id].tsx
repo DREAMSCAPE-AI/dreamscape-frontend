@@ -1,21 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Star, 
-  MapPin, 
-  Clock, 
-  Users, 
-  Calendar, 
-  Shield, 
+import {
+  ArrowLeft,
+  Star,
+  MapPin,
+  Clock,
+  Users,
+  Calendar,
+  Shield,
   Check,
   Heart,
   Share2,
   Camera,
-  Info
+  Info,
+  ShoppingCart
 } from 'lucide-react';
 import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
+import { useCartStore } from '@/store/cartStore';
 
 interface ActivityDetail {
   id: string;
@@ -68,9 +70,13 @@ interface ActivityDetail {
   }[];
 }
 
+// TODO: Replace with actual user ID from auth store
+const TEMP_USER_ID = 'user-123';
+
 export default function ActivityDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addToCart, openDrawer, checkout } = useCartStore();
   const [activity, setActivity] = useState<ActivityDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -78,6 +84,7 @@ export default function ActivityDetailPage() {
   const [selectedTime, setSelectedTime] = useState('');
   const [participants, setParticipants] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -264,27 +271,106 @@ export default function ActivityDetailPage() {
     };
   };
 
-  const handleBooking = () => {
+  const handleAddToCart = async () => {
+    if (!activity) return;
+
+    if (!selectedDate || !selectedTime) {
+      alert('Please select a date and time for your activity before adding to cart.');
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      // Add activity to cart with complete booking details
+      await addToCart({
+        userId: TEMP_USER_ID,
+        type: 'ACTIVITY',
+        itemId: activity.id,
+        itemData: {
+          name: activity.name,
+          description: activity.description,
+          location: activity.location,
+          rating: activity.rating,
+          reviewCount: activity.reviewCount,
+          duration: activity.duration,
+          groupSize: activity.groupSize,
+          category: activity.category,
+          images: activity.images,
+          bookingDetails: {
+            date: selectedDate,
+            time: selectedTime,
+            participants,
+            meetingPoint: activity.meetingPoint,
+            languages: activity.languages,
+            difficulty: activity.difficulty,
+          },
+          bookingInfo: activity.bookingInfo,
+        },
+        quantity: participants,
+        price: activity.price.amount,
+        currency: activity.price.currency,
+      });
+
+      // Open cart drawer to show added item
+      openDrawer();
+    } catch (error) {
+      console.error('[ActivityDetail] Failed to add to cart:', error);
+      alert('Failed to add activity to cart. Please try again.');
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleBooking = async () => {
+    if (!activity) return;
+
     if (!selectedDate || !selectedTime) {
       alert('Please select a date and time for your activity.');
       return;
     }
 
-    // Navigate to booking page or show booking modal
-    const bookingData = {
-      activityId: activity?.id,
-      activityName: activity?.name,
-      date: selectedDate,
-      time: selectedTime,
-      participants,
-      totalPrice: activity ? activity.price.amount * participants : 0
-    };
+    try {
+      // First add to cart
+      await addToCart({
+        userId: TEMP_USER_ID,
+        type: 'ACTIVITY',
+        itemId: activity.id,
+        itemData: {
+          name: activity.name,
+          description: activity.description,
+          location: activity.location,
+          rating: activity.rating,
+          reviewCount: activity.reviewCount,
+          duration: activity.duration,
+          groupSize: activity.groupSize,
+          category: activity.category,
+          images: activity.images,
+          bookingDetails: {
+            date: selectedDate,
+            time: selectedTime,
+            participants,
+            meetingPoint: activity.meetingPoint,
+            languages: activity.languages,
+            difficulty: activity.difficulty,
+          },
+          bookingInfo: activity.bookingInfo,
+        },
+        quantity: participants,
+        price: activity.price.amount,
+        currency: activity.price.currency,
+      });
 
-    // Store booking data in localStorage for the booking process
-    localStorage.setItem('activityBooking', JSON.stringify(bookingData));
-    
-    // Navigate to booking confirmation page
-    navigate('/activities/booking');
+      // Then proceed to checkout
+      const checkoutResponse = await checkout(TEMP_USER_ID);
+      navigate('/checkout', {
+        state: {
+          checkoutData: checkoutResponse,
+        },
+      });
+    } catch (error) {
+      console.error('[ActivityDetail] Failed to process booking:', error);
+      alert('Failed to process booking. Please try again.');
+    }
   };
 
   if (loading) {
@@ -614,7 +700,21 @@ export default function ActivityDetailPage() {
                 </div>
               </div>
 
-              {/* Book Button */}
+              {/* Add to Cart Button */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!activity.availability.available || isAddingToCart}
+                className={`w-full py-3 px-4 rounded-lg font-medium transition-colors mb-3 flex items-center justify-center gap-2 ${
+                  activity.availability.available && !isAddingToCart
+                    ? 'bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed border-2 border-gray-300'
+                }`}
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {isAddingToCart ? 'Adding to Cart...' : 'Add to Cart'}
+              </button>
+
+              {/* Book Now Button */}
               <button
                 onClick={handleBooking}
                 disabled={!activity.availability.available}

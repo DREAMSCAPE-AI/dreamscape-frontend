@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Heart, Eye, Car, Utensils, Waves, Dumbbell, ShoppingCart } from 'lucide-react';
+import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Heart, Eye, Car, Utensils, Waves, Dumbbell } from 'lucide-react';
 import type { HotelOffer } from '../../services/api/types';
-import { useCartStore } from '@/store/cartStore';
 
 interface HotelResultsProps {
   hotels: HotelOffer[];
@@ -12,7 +11,6 @@ interface HotelResultsProps {
 type SortOption = 'recommended' | 'price_low' | 'price_high' | 'rating' | 'distance';
 
 const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onSelect, loading = false }) => {
-  const { addToCart, isLoading: cartLoading } = useCartStore();
   const [sortBy, setSortBy] = useState<SortOption>('recommended');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
@@ -22,9 +20,6 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
     freeCancellation: false
   });
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-
-  // TODO: Replace with actual user ID from auth
-  const TEMP_USER_ID = 'user-123';
 
   // Memoize the sorting and filtering logic to prevent unnecessary recalculations
   const sortedAndFilteredHotels = useMemo(() => {
@@ -104,40 +99,6 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
   const handleHotelSelect = useCallback((hotel: HotelOffer) => {
     onSelect(hotel);
   }, [onSelect]);
-
-  const handleAddToCart = useCallback(async (hotel: HotelOffer) => {
-    try {
-      // Extract city/location from hotel data or search params
-      const location = hotel.address?.cityName ||
-                      hotel.cityCode ||
-                      hotel.chainCode ||
-                      'Unknown Location';
-
-      await addToCart({
-        userId: TEMP_USER_ID,
-        type: 'HOTEL',
-        itemId: hotel.id,
-        itemData: {
-          type: 'hotel',
-          name: hotel.name,
-          location: location,
-          checkInDate: new Date().toISOString(), // TODO: Get from search params
-          checkOutDate: new Date(Date.now() + 86400000).toISOString(), // TODO: Get from search params
-          nights: 1, // TODO: Calculate from dates
-          roomType: 'Standard', // TODO: Get from offer details
-          guests: 1, // Number of guests
-          rating: hotel.rating,
-          imageUrl: hotel.media?.[0]?.uri,
-        },
-        quantity: 1,
-        price: parseFloat(hotel.price?.total || '0'),
-        currency: hotel.price?.currency || 'EUR',
-      });
-    } catch (error) {
-      console.error('Failed to add hotel to cart:', error);
-      alert('Failed to add hotel to cart. Please try again.');
-    }
-  }, [addToCart, TEMP_USER_ID]);
 
   const getAmenityIcon = useCallback((amenity: string) => {
     switch (amenity) {
@@ -408,17 +369,8 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
 
                     <div className="space-y-2">
                       <button
-                        onClick={() => handleAddToCart(hotel)}
-                        disabled={cartLoading}
-                        className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                      >
-                        <ShoppingCart className="w-5 h-5" />
-                        Add to Cart
-                      </button>
-
-                      <button
                         onClick={() => handleHotelSelect(hotel)}
-                        className="w-full px-6 py-3 bg-white border-2 border-orange-500 text-orange-500 rounded-lg hover:bg-orange-50 transition-colors font-medium"
+                        className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
                       >
                         View Details
                       </button>
