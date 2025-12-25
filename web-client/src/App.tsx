@@ -35,6 +35,10 @@ import InsightsPage from '@/pages/insights';
 import UnifiedDashboardPage from '@/pages/dashboard/unified';
 import InterchangeableDashboardPage from '@/pages/dashboard/interchangeable';
 
+// Payment Pages
+import CheckoutPage from '@/pages/checkout';
+import PaymentConfirmationPage from '@/pages/payment/confirmation';
+
 // Auth checker component that runs on app mount
 // Memoized to prevent unnecessary re-renders
 const AuthChecker = React.memo(() => {
@@ -99,6 +103,10 @@ function App() {
             <Route path="/airlines" element={<AirlinesPage />} />
             <Route path="/transfers" element={<TransfersPage />} />
             <Route path="/insights" element={<InsightsPage />} />
+
+            {/* Payment Routes */}
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment/confirmation" element={<PaymentConfirmationPage />} />
           </Route>
         </Routes>
       </ErrorBoundary>

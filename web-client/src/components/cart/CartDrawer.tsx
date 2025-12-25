@@ -4,6 +4,7 @@
  */
 
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, ShoppingCart, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import CartItem from './CartItem';
@@ -13,6 +14,7 @@ import CartSummary from './CartSummary';
 const TEMP_USER_ID = 'user-123';
 
 export const CartDrawer = () => {
+  const navigate = useNavigate();
   const {
     cart,
     isLoading,
@@ -75,14 +77,20 @@ export const CartDrawer = () => {
   const handleCheckout = async () => {
     try {
       const checkoutResponse = await checkout(TEMP_USER_ID);
-      console.log('Checkout response:', checkoutResponse);
+      console.log('[CartDrawer] Checkout response:', checkoutResponse);
 
-      // TODO: Redirect to payment page with booking reference
-      alert(`Booking created: ${checkoutResponse.bookingReference}\nTotal: ${checkoutResponse.currency} ${checkoutResponse.totalAmount}`);
+      // Navigate to checkout page with payment data
+      navigate('/checkout', {
+        state: {
+          checkoutData: checkoutResponse,
+        },
+      });
 
+      // Close drawer after navigation
       closeDrawer();
     } catch (error) {
-      console.error('Checkout failed:', error);
+      console.error('[CartDrawer] Checkout failed:', error);
+      // Error will be displayed by the error banner in the drawer
     }
   };
 
