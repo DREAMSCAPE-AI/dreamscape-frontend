@@ -3,7 +3,7 @@ import {
   HealthChecker,
   ComponentType,
   HealthStatus,
-} from '../../../../dreamscape-services/shared/health';
+} from '../../../shared/health';
 
 const router = Router();
 
