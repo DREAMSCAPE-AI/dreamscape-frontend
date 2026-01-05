@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FlightSearch from './FlightSearch';
 import FlightResults from './FlightResults';
 import FlightResultsToolbar from './FlightResultsToolbar';
@@ -20,11 +20,19 @@ import {
   isInDepartureTimeRange,
   matchesStopsFilter
 } from '@/utils/flightUtils';
+import { useFlightBookingStore } from '@/store/flightBookingStore';
+import { useCartStore } from '@/store/cartStore';
 
 type BookingStep = 'search' | 'results' | 'details' | 'seats' | 'meals' | 'baggage' | 'passengers' | 'payment';
 
+// TODO: Replace with actual user ID from auth store
+const TEMP_USER_ID = 'user-123';
+
 const FlightBookingFlow: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { setSelectedFlight: setFlightInStore } = useFlightBookingStore();
+  const { addToCart, openDrawer, checkout } = useCartStore();
   const [currentStep, setCurrentStep] = useState<BookingStep>('search');
   const [searchResults, setSearchResults] = useState<FlightOffer[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<FlightOffer | null>(null);
@@ -34,6 +42,7 @@ const FlightBookingFlow: React.FC = () => {
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<SelectedMeal[]>([]);
   const [selectedBaggage, setSelectedBaggage] = useState<SelectedBaggage[]>([]);
+  const [passengerInfo, setPassengerInfo] = useState<any[]>([]);
   const [passengerCount, setPassengerCount] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -344,6 +353,7 @@ const FlightBookingFlow: React.FC = () => {
   };
 
   const handleFlightSelect = (flight: FlightOffer) => {
+    // First, show flight details
     if (isRoundTrip && !isSelectingReturnFlight) {
       // For round-trip: selecting outbound flight
       setSelectedFlight(flight);
@@ -534,6 +544,7 @@ const FlightBookingFlow: React.FC = () => {
                 console.log('Selected seats:', selectedSeats);
                 console.log('Selected meals:', selectedMeals);
                 console.log('Selected baggage:', selectedBaggage);
+                setPassengerInfo(passengerDetails);
                 setCurrentStep('payment');
               }}
             />
@@ -583,8 +594,118 @@ const FlightBookingFlow: React.FC = () => {
                   </span>
                 </div>
               </div>
-              
-              <p className="text-gray-600 mt-2">Payment implementation coming soon...</p>
+
+              {/* Action Buttons */}
+              <div className="space-y-3 mt-6">
+                {/* Add to Cart Button */}
+                <button
+                  onClick={async () => {
+                    if (!selectedFlight) return;
+                    try {
+                      const totalPrice = parseFloat(selectedFlight.price.total || '0') +
+                        selectedSeats.reduce((sum, seat) => sum + seat.price, 0) +
+                        selectedMeals.reduce((sum, meal) => sum + meal.price, 0) +
+                        selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0);
+
+                      const firstSegment = selectedFlight.itineraries?.[0]?.segments?.[0];
+                      const lastSegment = selectedFlight.itineraries?.[0]?.segments?.[selectedFlight.itineraries[0].segments.length - 1];
+
+                      await addToCart({
+                        userId: TEMP_USER_ID,
+                        type: 'FLIGHT',
+                        itemId: selectedFlight.id,
+                        itemData: {
+                          ...selectedFlight,
+                          origin: firstSegment?.departure?.iataCode,
+                          destination: lastSegment?.arrival?.iataCode,
+                          departureDate: firstSegment?.departure?.at,
+                          arrivalDate: lastSegment?.arrival?.at,
+                          bookingDetails: {
+                            seats: selectedSeats,
+                            meals: selectedMeals,
+                            baggage: selectedBaggage,
+                            passengers: passengerInfo,
+                          },
+                        },
+                        quantity: passengerCount,
+                        price: totalPrice,
+                        currency: selectedFlight.price.currency || 'USD',
+                      });
+                      openDrawer();
+                    } catch (error) {
+                      console.error('Failed to add to cart:', error);
+                      alert('Failed to add flight to cart. Please try again.');
+                    }
+                  }}
+                  className="w-full py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Add to Cart
+                </button>
+
+                {/* Pay Now Button */}
+                <button
+                  onClick={async () => {
+                    if (!selectedFlight) return;
+                    try {
+                      const totalPrice = parseFloat(selectedFlight.price.total || '0') +
+                        selectedSeats.reduce((sum, seat) => sum + seat.price, 0) +
+                        selectedMeals.reduce((sum, meal) => sum + meal.price, 0) +
+                        selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0);
+
+                      const firstSegment = selectedFlight.itineraries?.[0]?.segments?.[0];
+                      const lastSegment = selectedFlight.itineraries?.[0]?.segments?.[selectedFlight.itineraries[0].segments.length - 1];
+
+                      // First add to cart
+                      await addToCart({
+                        userId: TEMP_USER_ID,
+                        type: 'FLIGHT',
+                        itemId: selectedFlight.id,
+                        itemData: {
+                          ...selectedFlight,
+                          origin: firstSegment?.departure?.iataCode,
+                          destination: lastSegment?.arrival?.iataCode,
+                          departureDate: firstSegment?.departure?.at,
+                          arrivalDate: lastSegment?.arrival?.at,
+                          bookingDetails: {
+                            seats: selectedSeats,
+                            meals: selectedMeals,
+                            baggage: selectedBaggage,
+                            passengers: passengerInfo,
+                          },
+                        },
+                        quantity: passengerCount,
+                        price: totalPrice,
+                        currency: selectedFlight.price.currency || 'USD',
+                      });
+
+                      // Then proceed to checkout
+                      const checkoutResponse = await checkout(TEMP_USER_ID);
+                      navigate('/checkout', {
+                        state: {
+                          checkoutData: checkoutResponse,
+                        },
+                      });
+                    } catch (error) {
+                      console.error('Failed to process payment:', error);
+                      alert('Failed to process payment. Please try again.');
+                    }
+                  }}
+                  className="w-full py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:from-orange-600 hover:to-pink-600 shadow-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                  Pay Now - ${(
+                    parseFloat(selectedFlight?.price.total || '0') +
+                    selectedSeats.reduce((sum, seat) => sum + seat.price, 0) +
+                    selectedMeals.reduce((sum, meal) => sum + meal.price, 0) +
+                    selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0)
+                  ).toFixed(2)}
+                </button>
+              </div>
             </div>
           )}
         </div>

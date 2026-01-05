@@ -11,6 +11,7 @@ import FlightsPage from '@/pages/flights';
 import MapPage from '@/pages/map';
 import DestinationPage from '@/pages/destination/[id]';
 import DestinationsPage from '@/pages/destinations';
+import VRViewerPage from '@/pages/vr/[id]';
 import ExperiencesPage from '@/pages/experiences';
 import ExperiencePage from '@/pages/experiences/[id]';
 import ActivitiesPage from '@/pages/activities';
@@ -34,6 +35,10 @@ import TransfersPage from '@/pages/transfers';
 import InsightsPage from '@/pages/insights';
 import UnifiedDashboardPage from '@/pages/dashboard/unified';
 import InterchangeableDashboardPage from '@/pages/dashboard/interchangeable';
+
+// Payment Pages
+import CheckoutPage from '@/pages/checkout';
+import PaymentConfirmationPage from '@/pages/payment/confirmation';
 
 // Auth checker component that runs on app mount
 // Memoized to prevent unnecessary re-renders
@@ -64,6 +69,7 @@ function App() {
             <Route path="/map" element={<MapPage />} />
             <Route path="/destinations" element={<DestinationsPage />} />
             <Route path="/destination/:id" element={<DestinationPage />} />
+            <Route path="/vr/:id" element={<VRViewerPage />} />
             <Route path="/experiences" element={<ExperiencesPage />} />
             <Route path="/experiences/:id" element={<ExperiencePage />} />
             <Route path="/activities" element={<ActivitiesPage />} />
@@ -99,6 +105,10 @@ function App() {
             <Route path="/airlines" element={<AirlinesPage />} />
             <Route path="/transfers" element={<TransfersPage />} />
             <Route path="/insights" element={<InsightsPage />} />
+
+            {/* Payment Routes */}
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment/confirmation" element={<PaymentConfirmationPage />} />
           </Route>
         </Routes>
       </ErrorBoundary>

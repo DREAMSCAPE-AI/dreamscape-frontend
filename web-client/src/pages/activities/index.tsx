@@ -688,16 +688,18 @@ export default function ActivitiesPage() {
                       )}
                     </div>
 
-                    {/* Book Button */}
-                    <button
-                      className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-2 px-4 rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium"
-                      onClick={() => {
-                        // Navigate to activity detail page or booking flow
-                        window.location.href = `/activities/${activity.id}`;
-                      }}
-                    >
-                      View Details & Book
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="space-y-2">
+                      <button
+                        className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-2 px-4 rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium"
+                        onClick={() => {
+                          // Navigate to activity detail page
+                          window.location.href = `/activities/${activity.id}`;
+                        }}
+                      >
+                        View Details
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

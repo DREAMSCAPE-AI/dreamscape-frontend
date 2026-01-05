@@ -366,14 +366,16 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                       </div>
                       <div className="text-sm text-gray-500">per night</div>
                     </div>
-                    
-                    <button
-                      onClick={() => handleHotelSelect(hotel)}
-                      className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
-                    >
-                      View Details
-                    </button>
-                    
+
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => handleHotelSelect(hotel)}
+                        className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+                      >
+                        View Details
+                      </button>
+                    </div>
+
                     <div className="text-xs text-gray-500 mt-2">
                       Includes taxes & fees
                     </div>

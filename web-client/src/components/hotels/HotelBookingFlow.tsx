@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import HotelSearch from './HotelSearch';
 import HotelResults from './HotelResults';
 import HotelDetails from './HotelDetails';
 import ApiService from '../../services/api';
 import type { HotelOffer, HotelSearchParams } from '../../services/api/types';
+import { useCartStore } from '@/store/cartStore';
+
+const TEMP_USER_ID = 'user-123';
 
 type BookingStep = 'search' | 'results' | 'details' | 'passengers' | 'payment';
 
 const HotelBookingFlow: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<BookingStep>('search');
   const [searchResults, setSearchResults] = useState<HotelOffer[]>([]);
   const [selectedHotel, setSelectedHotel] = useState<HotelOffer | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [guestInfo, setGuestInfo] = useState<any>(null);
+  const [searchParams, setSearchParams] = useState<any>(null);
+
+  const { addToCart, openDrawer, checkout } = useCartStore();
 
   // Enhanced hotel search function with better image handling
   const handleSearch = async (params: HotelSearchParams) => {
     setLoading(true);
     setError(null);
+    setSearchParams(params);
     try {
       const result = await ApiService.searchHotels(params);
 
@@ -246,10 +255,115 @@ const HotelBookingFlow: React.FC = () => {
             </div>
           )}
 
-          {currentStep === 'payment' && (
+          {currentStep === 'payment' && selectedHotel && (
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold">Payment</h2>
-              <p className="text-gray-600 mt-2">Payment implementation coming soon...</p>
+              <h2 className="text-xl font-semibold mb-6">Payment</h2>
+
+              {/* Hotel Summary */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h3 className="font-semibold text-gray-900 mb-2">{selectedHotel.name}</h3>
+                <div className="text-sm text-gray-600">
+                  <p>Check-in: {searchParams?.checkInDate || 'N/A'}</p>
+                  <p>Check-out: {searchParams?.checkOutDate || 'N/A'}</p>
+                  <p className="mt-2 font-semibold text-gray-900">
+                    Total: {selectedHotel.price.currency} {selectedHotel.price.grandTotal}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-4">
+                {/* Add to Cart Button */}
+                <button
+                  onClick={async () => {
+                    if (!selectedHotel) return;
+                    try {
+                      await addToCart({
+                        userId: TEMP_USER_ID,
+                        type: 'HOTEL',
+                        itemId: selectedHotel.hotelId || selectedHotel.id,
+                        itemData: {
+                          ...selectedHotel,
+                          name: selectedHotel.name,
+                          location: searchParams?.cityCode || searchParams?.location || 'N/A',
+                          checkInDate: searchParams?.checkInDate,
+                          checkOutDate: searchParams?.checkOutDate,
+                          bookingDetails: {
+                            guests: guestInfo,
+                            searchParams,
+                          },
+                        },
+                        quantity: 1,
+                        price: parseFloat(selectedHotel.price.grandTotal || selectedHotel.price.total || '0'),
+                        currency: selectedHotel.price.currency || 'USD',
+                      });
+                      openDrawer();
+                      alert('Hotel added to cart successfully!');
+                    } catch (error) {
+                      console.error('Failed to add to cart:', error);
+                      alert('Failed to add hotel to cart. Please try again.');
+                    }
+                  }}
+                  className="w-full py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Add to Cart
+                </button>
+
+                {/* Pay Now Button */}
+                <button
+                  onClick={async () => {
+                    if (!selectedHotel) return;
+                    try {
+                      await addToCart({
+                        userId: TEMP_USER_ID,
+                        type: 'HOTEL',
+                        itemId: selectedHotel.hotelId || selectedHotel.id,
+                        itemData: {
+                          ...selectedHotel,
+                          name: selectedHotel.name,
+                          location: searchParams?.cityCode || searchParams?.location || 'N/A',
+                          checkInDate: searchParams?.checkInDate,
+                          checkOutDate: searchParams?.checkOutDate,
+                          bookingDetails: {
+                            guests: guestInfo,
+                            searchParams,
+                          },
+                        },
+                        quantity: 1,
+                        price: parseFloat(selectedHotel.price.grandTotal || selectedHotel.price.total || '0'),
+                        currency: selectedHotel.price.currency || 'USD',
+                      });
+
+                      const checkoutResponse = await checkout(TEMP_USER_ID);
+                      navigate('/checkout', {
+                        state: { checkoutData: checkoutResponse },
+                      });
+                    } catch (error) {
+                      console.error('Failed to process payment:', error);
+                      alert('Failed to process payment. Please try again.');
+                    }
+                  }}
+                  className="w-full py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:from-orange-600 hover:to-pink-600 shadow-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                  Pay Now - {selectedHotel.price.currency} {selectedHotel.price.grandTotal || selectedHotel.price.total}
+                </button>
+              </div>
+
+              {/* Back Button */}
+              <div className="mt-4">
+                <button
+                  onClick={() => setCurrentStep('passengers')}
+                  className="w-full px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Back
+                </button>
+              </div>
             </div>
           )}
         </div>
