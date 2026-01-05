@@ -1,10 +1,13 @@
 /* eslint-disable no-unused-vars */
 // App.js - Version refactorisée utilisant les services modulaires
+// DR-498: QR Code Access pour Expérience VR - Deep Linking Integration
 import React, { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { VRButton, ARButton, XR, Controllers, Hands } from '@react-three/xr';
 import { OrbitControls, Text, Box } from '@react-three/drei';
 import * as THREE from 'three';
+import { useVRDeepLink } from './hooks/useVRDeepLink';
+import DeepLinkHandler from './components/DeepLinkHandler';
 import './App.css';
 
 // Services refactorisés (DR-250, DR-251, DR-252, DR-253, DR-410, DR-411)
@@ -547,6 +550,9 @@ function VREnvironment() {
 function App() {
   const [diagnosticVisible, setDiagnosticVisible] = useState(true);
 
+  // DR-498 / DR-501 / DR-502: Deep Linking for QR Code Access
+  const deepLinkState = useVRDeepLink();
+
   const toggleDiagnostic = useCallback(() => {
     setDiagnosticVisible(prev => !prev);
   }, []);
@@ -566,9 +572,26 @@ function App() {
 
   return (
     <div className="App">
+      {/* DR-498 / DR-501: Deep Link Handler */}
+      <DeepLinkHandler deepLinkState={deepLinkState} refreshToken={deepLinkState.refreshToken} />
+
       <div className="controls">
         <h1>🎯 DreamScape VR - Architecture Modulaire</h1>
         <p>Version refactorisée avec services (DR-250, DR-251, DR-252, DR-253, DR-410, DR-411)</p>
+
+        {/* DR-498: Show deep link status */}
+        {deepLinkState.isDeepLink && deepLinkState.isValid && (
+          <div style={{
+            background: 'linear-gradient(45deg, #10B981, #3B82F6)',
+            color: 'white',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            margin: '10px 0',
+            fontSize: '14px'
+          }}>
+            🔗 VR Deep Link Active - Destination: <strong>{deepLinkState.destination}</strong>
+          </div>
+        )}
 
         <button
           onClick={toggleDiagnostic}

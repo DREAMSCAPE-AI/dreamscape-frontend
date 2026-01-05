@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock, Glasses } from 'lucide-react';
 import voyageService from '../../services/api/VoyageService';
 import imageService from '../../services/imageService';
-import VRQRCodeModal from '../../components/vr/VRQRCodeModal';
+import QRCodeDisplay from '../../components/vr/QRCodeDisplay';
 
 interface Destination {
   id: string;
@@ -37,7 +37,6 @@ export default function DestinationPage() {
   const [destination, setDestination] = useState<Destination | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showVRModal, setShowVRModal] = useState(false);
 
   useEffect(() => {
     const fetchDestination = async () => {
@@ -306,19 +305,18 @@ export default function DestinationPage() {
           </div>
         </div>
         <div className="absolute bottom-6 right-6 flex gap-2">
-          <button
-            onClick={() => setShowVRModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg backdrop-blur-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg flex items-center gap-2 font-medium"
-          >
-            <Glasses className="w-5 h-5" />
-            Explorer en VR
-          </button>
           <button className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm hover:bg-opacity-30 transition-all">
             <Heart className="w-5 h-5 text-white" />
           </button>
           <button className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm hover:bg-opacity-30 transition-all">
             <Share2 className="w-5 h-5 text-white" />
           </button>
+          <div className="ml-2">
+            <QRCodeDisplay
+              destinationId={id || 'unknown'}
+              expirationMinutes={10}
+            />
+          </div>
         </div>
       </div>
 
@@ -416,14 +414,6 @@ export default function DestinationPage() {
           </div>
         </div>
       </div>
-
-      {/* VR QR Code Modal */}
-      <VRQRCodeModal
-        isOpen={showVRModal}
-        onClose={() => setShowVRModal(false)}
-        destinationId={id || ''}
-        destinationName={destination?.name || ''}
-      />
     </div>
   );
 }
