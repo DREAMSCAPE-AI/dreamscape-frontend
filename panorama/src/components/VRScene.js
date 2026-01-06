@@ -10,6 +10,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 import ImageResizer from '../services/ImageResizer';
+import Hotspot from './Hotspot';
 import {
   getTextureLoader,
   getTextureOptimizer,
@@ -141,145 +142,16 @@ function VRScene({ scene, onSceneChange, onHotspotClick }) {
       {/* Éclairage ambiant adapté */}
       <ambientLight intensity={scene.settings?.ambientLightIntensity || 0.7} />
 
-      {/* Rendu des hotspots - sera implémenté dans un composant séparé */}
+      {/* Rendu des hotspots interactifs */}
       {scene.hotspots && scene.hotspots.map((hotspot) => (
         <Hotspot
           key={hotspot.id}
           hotspot={hotspot}
-          onSceneChange={onSceneChange}
-          onInteraction={onHotspotClick}
+          onClick={onHotspotClick}
         />
       ))}
     </>
   );
 }
 
-/**
- * Composant Hotspot - Point d'intérêt interactif
- */
-function Hotspot({ hotspot, onSceneChange, onInteraction }) {
-  const [hovered, setHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
-
-  const handleClick = useCallback(() => {
-    setClicked(true);
-
-    console.log(`🎯 Hotspot cliqué: ${hotspot.title}`);
-
-    if (hotspot.type === 'teleport' && hotspot.targetScene && onSceneChange) {
-      console.log(`🚀 Téléportation vers: ${hotspot.targetScene}`);
-      onSceneChange(hotspot.targetScene);
-    }
-
-    if (onInteraction) {
-      onInteraction(hotspot);
-    }
-
-    // Animation de clic
-    setTimeout(() => setClicked(false), 300);
-  }, [hotspot, onSceneChange, onInteraction]);
-
-  const handlePointerOver = useCallback(() => {
-    setHovered(true);
-    document.body.style.cursor = 'pointer';
-  }, []);
-
-  const handlePointerOut = useCallback(() => {
-    setHovered(false);
-    document.body.style.cursor = 'auto';
-  }, []);
-
-  // Couleur selon le type de hotspot
-  const getColor = () => {
-    if (clicked) return '#FFFFFF';
-    if (hovered) return '#FFD700';
-
-    switch (hotspot.type) {
-      case 'teleport':
-        return '#10B981'; // Vert
-      case 'info':
-        return '#F59E0B'; // Orange
-      default:
-        return '#3B82F6'; // Bleu
-    }
-  };
-
-  // Icône selon le type
-  const getIcon = () => {
-    if (hotspot.icon) return hotspot.icon;
-
-    switch (hotspot.type) {
-      case 'teleport':
-        return '🚪';
-      case 'info':
-        return 'ℹ️';
-      default:
-        return '📍';
-    }
-  };
-
-  const position = hotspot.position || [0, 1.6, -3];
-  const scale = clicked ? 1.3 : hovered ? 1.2 : 1;
-
-  return (
-    <group position={position}>
-      {/* Sphère cliquable */}
-      <mesh
-        onClick={handleClick}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-        scale={scale}
-      >
-        <sphereGeometry args={[0.2, 32, 32]} />
-        <meshStandardMaterial
-          color={getColor()}
-          emissive={getColor()}
-          emissiveIntensity={hovered ? 0.5 : 0.2}
-          transparent
-          opacity={hovered ? 0.9 : 0.7}
-        />
-      </mesh>
-
-      {/* Texte du hotspot */}
-      {hovered && (
-        <group position={[0, 0.4, 0]}>
-          <mesh>
-            <planeGeometry args={[2, 0.5]} />
-            <meshBasicMaterial
-              color="#000000"
-              transparent
-              opacity={0.7}
-            />
-          </mesh>
-          <text
-            position={[0, 0, 0.01]}
-            fontSize={0.12}
-            color="#FFFFFF"
-            anchorX="center"
-            anchorY="middle"
-            maxWidth={1.8}
-          >
-            {`${getIcon()} ${hotspot.title}`}
-            {hotspot.distance && `\n${hotspot.distance}`}
-          </text>
-        </group>
-      )}
-
-      {/* Effet de pulsation pour attirer l'attention */}
-      {!hovered && (
-        <mesh scale={[1.5, 1.5, 1.5]}>
-          <sphereGeometry args={[0.2, 16, 16]} />
-          <meshBasicMaterial
-            color={getColor()}
-            transparent
-            opacity={0.2}
-            wireframe
-          />
-        </mesh>
-      )}
-    </group>
-  );
-}
-
 export default VRScene;
-export { Hotspot };
