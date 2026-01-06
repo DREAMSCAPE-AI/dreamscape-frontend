@@ -18,6 +18,7 @@ import {
   getAssetCache
 } from './services';
 import ImageResizer from './services/ImageResizer';
+import ParisEnvironment from './components/ParisEnvironment';
 
 // === COMPOSANTS DE DIAGNOSTIC ===
 
@@ -41,7 +42,7 @@ function WebGLDiagnostic() {
       try {
         // Utiliser le service WebGLDetector
         const detector = getWebGLDetector();
-        const limits = await detector.detectLimits();
+        const limits = await detector.detect();
 
         if (limits.success) {
           setGlInfo({
@@ -403,13 +404,22 @@ function TextureLoadingStatus({ isLoading, loadingState, hasTexture, progress, e
 // === ENVIRONNEMENT VR ===
 
 /**
- * Composant VR Environment refactorisé
- * Utilise tous les services créés pour une architecture propre
+ * Composant VR Environment - Environnement Paris interactif
  */
 function VREnvironment() {
-  const [clicked, setClicked] = useState(false);
+  // Récupérer le paramètre destination depuis l'URL
+  const searchParams = new URLSearchParams(window.location.search);
+  const destination = searchParams.get('destination');
+
+  // Si destination=paris, charger l'environnement Paris avec hotspots
+  if (destination === 'paris') {
+    return <ParisEnvironment />;
+  }
+
+  // Sinon, afficher un panorama simple (mode test/diagnostic)
   const [prepResults, setPrepResults] = useState(null);
   const [textureReady, setTextureReady] = useState(false);
+  const showDiagnostics = searchParams.get('debug') === 'true';
 
   // Callback pour recevoir les résultats de préparation
   const handlePrepResults = useCallback((results) => {
@@ -444,25 +454,15 @@ function VREnvironment() {
     };
   }, [texture, prepResults]);
 
-  // Gestionnaires d'événements
-  const handleCubeClick = useCallback(() => {
-    setClicked(prev => !prev);
-    console.log('🎯 Interaction cube détectée');
-  }, []);
-
-  const handleCubePointerOver = useCallback(() => {
-    document.body.style.cursor = 'pointer';
-  }, []);
-
-  const handleCubePointerOut = useCallback(() => {
-    document.body.style.cursor = 'auto';
-  }, []);
-
   return (
     <>
-      {/* Diagnostics */}
-      <WebGLDiagnostic />
-      <MemoryMonitor />
+      {/* Diagnostics (uniquement si ?debug=true) */}
+      {showDiagnostics && (
+        <>
+          <WebGLDiagnostic />
+          <MemoryMonitor />
+        </>
+      )}
 
       {/* Préparation de l'image */}
       <ImagePreparation
@@ -470,14 +470,16 @@ function VREnvironment() {
         onResults={handlePrepResults}
       />
 
-      {/* Statut du chargement */}
-      <TextureLoadingStatus
-        isLoading={isLoading}
-        loadingState={loadingState}
-        hasTexture={!!texture}
-        progress={progress}
-        error={error}
-      />
+      {/* Statut du chargement (masqué en production) */}
+      {showDiagnostics && (
+        <TextureLoadingStatus
+          isLoading={isLoading}
+          loadingState={loadingState}
+          hasTexture={!!texture}
+          progress={progress}
+          error={error}
+        />
+      )}
 
       {/* Sphère panoramique avec texture */}
       {texture && (
@@ -548,7 +550,13 @@ function VREnvironment() {
 // === COMPOSANT PRINCIPAL ===
 
 function App() {
-  const [diagnosticVisible, setDiagnosticVisible] = useState(true);
+  // Vérifier le mode debug depuis l'URL
+  const searchParams = new URLSearchParams(window.location.search);
+  const isDebugMode = searchParams.get('debug') === 'true';
+  const destination = searchParams.get('destination');
+  const showControls = isDebugMode || !destination; // Masquer les contrôles en mode destination (sauf debug)
+
+  const [diagnosticVisible, setDiagnosticVisible] = useState(isDebugMode);
 
   // DR-498 / DR-501 / DR-502: Deep Linking for QR Code Access
   const deepLinkState = useVRDeepLink();
@@ -575,7 +583,8 @@ function App() {
       {/* DR-498 / DR-501: Deep Link Handler */}
       <DeepLinkHandler deepLinkState={deepLinkState} refreshToken={deepLinkState.refreshToken} />
 
-      <div className="controls">
+      {showControls && (
+        <div className="controls">
         <h1>🎯 DreamScape VR - Architecture Modulaire</h1>
         <p>Version refactorisée avec services (DR-250, DR-251, DR-252, DR-253, DR-410, DR-411)</p>
 
@@ -640,6 +649,7 @@ function App() {
           }}
         />
       </div>
+      )}
 
       <Canvas
         style={{
@@ -679,24 +689,26 @@ function App() {
         </XR>
       </Canvas>
 
-      <div className="instructions">
-        <h3>🎯 Architecture Modulaire Refactorisée</h3>
-        <div style={{ textAlign: 'left', margin: '20px' }}>
-          <h4>Services implémentés :</h4>
-          <p><strong>WebGLDetector (DR-410):</strong> Détection automatique des limites WebGL du GPU</p>
-          <p><strong>ImageResizer (DR-411):</strong> Redimensionnement progressif haute qualité</p>
-          <p><strong>TextureLoader (DR-251):</strong> Chargement progressif avec retry</p>
-          <p><strong>TextureOptimizer (DR-252):</strong> Optimisation pour la VR</p>
-          <p><strong>AssetCache (DR-253):</strong> Cache intelligent avec LRU</p>
+      {showControls && (
+        <div className="instructions">
+          <h3>🎯 Architecture Modulaire Refactorisée</h3>
+          <div style={{ textAlign: 'left', margin: '20px' }}>
+            <h4>Services implémentés :</h4>
+            <p><strong>WebGLDetector (DR-410):</strong> Détection automatique des limites WebGL du GPU</p>
+            <p><strong>ImageResizer (DR-411):</strong> Redimensionnement progressif haute qualité</p>
+            <p><strong>TextureLoader (DR-251):</strong> Chargement progressif avec retry</p>
+            <p><strong>TextureOptimizer (DR-252):</strong> Optimisation pour la VR</p>
+            <p><strong>AssetCache (DR-253):</strong> Cache intelligent avec LRU</p>
 
-          <h4>Avantages :</h4>
-          <p>✅ Code modulaire et testable</p>
-          <p>✅ Séparation des responsabilités</p>
-          <p>✅ Réutilisable pour d'autres environnements VR</p>
-          <p>✅ Gestion automatique de la mémoire</p>
-          <p>✅ Performance optimisée</p>
+            <h4>Avantages :</h4>
+            <p>✅ Code modulaire et testable</p>
+            <p>✅ Séparation des responsabilités</p>
+            <p>✅ Réutilisable pour d'autres environnements VR</p>
+            <p>✅ Gestion automatique de la mémoire</p>
+            <p>✅ Performance optimisée</p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -81,7 +81,7 @@ export default function DeepLinkHandler({ deepLinkState, refreshToken }) {
         <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
           Invalid Access Link
         </div>
-        <div style={{ fontSize: '14px', marginBottom: '12px', opacity: 0.9' }}>
+        <div style={{ fontSize: '14px', marginBottom: '12px', opacity: 0.9 }}>
           {error}
         </div>
         <button

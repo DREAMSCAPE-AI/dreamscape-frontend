@@ -4,9 +4,13 @@
  * Ticket: DR-74 (VR-003 - Environnement VR Paris)
  *
  * Structure des scènes VR de Paris avec panoramas 360° et hotspots interactifs
+ * Les positions des hotspots de téléportation sont calculées géographiquement
  */
 
-export const parisEnvironment = {
+import { calculateHotspotPosition } from '../utils/geoPositioning';
+
+// Données de base des scènes (avant calcul géographique)
+const parisEnvironmentBase = {
   id: 'paris',
   name: 'Paris',
   description: 'Découvrez la Ville Lumière en réalité virtuelle',
@@ -21,6 +25,7 @@ export const parisEnvironment = {
       thumbnailUrl: '/panoramas/paris/thumbnails/eiffel-tower-thumb.jpg',
       position: { lat: 48.8584, lng: 2.2945 },
 
+      icon: '🗼',
       hotspots: [
         {
           id: 'eiffel-info',
@@ -30,25 +35,8 @@ export const parisEnvironment = {
           description: 'Construite en 1889 pour l\'Exposition Universelle, la Tour Eiffel mesure 330 mètres de haut.',
           icon: '🗼',
           audioUrl: '/audio/paris/eiffel-tower.mp3'
-        },
-        {
-          id: 'to-louvre',
-          type: 'teleport',
-          position: [3, 1.5, -2],
-          title: 'Aller au Louvre',
-          targetScene: 'louvre',
-          icon: '🖼️',
-          distance: '3.2 km'
-        },
-        {
-          id: 'to-arc-triomphe',
-          type: 'teleport',
-          position: [-3, 1.5, -2],
-          title: 'Aller à l\'Arc de Triomphe',
-          targetScene: 'arc-triomphe',
-          icon: '🏛️',
-          distance: '2.1 km'
         }
+        // Les hotspots de téléportation seront calculés géographiquement
       ]
     },
 
@@ -60,6 +48,7 @@ export const parisEnvironment = {
       thumbnailUrl: '/panoramas/paris/thumbnails/louvre-thumb.jpg',
       position: { lat: 48.8606, lng: 2.3376 },
 
+      icon: '🖼️',
       hotspots: [
         {
           id: 'louvre-info',
@@ -77,24 +66,6 @@ export const parisEnvironment = {
           title: 'Pyramide du Louvre',
           description: 'Conçue par I.M. Pei et inaugurée en 1989, cette pyramide de verre et de métal est devenue un symbole moderne de Paris.',
           icon: '🔺'
-        },
-        {
-          id: 'to-eiffel',
-          type: 'teleport',
-          position: [-3, 1.5, -2],
-          title: 'Retour à la Tour Eiffel',
-          targetScene: 'eiffel-tower',
-          icon: '🗼',
-          distance: '3.2 km'
-        },
-        {
-          id: 'to-notre-dame',
-          type: 'teleport',
-          position: [3, 1.5, -2],
-          title: 'Aller à Notre-Dame',
-          targetScene: 'notre-dame',
-          icon: '⛪',
-          distance: '1.5 km'
         }
       ]
     },
@@ -107,6 +78,7 @@ export const parisEnvironment = {
       thumbnailUrl: '/panoramas/paris/thumbnails/arc-triomphe-thumb.jpg',
       position: { lat: 48.8738, lng: 2.2950 },
 
+      icon: '🏛️',
       hotspots: [
         {
           id: 'arc-info',
@@ -124,24 +96,6 @@ export const parisEnvironment = {
           title: 'Champs-Élysées',
           description: 'L\'avenue la plus célèbre de Paris, longue de 1,9 km, bordée de boutiques de luxe et de cafés.',
           icon: '🛍️'
-        },
-        {
-          id: 'to-eiffel',
-          type: 'teleport',
-          position: [3, 1.5, -2],
-          title: 'Aller à la Tour Eiffel',
-          targetScene: 'eiffel-tower',
-          icon: '🗼',
-          distance: '2.1 km'
-        },
-        {
-          id: 'to-sacre-coeur',
-          type: 'teleport',
-          position: [-3, 1.5, -2],
-          title: 'Aller au Sacré-Cœur',
-          targetScene: 'sacre-coeur',
-          icon: '⛪',
-          distance: '4.5 km'
         }
       ]
     },
@@ -154,6 +108,7 @@ export const parisEnvironment = {
       thumbnailUrl: '/panoramas/paris/thumbnails/notre-dame-thumb.jpg',
       position: { lat: 48.8530, lng: 2.3499 },
 
+      icon: '⛪',
       hotspots: [
         {
           id: 'notre-dame-info',
@@ -171,15 +126,6 @@ export const parisEnvironment = {
           title: 'La Seine',
           description: 'Le fleuve qui traverse Paris, classé au patrimoine mondial de l\'UNESCO.',
           icon: '🌊'
-        },
-        {
-          id: 'to-louvre',
-          type: 'teleport',
-          position: [-3, 1.5, -2],
-          title: 'Aller au Louvre',
-          targetScene: 'louvre',
-          icon: '🖼️',
-          distance: '1.5 km'
         }
       ]
     },
@@ -192,6 +138,7 @@ export const parisEnvironment = {
       thumbnailUrl: '/panoramas/paris/thumbnails/sacre-coeur-thumb.jpg',
       position: { lat: 48.8867, lng: 2.3431 },
 
+      icon: '⛪',
       hotspots: [
         {
           id: 'sacre-coeur-info',
@@ -209,15 +156,6 @@ export const parisEnvironment = {
           title: 'Quartier de Montmartre',
           description: 'Quartier bohème historique, célèbre pour ses artistes, le Moulin Rouge et ses rues pavées.',
           icon: '🎨'
-        },
-        {
-          id: 'to-arc-triomphe',
-          type: 'teleport',
-          position: [3, 1.5, -2],
-          title: 'Aller à l\'Arc de Triomphe',
-          targetScene: 'arc-triomphe',
-          icon: '🏛️',
-          distance: '4.5 km'
         }
       ]
     }
@@ -241,6 +179,41 @@ export const parisEnvironment = {
     teleportHotspotColor: '#10B981',
     infoHotspotColor: '#F59E0B'
   }
+};
+
+// Calculer les hotspots de téléportation avec positions géographiques réelles
+const scenesWithGeoHotspots = parisEnvironmentBase.scenes.map(scene => {
+  // Créer les hotspots de téléportation vers les autres scènes
+  const teleportHotspots = parisEnvironmentBase.scenes
+    .filter(targetScene => targetScene.id !== scene.id)
+    .map(targetScene => {
+      const hotspotData = calculateHotspotPosition(scene, targetScene, 1.5, 3);
+
+      return {
+        id: `to-${targetScene.id}`,
+        type: 'teleport',
+        position: hotspotData.position,
+        title: `${targetScene.name}`,
+        targetScene: targetScene.id,
+        icon: targetScene.icon || '📍',
+        distance: hotspotData.distance,
+        bearing: `${hotspotData.bearing}° ${hotspotData.direction}`
+      };
+    });
+
+  return {
+    ...scene,
+    hotspots: [
+      ...scene.hotspots, // Garder les hotspots info existants
+      ...teleportHotspots // Ajouter les hotspots de téléportation calculés
+    ]
+  };
+});
+
+// Exporter l'environnement avec les hotspots calculés
+export const parisEnvironment = {
+  ...parisEnvironmentBase,
+  scenes: scenesWithGeoHotspots
 };
 
 export default parisEnvironment;

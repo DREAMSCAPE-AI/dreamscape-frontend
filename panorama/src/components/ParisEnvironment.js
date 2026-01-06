@@ -81,9 +81,13 @@ function ParisEnvironment() {
       setTimeout(() => {
         setHotspotInfo(null);
       }, 10000);
+    } else if (hotspot.type === 'teleport') {
+      // Téléportation vers une autre scène
+      console.log(`🚀 Téléportation vers: ${hotspot.targetScene}`);
+      handleSceneChange(hotspot.targetScene);
     }
 
-  }, []);
+  }, [handleSceneChange]);
 
   if (!currentScene) {
     return (
