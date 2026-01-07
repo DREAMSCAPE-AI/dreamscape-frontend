@@ -25,7 +25,7 @@ const ActivityBookingFlow: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const DEBUG_MODE = true; // Activé pour analyser les données de l'API
+      const DEBUG_MODE = false; // Désactivé après analyse
 
       if (DEBUG_MODE) {
         console.log('🚀 Activity search initiated');
