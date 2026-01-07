@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock, Glasses } from 'lucide-react';
 import voyageService from '../../services/api/VoyageService';
 import imageService from '../../services/imageService';
+import QRCodeDisplay from '../../components/vr/QRCodeDisplay';
 
 interface Destination {
   id: string;
@@ -304,12 +305,18 @@ export default function DestinationPage() {
           </div>
         </div>
         <div className="absolute bottom-6 right-6 flex gap-2">
-          <button className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
+          <button className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm hover:bg-opacity-30 transition-all">
             <Heart className="w-5 h-5 text-white" />
           </button>
-          <button className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
+          <button className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm hover:bg-opacity-30 transition-all">
             <Share2 className="w-5 h-5 text-white" />
           </button>
+          <div className="ml-2">
+            <QRCodeDisplay
+              destinationId={id || 'unknown'}
+              expirationMinutes={10}
+            />
+          </div>
         </div>
       </div>
 

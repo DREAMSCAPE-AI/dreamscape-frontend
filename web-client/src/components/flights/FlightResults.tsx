@@ -232,12 +232,14 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={() => onSelect(flight)}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold shadow-lg"
-                  >
-                    Select Flight
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => onSelect(flight)}
+                      className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold shadow-lg"
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
