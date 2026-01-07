@@ -232,7 +232,7 @@ function HotspotInfoPanel({ hotspot, onClose }) {
         color="#F59E0B"
         anchorX="center"
         anchorY="middle"
-        font Bold
+        fontWeight="bold"
       >
         {`${hotspot.icon || 'ℹ️'} ${hotspot.title}`}
       </Text>
