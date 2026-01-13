@@ -40,6 +40,9 @@ import InterchangeableDashboardPage from '@/pages/dashboard/interchangeable';
 import CheckoutPage from '@/pages/checkout';
 import PaymentConfirmationPage from '@/pages/payment/confirmation';
 
+// User Favorites Page
+import FavoritesPage from '@/pages/favorites';
+
 // Auth checker component that runs on app mount
 // Memoized to prevent unnecessary re-renders
 const AuthChecker = React.memo(() => {
@@ -96,6 +99,7 @@ function App() {
                 <SettingsPage />
               </OnboardingGuard>
             } />
+            <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/support" element={<SupportPage />} />
             
             {/* New API Component Routes */}
