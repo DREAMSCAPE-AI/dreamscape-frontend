@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import type { RegisterData, LoginCredentials } from './types';
+import { useItineraryStore } from '@/store/itineraryStore';
 
 const AUTH_API_BASE_URL = import.meta.env.VITE_AUTH_SERVICE_URL || 'http://localhost:3001/api';
 
@@ -199,6 +200,8 @@ const useAuth = create<AuthState>()(
       },
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
+        // Clear user-specific data from other stores
+        useItineraryStore.getState().reset();
       },
       updateUser: (updates: Partial<User>) => {
         const { user } = get();

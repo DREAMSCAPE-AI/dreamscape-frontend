@@ -9,6 +9,7 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import StripeCheckoutForm from './StripeCheckoutForm';
 import { useAuth } from '@/services/auth/AuthService';
+import { getAirportInfo } from '@/utils/airportCodes';
 
 interface CheckoutData {
   bookingReference: string;
@@ -57,7 +58,7 @@ const CheckoutPage = () => {
     if (!data) {
       setError('No checkout data found. Please start from your cart.');
       setLoading(false);
-      setTimeout(() => navigate('/cart'), 3000);
+      setTimeout(() => navigate(-1), 3000);
       return;
     }
 
@@ -107,7 +108,7 @@ const CheckoutPage = () => {
             <h2 className="mt-4 text-xl font-semibold text-gray-900">Checkout Error</h2>
             <p className="mt-2 text-gray-600">{error || 'Unable to load payment form'}</p>
             <button
-              onClick={() => navigate('/cart')}
+              onClick={() => navigate(-1)}
               className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
             >
               Return to Cart
@@ -168,56 +169,76 @@ const CheckoutPage = () => {
                         </div>
 
                         <div className="mt-2 text-sm text-gray-600">
-                          {item.type === 'FLIGHT' && (
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-3">
-                                <div className="text-center">
-                                  <p className="font-bold text-lg text-gray-900">
-                                    {item.itemData?.origin || item.itemData?.departure?.iataCode || 'N/A'}
-                                  </p>
-                                  <p className="text-xs text-gray-500">
-                                    {item.itemData?.departureDate
-                                      ? new Date(item.itemData.departureDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-                                      : item.itemData?.departure?.at
-                                      ? new Date(item.itemData.departure.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-                                      : 'N/A'}
-                                  </p>
+                          {item.type === 'FLIGHT' && (() => {
+                            // Extract flight data with fallbacks
+                            const data = item.itemData;
+                            const originCode = data?.origin || data?.departure?.iataCode || '';
+                            const destinationCode = data?.destination || data?.arrival?.iataCode || '';
+                            const departureDateTime = data?.departureDate || data?.departureTime || data?.departure?.at || '';
+                            const arrivalDateTime = data?.arrivalDate || data?.arrivalTime || data?.arrival?.at || '';
+                            const carrier = data?.validatingAirlineCodes?.[0] || data?.carrierCode || data?.airline || '';
+                            const flightNum = data?.flightNumber || data?.number || '';
+                            const duration = data?.duration || '';
+
+                            // Get city names from airport codes
+                            const originInfo = getAirportInfo(originCode);
+                            const destinationInfo = getAirportInfo(destinationCode);
+
+                            return (
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-3">
+                                  <div className="text-center">
+                                    <p className="font-bold text-lg text-gray-900">
+                                      {originCode || '---'}
+                                    </p>
+                                    {originInfo && (
+                                      <p className="text-xs text-gray-600 font-medium">
+                                        {originInfo.city}
+                                      </p>
+                                    )}
+                                    <p className="text-xs text-gray-500">
+                                      {departureDateTime
+                                        ? new Date(departureDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                                        : '--:--'}
+                                    </p>
+                                  </div>
+                                  <svg className="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                  </svg>
+                                  <div className="text-center">
+                                    <p className="font-bold text-lg text-gray-900">
+                                      {destinationCode || '---'}
+                                    </p>
+                                    {destinationInfo && (
+                                      <p className="text-xs text-gray-600 font-medium">
+                                        {destinationInfo.city}
+                                      </p>
+                                    )}
+                                    <p className="text-xs text-gray-500">
+                                      {arrivalDateTime
+                                        ? new Date(arrivalDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                                        : '--:--'}
+                                    </p>
+                                  </div>
                                 </div>
-                                <svg className="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                                <div className="text-center">
-                                  <p className="font-bold text-lg text-gray-900">
-                                    {item.itemData?.destination || item.itemData?.arrival?.iataCode || 'N/A'}
+                                {departureDateTime && (
+                                  <p className="text-xs text-gray-600 font-medium">
+                                    {new Date(departureDateTime).toLocaleDateString('fr-FR', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
                                   </p>
+                                )}
+                                {(carrier || flightNum) && (
                                   <p className="text-xs text-gray-500">
-                                    {item.itemData?.arrivalDate
-                                      ? new Date(item.itemData.arrivalDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-                                      : item.itemData?.arrival?.at
-                                      ? new Date(item.itemData.arrival.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-                                      : 'N/A'}
+                                    Carrier: {carrier}{flightNum ? ` • Flight ${flightNum}` : ''}
                                   </p>
-                                </div>
+                                )}
+                                {duration && (
+                                  <p className="text-xs text-gray-500">
+                                    Duration: {duration.replace('PT', '').replace('H', 'h ').replace('M', 'min')}
+                                  </p>
+                                )}
                               </div>
-                              <p className="text-xs text-gray-600 font-medium">
-                                {item.itemData?.departureDate
-                                  ? new Date(item.itemData.departureDate).toLocaleDateString('fr-FR', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
-                                  : item.itemData?.departure?.at
-                                  ? new Date(item.itemData.departure.at).toLocaleDateString('fr-FR', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
-                                  : 'N/A'}
-                              </p>
-                              {(item.itemData?.validatingAirlineCodes?.[0] || item.itemData?.carrierCode) && (
-                                <p className="text-xs text-gray-500">
-                                  Carrier: {item.itemData.validatingAirlineCodes?.[0] || item.itemData.carrierCode} {item.itemData.number ? `• Flight ${item.itemData.number}` : ''}
-                                </p>
-                              )}
-                              {item.itemData?.duration && (
-                                <p className="text-xs text-gray-500">
-                                  Duration: {item.itemData.duration.replace('PT', '').replace('H', 'h ').replace('M', 'min')}
-                                </p>
-                              )}
-                            </div>
-                          )}
+                            );
+                          })()}
 
                           {item.type === 'HOTEL' && (
                             <div>
@@ -238,13 +259,38 @@ const CheckoutPage = () => {
                             </div>
                           )}
 
-                          {item.type === 'ACTIVITY' && (
-                            <div>
-                              <p className="font-medium text-gray-900">
-                                {item.itemData?.name || 'Activity Booking'}
-                              </p>
-                            </div>
-                          )}
+                          {item.type === 'ACTIVITY' && (() => {
+                            const data = item.itemData;
+                            const activityName = data?.name || 'Activity Booking';
+                            const activityLocation = data?.location?.name || data?.location || '';
+                            const activityDate = data?.date || data?.startDate || '';
+                            const activityDuration = data?.duration || '';
+
+                            return (
+                              <div>
+                                <p className="font-medium text-gray-900">
+                                  {activityName}
+                                </p>
+                                {activityLocation && (
+                                  <p className="text-sm text-gray-600 mt-1">
+                                    {activityLocation}
+                                  </p>
+                                )}
+                                {(activityDate || activityDuration) && (
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {activityDate ? new Date(activityDate).toLocaleDateString('fr-FR', {
+                                      weekday: 'short',
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric'
+                                    }) : ''}
+                                    {activityDate && activityDuration ? ' • ' : ''}
+                                    {activityDuration}
+                                  </p>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
 

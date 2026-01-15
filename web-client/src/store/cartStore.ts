@@ -138,6 +138,8 @@ export const useCartStore = create<CartState>()(
           try {
             await cartService.clearCart(userId);
             set({ cart: null, isLoading: false, isDrawerOpen: false });
+            // Also clear persisted cart from localStorage
+            localStorage.removeItem('dreamscape-cart-storage');
             console.log('[CartStore] Cart cleared');
           } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to clear cart';

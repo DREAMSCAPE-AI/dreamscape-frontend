@@ -76,8 +76,16 @@ function App() {
             <Route path="/activities" element={<ActivitiesPage />} />
             <Route path="/activities/:id" element={<ActivityPage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/planner" element={<PlannerPage />} />
-            <Route path="/planner/:id" element={<ItineraryDetailPage />} />
+            <Route path="/planner" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <PlannerPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/planner/:id" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <ItineraryDetailPage />
+              </OnboardingGuard>
+            } />
             <Route path="/dashboard" element={
               <OnboardingGuard>
                 <DashboardPage />

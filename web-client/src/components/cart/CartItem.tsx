@@ -5,6 +5,7 @@
 
 import { Minus, Plus, Trash2, Plane, Hotel, MapPin } from 'lucide-react';
 import type { CartItem as CartItemType, FlightItemData, HotelItemData } from '@/types/cart';
+import { getAirportInfo } from '@/utils/airportCodes';
 
 interface CartItemProps {
   item: CartItemType;
@@ -45,53 +46,48 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data = item.itemData as any;
 
-      // Handle new structure with origin/destination at root level
-      if (data.origin && data.destination) {
-        return (
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-bold text-gray-900">{data.origin}</span>
-              <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-              <span className="font-bold text-gray-900">{data.destination}</span>
-            </div>
-            <p className="text-xs text-gray-600 mb-1">
-              {data.departureDate ? new Date(data.departureDate).toLocaleDateString('fr-FR', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-              }) : 'N/A'}
-            </p>
-            <p className="text-xs text-gray-500">
-              {data.validatingAirlineCodes?.[0] || data.carrierCode || 'Flight'}
-            </p>
-          </div>
-        );
-      }
+      // Extract origin/destination with multiple fallbacks
+      const originCode = data.origin || data.departure?.iataCode || '';
+      const destinationCode = data.destination || data.arrival?.iataCode || '';
+      const departureDateTime = data.departureDate || data.departureTime || data.departure?.at || '';
+      const carrier = data.validatingAirlineCodes?.[0] || data.carrierCode || data.airline || '';
+      const flightNum = data.flightNumber || data.number || '';
 
-      // Handle old structure with departure/arrival objects
-      if (data.departure && data.arrival) {
+      // Get city names from airport codes
+      const originInfo = getAirportInfo(originCode);
+      const destinationInfo = getAirportInfo(destinationCode);
+
+      // Display flight info with extracted data
+      if (originCode || destinationCode) {
         return (
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-bold text-gray-900">{data.departure?.iataCode || 'N/A'}</span>
+              <div className="text-center">
+                <span className="font-bold text-gray-900">{originCode || '---'}</span>
+                {originInfo && (
+                  <p className="text-xs text-gray-500">{originInfo.city}</p>
+                )}
+              </div>
               <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-              <span className="font-bold text-gray-900">{data.arrival?.iataCode || 'N/A'}</span>
+              <div className="text-center">
+                <span className="font-bold text-gray-900">{destinationCode || '---'}</span>
+                {destinationInfo && (
+                  <p className="text-xs text-gray-500">{destinationInfo.city}</p>
+                )}
+              </div>
             </div>
             <p className="text-xs text-gray-600 mb-1">
-              {data.departure?.at ? new Date(data.departure.at).toLocaleDateString('fr-FR', {
+              {departureDateTime ? new Date(departureDateTime).toLocaleDateString('fr-FR', {
                 weekday: 'short',
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric'
-              }) : 'N/A'}
+              }) : ''}
             </p>
             <p className="text-xs text-gray-500">
-              {data.carrierCode || ''} {data.number ? `${data.number}` : ''} • {data.aircraft?.code || 'ECONOMY'}
+              {carrier}{flightNum ? ` ${flightNum}` : ''}{carrier || flightNum ? '' : 'Flight'}
             </p>
           </div>
         );

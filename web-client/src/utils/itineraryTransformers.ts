@@ -7,19 +7,46 @@ import type { FlightItemData, HotelItemData, ActivityItemData } from '@/types/ca
 
 /**
  * Transform flight search result to ItineraryItem
+ * Handles both mock data structure and Amadeus API structure
  */
 export function flightToItineraryItem(flight: any): CreateItineraryItemDto {
   console.log('[flightToItineraryItem] Input flight:', flight);
 
-  const itemData: FlightItemData = {
+  // Extract origin/destination with multiple fallbacks (Amadeus API structure vs mock structure)
+  const origin = flight.origin || flight.departure?.iataCode ||
+    flight.itineraries?.[0]?.segments?.[0]?.departure?.iataCode || '';
+  const destination = flight.destination || flight.arrival?.iataCode ||
+    flight.itineraries?.[0]?.segments?.[flight.itineraries?.[0]?.segments?.length - 1]?.arrival?.iataCode || '';
+
+  // Extract times with multiple fallbacks
+  const departureDateTime = flight.departureTime || flight.departure?.at ||
+    flight.itineraries?.[0]?.segments?.[0]?.departure?.at || new Date().toISOString();
+  const arrivalDateTime = flight.arrivalTime || flight.arrival?.at ||
+    flight.itineraries?.[0]?.segments?.[flight.itineraries?.[0]?.segments?.length - 1]?.arrival?.at || new Date().toISOString();
+
+  // Extract carrier info
+  const carrierCode = flight.carrierCode || flight.validatingAirlineCodes?.[0] ||
+    flight.itineraries?.[0]?.segments?.[0]?.carrierCode || '';
+  const flightNum = flight.flightNumber || flight.number ||
+    flight.itineraries?.[0]?.segments?.[0]?.number || '';
+
+  // Extract duration - handle ISO format PT8H30M
+  const duration = flight.duration || flight.itineraries?.[0]?.duration || '0h';
+
+  // Build itemData with all fields needed for cart/checkout display
+  const itemData: FlightItemData & Record<string, any> = {
     type: 'flight',
-    flightNumber: flight.flightNumber || flight.number || 'N/A',
-    airline: flight.airline || flight.carrierCode || 'Unknown Airline',
-    origin: flight.origin || flight.departure?.iataCode || '',
-    destination: flight.destination || flight.arrival?.iataCode || '',
-    departureTime: flight.departureTime || flight.departure?.at || new Date().toISOString(),
-    arrivalTime: flight.arrivalTime || flight.arrival?.at || new Date().toISOString(),
-    duration: flight.duration || '0h',
+    flightNumber: flightNum || 'N/A',
+    airline: flight.airline || carrierCode || 'Unknown Airline',
+    origin,
+    destination,
+    departureTime: departureDateTime,
+    arrivalTime: arrivalDateTime,
+    // Cart-compatible fields (same data, different field names)
+    departureDate: departureDateTime,
+    arrivalDate: arrivalDateTime,
+    carrierCode,
+    duration,
     cabinClass: flight.cabinClass || flight.class || 'economy',
     passengers: flight.passengers || {
       adults: 1,
@@ -28,7 +55,7 @@ export function flightToItineraryItem(flight: any): CreateItineraryItemDto {
     }
   };
 
-  const price = flight.price?.total || flight.price || 0;
+  const price = flight.price?.total || flight.price?.grandTotal || flight.price || 0;
   const currency = flight.price?.currency || flight.currency || 'USD';
 
   const result = {
@@ -97,12 +124,18 @@ export function hotelToItineraryItem(hotel: any): CreateItineraryItemDto {
  * Transform activity search result to ItineraryItem
  */
 export function activityToItineraryItem(activity: any): CreateItineraryItemDto {
+  console.log('[activityToItineraryItem] Input activity:', activity);
+
+  // Determine location safely
+  let locationStr = activity.location || activity.city || 'Unknown Location';
+  if (locationStr === 'Unknown Location' && activity.geoCode?.latitude && activity.geoCode?.longitude) {
+    locationStr = `${activity.geoCode.latitude}, ${activity.geoCode.longitude}`;
+  }
+
   const itemData: ActivityItemData = {
     type: 'activity',
     name: activity.name || activity.title || 'Unknown Activity',
-    location: activity.location || activity.geoCode?.latitude ?
-      `${activity.geoCode.latitude}, ${activity.geoCode.longitude}` :
-      activity.city || '',
+    location: locationStr,
     date: activity.date || activity.startDate || new Date().toISOString(),
     duration: activity.duration || '2h',
     participants: activity.participants || activity.adults || 1,
@@ -118,8 +151,8 @@ export function activityToItineraryItem(activity: any): CreateItineraryItemDto {
   const durationHours = parseDuration(itemData.duration);
   const endDate = new Date(startDate.getTime() + durationHours * 60 * 60 * 1000);
 
-  return {
-    type: 'ACTIVITY',
+  const result = {
+    type: 'ACTIVITY' as const,
     itemId: activity.id || activity.activityId,
     itemData: itemData as any,
     price: parseFloat(price.toString()),
@@ -132,6 +165,9 @@ export function activityToItineraryItem(activity: any): CreateItineraryItemDto {
     location: itemData.location,
     order: 0
   };
+
+  console.log('[activityToItineraryItem] Output DTO:', result);
+  return result;
 }
 
 /**

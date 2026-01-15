@@ -247,7 +247,7 @@ const StripeCheckoutForm = ({
       {/* Cancel Button */}
       <button
         type="button"
-        onClick={() => navigate('/cart')}
+        onClick={() => navigate(-1)}
         disabled={isProcessing}
         className="w-full py-2 px-4 rounded-md font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >

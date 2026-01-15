@@ -7,11 +7,14 @@ import { useAuth } from '@/services/auth/AuthService';
 import ItineraryTimeline from './ItineraryTimeline';
 import ExportMenu from './ExportMenu';
 
+// TODO: Replace with actual user ID from auth store when fully integrated
+const TEMP_USER_ID = 'user-123';
+
 const ItineraryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { currentItinerary, isLoading, fetchItineraryById } = useItineraryStore();
-  const { addToCart } = useCartStore();
+  const { addToCart, openDrawer } = useCartStore();
   const { user } = useAuth();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
@@ -38,12 +41,12 @@ const ItineraryDetail: React.FC = () => {
 
   const getTotalPrice = () => {
     if (!currentItinerary?.items) return 0;
-    return currentItinerary.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return currentItinerary.items.reduce((total, item) => total + (Number(item.price) * (item.quantity || 1)), 0);
   };
 
   const handleAddAllToCart = async () => {
-    if (!currentItinerary?.items || !user) {
-      alert('Please log in to add items to cart');
+    if (!currentItinerary?.items) {
+      alert('No itinerary items found');
       return;
     }
 
@@ -55,24 +58,21 @@ const ItineraryDetail: React.FC = () => {
     setIsAddingToCart(true);
 
     try {
-      // Add each item to cart
+      // Add each item to cart using TEMP_USER_ID for consistency with CartDrawer
       for (const item of currentItinerary.items) {
         await addToCart({
-          userId: user.id,
+          userId: TEMP_USER_ID,
           type: item.type as any,
           itemId: item.itemId || item.id,
           itemData: item.itemData,
-          quantity: item.quantity,
-          price: item.price,
-          currency: item.currency
+          quantity: item.quantity || 1,
+          price: Number(item.price), // Convert Decimal to number
+          currency: item.currency || 'USD'
         });
       }
 
-      // Success notification
-      alert(`${currentItinerary.items.length} items added to cart successfully!`);
-
-      // Redirect to cart
-      navigate('/checkout');
+      // Open cart drawer to show added items
+      openDrawer();
     } catch (error) {
       console.error('Failed to add items to cart:', error);
       alert('Failed to add some items to cart. Please try again.');
@@ -151,24 +151,26 @@ const ItineraryDetail: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Add All to Cart Button */}
+              {/* Add All to Cart Button - Outline style like hotel/flight pages */}
               {currentItinerary.items && currentItinerary.items.length > 0 && (
                 <button
                   onClick={handleAddAllToCart}
                   disabled={isAddingToCart || !user}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-orange-400 rounded-lg hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title={!user ? 'Please log in to add to cart' : ''}
                 >
                   {isAddingToCart ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Adding...</span>
+                      <Loader2 className="w-5 h-5 animate-spin text-orange-500" />
+                      <span className="text-orange-500 font-medium">Adding...</span>
                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="w-5 h-5" />
-                      <span>Add All to Cart</span>
-                      <span className="ml-1 px-2 py-0.5 bg-green-700 rounded-full text-xs">
+                      <ShoppingCart className="w-5 h-5 text-orange-500" />
+                      <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent font-medium">
+                        Add All to Cart
+                      </span>
+                      <span className="ml-1 px-2 py-0.5 bg-orange-100 text-orange-600 rounded-full text-xs font-semibold">
                         {currentItinerary.items.length}
                       </span>
                     </>
@@ -177,12 +179,6 @@ const ItineraryDetail: React.FC = () => {
               )}
 
               <ExportMenu itineraryId={currentItinerary.id} />
-              <button
-                onClick={() => alert('Share functionality coming soon!')}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Share Trip
-              </button>
             </div>
           </div>
         </div>
