@@ -1,18 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ActivitySearch, { ActivitySearchParams } from './ActivitySearch';
 import ActivityResults, { Activity } from './ActivityResults';
 import ActivityDetails from './ActivityDetails';
+import ActivityParticipantInfo from './booking/ActivityParticipantInfo';
+import ActivityPayment from './booking/ActivityPayment';
 import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
+import { useActivityBookingStore, ActivityBookingStep } from '@/store/activityBookingStore';
 
-type BookingStep = 'search' | 'results' | 'details' | 'payment';
+type BookingStep = 'search' | 'results' | 'details' | 'participant-info' | 'payment';
 
 const ActivityBookingFlow: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('search');
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Use activity booking store
+  const {
+    selectedActivity,
+    setSelectedActivity: setStoreActivity,
+    numberOfParticipants,
+    setNumberOfParticipants,
+    initializeParticipants,
+    currentStep: storeStep,
+    setCurrentStep: setStoreStep,
+    resetBooking,
+  } = useActivityBookingStore();
+
+  // Reset booking on component mount (when user navigates to /activities)
+  useEffect(() => {
+    resetBooking();
+    setCurrentStep('search');
+  }, []); // Empty dependency array = runs only on mount
+
+  // Sync local step with store step
+  useEffect(() => {
+    const stepMapping: Record<ActivityBookingStep, BookingStep> = {
+      [ActivityBookingStep.SEARCH]: 'search',
+      [ActivityBookingStep.SELECT_ACTIVITY]: 'results',
+      [ActivityBookingStep.DETAILS]: 'details',
+      [ActivityBookingStep.PAYMENT]: 'payment',
+    };
+    if (storeStep in stepMapping) {
+      setCurrentStep(stepMapping[storeStep as ActivityBookingStep]);
+    }
+  }, [storeStep]);
 
   // Amadeus Test API supported cities
   const testApiSupportedCities = [
@@ -379,10 +412,33 @@ const ActivityBookingFlow: React.FC = () => {
   };
 
   const handleActivitySelect = (activity: Activity) => {
-    setSelectedActivity(activity);
+    // Set activity in store
+    setStoreActivity(activity);
     setCurrentStep('details');
-    // TODO: Navigate to activity details page
+    setStoreStep(ActivityBookingStep.DETAILS);
     console.log('Selected activity:', activity);
+  };
+
+  const handleDetailsAccept = () => {
+    // Initialize participants based on number of participants
+    // For now, default to 1 adult
+    initializeParticipants(numberOfParticipants || 1, ['adult']);
+    setCurrentStep('participant-info');
+  };
+
+  const handleParticipantInfoNext = () => {
+    setCurrentStep('payment');
+    setStoreStep(ActivityBookingStep.PAYMENT);
+  };
+
+  const handleBackToResults = () => {
+    setCurrentStep('results');
+    setStoreStep(ActivityBookingStep.SELECT_ACTIVITY);
+  };
+
+  const handleBackToDetails = () => {
+    setCurrentStep('details');
+    setStoreStep(ActivityBookingStep.DETAILS);
   };
 
   return (
@@ -396,6 +452,7 @@ const ActivityBookingFlow: React.FC = () => {
                 { step: 'search', label: 'Search' },
                 { step: 'results', label: 'Select Activity' },
                 { step: 'details', label: 'Details' },
+                { step: 'participant-info', label: 'Participants' },
                 { step: 'payment', label: 'Payment' }
               ].map(({ step, label }, index) => (
                 <div
@@ -412,8 +469,8 @@ const ActivityBookingFlow: React.FC = () => {
                   <div className="ml-2 text-sm font-medium text-gray-600">
                     {label}
                   </div>
-                  {index < 3 && (
-                    <div className="w-24 h-0.5 mx-2 bg-gray-200" />
+                  {index < 4 && (
+                    <div className="w-16 h-0.5 mx-2 bg-gray-200" />
                   )}
                 </div>
               ))}
@@ -448,16 +505,37 @@ const ActivityBookingFlow: React.FC = () => {
             {currentStep === 'details' && selectedActivity && (
               <ActivityDetails
                 activity={selectedActivity}
-                onClose={() => setCurrentStep('results')}
-                onBack={() => setCurrentStep('results')}
-                onAccept={() => setCurrentStep('payment')}
+                onClose={handleBackToResults}
+                onBack={handleBackToResults}
+                onAccept={handleDetailsAccept}
               />
+            )}
+
+            {currentStep === 'participant-info' && (
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <ActivityParticipantInfo />
+
+                {/* Navigation Buttons */}
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={handleBackToDetails}
+                    className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  >
+                    Back to Details
+                  </button>
+                  <button
+                    onClick={handleParticipantInfoNext}
+                    className="px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+                  >
+                    Continue to Payment
+                  </button>
+                </div>
+              </div>
             )}
 
             {currentStep === 'payment' && (
               <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-semibold">Payment</h2>
-                <p className="text-gray-600 mt-2">Payment implementation coming soon...</p>
+                <ActivityPayment />
               </div>
             )}
           </div>

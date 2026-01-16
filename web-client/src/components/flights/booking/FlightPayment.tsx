@@ -51,22 +51,26 @@ export default function FlightPayment() {
     setIsAddingToCart(true);
     try {
       // Prepare complete flight booking data
+      // Extract flight segments for easier access
+      const firstItinerary = selectedFlight.itineraries?.[0];
+      const segments = firstItinerary?.segments || [];
+      const firstSeg = segments[0];
+      const lastSeg = segments[segments.length - 1];
+
       await addToCart(TEMP_USER_ID, {
         type: 'FLIGHT',
         itemId: selectedFlight.id,
         itemData: {
           // Flight details
           ...selectedFlight,
-          origin: selectedFlight.itineraries?.[0]?.segments?.[0]?.departure?.iataCode,
-          destination:
-            selectedFlight.itineraries?.[0]?.segments?.[
-              selectedFlight.itineraries[0].segments.length - 1
-            ]?.arrival?.iataCode,
-          departureDate: selectedFlight.itineraries?.[0]?.segments?.[0]?.departure?.at,
-          arrivalDate:
-            selectedFlight.itineraries?.[0]?.segments?.[
-              selectedFlight.itineraries[0].segments.length - 1
-            ]?.arrival?.at,
+          // Normalized flight info for display
+          origin: firstSeg?.departure?.iataCode || '',
+          destination: lastSeg?.arrival?.iataCode || '',
+          departureDate: firstSeg?.departure?.at || '',
+          arrivalDate: lastSeg?.arrival?.at || '',
+          duration: firstItinerary?.duration || '',
+          carrierCode: firstSeg?.carrierCode || selectedFlight.validatingAirlineCodes?.[0] || '',
+          flightNumber: firstSeg?.number || '',
 
           // Booking details
           bookingDetails: {
@@ -120,22 +124,26 @@ export default function FlightPayment() {
 
     setIsProcessingPayment(true);
     try {
+      // Extract flight segments for easier access
+      const firstItinerary = selectedFlight.itineraries?.[0];
+      const segments = firstItinerary?.segments || [];
+      const firstSeg = segments[0];
+      const lastSeg = segments[segments.length - 1];
+
       // First add to cart
       await addToCart(TEMP_USER_ID, {
         type: 'FLIGHT',
         itemId: selectedFlight.id,
         itemData: {
           ...selectedFlight,
-          origin: selectedFlight.itineraries?.[0]?.segments?.[0]?.departure?.iataCode,
-          destination:
-            selectedFlight.itineraries?.[0]?.segments?.[
-              selectedFlight.itineraries[0].segments.length - 1
-            ]?.arrival?.iataCode,
-          departureDate: selectedFlight.itineraries?.[0]?.segments?.[0]?.departure?.at,
-          arrivalDate:
-            selectedFlight.itineraries?.[0]?.segments?.[
-              selectedFlight.itineraries[0].segments.length - 1
-            ]?.arrival?.at,
+          // Normalized flight info for display
+          origin: firstSeg?.departure?.iataCode || '',
+          destination: lastSeg?.arrival?.iataCode || '',
+          departureDate: firstSeg?.departure?.at || '',
+          arrivalDate: lastSeg?.arrival?.at || '',
+          duration: firstItinerary?.duration || '',
+          carrierCode: firstSeg?.carrierCode || selectedFlight.validatingAirlineCodes?.[0] || '',
+          flightNumber: firstSeg?.number || '',
           bookingDetails: {
             passengers: passengers.map((p) => ({
               ...p,

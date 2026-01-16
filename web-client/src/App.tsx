@@ -18,6 +18,7 @@ import ActivitiesPage from '@/pages/activities';
 import ActivityPage from '@/pages/activities/[id]';
 import AboutPage from '@/pages/about';
 import PlannerPage from '@/pages/planner';
+import ItineraryDetailPage from '@/pages/planner/[id]';
 import DashboardPage from '@/pages/dashboard';
 import SettingsPage from '@/pages/settings';
 import SupportPage from '@/pages/support';
@@ -75,7 +76,16 @@ function App() {
             <Route path="/activities" element={<ActivitiesPage />} />
             <Route path="/activities/:id" element={<ActivityPage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/planner" element={<PlannerPage />} />
+            <Route path="/planner" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <PlannerPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/planner/:id" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <ItineraryDetailPage />
+              </OnboardingGuard>
+            } />
             <Route path="/dashboard" element={
               <OnboardingGuard>
                 <DashboardPage />

@@ -12,15 +12,18 @@ import {
   ArrowRight,
   X,
   Check,
-  XCircle
+  XCircle,
+  Minus,
+  Plus
 } from 'lucide-react';
 import type { Activity } from './ActivityResults';
 import imageService from '@/services/imageService';
+import { useActivityBookingStore } from '@/store/activityBookingStore';
 
 interface ActivityDetailsProps {
   activity: Activity;
   onClose: () => void;
-  onAccept: (activity: Activity) => void;
+  onAccept: () => void;
   onBack: () => void;
 }
 
@@ -32,6 +35,14 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
 }) => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showWhatsIncluded, setShowWhatsIncluded] = useState(false);
+
+  // Get number of participants from store
+  const { numberOfParticipants, setNumberOfParticipants } = useActivityBookingStore();
+
+  const handleParticipantsChange = (change: number) => {
+    const newCount = Math.max(1, Math.min(20, numberOfParticipants + change));
+    setNumberOfParticipants(newCount);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -332,6 +343,42 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Number of Participants */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Number of Participants</h3>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between max-w-xs">
+                <button
+                  onClick={() => handleParticipantsChange(-1)}
+                  disabled={numberOfParticipants <= 1}
+                  className="p-2 rounded-lg border border-gray-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Minus className="w-5 h-5" />
+                </button>
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-orange-500" />
+                  <span className="text-xl font-semibold">{numberOfParticipants}</span>
+                  <span className="text-gray-600">
+                    {numberOfParticipants === 1 ? 'person' : 'people'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleParticipantsChange(1)}
+                  disabled={numberOfParticipants >= 20}
+                  className="p-2 rounded-lg border border-gray-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">
+                Price per person: {activity.price.formatted}
+              </p>
+              <p className="text-lg font-semibold text-orange-600 mt-1">
+                Total: {activity.price.currency} {(activity.price.amount * numberOfParticipants).toFixed(2)}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Actions */}
@@ -344,11 +391,11 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
               Back to Results
             </button>
             <button
-              onClick={() => onAccept(activity)}
+              onClick={onAccept}
               disabled={!activity.availability.available}
               className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>Continue to Payment</span>
+              <span>Continue to Booking</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
