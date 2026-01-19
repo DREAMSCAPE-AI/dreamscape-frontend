@@ -4,6 +4,7 @@ import DateRangePicker from '../shared/DateRangePicker';
 import Dropdown from '../shared/Dropdown';
 import AirportSearch from '../shared/AirportSearch';
 import type { UIFlightSearchParams } from '../../services/api/types';
+import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 
 interface ValidationErrors {
   origin?: string;
@@ -119,6 +120,9 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
     return Object.keys(errors).length === 0;
   };
 
+  // History tracking
+  const { trackSearch } = useHistoryTracking();
+
   const handleSearch = () => {
     setShowErrors(true);
     if (!validateSearch()) {
@@ -132,6 +136,9 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
       flexibleDates,
       nearbyAirports
     };
+
+    // Track the flight search
+    trackSearch(`${searchParams.origin} → ${searchParams.destination} (${searchParams.departureDate})`, 'flight');
 
     onSearch(finalParams);
   };
