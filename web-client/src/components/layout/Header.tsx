@@ -241,7 +241,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         <span>Favorites</span>
                       </Link>
                       <Link
-                        to="/planner"
+                        to="/bookings"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
                       >
