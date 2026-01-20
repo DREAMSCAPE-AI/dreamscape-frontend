@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, MapPin, Clock } from 'lucide-react';
+import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 
 export interface ActivitySearchParams {
   location: string;
@@ -57,7 +58,14 @@ const ActivitySearch: React.FC<ActivitySearchProps> = ({
     { id: 'full-day', name: 'Full Day (8+ hours)', minHours: 8 }
   ];
 
+  // History tracking
+  const { trackSearch } = useHistoryTracking();
+
   const handleSearch = () => {
+    // Track the activity search
+    const searchQuery = `${selectedLocation || 'All locations'} - ${selectedCategory}`;
+    trackSearch(searchQuery, 'activity');
+
     onSearch({
       location: selectedLocation,
       category: selectedCategory,

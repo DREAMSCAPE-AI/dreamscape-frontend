@@ -9,7 +9,10 @@ import type {
   HistoryEntityType,
 } from '@/types/history';
 
-const HISTORY_API_BASE_URL = import.meta.env.USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
+const HISTORY_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
+
+// Debug: log the configured URL
+console.log('[HistoryService] API Base URL:', HISTORY_API_BASE_URL);
 
 /**
  * Service for managing user history
@@ -19,8 +22,11 @@ class HistoryService {
   private api: AxiosInstance;
 
   constructor() {
+    const fullBaseUrl = `${HISTORY_API_BASE_URL}/users/history`;
+    console.log('[HistoryService] Full API URL:', fullBaseUrl);
+
     this.api = axios.create({
-      baseURL: `${HISTORY_API_BASE_URL}/users/history`,
+      baseURL: fullBaseUrl,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -33,17 +39,21 @@ class HistoryService {
       (config) => {
         // Get token from Zustand auth storage
         const authStorage = localStorage.getItem('auth-storage');
+        console.log('[HistoryService] Auth storage raw:', authStorage ? 'Found' : 'Not found');
+
         if (authStorage) {
           try {
             const authData = JSON.parse(authStorage);
             const token = authData?.state?.token;
+            console.log('[HistoryService] Token found:', token ? 'Yes' : 'No');
             if (token) {
               config.headers.Authorization = `Bearer ${token}`;
             }
           } catch (error) {
-            console.error('Failed to parse auth storage:', error);
+            console.error('[HistoryService] Failed to parse auth storage:', error);
           }
         }
+        console.log('[HistoryService] Request:', config.method?.toUpperCase(), config.url);
         return config;
       },
       (error) => Promise.reject(error)

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Star, Clock, Users, Calendar, MapPin } from 'lucide-react';
 import imageService from '@/services/imageService';
+import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 
 export interface Activity {
   id: string;
@@ -51,6 +52,18 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 12;
+
+  // History tracking
+  const { trackActivityView } = useHistoryTracking();
+
+  const handleActivitySelect = useCallback((activity: Activity) => {
+    // Track activity view
+    trackActivityView(activity.id, activity.name);
+    // Call the original onSelect
+    if (onSelect) {
+      onSelect(activity);
+    }
+  }, [onSelect, trackActivityView]);
 
   // Pagination logic
   const totalPages = Math.ceil(activities.length / ITEMS_PER_PAGE);
@@ -103,7 +116,7 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
           <div
             key={activity.id}
             className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer"
-            onClick={() => onSelect && onSelect(activity)}
+            onClick={() => handleActivitySelect(activity)}
           >
             {/* Activity Image */}
             <div className="h-48 bg-gray-200 relative overflow-hidden">
