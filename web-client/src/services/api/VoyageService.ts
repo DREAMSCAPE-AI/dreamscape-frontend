@@ -376,6 +376,36 @@ class VoyageService {
     const response = await this.api.get('/recommendations', { params });
     return response.data;
   }
+
+  // Booking Services
+  async getUserBookings(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    type?: string;
+    sortBy?: 'createdAt' | 'updatedAt' | 'totalAmount' | 'status';
+    sortOrder?: 'asc' | 'desc';
+    search?: string;
+    userId?: string;
+  }): Promise<any> {
+    const response = await this.api.get('/bookings', { params });
+    return response.data;
+  }
+
+  async getBookingStats(userId?: string): Promise<any> {
+    const response = await this.api.get('/bookings/stats', { params: { userId } });
+    return response.data;
+  }
+
+  async getBookingDetails(reference: string, userId?: string): Promise<any> {
+    const response = await this.api.get(`/bookings/${reference}`, { params: { userId } });
+    return response.data;
+  }
+
+  async cancelBooking(reference: string, reason?: string, userId?: string): Promise<any> {
+    const response = await this.api.post(`/bookings/${reference}/cancel`, { reason, userId });
+    return response.data;
+  }
 }
 
 export default new VoyageService();
