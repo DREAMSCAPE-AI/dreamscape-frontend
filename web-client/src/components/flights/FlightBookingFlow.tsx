@@ -22,17 +22,17 @@ import {
 } from '@/utils/flightUtils';
 import { useFlightBookingStore } from '@/store/flightBookingStore';
 import { useCartStore } from '@/store/cartStore';
+import { useAuth } from '@/services/auth/AuthService';
 
 type BookingStep = 'search' | 'results' | 'details' | 'seats' | 'meals' | 'baggage' | 'passengers' | 'payment';
-
-// TODO: Replace with actual user ID from auth store
-const TEMP_USER_ID = 'user-123';
 
 const FlightBookingFlow: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { setSelectedFlight: setFlightInStore } = useFlightBookingStore();
   const { addToCart, openDrawer, checkout } = useCartStore();
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
   const [currentStep, setCurrentStep] = useState<BookingStep>('search');
   const [searchResults, setSearchResults] = useState<FlightOffer[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<FlightOffer | null>(null);
@@ -611,7 +611,7 @@ const FlightBookingFlow: React.FC = () => {
                       const lastSegment = selectedFlight.itineraries?.[0]?.segments?.[selectedFlight.itineraries[0].segments.length - 1];
 
                       await addToCart({
-                        userId: TEMP_USER_ID,
+                        userId: userId,
                         type: 'FLIGHT',
                         itemId: selectedFlight.id,
                         itemData: {
@@ -660,7 +660,7 @@ const FlightBookingFlow: React.FC = () => {
 
                       // First add to cart
                       await addToCart({
-                        userId: TEMP_USER_ID,
+                        userId: userId,
                         type: 'FLIGHT',
                         itemId: selectedFlight.id,
                         itemData: {
@@ -682,7 +682,7 @@ const FlightBookingFlow: React.FC = () => {
                       });
 
                       // Then proceed to checkout
-                      const checkoutResponse = await checkout(TEMP_USER_ID);
+                      const checkoutResponse = await checkout(userId);
                       navigate('/checkout', {
                         state: {
                           checkoutData: checkoutResponse,

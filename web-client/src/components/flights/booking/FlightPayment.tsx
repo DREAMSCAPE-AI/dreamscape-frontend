@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFlightBookingStore } from '@/store/flightBookingStore';
 import { useCartStore } from '@/store/cartStore';
+import { useAuth } from '@/services/auth/AuthService';
 import {
   CreditCard,
   ShoppingCart,
@@ -18,11 +19,10 @@ import {
   Armchair,
 } from 'lucide-react';
 
-// TODO: Replace with actual user ID from auth store
-const TEMP_USER_ID = 'user-123';
-
 export default function FlightPayment() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
   const {
     selectedFlight,
     passengers,
@@ -57,7 +57,7 @@ export default function FlightPayment() {
       const firstSeg = segments[0];
       const lastSeg = segments[segments.length - 1];
 
-      await addToCart(TEMP_USER_ID, {
+      await addToCart(userId, {
         type: 'FLIGHT',
         itemId: selectedFlight.id,
         itemData: {
@@ -131,7 +131,7 @@ export default function FlightPayment() {
       const lastSeg = segments[segments.length - 1];
 
       // First add to cart
-      await addToCart(TEMP_USER_ID, {
+      await addToCart(userId, {
         type: 'FLIGHT',
         itemId: selectedFlight.id,
         itemData: {
@@ -170,7 +170,7 @@ export default function FlightPayment() {
       });
 
       // Then proceed to checkout
-      const checkoutResponse = await checkout(TEMP_USER_ID);
+      const checkoutResponse = await checkout(userId);
 
       // Navigate to checkout page
       navigate('/checkout', {
