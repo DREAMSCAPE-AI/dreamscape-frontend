@@ -273,7 +273,7 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                   alt={hotel.name}
                   className="w-full h-64 lg:h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
                 {/* Favorite Button */}
                 <FavoriteButton
