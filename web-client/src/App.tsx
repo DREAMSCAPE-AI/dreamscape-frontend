@@ -44,6 +44,10 @@ import PaymentConfirmationPage from '@/pages/payment/confirmation';
 // User History Page
 import HistoryPage from '@/pages/history';
 
+// User Bookings Pages
+import BookingsPage from '@/pages/bookings';
+import BookingDetailPage from '@/pages/bookings/[reference]';
+
 // Auth checker component that runs on app mount
 // Memoized to prevent unnecessary re-renders
 const AuthChecker = React.memo(() => {
@@ -112,6 +116,16 @@ function App() {
             <Route path="/history" element={
               <OnboardingGuard requireOnboarding={false}>
                 <HistoryPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/bookings" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <BookingsPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/bookings/:reference" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <BookingDetailPage />
               </OnboardingGuard>
             } />
             <Route path="/support" element={<SupportPage />} />
