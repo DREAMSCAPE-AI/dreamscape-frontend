@@ -94,8 +94,8 @@ const OnboardingWizard: React.FC = () => {
   const handleSkipOnboarding = () => {
     if (confirm('Êtes-vous sûr de vouloir passer l\'onboarding ? Vous pourrez le reprendre plus tard dans vos paramètres.')) {
       skipOnboarding();
-      // Redirect to the page they were trying to access or dashboard
-      const returnPath = (location.state as any)?.from || '/dashboard';
+      // Redirect to the page they were trying to access or homepage
+      const returnPath = (location.state as any)?.from || '/';
       navigate(returnPath, { replace: true });
     }
   };
@@ -113,8 +113,8 @@ const OnboardingWizard: React.FC = () => {
       // Small delay to ensure state is persisted
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Redirect to dashboard after successful completion
-      const returnPath = (location.state as any)?.from || '/dashboard';
+      // Redirect to homepage after successful completion
+      const returnPath = (location.state as any)?.from || '/';
       navigate(returnPath, { replace: true });
 
       // Force a page reload to ensure all guards recognize the completed status

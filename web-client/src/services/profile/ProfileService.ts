@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-const PROFILE_API_BASE_URL = import.meta.env.USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
+const PROFILE_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
 
 export interface UserProfileData {
   profile: {

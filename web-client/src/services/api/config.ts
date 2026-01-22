@@ -1,4 +1,4 @@
-const VOYAGE_API_BASE_URL = import.meta.env.VOYAGE_SERVICE_API_BASE_URL || 'http://localhost:3003/api';
+const VOYAGE_API_BASE_URL = import.meta.env.VITE_VOYAGE_SERVICE_URL || 'http://localhost:3004/api/v1';
 
 // API Base Configuration
 export const API_CONFIG = {

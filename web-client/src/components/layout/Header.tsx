@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import Logo from './Logo';
 import { CartButton } from '@/components/cart';
+import { useFavoritesStore } from '@/store/favoritesStore';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -37,6 +38,17 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showDiscoverMenu, setShowDiscoverMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Get favorites count from store
+  const favoritesCount = useFavoritesStore((state) => state.getTotalCount());
+  const fetchFavorites = useFavoritesStore((state) => state.fetchFavorites);
+
+  // Fetch favorites when user is logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchFavorites({ limit: 0 }); // Get count only
+    }
+  }, [isLoggedIn, fetchFavorites]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -188,11 +200,17 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 <CartButton />
 
                 {/* Favorites */}
-                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                <button
+                  onClick={() => navigate('/favorites')}
+                  className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+                  title="View favorites"
+                >
                   <Heart className="w-6 h-6" />
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    3
-                  </span>
+                  {favoritesCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {favoritesCount > 99 ? '99+' : favoritesCount}
+                    </span>
+                  )}
                 </button>
 
                 {/* Notifications */}

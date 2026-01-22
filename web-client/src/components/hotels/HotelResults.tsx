@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Heart, Eye, Car, Utensils, Waves, Dumbbell } from 'lucide-react';
+import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Eye, Car, Utensils, Waves, Dumbbell } from 'lucide-react';
 import type { HotelOffer } from '../../services/api/types';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
+import { FavoriteButton } from '@/components/favorites';
 
 interface HotelResultsProps {
   hotels: HotelOffer[];
@@ -20,7 +21,6 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
     amenities: [] as string[],
     freeCancellation: false
   });
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   // History tracking hook
   const { trackHotelView, trackHotelFavorite, trackHotelUnfavorite } = useHistoryTracking();
@@ -87,24 +87,15 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
     });
   }, [hotels, sortBy, filters]);
 
-  // Use useCallback to prevent function recreation on every render
-  const toggleFavorite = useCallback((hotelId: string, hotelName?: string) => {
-    console.log('[HotelResults] toggleFavorite called:', { hotelId, hotelName });
-    setFavorites(prev => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(hotelId)) {
-        newFavorites.delete(hotelId);
-        // Track unfavorite action
-        console.log('[HotelResults] Tracking unfavorite');
-        trackHotelUnfavorite(hotelId, hotelName);
-      } else {
-        newFavorites.add(hotelId);
-        // Track favorite action
-        console.log('[HotelResults] Tracking favorite');
-        trackHotelFavorite(hotelId, hotelName);
-      }
-      return newFavorites;
-    });
+  // Handle favorite toggle with history tracking
+  const handleFavoriteToggle = useCallback((hotel: HotelOffer, isFavorited: boolean) => {
+    if (isFavorited) {
+      console.log('[HotelResults] Tracking favorite');
+      trackHotelFavorite(hotel.id, hotel.name);
+    } else {
+      console.log('[HotelResults] Tracking unfavorite');
+      trackHotelUnfavorite(hotel.id, hotel.name);
+    }
   }, [trackHotelFavorite, trackHotelUnfavorite]);
 
   const handleHotelSelect = useCallback((hotel: HotelOffer) => {
@@ -293,21 +284,25 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                   className="w-full h-64 lg:h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                
+
                 {/* Favorite Button */}
-                <button
-                  onClick={() => toggleFavorite(hotel.id, hotel.name)}
-                  className="absolute top-4 right-4 p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-                >
-                  <Heart
-                    className={`w-5 h-5 ${
-                      favorites.has(hotel.id)
-                        ? 'text-red-500 fill-red-500'
-                        : 'text-gray-600'
-                    }`}
+                <div className="absolute top-4 right-4">
+                  <FavoriteButton
+                    entityType="HOTEL"
+                    entityId={hotel.id}
+                    entityData={{
+                      name: hotel.name,
+                      rating: hotel.rating,
+                      price: hotel.price?.total,
+                      currency: hotel.price?.currency,
+                      media: hotel.media?.[0]?.uri,
+                      chainCode: hotel.chainCode,
+                    }}
+                    size="md"
+                    onToggle={(isFavorited) => handleFavoriteToggle(hotel, isFavorited)}
                   />
-                </button>
-                
+                </div>
+
                 {/* Image Count */}
                 {hotel.media && hotel.media.length > 1 && (
                   <div className="absolute bottom-4 right-4 px-2 py-1 bg-black/70 text-white text-sm rounded-lg flex items-center gap-1">

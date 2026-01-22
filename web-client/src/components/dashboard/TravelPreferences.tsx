@@ -123,7 +123,12 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
             </select>
           ) : (
             <span className="text-sm text-gray-600">
-              {preferences.preferredLanguage === 'en' ? 'English' : preferences.preferredLanguage.toUpperCase()}
+              {preferences.preferredLanguage === 'en' ? 'English' :
+               preferences.preferredLanguage === 'es' ? 'Spanish' :
+               preferences.preferredLanguage === 'fr' ? 'French' :
+               preferences.preferredLanguage === 'de' ? 'German' :
+               preferences.preferredLanguage === 'ja' ? 'Japanese' :
+               preferences.preferredLanguage?.toUpperCase() || 'English'}
             </span>
           )}
         </div>
@@ -202,7 +207,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
             </div>
           ) : (
             <span className="text-sm text-gray-600">
-              ${preferences.budgetRange.min} - ${preferences.budgetRange.max}
+              ${preferences.budgetRange?.min || 0} - ${preferences.budgetRange?.max || 5000}
             </span>
           )}
         </div>
@@ -235,13 +240,13 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
             <span className="text-sm font-medium text-gray-700">Notifications</span>
           </div>
           <div className="space-y-2 ml-6">
-            {Object.entries(preferences.notifications).map(([key, value]) => (
+            {Object.entries(preferences.notifications || {}).map(([key, value]) => (
               <div key={key} className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 capitalize">{key}</span>
                 {isEditing ? (
                   <input
                     type="checkbox"
-                    checked={editedPreferences.notifications[key as keyof typeof editedPreferences.notifications]}
+                    checked={editedPreferences.notifications?.[key as keyof typeof editedPreferences.notifications]}
                     onChange={(e) => setEditedPreferences(prev => ({
                       ...prev,
                       notifications: {

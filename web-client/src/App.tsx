@@ -44,6 +44,9 @@ import PaymentConfirmationPage from '@/pages/payment/confirmation';
 // User History Page
 import HistoryPage from '@/pages/history';
 
+// Favorites Page
+import FavoritesPage from '@/pages/FavoritesPage';
+
 // User Bookings Pages
 import BookingsPage from '@/pages/bookings';
 import BookingDetailPage from '@/pages/bookings/[reference]';
@@ -116,6 +119,11 @@ function App() {
             <Route path="/history" element={
               <OnboardingGuard requireOnboarding={false}>
                 <HistoryPage />
+              </OnboardingGuard>
+            } />
+            <Route path="/favorites" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <FavoritesPage />
               </OnboardingGuard>
             } />
             <Route path="/bookings" element={
