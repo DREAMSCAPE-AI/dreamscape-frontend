@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useActivityBookingStore } from '@/store/activityBookingStore';
 import { useCartStore } from '@/store/cartStore';
+import { useAuth } from '@/services/auth/AuthService';
 import {
   CreditCard,
   ShoppingCart,
@@ -18,11 +19,10 @@ import {
   Star,
 } from 'lucide-react';
 
-// TODO: Replace with actual user ID from auth store
-const TEMP_USER_ID = 'user-123';
-
 export default function ActivityPayment() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
   const {
     selectedActivity,
     participants,
@@ -50,7 +50,7 @@ export default function ActivityPayment() {
     try {
       // Prepare complete activity booking data
       await addToCart({
-        userId: TEMP_USER_ID,
+        userId: userId,
         type: 'ACTIVITY',
         itemId: selectedActivity.id,
         itemData: {
@@ -113,7 +113,7 @@ export default function ActivityPayment() {
     try {
       // First add to cart
       await addToCart({
-        userId: TEMP_USER_ID,
+        userId: userId,
         type: 'ACTIVITY',
         itemId: selectedActivity.id,
         itemData: {
@@ -149,7 +149,7 @@ export default function ActivityPayment() {
       });
 
       // Then proceed to checkout
-      const checkoutResponse = await checkout(TEMP_USER_ID);
+      const checkoutResponse = await checkout(userId);
 
       // Navigate to checkout page
       navigate('/checkout', {

@@ -7,14 +7,15 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ShoppingCart, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
+import { useAuth } from '@/services/auth/AuthService';
 import CartItem from './CartItem';
 import CartSummary from './CartSummary';
 
-// TODO: Replace with actual user ID from auth store
-const TEMP_USER_ID = 'user-123';
-
 export const CartDrawer = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+  const userId = user?.id || 'guest';
+
   const {
     cart,
     isLoading,
@@ -36,13 +37,13 @@ export const CartDrawer = () => {
   // Fetch cart on mount
   useEffect(() => {
     if (isDrawerOpen) {
-      fetchCart(TEMP_USER_ID);
+      fetchCart(userId);
     }
   }, [isDrawerOpen]);
 
   const handleUpdateQuantity = async (itemId: string, quantity: number) => {
     try {
-      await updateItemQuantity(TEMP_USER_ID, itemId, quantity);
+      await updateItemQuantity(userId, itemId, quantity);
     } catch (error) {
       console.error('Failed to update quantity:', error);
     }
@@ -50,7 +51,7 @@ export const CartDrawer = () => {
 
   const handleRemoveItem = async (itemId: string) => {
     try {
-      await removeItem(TEMP_USER_ID, itemId);
+      await removeItem(userId, itemId);
     } catch (error) {
       console.error('Failed to remove item:', error);
     }
@@ -60,7 +61,7 @@ export const CartDrawer = () => {
     if (!confirm('Are you sure you want to clear your cart?')) return;
 
     try {
-      await clearCart(TEMP_USER_ID);
+      await clearCart(userId);
     } catch (error) {
       console.error('Failed to clear cart:', error);
     }
@@ -68,7 +69,7 @@ export const CartDrawer = () => {
 
   const handleExtendExpiry = async () => {
     try {
-      await extendExpiry(TEMP_USER_ID);
+      await extendExpiry(userId);
     } catch (error) {
       console.error('Failed to extend cart expiry:', error);
     }
@@ -76,7 +77,7 @@ export const CartDrawer = () => {
 
   const handleCheckout = async () => {
     try {
-      const checkoutResponse = await checkout(TEMP_USER_ID);
+      const checkoutResponse = await checkout(userId);
       console.log('[CartDrawer] Checkout response:', checkoutResponse);
 
       // Navigate to checkout page with payment data

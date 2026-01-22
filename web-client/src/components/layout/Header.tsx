@@ -19,7 +19,9 @@ import {
   Building,
   Car,
   Brain,
-  Wrench
+  Wrench,
+  Calendar,
+  Clock
 } from 'lucide-react';
 import Logo from './Logo';
 import { CartButton } from '@/components/cart';
@@ -229,6 +231,22 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       >
                         <Route className="w-4 h-4" />
                         <span>My Trips</span>
+                      </Link>
+                      <Link
+                        to="/bookings"
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <Calendar className="w-4 h-4" />
+                        <span>My Bookings</span>
+                      </Link>
+                      <Link
+                        to="/history"
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <Clock className="w-4 h-4" />
+                        <span>History</span>
                       </Link>
                       <Link
                         to="/settings"
