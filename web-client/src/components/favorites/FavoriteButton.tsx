@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import FavoritesService, { FavoriteType } from '@/services/api/FavoritesService';
 import { useAuth } from '@/services/auth/AuthService';
+import { useFavoritesBatch } from '@/contexts/FavoritesBatchContext';
 
 interface FavoriteButtonProps {
   entityType: FavoriteType;
@@ -26,6 +27,7 @@ const FavoriteButton = ({
   showLabel = false,
 }: FavoriteButtonProps) => {
   const { user } = useAuth();
+  const { checkFavorite } = useFavoritesBatch();
   const [isFavorited, setIsFavorited] = useState(false);
   const [favoriteId, setFavoriteId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,23 +45,18 @@ const FavoriteButton = ({
     lg: 24,
   };
 
-  // Check if item is already favorited
+  // Check if item is already favorited using batch context
   useEffect(() => {
-    const checkStatus = async () => {
-      if (!user) return;
+    if (!user) return;
 
-      try {
-        const response = await FavoritesService.checkFavorite(entityType, entityId);
-        setIsFavorited(response.isFavorited);
-        if (response.favorite) {
-          setFavoriteId(response.favorite.id);
-        }
-      } catch (error) {
-        console.error('[FavoriteButton] Error checking favorite status:', error);
+    // Use batch context for efficient checking
+    checkFavorite(entityType, entityId, (result) => {
+      setIsFavorited(result.isFavorited);
+      if (result.favorite) {
+        setFavoriteId(result.favorite.id);
       }
-    };
-
-    checkStatus();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, entityId, user]);
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {

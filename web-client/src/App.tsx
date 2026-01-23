@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { useAuth } from '@/services/auth/AuthService';
+import { FavoritesBatchProvider } from '@/contexts/FavoritesBatchContext';
 
 // Pages
 import HomePage from '@/pages/index';
@@ -66,10 +67,16 @@ const AuthChecker = React.memo(() => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <AuthChecker />
-      <ErrorBoundary>
-        <Routes>
+      <FavoritesBatchProvider>
+        <ErrorBoundary>
+          <Routes>
           <Route element={<RootLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthPage />} />
@@ -150,8 +157,9 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment/confirmation" element={<PaymentConfirmationPage />} />
           </Route>
-        </Routes>
-      </ErrorBoundary>
+          </Routes>
+        </ErrorBoundary>
+      </FavoritesBatchProvider>
     </BrowserRouter>
   );
 }

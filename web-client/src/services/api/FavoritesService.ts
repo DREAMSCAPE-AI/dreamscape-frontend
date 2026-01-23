@@ -71,12 +71,37 @@ class FavoritesService {
 
     // Add auth token to requests
     this.api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('dreamscape_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      // Get token from Zustand auth storage (same as HistoryService)
+      const authStorage = localStorage.getItem('auth-storage');
+      if (authStorage) {
+        try {
+          const authData = JSON.parse(authStorage);
+          const token = authData?.state?.token;
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+        } catch (error) {
+          console.error('[FavoritesService] Failed to parse auth storage:', error);
+        }
       }
       return config;
     });
+
+    // Response interceptor for error handling
+    this.api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        console.error('[FavoritesService] API Error:', error.response?.data || error.message);
+
+        // Handle unauthorized errors
+        if (error.response?.status === 401) {
+          localStorage.removeItem('auth-storage');
+          window.location.href = '/auth';
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
 
   /**
@@ -130,6 +155,25 @@ class FavoritesService {
     entityId: string
   ): Promise<{ success: boolean; isFavorited: boolean; favorite: { id: string; createdAt: string } | null }> {
     const response = await this.api.get(`/check/${entityType}/${entityId}`);
+    return response.data;
+  }
+
+  /**
+   * Batch check if multiple entities are favorited
+   * More efficient than individual checks when checking many items
+   */
+  async checkFavoritesBatch(
+    items: Array<{ entityType: FavoriteType; entityId: string }>
+  ): Promise<{
+    success: boolean;
+    results: Array<{
+      entityType: FavoriteType;
+      entityId: string;
+      isFavorited: boolean;
+      favorite: { id: string; createdAt: string } | null;
+    }>;
+  }> {
+    const response = await this.api.post('/check-batch', { items });
     return response.data;
   }
 }
