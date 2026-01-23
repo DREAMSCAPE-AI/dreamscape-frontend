@@ -7,15 +7,13 @@ import { useAuth } from '@/services/auth/AuthService';
 import ItineraryTimeline from './ItineraryTimeline';
 import ExportMenu from './ExportMenu';
 
-// TODO: Replace with actual user ID from auth store when fully integrated
-const TEMP_USER_ID = 'user-123';
-
 const ItineraryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { currentItinerary, isLoading, fetchItineraryById } = useItineraryStore();
   const { addToCart, openDrawer } = useCartStore();
   const { user } = useAuth();
+  const userId = user?.id || 'guest';
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   useEffect(() => {
@@ -58,10 +56,10 @@ const ItineraryDetail: React.FC = () => {
     setIsAddingToCart(true);
 
     try {
-      // Add each item to cart using TEMP_USER_ID for consistency with CartDrawer
+      // Add each item to cart using userId for consistency with CartDrawer
       for (const item of currentItinerary.items) {
         await addToCart({
-          userId: TEMP_USER_ID,
+          userId: userId,
           type: item.type as any,
           itemId: item.itemId || item.id,
           itemData: item.itemData,

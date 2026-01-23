@@ -6,14 +6,15 @@ import HotelDetails from './HotelDetails';
 import ApiService from '../../services/api';
 import type { HotelOffer, HotelSearchParams } from '../../services/api/types';
 import { useCartStore } from '@/store/cartStore';
-
-const TEMP_USER_ID = 'user-123';
+import { useAuth } from '@/services/auth/AuthService';
 
 type BookingStep = 'search' | 'results' | 'details' | 'passengers' | 'payment';
 
 const HotelBookingFlow: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
   const [currentStep, setCurrentStep] = useState<BookingStep>('search');
   const [searchResults, setSearchResults] = useState<HotelOffer[]>([]);
   const [selectedHotel, setSelectedHotel] = useState<HotelOffer | null>(null);
@@ -279,7 +280,7 @@ const HotelBookingFlow: React.FC = () => {
                     if (!selectedHotel) return;
                     try {
                       await addToCart({
-                        userId: TEMP_USER_ID,
+                        userId: userId,
                         type: 'HOTEL',
                         itemId: selectedHotel.hotelId || selectedHotel.id,
                         itemData: {
@@ -318,7 +319,7 @@ const HotelBookingFlow: React.FC = () => {
                     if (!selectedHotel) return;
                     try {
                       await addToCart({
-                        userId: TEMP_USER_ID,
+                        userId: userId,
                         type: 'HOTEL',
                         itemId: selectedHotel.hotelId || selectedHotel.id,
                         itemData: {
@@ -337,7 +338,7 @@ const HotelBookingFlow: React.FC = () => {
                         currency: selectedHotel.price.currency || 'USD',
                       });
 
-                      const checkoutResponse = await checkout(TEMP_USER_ID);
+                      const checkoutResponse = await checkout(userId);
                       navigate('/checkout', {
                         state: { checkoutData: checkoutResponse },
                       });

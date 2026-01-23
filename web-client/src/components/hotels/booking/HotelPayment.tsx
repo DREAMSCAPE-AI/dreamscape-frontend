@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHotelBookingStore } from '@/store/hotelBookingStore';
 import { useCartStore } from '@/store/cartStore';
+import { useAuth } from '@/services/auth/AuthService';
 import {
   CreditCard,
   ShoppingCart,
@@ -16,11 +17,10 @@ import {
   DollarSign,
 } from 'lucide-react';
 
-// TODO: Replace with actual user ID from auth store
-const TEMP_USER_ID = 'user-123';
-
 export default function HotelPayment() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
   const {
     selectedHotel,
     rooms,
@@ -51,7 +51,7 @@ export default function HotelPayment() {
     try {
       // Prepare complete hotel booking data
       await addToCart({
-        userId: TEMP_USER_ID,
+        userId: userId,
         type: 'HOTEL',
         itemId: selectedHotel.hotelId || selectedHotel.id,
         itemData: {
@@ -106,7 +106,7 @@ export default function HotelPayment() {
     try {
       // First add to cart
       await addToCart({
-        userId: TEMP_USER_ID,
+        userId: userId,
         type: 'HOTEL',
         itemId: selectedHotel.hotelId || selectedHotel.id,
         itemData: {
@@ -136,7 +136,7 @@ export default function HotelPayment() {
       });
 
       // Then proceed to checkout
-      const checkoutResponse = await checkout(TEMP_USER_ID);
+      const checkoutResponse = await checkout(userId);
 
       // Navigate to checkout page
       navigate('/checkout', {

@@ -247,7 +247,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <Calendar className="w-4 h-4" />
-                        <span>Bookings</span>
+                        <span>My Bookings</span>
                       </Link>
                       <Link
                         to="/history"

@@ -11,8 +11,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { useCartStore } from '@/store/cartStore';
-
-const TEMP_USER_ID = 'user-123';
+import { useAuth } from '@/services/auth/AuthService';
 
 interface StripeCheckoutFormProps {
   bookingReference: string;
@@ -31,6 +30,8 @@ const StripeCheckoutForm = ({
   const elements = useElements();
   const navigate = useNavigate();
   const { clearCart } = useCartStore();
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -72,8 +73,33 @@ const StripeCheckoutForm = ({
         // Payment succeeded
         console.log('[StripeCheckoutForm] Payment succeeded:', paymentIntent.id);
 
+        // Confirm the booking directly (bypass Kafka dependency)
+        try {
+          const VOYAGE_API_URL = import.meta.env.VITE_VOYAGE_API_URL || 'http://localhost:3004';
+          const confirmResponse = await fetch(`${VOYAGE_API_URL}/api/v1/bookings/${bookingReference}/confirm`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId,
+              paymentIntentId: paymentIntent.id,
+            }),
+          });
+
+          if (confirmResponse.ok) {
+            const confirmData = await confirmResponse.json();
+            console.log('[StripeCheckoutForm] Booking confirmed:', confirmData);
+          } else {
+            console.warn('[StripeCheckoutForm] Failed to confirm booking, will rely on Kafka flow');
+          }
+        } catch (confirmError) {
+          console.warn('[StripeCheckoutForm] Error confirming booking:', confirmError);
+          // Don't fail - payment was successful, booking confirmation might happen via Kafka
+        }
+
         // Clear the cart after successful payment
-        await clearCart(TEMP_USER_ID);
+        await clearCart(userId);
 
         // Navigate to confirmation page with payment data
         navigate('/payment/confirmation', {

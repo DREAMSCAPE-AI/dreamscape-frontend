@@ -18,6 +18,7 @@ import {
 import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
 import { useCartStore } from '@/store/cartStore';
+import { useAuth } from '@/services/auth/AuthService';
 
 interface ActivityDetail {
   id: string;
@@ -70,13 +71,12 @@ interface ActivityDetail {
   }[];
 }
 
-// TODO: Replace with actual user ID from auth store
-const TEMP_USER_ID = 'user-123';
-
 export default function ActivityDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart, openDrawer, checkout } = useCartStore();
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
   const [activity, setActivity] = useState<ActivityDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -283,7 +283,7 @@ export default function ActivityDetailPage() {
     try {
       // Add activity to cart with complete booking details
       await addToCart({
-        userId: TEMP_USER_ID,
+        userId: userId,
         type: 'ACTIVITY',
         itemId: activity.id,
         itemData: {
@@ -332,7 +332,7 @@ export default function ActivityDetailPage() {
     try {
       // First add to cart
       await addToCart({
-        userId: TEMP_USER_ID,
+        userId: userId,
         type: 'ACTIVITY',
         itemId: activity.id,
         itemData: {
@@ -361,7 +361,7 @@ export default function ActivityDetailPage() {
       });
 
       // Then proceed to checkout
-      const checkoutResponse = await checkout(TEMP_USER_ID);
+      const checkoutResponse = await checkout(userId);
       navigate('/checkout', {
         state: {
           checkoutData: checkoutResponse,
