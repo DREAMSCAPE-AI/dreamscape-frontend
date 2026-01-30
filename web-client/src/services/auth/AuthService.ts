@@ -4,7 +4,16 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import type { RegisterData, LoginCredentials } from './types';
 import { useItineraryStore } from '@/store/itineraryStore';
 
-const AUTH_API_BASE_URL = import.meta.env.VITE_AUTH_SERVICE_URL || 'http://localhost:3001/api';
+const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
+  const trimmed = (envValue || '').trim();
+  if (trimmed) return trimmed;
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin.replace(/\/$/, '')}${fallbackPath}`;
+  }
+  return `http://localhost:3001${fallbackPath}`;
+};
+
+const AUTH_API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_AUTH_SERVICE_URL);
 
 // Auth API Service Class
 class AuthApiService {
