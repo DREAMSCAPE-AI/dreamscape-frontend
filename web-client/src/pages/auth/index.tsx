@@ -23,18 +23,18 @@ export default function AuthPage() {
       try {
         const response = await onboardingService.getProgress();
 
-        // If onboarding is completed (100%), go to dashboard
+        // If onboarding is completed (100%), go to home
         if (response.success && response.data && response.data.progressPercentage === 100) {
-          navigate('/dashboard');
+          navigate('/');
         } else {
-          // Otherwise, go to dashboard (which will show onboarding modal if needed)
-          navigate('/dashboard');
+          // Otherwise, go to home (which will redirect to onboarding if needed)
+          navigate('/');
         }
       } catch (onboardingError) {
         // If we can't check onboarding status (e.g., JWT not configured on backend),
-        // default to dashboard which will handle onboarding display
-        console.log('Could not check onboarding status, redirecting to dashboard');
-        navigate('/dashboard');
+        // default to home which will handle onboarding display
+        console.log('Could not check onboarding status, redirecting to home');
+        navigate('/');
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -53,8 +53,8 @@ export default function AuthPage() {
     try {
       await signup(name, email, password);
 
-      // After signup, go to dashboard (which will show onboarding modal)
-      navigate('/dashboard');
+      // After signup, go to home (which will redirect to onboarding if needed)
+      navigate('/');
     } catch (err: any) {
       if (err?.response?.data?.errors && Array.isArray(err.response.data.errors)) {
         const validationErrors = err.response.data.errors.map((error: any) => error.msg).join(', ');

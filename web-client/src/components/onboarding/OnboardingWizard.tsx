@@ -46,6 +46,7 @@ const OnboardingWizard: React.FC = () => {
     getIsFirstStep,
     getIsLastStep,
     getCanProceed,
+    getAllRequiredStepsCompleted,
     initializeOnboarding,
     nextStep,
     previousStep,
@@ -61,39 +62,21 @@ const OnboardingWizard: React.FC = () => {
   const isFirstStep = getIsFirstStep();
   const isLastStep = getIsLastStep();
   const canProceed = getCanProceed();
+  const allRequiredStepsCompleted = getAllRequiredStepsCompleted();
 
   // Initialize onboarding on mount
   useEffect(() => {
     initializeOnboarding();
   }, [initializeOnboarding]);
 
-  // Handle browser back/forward
-  useEffect(() => {
-    const handlePopState = (event: PopStateEvent) => {
-      if (event.state?.stepIndex !== undefined) {
-        goToStep(event.state.stepIndex);
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [goToStep]);
-
-  // Push state when step changes
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.history.pushState(
-        { stepIndex: currentStepIndex },
-        '',
-        `/onboarding?step=${currentStep.id}`
-      );
-    }
-  }, [currentStepIndex, currentStep.id]);
-
   // Handle skip entire onboarding
   const handleSkipOnboarding = () => {
     if (confirm('Êtes-vous sûr de vouloir passer l\'onboarding ? Vous pourrez le reprendre plus tard dans vos paramètres.')) {
       skipOnboarding();
+      // Update user in auth store to mark onboarding as completed (skipped counts as completed)
+      updateUser({
+        onboardingCompleted: true
+      });
       // Redirect to the page they were trying to access or dashboard
       const returnPath = (location.state as any)?.from || '/dashboard';
       navigate(returnPath, { replace: true });
@@ -116,9 +99,6 @@ const OnboardingWizard: React.FC = () => {
       // Redirect to dashboard after successful completion
       const returnPath = (location.state as any)?.from || '/dashboard';
       navigate(returnPath, { replace: true });
-
-      // Force a page reload to ensure all guards recognize the completed status
-      window.location.href = returnPath;
     }
   };
 
@@ -288,12 +268,13 @@ const OnboardingWizard: React.FC = () => {
             {isLastStep ? (
               <button
                 onClick={handleCompleteOnboarding}
-                disabled={!canProceed || isSaving}
+                disabled={!allRequiredStepsCompleted || isSaving}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
-                  canProceed && !isSaving
+                  allRequiredStepsCompleted && !isSaving
                     ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:opacity-90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
+                title={!allRequiredStepsCompleted ? 'Vous devez compléter toutes les étapes obligatoires' : ''}
               >
                 {isSaving ? (
                   <>
@@ -341,6 +322,11 @@ const OnboardingWizard: React.FC = () => {
             {!canProceed && currentStep.required && (
               <p className="text-sm text-red-600 mt-1">
                 Veuillez compléter les champs requis pour continuer
+              </p>
+            )}
+            {isLastStep && !allRequiredStepsCompleted && (
+              <p className="text-sm text-red-600 mt-1">
+                Vous devez compléter toutes les étapes obligatoires avant de terminer l'onboarding
               </p>
             )}
           </div>

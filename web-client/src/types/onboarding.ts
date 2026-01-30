@@ -234,7 +234,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 'travel_types',
     title: 'Types de voyage',
     description: 'Quels types de voyages vous intéressent ?',
-    icon: '✈️',
+    icon: '🧳',
     required: true,
     order: 3
   },

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useOnboardingStore from '@/store/onboardingStore';
 import { useAuth } from '@/services/auth/AuthService';
-import { ROUTES, ONBOARDING_EXEMPT_ROUTES } from '@/constants/routes';
+import { ONBOARDING_EXEMPT_ROUTES } from '@/constants/routes';
 
 interface OnboardingGuardProps {
   children: React.ReactNode;
@@ -65,8 +65,9 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
 
   const onboardingStatus = getOnboardingStatus();
 
+  // Redirect to onboarding page if not completed or skipped
   if (onboardingStatus === 'not_started' || onboardingStatus === 'in_progress') {
-    return <Navigate to={ROUTES.ONBOARDING} replace state={{ from: location.pathname }} />;
+    return <Navigate to="/onboarding" replace state={{ from: location.pathname }} />;
   }
 
   return <>{children}</>;
