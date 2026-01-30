@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import healthRoutes from './routes/health';
 
 const app = express();
 const PORT = process.env.GATEWAY_PORT || 3000;
@@ -21,15 +22,9 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK',
-    service: 'dreamscape-gateway',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
-});
+// Health check routes - INFRA-013.1
+app.use('/health', healthRoutes);
+app.use('/api/health', healthRoutes); // Alternative path for consistency
 
 // API Documentation endpoint
 app.get('/docs', (req, res) => {

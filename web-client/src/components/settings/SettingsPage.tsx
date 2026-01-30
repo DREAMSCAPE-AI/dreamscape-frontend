@@ -20,15 +20,13 @@ import {
   X,
   Upload
 } from 'lucide-react';
-import profileService, { UserProfileData } from '../../services/profileService';
+import { profileService, UserProfileData } from '@/services/profile';
+import TravelPreferencesSection from './TravelPreferencesSection';
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState('profile');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState('');
-  const [newItem, setNewItem] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -60,12 +58,6 @@ const SettingsPage = () => {
       dataSharing: false,
       marketing: true
     },
-    travel: {
-      preferredDestinations: [],
-      accommodationType: [],
-      activities: [],
-      dietary: []
-    }
   });
 
   // Load user profile on component mount
@@ -84,55 +76,6 @@ const SettingsPage = () => {
     loadProfile();
   }, []);
 
-  // Fonctions pour les modales
-  const openModal = (type: string) => {
-    setModalType(type);
-    setNewItem('');
-    setShowModal(true);
-  };
-
-  const addItem = () => {
-    if (!newItem.trim()) return;
-
-    const updatedSettings = { ...settings };
-    switch (modalType) {
-      case 'destinations':
-        updatedSettings.travel.preferredDestinations.push(newItem.trim());
-        break;
-      case 'accommodation':
-        updatedSettings.travel.accommodationType.push(newItem.trim());
-        break;
-      case 'activities':
-        updatedSettings.travel.activities.push(newItem.trim());
-        break;
-      case 'dietary':
-        updatedSettings.travel.dietary.push(newItem.trim());
-        break;
-    }
-    
-    setSettings(updatedSettings);
-    setShowModal(false);
-    setNewItem('');
-  };
-
-  const removeItem = (type: string, index: number) => {
-    const updatedSettings = { ...settings };
-    switch (type) {
-      case 'destinations':
-        updatedSettings.travel.preferredDestinations.splice(index, 1);
-        break;
-      case 'accommodation':
-        updatedSettings.travel.accommodationType.splice(index, 1);
-        break;
-      case 'activities':
-        updatedSettings.travel.activities.splice(index, 1);
-        break;
-      case 'dietary':
-        updatedSettings.travel.dietary.splice(index, 1);
-        break;
-    }
-    setSettings(updatedSettings);
-  };
 
   // Fonction pour redimensionner l'image
   const resizeImage = (file: File): Promise<string> => {
@@ -212,13 +155,12 @@ const SettingsPage = () => {
     try {
       const updatedData = await profileService.updateProfile(settings);
       // Update the local state with the response from the server
-      if (updatedData.profile || updatedData.preferences || updatedData.notifications || updatedData.privacy || updatedData.travel) {
+      if (updatedData.profile || updatedData.preferences || updatedData.notifications || updatedData.privacy) {
         setSettings({
           profile: updatedData.profile || settings.profile,
           preferences: updatedData.preferences || settings.preferences,
           notifications: updatedData.notifications || settings.notifications,
-          privacy: updatedData.privacy || settings.privacy,
-          travel: updatedData.travel || settings.travel
+          privacy: updatedData.privacy || settings.privacy
         });
       }
       
@@ -570,177 +512,10 @@ const SettingsPage = () => {
 
           {/* Travel Preferences */}
           {activeSection === 'travel' && (
-            <div className="space-y-6">
-              {/* Destinations */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Preferred Destinations</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.preferredDestinations.map((destination, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <MapPin className="w-4 h-4" />
-                      {destination}
-                      <button
-                        onClick={() => removeItem('destinations', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('destinations')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Destination
-                  </button>
-                </div>
-              </div>
-
-              {/* Accommodation */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Accommodation Preferences</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.accommodationType.map((type, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <Hotel className="w-4 h-4" />
-                      {type}
-                      <button
-                        onClick={() => removeItem('accommodation', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('accommodation')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Type
-                  </button>
-                </div>
-              </div>
-
-              {/* Activities */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Activity Interests</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.activities.map((activity, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <Heart className="w-4 h-4" />
-                      {activity}
-                      <button
-                        onClick={() => removeItem('activities', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('activities')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Interest
-                  </button>
-                </div>
-              </div>
-
-              {/* Dietary Preferences */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Dietary Preferences</h2>
-                <div className="flex flex-wrap gap-2">
-                  {settings.travel.dietary.map((diet, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm flex items-center gap-1 group"
-                    >
-                      <Utensils className="w-4 h-4" />
-                      {diet}
-                      <button
-                        onClick={() => removeItem('dietary', index)}
-                        className="ml-1 opacity-0 group-hover:opacity-100 text-orange-400 hover:text-orange-600 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <button 
-                    onClick={() => openModal('dietary')}
-                    className="flex items-center gap-1 px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-orange-500 hover:text-orange-500"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Preference
-                  </button>
-                </div>
-              </div>
-            </div>
+            <TravelPreferencesSection />
           )}
         </div>
       </div>
-
-      {/* Modal pour ajouter un item */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96 max-w-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">
-                Add {modalType === 'destinations' ? 'Destination' : 
-                     modalType === 'accommodation' ? 'Accommodation Type' :
-                     modalType === 'activities' ? 'Activity Interest' :
-                     'Dietary Preference'}
-              </h3>
-              <button 
-                onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={newItem}
-                onChange={(e) => setNewItem(e.target.value)}
-                placeholder={`Enter ${modalType === 'destinations' ? 'destination' :
-                                    modalType === 'accommodation' ? 'accommodation type' :
-                                    modalType === 'activities' ? 'activity' :
-                                    'dietary preference'}...`}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                onKeyPress={(e) => e.key === 'Enter' && addItem()}
-                autoFocus
-              />
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={addItem}
-                  disabled={!newItem.trim()}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal pour changer le mot de passe */}
       {showPasswordModal && (

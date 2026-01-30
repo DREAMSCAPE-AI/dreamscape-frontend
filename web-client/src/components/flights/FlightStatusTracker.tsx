@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plane, Clock, AlertTriangle, CheckCircle, Search, Loader2 } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface FlightStatus {
   flightDate: string;
@@ -52,7 +52,7 @@ const FlightStatusTracker: React.FC = () => {
     setLoading(true);
     try {
       // Get flight status
-      const statusResponse = await ApiService.getFlightStatus(searchParams);
+      const statusResponse = await voyageService.getFlightStatus(searchParams);
       
       if (statusResponse.data && statusResponse.data.length > 0) {
         const flight = statusResponse.data[0];
@@ -61,7 +61,7 @@ const FlightStatusTracker: React.FC = () => {
         // If we have flight details, predict delay
         if (flight.departure && flight.arrival) {
           try {
-            const delayResponse = await ApiService.predictFlightDelay({
+            const delayResponse = await voyageService.predictFlightDelay({
               originLocationCode: flight.departure.iataCode,
               destinationLocationCode: flight.arrival.iataCode,
               departureDate: flight.flightDate,

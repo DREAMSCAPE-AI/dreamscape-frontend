@@ -1,7 +1,80 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import apiService from '../api';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import type { RegisterData, LoginCredentials } from './types';
+import { useItineraryStore } from '@/store/itineraryStore';
 
+const AUTH_API_BASE_URL = import.meta.env.VITE_AUTH_SERVICE_URL || 'http://localhost:3001/api';
+
+// Auth API Service Class
+class AuthApiService {
+  private api: AxiosInstance;
+
+  constructor() {
+    this.api = axios.create({
+      baseURL: AUTH_API_BASE_URL,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+
+    // Request interceptor for logging
+    this.api.interceptors.request.use(
+      (config) => {
+        console.log(`Auth API Request: ${config.method?.toUpperCase()} ${config.url}`);
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    // Response interceptor for error handling
+    this.api.interceptors.response.use(
+      (response: AxiosResponse) => response,
+      (error) => {
+        console.error('Auth API Error:', error.response?.data || error.message);
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  async register(userData: RegisterData): Promise<any> {
+    const response = await this.api.post('/v1/auth/register', userData);
+    return response.data;
+  }
+
+  async login(credentials: LoginCredentials): Promise<any> {
+    const response = await this.api.post('/v1/auth/login', credentials);
+    return response.data;
+  }
+
+  async getUserProfile(token: string): Promise<any> {
+    const response = await this.api.get('/v1/auth/profile', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  }
+
+  async updateProfile(token: string, profileData: any): Promise<any> {
+    const response = await this.api.put('/v1/auth/profile', profileData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  }
+
+  async verifyToken(token: string): Promise<any> {
+    const response = await this.api.post('/v1/auth/verify-token', {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  }
+}
+
+// Create singleton instance
+const authApiService = new AuthApiService();
+
+// User interface for Zustand store
 interface User {
   id: string;
   name: string;
@@ -9,6 +82,8 @@ interface User {
   role: 'admin' | 'user';
   username?: string;
   isVerified?: boolean;
+  onboardingCompleted?: boolean;
+  onboardingCompletedAt?: string;
 }
 
 interface AuthState {
@@ -19,9 +94,10 @@ interface AuthState {
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => void;
 }
 
-
+// Zustand Store
 const useAuth = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -30,26 +106,27 @@ const useAuth = create<AuthState>()(
       isAuthenticated: false,
       login: async (email: string, password: string) => {
         try {
-          const response = await apiService.login({ email, password });
-          
+          const response = await authApiService.login({ email, password });
+
           if (response.success && response.data) {
             const { tokens, user } = response.data;
             const token = tokens?.accessToken;
-            
-            // Transform user data to match frontend interface
+
             const userData = {
               id: user.id,
               name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
               email: user.email,
               role: user.role === 'ADMIN' ? 'admin' as const : 'user' as const,
               username: user.username,
-              isVerified: user.isVerified
+              isVerified: user.isVerified,
+              onboardingCompleted: user.onboardingCompleted,
+              onboardingCompletedAt: user.onboardingCompletedAt
             };
-            
-            set({ 
-              user: userData, 
-              token, 
-              isAuthenticated: true 
+
+            set({
+              user: userData,
+              token,
+              isAuthenticated: true
             });
           } else {
             throw new Error(response.message || 'Login failed');
@@ -63,34 +140,35 @@ const useAuth = create<AuthState>()(
         try {
           const [firstName, ...lastNameParts] = name.split(' ');
           const lastName = lastNameParts.join(' ');
-          
-          const userData = {
+
+          const userData: RegisterData = {
             email,
             password,
             firstName: firstName || '',
             lastName: lastName || ''
           };
-          
-          const response = await apiService.register(userData);
-          
+
+          const response = await authApiService.register(userData);
+
           if (response.success && response.data) {
             const { tokens, user } = response.data;
             const token = tokens?.accessToken;
-            
-            // Transform user data to match frontend interface
+
             const transformedUser = {
               id: user.id,
               name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
               email: user.email,
               role: user.role === 'ADMIN' ? 'admin' as const : 'user' as const,
               username: user.username,
-              isVerified: user.isVerified
+              isVerified: user.isVerified,
+              onboardingCompleted: user.onboardingCompleted,
+              onboardingCompletedAt: user.onboardingCompletedAt
             };
-            
-            set({ 
-              user: transformedUser, 
-              token, 
-              isAuthenticated: true 
+
+            set({
+              user: transformedUser,
+              token,
+              isAuthenticated: true
             });
           } else {
             throw new Error(response.message || 'Registration failed');
@@ -109,9 +187,9 @@ const useAuth = create<AuthState>()(
           set({ user: null, isAuthenticated: false });
           return;
         }
-        
+
         try {
-          const response = await apiService.verifyToken(token);
+          const response = await authApiService.verifyToken(token);
           if (!response.success) {
             set({ user: null, token: null, isAuthenticated: false });
           }
@@ -122,6 +200,14 @@ const useAuth = create<AuthState>()(
       },
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
+        // Clear user-specific data from other stores
+        useItineraryStore.getState().reset();
+      },
+      updateUser: (updates: Partial<User>) => {
+        const { user } = get();
+        if (user) {
+          set({ user: { ...user, ...updates } });
+        }
       }
     }),
     {
@@ -130,4 +216,4 @@ const useAuth = create<AuthState>()(
   )
 );
 
-export { useAuth };
+export { useAuth, authApiService };

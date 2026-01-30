@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Heart, Eye, Car, Utensils, Waves, Dumbbell } from 'lucide-react';
 import type { HotelOffer } from '../../services/api/types';
+import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 
 interface HotelResultsProps {
   hotels: HotelOffer[];
@@ -20,6 +21,9 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
     freeCancellation: false
   });
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+
+  // History tracking hook
+  const { trackHotelView, trackHotelFavorite, trackHotelUnfavorite } = useHistoryTracking();
 
   // Memoize the sorting and filtering logic to prevent unnecessary recalculations
   const sortedAndFilteredHotels = useMemo(() => {
@@ -84,21 +88,32 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
   }, [hotels, sortBy, filters]);
 
   // Use useCallback to prevent function recreation on every render
-  const toggleFavorite = useCallback((hotelId: string) => {
+  const toggleFavorite = useCallback((hotelId: string, hotelName?: string) => {
+    console.log('[HotelResults] toggleFavorite called:', { hotelId, hotelName });
     setFavorites(prev => {
       const newFavorites = new Set(prev);
       if (newFavorites.has(hotelId)) {
         newFavorites.delete(hotelId);
+        // Track unfavorite action
+        console.log('[HotelResults] Tracking unfavorite');
+        trackHotelUnfavorite(hotelId, hotelName);
       } else {
         newFavorites.add(hotelId);
+        // Track favorite action
+        console.log('[HotelResults] Tracking favorite');
+        trackHotelFavorite(hotelId, hotelName);
       }
       return newFavorites;
     });
-  }, []);
+  }, [trackHotelFavorite, trackHotelUnfavorite]);
 
   const handleHotelSelect = useCallback((hotel: HotelOffer) => {
+    console.log('[HotelResults] handleHotelSelect called:', { id: hotel.id, name: hotel.name });
+    // Track hotel view action
+    console.log('[HotelResults] Tracking hotel view');
+    trackHotelView(hotel.id, hotel.name);
     onSelect(hotel);
-  }, [onSelect]);
+  }, [onSelect, trackHotelView]);
 
   const getAmenityIcon = useCallback((amenity: string) => {
     switch (amenity) {
@@ -281,15 +296,15 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                 
                 {/* Favorite Button */}
                 <button
-                  onClick={() => toggleFavorite(hotel.id)}
+                  onClick={() => toggleFavorite(hotel.id, hotel.name)}
                   className="absolute top-4 right-4 p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
                 >
-                  <Heart 
+                  <Heart
                     className={`w-5 h-5 ${
-                      favorites.has(hotel.id) 
-                        ? 'text-red-500 fill-red-500' 
+                      favorites.has(hotel.id)
+                        ? 'text-red-500 fill-red-500'
                         : 'text-gray-600'
-                    }`} 
+                    }`}
                   />
                 </button>
                 
@@ -366,14 +381,16 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                       </div>
                       <div className="text-sm text-gray-500">per night</div>
                     </div>
-                    
-                    <button
-                      onClick={() => handleHotelSelect(hotel)}
-                      className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
-                    >
-                      View Details
-                    </button>
-                    
+
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => handleHotelSelect(hotel)}
+                        className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+                      >
+                        View Details
+                      </button>
+                    </div>
+
                     <div className="text-xs text-gray-500 mt-2">
                       Includes taxes & fees
                     </div>

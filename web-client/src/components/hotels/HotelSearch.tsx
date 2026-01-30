@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, Users, Search, Minus, Plus, ChevronDown } from 'lucide-react';
 import DateRangePicker from '../shared/DateRangePicker';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 import type { HotelSearchParams } from '../../services/api/types';
+import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 
 interface HotelSearchProps {
   onSearch: (params: HotelSearchParams) => void;
@@ -77,7 +78,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
       locationTimeoutRef.current = window.setTimeout(async () => {
         setLocationLoading(true);
         try {
-          const response = await ApiService.searchLocations({
+          const response = await voyageService.searchLocations({
             keyword: locationQuery,
             subType: 'CITY'
           });
@@ -118,10 +119,20 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
   }, []);
 
   const handleDateChange = ({ startDate, endDate }: { startDate: Date | null; endDate: Date | null }) => {
+    // Format dates to YYYY-MM-DD format for Amadeus API
+    // Use local timezone to avoid date shifting issues
+    const formatDate = (date: Date | null): string => {
+      if (!date) return '';
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     setSearchParams({
       ...searchParams,
-      checkInDate: startDate ? startDate.toISOString().split('T')[0] : '',
-      checkOutDate: endDate ? endDate.toISOString().split('T')[0] : ''
+      checkInDate: formatDate(startDate),
+      checkOutDate: formatDate(endDate)
     });
   };
 
@@ -194,10 +205,23 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
     });
   };
 
+  // History tracking
+  const { trackSearch } = useHistoryTracking();
+
   const handleSearch = () => {
+    console.log('[HotelSearch] handleSearch called');
+    console.log('[HotelSearch] searchParams:', searchParams);
+
     if (!searchParams.cityCode || !searchParams.checkInDate || !searchParams.checkOutDate) {
+      console.log('[HotelSearch] Validation failed - missing params');
       return;
     }
+
+    // Track the hotel search
+    const searchQuery = `${locationQuery} (${searchParams.checkInDate} - ${searchParams.checkOutDate})`;
+    console.log('[HotelSearch] Tracking search:', searchQuery);
+    trackSearch(searchQuery, 'hotel');
+
     onSearch(searchParams);
   };
 

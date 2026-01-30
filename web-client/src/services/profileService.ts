@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-const PROFILE_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_URL || 'http://localhost:3003';
+const PROFILE_API_BASE_URL = import.meta.env.USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
 
 export interface UserProfileData {
   profile: {
@@ -85,13 +85,13 @@ class ProfileService {
 
   // Get user profile and settings
   async getProfile(): Promise<UserProfileData> {
-    const response = await this.api.get('/api/v1/users/profile');
+    const response = await this.api.get('/users/profile');
     return response.data;
   }
 
   // Update user profile and settings
   async updateProfile(profileData: UserProfileData): Promise<UserProfileData> {
-    const response = await this.api.put('/api/v1/users/profile', profileData);
+    const response = await this.api.put('/users/profile', profileData);
     return response.data;
   }
 
@@ -100,7 +100,7 @@ class ProfileService {
     const formData = new FormData();
     formData.append('avatar', file);
     
-    const response = await this.api.post('/api/v1/users/profile/avatar', formData, {
+    const response = await this.api.post('/users/profile/avatar', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       }

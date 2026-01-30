@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  User, 
-  Menu, 
-  Heart, 
-  Bell, 
-  ChevronDown, 
+import {
+  User,
+  Menu,
+  Heart,
+  Bell,
+  ChevronDown,
   LogOut,
   Settings,
   HelpCircle,
@@ -19,9 +19,12 @@ import {
   Building,
   Car,
   Brain,
-  Wrench
+  Wrench,
+  Calendar,
+  Clock
 } from 'lucide-react';
 import Logo from './Logo';
+import { CartButton } from '@/components/cart';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -33,6 +36,23 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDiscoverMenu, setShowDiscoverMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   const handleLogout = () => {
     setShowUserMenu(false);
@@ -58,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
 
   return (
     <header className="fixed w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-6 lg:px-8">
         <nav className="flex items-center justify-between h-20">
           {/* Left Section */}
           <div className="flex items-center gap-8">
@@ -164,17 +184,26 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <>
-                <button className="hidden md:flex items-center gap-1 text-gray-700 hover:text-orange-500">
-                  <Heart className="w-5 h-5" />
-                  <span className="text-xs bg-orange-100 text-orange-600 px-1.5 rounded-full">3</span>
+                {/* Shopping Cart */}
+                <CartButton />
+
+                {/* Favorites */}
+                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                  <Heart className="w-6 h-6" />
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    3
+                  </span>
                 </button>
 
-                <button className="hidden md:flex items-center gap-1 text-gray-700 hover:text-orange-500">
-                  <Bell className="w-5 h-5" />
-                  <span className="text-xs bg-orange-100 text-orange-600 px-1.5 rounded-full">2</span>
+                {/* Notifications */}
+                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                  <Bell className="w-6 h-6" />
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    2
+                  </span>
                 </button>
 
-                <div className="relative">
+                <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center gap-2 text-gray-700"
@@ -190,6 +219,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         to="/dashboard"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <User className="w-4 h-4" />
                         <span>Profile</span>
@@ -197,13 +227,31 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         to="/planner"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <Route className="w-4 h-4" />
                         <span>My Trips</span>
                       </Link>
                       <Link
+                        to="/bookings"
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <Calendar className="w-4 h-4" />
+                        <span>My Bookings</span>
+                      </Link>
+                      <Link
+                        to="/history"
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <Clock className="w-4 h-4" />
+                        <span>History</span>
+                      </Link>
+                      <Link
                         to="/settings"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <Settings className="w-4 h-4" />
                         <span>Settings</span>
@@ -211,6 +259,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         to="/support"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
                       >
                         <HelpCircle className="w-4 h-4" />
                         <span>Help</span>

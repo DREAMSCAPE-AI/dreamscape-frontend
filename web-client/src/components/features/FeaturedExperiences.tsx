@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ExperienceCard from './ExperienceCard';
 import SectionTitle from '../shared/SectionTitle';
-import apiService from '@/services/api';
+import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
 
 interface FeaturedExperience {
@@ -59,7 +59,7 @@ const FeaturedExperiences = () => {
               await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 second delay
             }
 
-            const response = await apiService.searchActivities({
+            const response = await voyageService.searchActivities({
               latitude: location.lat,
               longitude: location.lng,
               radius: 50

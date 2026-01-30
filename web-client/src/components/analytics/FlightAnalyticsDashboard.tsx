@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BarChart3, TrendingUp, Calendar, MapPin, Loader2 } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface AnalyticsData {
   mostTraveled: any[];
@@ -40,17 +40,17 @@ const FlightAnalyticsDashboard: React.FC = () => {
     setLoading(true);
     try {
       const [mostTraveled, mostBooked, busiestPeriod] = await Promise.all([
-        ApiService.getMostTraveledDestinations({
+        voyageService.getMostTraveledDestinations({
           originCityCode: originCity,
           period: period,
           max: 10
         }),
-        ApiService.getMostBookedDestinations({
+        voyageService.getMostBookedDestinations({
           originCityCode: originCity,
           period: period,
           max: 10
         }),
-        ApiService.getBusiestTravelingPeriod({
+        voyageService.getBusiestTravelingPeriod({
           cityCode: originCity,
           period: period,
           direction: 'DEPARTING'
@@ -92,7 +92,7 @@ const FlightAnalyticsDashboard: React.FC = () => {
 
     setSearchLoading(true);
     try {
-      const response = await ApiService.searchAirports({ keyword: query });
+      const response = await voyageService.searchAirports({ keyword: query });
       const airports = response.data?.slice(0, 8) || [];
       setSuggestions(airports);
     } catch (error) {

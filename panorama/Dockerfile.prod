@@ -1,0 +1,57 @@
+# Dockerfile production pour panorama VR service
+# Multi-stage build pour optimiser la taille de l'image
+
+# === Stage de build ===
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copier les fichiers de configuration
+COPY panorama/package.json ./
+
+# Installer les dépendances
+RUN npm install --legacy-peer-deps
+
+# Copier le code source
+COPY panorama/src ./src
+COPY panorama/public ./public 2>/dev/null || true
+
+# Build de production React
+RUN npm run build
+
+# === Stage de production avec nginx ===
+FROM nginx:alpine
+
+# Copier la configuration nginx personnalisée pour React SPA
+RUN echo 'server { \
+    listen 80; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+    # Optimisation pour les assets statiques \
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ { \
+        expires 1y; \
+        add_header Cache-Control "public, immutable"; \
+    } \
+    # Support WebXR et WebGL \
+    location ~* \.(glb|gltf|bin|hdr)$ { \
+        expires 1y; \
+        add_header Cache-Control "public, immutable"; \
+        add_header Access-Control-Allow-Origin "*"; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
+
+# Copier les fichiers buildés depuis le stage builder
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Exposer le port 80
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
+  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+
+# Nginx démarre automatiquement en foreground
+CMD ["nginx", "-g", "daemon off;"]

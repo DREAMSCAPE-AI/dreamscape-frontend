@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DestinationCard from '@/components/DestinationCard';
-import apiService from '@/services/api';
+import voyageService from '@/services/api/VoyageService';
 import imageService from '@/services/imageService';
 
 interface Destination {
@@ -57,7 +57,7 @@ export default function DestinationsPage() {
             
             console.log(`Fetching destination ${i + 1}/${popularCities.length}: ${cityCode}`);
             
-            const response = await apiService.searchLocations({
+            const response = await voyageService.searchLocations({
               keyword: cityCode,
               subType: 'CITY'
             });

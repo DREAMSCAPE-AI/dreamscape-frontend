@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Headset as VrHeadset, Star, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import apiService from '@/services/api';
+import voyageService from '@/services/api/VoyageService';
 
 interface SearchResult {
   id: string;
@@ -46,7 +46,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ onVRPreview, searchQuery,
       // If we have location-based search, use activities API
       if (searchQuery) {
         // First, try to get location coordinates
-        const locationResponse = await apiService.searchLocations({
+        const locationResponse = await voyageService.searchLocations({
           keyword: searchQuery,
           subType: 'CITY'
         });
@@ -55,7 +55,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ onVRPreview, searchQuery,
           const location = locationResponse.data[0];
           
           // Search for activities in this location
-          const activitiesResponse = await apiService.searchActivities({
+          const activitiesResponse = await voyageService.searchActivities({
             latitude: location.geoCode?.latitude || 0,
             longitude: location.geoCode?.longitude || 0,
             radius: 50

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plane, Search, MapPin, Info, Loader2, Globe } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 
 interface AirlineInfo {
   type: string;
@@ -47,7 +47,7 @@ const AirlineInformationCenter: React.FC = () => {
         : { ICAOCode: searchQuery.toUpperCase() };
 
       try {
-        const airlineResponse = await ApiService.lookupAirlineCode(lookupParams);
+        const airlineResponse = await voyageService.lookupAirlineCode(lookupParams);
         
         if (airlineResponse.data && airlineResponse.data.length > 0) {
           setAirlineInfo(airlineResponse.data[0]);
@@ -89,7 +89,7 @@ const AirlineInformationCenter: React.FC = () => {
 
       // Get airline routes
       try {
-        const routesResponse = await ApiService.getAirlineRoutes({
+        const routesResponse = await voyageService.getAirlineRoutes({
           airlineCode: searchQuery.toUpperCase(),
           max: 20
         });

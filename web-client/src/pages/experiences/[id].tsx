@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Clock, Users, Calendar, Heart, Share2 } from 'lucide-react';
-import ApiService from '../../services/api';
+import voyageService from '../../services/api/VoyageService';
 import imageService from '../../services/imageService';
 
 interface Experience {
@@ -58,7 +58,7 @@ export default function ExperiencePage() {
           // Try to find the activity in one of these locations
           for (const location of popularLocations) {
             try {
-              const activitiesResult = await ApiService.searchActivities({
+              const activitiesResult = await voyageService.searchActivities({
                 latitude: location.lat,
                 longitude: location.lng,
                 radius: 50
