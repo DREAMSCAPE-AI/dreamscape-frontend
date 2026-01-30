@@ -2,6 +2,8 @@ import React from 'react';
 import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee, Loader } from 'lucide-react';
 import type { FlightOffer } from '@/services/api/types';
 import airlineService from '@/services/airlineService';
+import { FavoriteButton } from '@/components/favorites';
+import { FavoriteType } from '@/services/api/FavoritesService';
 
 interface FlightResultsProps {
   flights: FlightOffer[];
@@ -96,8 +98,27 @@ const FlightResults: React.FC<FlightResultsProps> = ({
         return (
           <div
             key={flight.id}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100"
+            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 relative"
           >
+            {/* Favorite Button */}
+            <FavoriteButton
+              entityType={FavoriteType.FLIGHT}
+              entityId={flight.id}
+              entityData={{
+                title: `${firstSegment.departure.iataCode} → ${firstSegment.arrival.iataCode}`,
+                flightNumber: `${firstSegment.carrierCode} ${firstSegment.number}`,
+                airline: airlineName,
+                origin: firstSegment.departure.iataCode,
+                destination: firstSegment.arrival.iataCode,
+                departureTime: formatTime(firstSegment.departure.at),
+                arrivalTime: formatTime(firstSegment.arrival.at),
+                price: parseFloat(flight.price.total),
+                currency: flight.price.currency,
+              }}
+              size="md"
+              className="absolute top-4 right-4 z-10"
+            />
+
             <div className="p-6">
               <div className="flex items-start justify-between mb-6">
                 {/* Airline Info & Flight Details */}

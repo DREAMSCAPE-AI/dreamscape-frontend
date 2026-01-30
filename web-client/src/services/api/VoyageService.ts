@@ -377,7 +377,7 @@ class VoyageService {
     return response.data;
   }
 
-  // Booking Services
+  // Booking Management Services
   async getUserBookings(params?: {
     page?: number;
     limit?: number;

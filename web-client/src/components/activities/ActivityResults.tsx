@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { Star, Clock, Users, Calendar, MapPin } from 'lucide-react';
 import imageService from '@/services/imageService';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
+import { FavoriteButton } from '@/components/favorites';
+import { FavoriteType } from '@/services/api/FavoritesService';
 
 export interface Activity {
   id: string;
@@ -135,6 +137,23 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
                   <Calendar className="w-12 h-12 text-white" />
                 </div>
               )}
+
+              {/* Favorite Button */}
+              <FavoriteButton
+                entityType={FavoriteType.ACTIVITY}
+                entityId={activity.id}
+                entityData={{
+                  title: activity.name,
+                  location: activity.location.name,
+                  description: activity.shortDescription,
+                  price: activity.price.amount,
+                  currency: activity.price.currency,
+                  duration: activity.duration,
+                  imageUrl: activity.images[0],
+                }}
+                size="sm"
+                className="absolute top-3 left-3 z-10"
+              />
 
               {/* Availability Badge */}
               <div className="absolute top-3 right-3">

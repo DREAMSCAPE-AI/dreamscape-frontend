@@ -277,7 +277,10 @@ export default function DestinationsPage() {
           {destinations.map((destination) => (
             <DestinationCard
               key={destination.id}
-              destination={destination}
+              id={destination.id}
+              title={destination.title}
+              image={destination.image}
+              description={destination.description}
               onClick={() => handleDestinationClick(destination)}
             />
           ))}
