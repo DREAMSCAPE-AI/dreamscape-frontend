@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-const VOYAGE_API_BASE_URL = import.meta.env.VITE_VOYAGE_SERVICE_URL || 'http://localhost:3003/api/v1';
+const VOYAGE_API_BASE_URL = import.meta.env.VITE_VOYAGE_SERVICE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:3003/api/v1';
 
 // Import types
 import type {
