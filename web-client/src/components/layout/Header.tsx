@@ -20,8 +20,9 @@ import {
   Car,
   Brain,
   Wrench,
+  Clock,
   Calendar,
-  Clock
+  History
 } from 'lucide-react';
 import Logo from './Logo';
 import { CartButton } from '@/components/cart';
@@ -188,12 +189,12 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 <CartButton />
 
                 {/* Favorites */}
-                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                <Link
+                  to="/favorites"
+                  className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+                >
                   <Heart className="w-6 h-6" />
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    3
-                  </span>
-                </button>
+                </Link>
 
                 {/* Notifications */}
                 <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
@@ -233,6 +234,14 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         <span>My Trips</span>
                       </Link>
                       <Link
+                        to="/favorites"
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <Heart className="w-4 h-4" />
+                        <span>Favorites</span>
+                      </Link>
+                      <Link
                         to="/bookings"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
@@ -245,7 +254,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Clock className="w-4 h-4" />
+                        <History className="w-4 h-4" />
                         <span>History</span>
                       </Link>
                       <Link

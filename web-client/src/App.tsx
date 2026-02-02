@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { useAuth } from '@/services/auth/AuthService';
+import { FavoritesBatchProvider } from '@/contexts/FavoritesBatchContext';
 
 // Pages
 import HomePage from '@/pages/index';
@@ -44,6 +45,9 @@ import PaymentConfirmationPage from '@/pages/payment/confirmation';
 // User History Page
 import HistoryPage from '@/pages/history';
 
+// User Favorites Page
+import FavoritesPage from '@/pages/favorites';
+
 // User Bookings Pages
 import BookingsPage from '@/pages/bookings';
 import BookingDetailPage from '@/pages/bookings/[reference]';
@@ -63,10 +67,16 @@ const AuthChecker = React.memo(() => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <AuthChecker />
-      <ErrorBoundary>
-        <Routes>
+      <FavoritesBatchProvider>
+        <ErrorBoundary>
+          <Routes>
           <Route element={<RootLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthPage />} />
@@ -118,6 +128,11 @@ function App() {
                 <HistoryPage />
               </OnboardingGuard>
             } />
+            <Route path="/favorites" element={
+              <OnboardingGuard requireOnboarding={false}>
+                <FavoritesPage />
+              </OnboardingGuard>
+            } />
             <Route path="/bookings" element={
               <OnboardingGuard requireOnboarding={false}>
                 <BookingsPage />
@@ -142,8 +157,9 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment/confirmation" element={<PaymentConfirmationPage />} />
           </Route>
-        </Routes>
-      </ErrorBoundary>
+          </Routes>
+        </ErrorBoundary>
+      </FavoritesBatchProvider>
     </BrowserRouter>
   );
 }
