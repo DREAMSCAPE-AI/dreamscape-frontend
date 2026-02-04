@@ -32,10 +32,10 @@ class ItineraryService {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_VOYAGE_SERVICE_URL || 'http://localhost:3003';
+    this.baseURL = import.meta.env.VITE_VOYAGE_SERVICE_URL;
 
     this.api = axios.create({
-      baseURL: `${this.baseURL}/api/v1`,
+      baseURL: `${this.baseURL}/v1`,
       headers: {
         'Content-Type': 'application/json'
       },
