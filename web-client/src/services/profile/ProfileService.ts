@@ -1,12 +1,9 @@
 import axios, { AxiosInstance } from 'axios';
 
-const resolveBaseUrl = (envValue?: string, fallbackPath = '/api/v1') => {
+const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   const trimmed = (envValue || '').trim();
   if (trimmed) return trimmed;
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin.replace(/\/$/, '')}${fallbackPath}`;
-  }
-  return `http://localhost:3001${fallbackPath}`;
+  return fallbackPath;
 };
 
 const PROFILE_API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_API_URL);
@@ -94,13 +91,13 @@ class ProfileService {
 
   // Get user profile and settings
   async getProfile(): Promise<UserProfileData> {
-    const response = await this.api.get('/users/profile');
+    const response = await this.api.get('/v1/users/profile');
     return response.data;
   }
 
   // Update user profile and settings
   async updateProfile(profileData: UserProfileData): Promise<UserProfileData> {
-    const response = await this.api.put('/users/profile', profileData);
+    const response = await this.api.put('/v1/users/profile', profileData);
     return response.data;
   }
 
@@ -109,7 +106,7 @@ class ProfileService {
     const formData = new FormData();
     formData.append('avatar', file);
 
-    const response = await this.api.post('/users/profile/avatar', formData, {
+    const response = await this.api.post('/v1/users/profile/avatar', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       }
