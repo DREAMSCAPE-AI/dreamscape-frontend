@@ -9,7 +9,7 @@ import type {
   HistoryEntityType,
 } from '@/types/history';
 
-const HISTORY_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
+const HISTORY_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL;
 
 // Debug: log the configured URL
 console.log('[HistoryService] API Base URL:', HISTORY_API_BASE_URL);
@@ -22,7 +22,7 @@ class HistoryService {
   private api: AxiosInstance;
 
   constructor() {
-    const fullBaseUrl = `${HISTORY_API_BASE_URL}/users/history`;
+    const fullBaseUrl = `${HISTORY_API_BASE_URL}/v1/users/history`;
     console.log('[HistoryService] Full API URL:', fullBaseUrl);
 
     this.api = axios.create({

@@ -1,4 +1,4 @@
-const GATEWAY_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:3000/api';
+const GATEWAY_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL;
 
 // API Gateway configuration
 export const gatewayConfig = {

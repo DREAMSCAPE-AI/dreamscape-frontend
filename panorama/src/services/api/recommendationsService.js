@@ -11,7 +11,7 @@ import axios from 'axios';
 
 // URL du backend AI service for recommendations
 // DR-204: Point to ai-service (port 3005) instead of auth-service
-const API_BASE_URL = process.env.REACT_APP_AI_API_URL || 'http://localhost:3005/api/v1';
+const API_BASE_URL = process.env.REACT_APP_AI_API_URL;
 
 // Instance axios avec authentification
 const api = axios.create({
