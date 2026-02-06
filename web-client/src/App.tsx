@@ -52,6 +52,12 @@ import FavoritesPage from '@/pages/favorites';
 import BookingsPage from '@/pages/bookings';
 import BookingDetailPage from '@/pages/bookings/[reference]';
 
+// Legal Pages
+import PrivacyPolicyPage from '@/pages/legal/PrivacyPolicy';
+
+// GDPR
+import CookieConsent from '@/components/gdpr/CookieConsent';
+
 // Auth checker component that runs on app mount
 // Memoized to prevent unnecessary re-renders
 const AuthChecker = React.memo(() => {
@@ -74,6 +80,7 @@ function App() {
       }}
     >
       <AuthChecker />
+      <CookieConsent />
       <FavoritesBatchProvider>
         <ErrorBoundary>
           <Routes>
@@ -144,6 +151,9 @@ function App() {
               </OnboardingGuard>
             } />
             <Route path="/support" element={<SupportPage />} />
+
+            {/* Legal Routes */}
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
             {/* New API Component Routes */}
             <Route path="/analytics" element={<AnalyticsPage />} />
