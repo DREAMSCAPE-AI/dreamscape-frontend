@@ -35,7 +35,7 @@ class ItineraryService {
     this.baseURL = import.meta.env.VITE_VOYAGE_SERVICE_URL;
 
     this.api = axios.create({
-      baseURL: `${this.baseURL}/v1`,
+      baseURL: this.baseURL,
       headers: {
         'Content-Type': 'application/json'
       },

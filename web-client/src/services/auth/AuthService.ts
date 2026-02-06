@@ -7,10 +7,7 @@ import { useItineraryStore } from '@/store/itineraryStore';
 const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   const trimmed = (envValue || '').trim();
   if (trimmed) return trimmed;
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin.replace(/\/$/, '')}${fallbackPath}`;
-  }
-  return `http://localhost:3001${fallbackPath}`;
+  return fallbackPath;
 };
 
 const AUTH_API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_AUTH_SERVICE_URL);
