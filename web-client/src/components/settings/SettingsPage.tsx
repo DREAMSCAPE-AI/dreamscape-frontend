@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { profileService, UserProfileData } from '@/services/profile';
 import TravelPreferencesSection from './TravelPreferencesSection';
+import ConsentManager from '@/components/gdpr/ConsentManager';
+import DataRightsSection from '@/components/gdpr/DataRightsSection';
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState('profile');
@@ -147,7 +149,8 @@ const SettingsPage = () => {
     { id: 'account', label: 'Account', icon: SettingsIcon },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy', icon: Lock },
-    { id: 'travel', label: 'Travel Preferences', icon: Globe }
+    { id: 'travel', label: 'Travel Preferences', icon: Globe },
+    { id: 'data-privacy', label: 'Data & Privacy', icon: Shield }
   ];
 
   const handleSave = async () => {
@@ -513,6 +516,14 @@ const SettingsPage = () => {
           {/* Travel Preferences */}
           {activeSection === 'travel' && (
             <TravelPreferencesSection />
+          )}
+
+          {/* Data & Privacy (GDPR) */}
+          {activeSection === 'data-privacy' && (
+            <div className="space-y-6">
+              <ConsentManager />
+              <DataRightsSection />
+            </div>
           )}
         </div>
       </div>
