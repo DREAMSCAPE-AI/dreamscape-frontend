@@ -26,11 +26,17 @@ const FeaturedExperiences = () => {
         setLoading(true);
         setError(null);
 
+        // TEMPORARY FIX: Disable automatic API calls to save Amadeus quota
+        // Use default experiences instead
+        console.log('[FeaturedExperiences] Using default data to avoid rate limiting');
+        setExperiences(await getDefaultExperiences());
+
+        /* ORIGINAL CODE - Disabled to save API quota
         // Check if we have cached experiences
         const cachedExperiences = localStorage.getItem('cachedExperiences');
         const cacheTimestamp = localStorage.getItem('experiencesCacheTime');
         const cacheExpiry = 15 * 60 * 1000; // 15 minutes
-        
+
         if (cachedExperiences && cacheTimestamp) {
           const isExpired = Date.now() - parseInt(cacheTimestamp) > cacheExpiry;
           if (!isExpired) {
@@ -68,7 +74,7 @@ const FeaturedExperiences = () => {
             if (response.data && response.data.length > 0) {
               const activity = response.data[0]; // Take the first activity
               const activityName = activity.name || `Experience in ${location.name.split(',')[0]}`;
-              
+
               experiences.push({
                 id: activity.id || `${location.name}-${Date.now()}`,
                 image: await imageService.getActivityImage(activityName, activity.type, location.name),
@@ -82,7 +88,7 @@ const FeaturedExperiences = () => {
             }
           } catch (err: any) {
             console.warn(`Failed to fetch activities for ${location.name}:`, err);
-            
+
             // If we hit rate limit, stop making more requests and use fallback
             if (err.response?.status === 429) {
               console.warn('Rate limit hit for activities, using fallback data');
@@ -100,6 +106,7 @@ const FeaturedExperiences = () => {
           localStorage.setItem('experiencesCacheTime', Date.now().toString());
           setExperiences(experiences);
         }
+        */
       } catch (err) {
         console.error('Error fetching featured experiences:', err);
         setError('Failed to load featured experiences');

@@ -410,16 +410,12 @@ function VREnvironment() {
   // Récupérer le paramètre destination depuis l'URL
   const searchParams = new URLSearchParams(window.location.search);
   const destination = searchParams.get('destination');
+  const showDiagnostics = searchParams.get('debug') === 'true';
 
-  // Si destination=paris, charger l'environnement Paris avec hotspots
-  if (destination === 'paris') {
-    return <ParisEnvironment />;
-  }
-
-  // Sinon, afficher un panorama simple (mode test/diagnostic)
+  // Tous les hooks DOIVENT être appelés avant tout return conditionnel
   const [prepResults, setPrepResults] = useState(null);
   const [textureReady, setTextureReady] = useState(false);
-  const showDiagnostics = searchParams.get('debug') === 'true';
+  const [clicked, setClicked] = useState(false);
 
   // Callback pour recevoir les résultats de préparation
   const handlePrepResults = useCallback((results) => {
@@ -431,9 +427,22 @@ function VREnvironment() {
     }
   }, []);
 
+  // Handlers pour le cube interactif
+  const handleCubeClick = useCallback(() => {
+    setClicked(prev => !prev);
+  }, []);
+
+  const handleCubePointerOver = useCallback(() => {
+    document.body.style.cursor = 'pointer';
+  }, []);
+
+  const handleCubePointerOut = useCallback(() => {
+    document.body.style.cursor = 'default';
+  }, []);
+
   // Charger la texture avec le service
   const { loadingState, isLoading, texture, error, progress } = useTextureLoading({
-    url: prepResults?.finalUrl || '/panorama-test.jpg',
+    url: prepResults?.finalUrl || '/panoramas/paris/eiffel-tower.jpg',
     shouldLoad: textureReady
   });
 
@@ -454,6 +463,12 @@ function VREnvironment() {
     };
   }, [texture, prepResults]);
 
+  // APRÈS tous les hooks, on peut faire des returns conditionnels
+  // Si destination=paris, charger l'environnement Paris avec hotspots
+  if (destination === 'paris') {
+    return <ParisEnvironment />;
+  }
+
   return (
     <>
       {/* Diagnostics (uniquement si ?debug=true) */}
@@ -466,7 +481,7 @@ function VREnvironment() {
 
       {/* Préparation de l'image */}
       <ImagePreparation
-        url="/panorama-test.jpg"
+        url="/panoramas/paris/eiffel-tower.jpg"
         onResults={handlePrepResults}
       />
 

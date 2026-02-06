@@ -7,8 +7,10 @@
  * Utilise les services créés dans DR-250
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { Text, Html } from '@react-three/drei';
 import ImageResizer from '../services/ImageResizer';
 import Hotspot from './Hotspot';
 import {
@@ -141,15 +143,6 @@ function VRScene({ scene, onSceneChange, onHotspotClick }) {
 
       {/* Éclairage ambiant adapté */}
       <ambientLight intensity={scene.settings?.ambientLightIntensity || 0.7} />
-
-      {/* Rendu des hotspots interactifs */}
-      {scene.hotspots && scene.hotspots.map((hotspot) => (
-        <Hotspot
-          key={hotspot.id}
-          hotspot={hotspot}
-          onClick={onHotspotClick}
-        />
-      ))}
     </>
   );
 }
