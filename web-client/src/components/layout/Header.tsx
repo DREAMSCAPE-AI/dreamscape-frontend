@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import Logo from './Logo';
 import { CartButton } from '@/components/cart';
+import FavoritesService from '@/services/api/FavoritesService';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -37,7 +38,27 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDiscoverMenu, setShowDiscoverMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const [favoritesCount, setFavoritesCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch favorites count when user is logged in
+  useEffect(() => {
+    const fetchFavoritesCount = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await FavoritesService.getFavorites({ limit: 0 });
+          setFavoritesCount(response.total || 0);
+        } catch (error) {
+          console.error('Failed to fetch favorites count:', error);
+          setFavoritesCount(0);
+        }
+      } else {
+        setFavoritesCount(0);
+      }
+    };
+
+    fetchFavoritesCount();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -192,8 +213,14 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 <Link
                   to="/favorites"
                   className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+                  title="View favorites"
                 >
                   <Heart className="w-6 h-6" />
+                  {favoritesCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {favoritesCount > 99 ? '99+' : favoritesCount}
+                    </span>
+                  )}
                 </Link>
 
                 {/* Notifications */}
