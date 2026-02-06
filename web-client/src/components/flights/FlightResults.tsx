@@ -3,7 +3,7 @@ import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee, Loader } from 'l
 import type { FlightOffer } from '@/services/api/types';
 import airlineService from '@/services/airlineService';
 import { FavoriteButton } from '@/components/favorites';
-import { useHistoryTracking } from '@/hooks/useHistoryTracking';
+import { FavoriteType } from '@/services/api/FavoritesService';
 
 interface FlightResultsProps {
   flights: FlightOffer[];
@@ -22,23 +22,6 @@ const FlightResults: React.FC<FlightResultsProps> = ({
   onLoadMore,
   loadingMore
 }) => {
-  // History tracking hook
-  const { trackFlightFavorite, trackFlightUnfavorite } = useHistoryTracking();
-
-  // Handle favorite toggle with history tracking
-  const handleFavoriteToggle = (flight: FlightOffer, isFavorited: boolean) => {
-    const firstSegment = flight.itineraries[0]?.segments[0];
-    const flightName = `${firstSegment?.departure.iataCode} → ${firstSegment?.arrival.iataCode}`;
-
-    if (isFavorited) {
-      console.log('[FlightResults] Tracking favorite');
-      trackFlightFavorite(flight.id, flightName);
-    } else {
-      console.log('[FlightResults] Tracking unfavorite');
-      trackFlightUnfavorite(flight.id, flightName);
-    }
-  };
-
   const formatDuration = (duration: string) => {
     // Convert ISO duration to readable format
     const hours = duration.match(/(\d+)H/)?.[1] || '0';
@@ -115,8 +98,27 @@ const FlightResults: React.FC<FlightResultsProps> = ({
         return (
           <div
             key={flight.id}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100"
+            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 relative"
           >
+            {/* Favorite Button */}
+            <FavoriteButton
+              entityType={FavoriteType.FLIGHT}
+              entityId={flight.id}
+              entityData={{
+                title: `${firstSegment.departure.iataCode} → ${firstSegment.arrival.iataCode}`,
+                flightNumber: `${firstSegment.carrierCode} ${firstSegment.number}`,
+                airline: airlineName,
+                origin: firstSegment.departure.iataCode,
+                destination: firstSegment.arrival.iataCode,
+                departureTime: formatTime(firstSegment.departure.at),
+                arrivalTime: formatTime(firstSegment.arrival.at),
+                price: parseFloat(flight.price.total),
+                currency: flight.price.currency,
+              }}
+              size="md"
+              className="absolute top-4 right-4 z-10"
+            />
+
             <div className="p-6">
               <div className="flex items-start justify-between mb-6">
                 {/* Airline Info & Flight Details */}
@@ -258,28 +260,6 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                     >
                       View Details
                     </button>
-                    <FavoriteButton
-                      entityType="FLIGHT"
-                      entityId={flight.id}
-                      entityData={{
-                        departure: firstSegment.departure.iataCode,
-                        arrival: firstSegment.arrival.iataCode,
-                        departureTime: firstSegment.departure.at,
-                        arrivalTime: firstSegment.arrival.at,
-                        duration: firstSegment.duration,
-                        carrier: firstSegment.carrierCode,
-                        carrierName: airlineName,
-                        price: flight.price.total,
-                        currency: flight.price.currency,
-                        stops: firstSegment.numberOfStops,
-                        cabin: flight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin,
-                        oneWay: flight.oneWay,
-                      }}
-                      size="md"
-                      className="w-full"
-                      showLabel={true}
-                      onToggle={(isFavorited) => handleFavoriteToggle(flight, isFavorited)}
-                    />
                   </div>
                 </div>
               </div>

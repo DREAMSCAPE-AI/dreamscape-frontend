@@ -155,7 +155,7 @@ const TravelTypesStep: React.FC = () => {
     <OnboardingStepWrapper
       title="Types de voyage"
       description="Sélectionnez tous les types de voyages qui vous intéressent"
-      icon="✈️"
+      icon="🧳"
     >
       <div className="space-y-8">
         {/* Progress indicator */}

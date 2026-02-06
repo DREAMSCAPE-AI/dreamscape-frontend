@@ -1,6 +1,15 @@
 import axios, { AxiosInstance } from 'axios';
 
-const PROFILE_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
+const resolveBaseUrl = (envValue?: string, fallbackPath = '/api/v1') => {
+  const trimmed = (envValue || '').trim();
+  if (trimmed) return trimmed;
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin.replace(/\/$/, '')}${fallbackPath}`;
+  }
+  return `http://localhost:3001${fallbackPath}`;
+};
+
+const PROFILE_API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_API_URL);
 
 export interface UserProfileData {
   profile: {
@@ -111,10 +120,12 @@ class ProfileService {
   // Change password
   async changePassword(currentPassword: string, newPassword: string): Promise<any> {
     // Utiliser le service auth pour changer le mot de passe
-    const authResponse = await axios.post('http://localhost:3001/api/v1/auth/change-password', {
-      currentPassword,
-      newPassword
-    }, {
+    const authResponse = await axios.post(
+      `${resolveBaseUrl(import.meta.env.VITE_AUTH_SERVICE_URL, '/api')}/v1/auth/change-password`,
+      {
+        currentPassword,
+        newPassword
+      }, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.getAuthToken()}`

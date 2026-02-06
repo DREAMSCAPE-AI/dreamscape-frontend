@@ -1,40 +1,30 @@
 import axios from 'axios';
 
-// Service URLs
-const AUTH_SERVICE_URL = import.meta.env.VITE_AUTH_SERVICE_URL || 'http://localhost:3001/api';
-const USER_SERVICE_URL = import.meta.env.VITE_USER_SERVICE_API_URL || 'http://localhost:3002/api/v1';
-const VOYAGE_SERVICE_URL = import.meta.env.VITE_VOYAGE_SERVICE_URL || 'http://localhost:3004/api/v1';
-
-// Create axios instances for different services
-const createApiInstance = (baseURL: string) => {
-  const instance = axios.create({
-    baseURL,
-    timeout: 10000,
-  });
-
-  // Add auth token to requests
-  instance.interceptors.request.use((config) => {
-    const authStorage = localStorage.getItem('auth-storage');
-    if (authStorage) {
-      try {
-        const parsed = JSON.parse(authStorage);
-        const token = parsed?.state?.token;
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-      } catch (e) {
-        console.error('Error parsing auth storage:', e);
-      }
-    }
-    return config;
-  });
-
-  return instance;
+const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
+  const trimmed = (envValue || '').trim();
+  if (trimmed) return trimmed;
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin.replace(/\/$/, '')}${fallbackPath}`;
+  }
+  return `http://localhost:3001${fallbackPath}`;
 };
 
-const authApi = createApiInstance(AUTH_SERVICE_URL);
-const userApi = createApiInstance(USER_SERVICE_URL);
-const voyageApi = createApiInstance(VOYAGE_SERVICE_URL);
+const API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_API_BASE_URL);
+
+// Create axios instance with auth interceptor
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+});
+
+// Add auth token to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth-token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export interface UserProfile {
   id: string;
@@ -128,7 +118,7 @@ class DashboardService {
   // User Profile Management
   async getUserProfile(): Promise<UserProfile> {
     try {
-      const response = await userApi.get('/users/profile');
+      const response = await api.get('/auth/profile');
       return response.data;
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -138,7 +128,7 @@ class DashboardService {
 
   async updateUserProfile(updates: Partial<UserProfile>): Promise<UserProfile> {
     try {
-      const response = await userApi.put('/users/profile', updates);
+      const response = await api.put('/auth/profile', updates);
       return response.data;
     } catch (error) {
       console.error('Error updating user profile:', error);
@@ -149,7 +139,7 @@ class DashboardService {
   // Booking Management
   async getUserBookings(): Promise<Booking[]> {
     try {
-      const response = await voyageApi.get('/bookings');
+      const response = await api.get('/bookings');
       return response.data;
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -159,7 +149,7 @@ class DashboardService {
 
   async getUpcomingTrips(): Promise<Booking[]> {
     try {
-      const response = await voyageApi.get('/bookings/upcoming');
+      const response = await api.get('/bookings/upcoming');
       return response.data;
     } catch (error) {
       console.error('Error fetching upcoming trips:', error);
@@ -169,7 +159,7 @@ class DashboardService {
 
   async cancelBooking(bookingId: string): Promise<void> {
     try {
-      await voyageApi.delete(`/bookings/${bookingId}`);
+      await api.delete(`/bookings/${bookingId}`);
     } catch (error) {
       console.error('Error cancelling booking:', error);
       throw error;
@@ -179,7 +169,7 @@ class DashboardService {
   // Search History
   async getSearchHistory(): Promise<SearchHistory[]> {
     try {
-      const response = await userApi.get('/users/history');
+      const response = await api.get('/search-history');
       return response.data;
     } catch (error) {
       console.error('Error fetching search history:', error);
@@ -189,7 +179,7 @@ class DashboardService {
 
   async getRecentSearches(limit: number = 5): Promise<string[]> {
     try {
-      const response = await userApi.get(`/users/history/recent?limit=${limit}`);
+      const response = await api.get(`/search-history/recent?limit=${limit}`);
       return response.data.map((item: SearchHistory) => item.query);
     } catch (error) {
       console.error('Error fetching recent searches:', error);
@@ -200,7 +190,7 @@ class DashboardService {
   // Recommendations
   async getPersonalizedRecommendations(): Promise<TravelRecommendation[]> {
     try {
-      const response = await voyageApi.get('/recommendations/personalized');
+      const response = await api.get('/recommendations/personalized');
       return response.data;
     } catch (error) {
       console.error('Error fetching recommendations:', error);
@@ -210,7 +200,7 @@ class DashboardService {
 
   async getTrendingDestinations(): Promise<TravelRecommendation[]> {
     try {
-      const response = await voyageApi.get('/recommendations/trending');
+      const response = await api.get('/recommendations/trending');
       return response.data;
     } catch (error) {
       console.error('Error fetching trending destinations:', error);
@@ -220,7 +210,7 @@ class DashboardService {
 
   async getDealsAndOffers(): Promise<TravelRecommendation[]> {
     try {
-      const response = await voyageApi.get('/recommendations/deals');
+      const response = await api.get('/recommendations/deals');
       return response.data;
     } catch (error) {
       console.error('Error fetching deals:', error);
@@ -232,7 +222,7 @@ class DashboardService {
   async getFlightInsights(origin?: string): Promise<FlightInsight[]> {
     try {
       const params = origin ? { origin } : {};
-      const response = await voyageApi.get('/flights/insights', { params });
+      const response = await api.get('/flights/insights', { params });
       return response.data;
     } catch (error) {
       console.error('Error fetching flight insights:', error);
@@ -242,7 +232,7 @@ class DashboardService {
 
   async getPriceAlerts(): Promise<any[]> {
     try {
-      const response = await voyageApi.get('/price-alerts');
+      const response = await api.get('/price-alerts');
       return response.data;
     } catch (error) {
       console.error('Error fetching price alerts:', error);
@@ -252,7 +242,7 @@ class DashboardService {
 
   async createPriceAlert(alertData: any): Promise<any> {
     try {
-      const response = await voyageApi.post('/price-alerts', alertData);
+      const response = await api.post('/price-alerts', alertData);
       return response.data;
     } catch (error) {
       console.error('Error creating price alert:', error);
@@ -263,7 +253,7 @@ class DashboardService {
   // Analytics and Insights
   async getTravelStats(): Promise<UserStats> {
     try {
-      const response = await userApi.get('/users/analytics/stats');
+      const response = await api.get('/analytics/user-stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching travel stats:', error);
@@ -273,7 +263,7 @@ class DashboardService {
 
   async getDestinationInsights(destination: string): Promise<any> {
     try {
-      const response = await voyageApi.get(`/analytics/destination/${destination}`);
+      const response = await api.get(`/analytics/destination/${destination}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching destination insights:', error);
@@ -284,7 +274,7 @@ class DashboardService {
   // Preferences
   async updatePreferences(preferences: Partial<UserPreferences>): Promise<UserPreferences> {
     try {
-      const response = await userApi.put('/users/preferences', preferences);
+      const response = await api.put('/preferences', preferences);
       return response.data;
     } catch (error) {
       console.error('Error updating preferences:', error);
@@ -295,7 +285,7 @@ class DashboardService {
   // Quick Actions
   async quickFlightSearch(params: any): Promise<any[]> {
     try {
-      const response = await voyageApi.get('/flights/search', { params });
+      const response = await api.get('/flights/search', { params });
       return response.data;
     } catch (error) {
       console.error('Error in quick flight search:', error);
@@ -305,7 +295,7 @@ class DashboardService {
 
   async quickHotelSearch(params: any): Promise<any[]> {
     try {
-      const response = await voyageApi.get('/hotels/search', { params });
+      const response = await api.get('/hotels/search', { params });
       return response.data;
     } catch (error) {
       console.error('Error in quick hotel search:', error);
@@ -315,7 +305,7 @@ class DashboardService {
 
   async quickActivitySearch(params: any): Promise<any[]> {
     try {
-      const response = await voyageApi.get('/activities/search', { params });
+      const response = await api.get('/activities/search', { params });
       return response.data;
     } catch (error) {
       console.error('Error in quick activity search:', error);

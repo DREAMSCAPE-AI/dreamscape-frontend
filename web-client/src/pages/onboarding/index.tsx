@@ -3,14 +3,12 @@ import { Navigate } from 'react-router-dom';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 import { useAuth } from '@/services/auth/AuthService';
 import useOnboardingStore from '@/store/onboardingStore';
-import HeroSection from '@/components/hero/HeroSection';
-import FeaturedExperiences from '@/components/features/FeaturedExperiences';
-import PersonalizationShowcase from '@/components/features/PersonalizationShowcase';
-import DestinationCategories from '@/components/categories/DestinationCategories';
-import SocialProof from '@/components/testimonials/SocialProof';
+import UserDashboard from '@/components/dashboard/UserDashboard';
+import BusinessDashboard from '@/components/business/BusinessDashboard';
+import LeisureDashboard from '@/components/leisure/LeisureDashboard';
+import BleisureDashboard from '@/components/bleisure/BleisureDashboard';
 
 const OnboardingPage: React.FC = () => {
-  // Check if user is authenticated using Zustand store
   const { isAuthenticated, user } = useAuth();
   const { initializeOnboarding, getOnboardingStatus } = useOnboardingStore();
 
@@ -33,22 +31,75 @@ const OnboardingPage: React.FC = () => {
   }
 
   const status = getOnboardingStatus();
-  if (status === 'completed') {
-    console.log('[OnboardingPage] Onboarding status is completed, redirecting to dashboard');
+  if (status === 'completed' || status === 'skipped') {
+    console.log('[OnboardingPage] Onboarding status is completed/skipped, redirecting to dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 
+  // Render the appropriate dashboard component based on user type
+  const renderDashboard = () => {
+    if (user?.type === 'business') {
+      return (
+        <main className="min-h-screen bg-gray-50 pt-20">
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
+              <div className="text-sm text-gray-600">Business Account</div>
+            </div>
+            <BusinessDashboard />
+          </div>
+        </main>
+      );
+    }
+
+    if (user?.type === 'leisure') {
+      return (
+        <main className="min-h-screen bg-gray-50 pt-20">
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
+              <div className="text-sm text-gray-600">Leisure Account</div>
+            </div>
+            <LeisureDashboard />
+          </div>
+        </main>
+      );
+    }
+
+    if (user?.type === 'bleisure') {
+      return (
+        <main className="min-h-screen bg-gray-50 pt-20">
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
+              <div className="text-sm text-gray-600">Bleisure Account</div>
+            </div>
+            <BleisureDashboard />
+          </div>
+        </main>
+      );
+    }
+
+    return (
+      <main className="min-h-screen bg-gray-50 pt-20">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
+            <div className="text-sm text-gray-600">
+              {user?.type && `${user.type.charAt(0).toUpperCase() + user.type.slice(1)} Account`}
+            </div>
+          </div>
+          <UserDashboard />
+        </div>
+      </main>
+    );
+  };
+
   return (
     <div className="relative min-h-screen">
-      {/* Background homepage content */}
+      {/* Background dashboard content */}
       <div className="absolute inset-0">
-        <main>
-          <HeroSection />
-          <FeaturedExperiences />
-          <PersonalizationShowcase />
-          <DestinationCategories />
-          <SocialProof />
-        </main>
+        {renderDashboard()}
       </div>
 
       {/* Semi-transparent overlay */}

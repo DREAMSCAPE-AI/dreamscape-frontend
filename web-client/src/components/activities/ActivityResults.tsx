@@ -3,6 +3,7 @@ import { Star, Clock, Users, Calendar, MapPin } from 'lucide-react';
 import imageService from '@/services/imageService';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 import { FavoriteButton } from '@/components/favorites';
+import { FavoriteType } from '@/services/api/FavoritesService';
 
 export interface Activity {
   id: string;
@@ -55,7 +56,7 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
   const ITEMS_PER_PAGE = 12;
 
   // History tracking
-  const { trackActivityView, trackActivityFavorite, trackActivityUnfavorite } = useHistoryTracking();
+  const { trackActivityView } = useHistoryTracking();
 
   const handleActivitySelect = useCallback((activity: Activity) => {
     // Track activity view
@@ -65,17 +66,6 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
       onSelect(activity);
     }
   }, [onSelect, trackActivityView]);
-
-  // Handle favorite toggle with history tracking
-  const handleFavoriteToggle = useCallback((activity: Activity, isFavorited: boolean) => {
-    if (isFavorited) {
-      console.log('[ActivityResults] Tracking favorite');
-      trackActivityFavorite(activity.id, activity.name);
-    } else {
-      console.log('[ActivityResults] Tracking unfavorite');
-      trackActivityUnfavorite(activity.id, activity.name);
-    }
-  }, [trackActivityFavorite, trackActivityUnfavorite]);
 
   // Pagination logic
   const totalPages = Math.ceil(activities.length / ITEMS_PER_PAGE);
@@ -149,24 +139,21 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
               )}
 
               {/* Favorite Button */}
-              <div className="absolute top-3 left-3" onClick={(e) => e.stopPropagation()}>
-                <FavoriteButton
-                  entityType="ACTIVITY"
-                  entityId={activity.id}
-                  entityData={{
-                    name: activity.name,
-                    location: activity.location.name,
-                    rating: activity.rating,
-                    price: activity.price.amount,
-                    currency: activity.price.currency,
-                    duration: activity.duration,
-                    category: activity.category,
-                    image: activity.images[0],
-                  }}
-                  size="sm"
-                  onToggle={(isFavorited) => handleFavoriteToggle(activity, isFavorited)}
-                />
-              </div>
+              <FavoriteButton
+                entityType={FavoriteType.ACTIVITY}
+                entityId={activity.id}
+                entityData={{
+                  title: activity.name,
+                  location: activity.location.name,
+                  description: activity.shortDescription,
+                  price: activity.price.amount,
+                  currency: activity.price.currency,
+                  duration: activity.duration,
+                  imageUrl: activity.images[0],
+                }}
+                size="sm"
+                className="absolute top-3 left-3 z-10"
+              />
 
               {/* Availability Badge */}
               <div className="absolute top-3 right-3">

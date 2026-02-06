@@ -23,6 +23,7 @@ interface OnboardingState {
   getIsLastStep: () => boolean;
   getCanProceed: () => boolean;
   getCompletionPercentage: () => number;
+  getAllRequiredStepsCompleted: () => boolean;
 
   initializeOnboarding: () => Promise<void>;
   loadProfile: () => Promise<void>;
@@ -100,6 +101,19 @@ const useOnboardingStore = create<OnboardingState>()(
         getCompletionPercentage: () => {
           const state = get();
           return state.progress?.progressPercentage || 0;
+        },
+
+        getAllRequiredStepsCompleted: () => {
+          const state = get();
+          const { progress } = state;
+
+          // Get all required steps
+          const requiredSteps = ONBOARDING_STEPS.filter(step => step.required);
+
+          // Check if all required steps are completed
+          return requiredSteps.every(step =>
+            progress?.completedSteps?.includes(step.id)
+          );
         },
 
         async initializeOnboarding() {
@@ -266,11 +280,36 @@ const useOnboardingStore = create<OnboardingState>()(
         },
 
         goToStep(stepIndex: number) {
+          const state = get();
+          const targetStep = ONBOARDING_STEPS[stepIndex];
+          const { progress } = state;
+
+          // Only allow navigation to completed steps or the next immediate step
           if (stepIndex >= 0 && stepIndex < ONBOARDING_STEPS.length) {
-            set({
-              currentStepIndex: stepIndex,
-              error: null
-            });
+            // Allow navigation to completed steps
+            if (progress?.completedSteps?.includes(targetStep.id)) {
+              set({
+                currentStepIndex: stepIndex,
+                error: null
+              });
+              return;
+            }
+
+            // Allow navigation to the first non-completed step (next in sequence)
+            const firstIncompleteIndex = ONBOARDING_STEPS.findIndex(
+              step => !progress?.completedSteps?.includes(step.id)
+            );
+
+            if (stepIndex === firstIncompleteIndex) {
+              set({
+                currentStepIndex: stepIndex,
+                error: null
+              });
+              return;
+            }
+
+            // Prevent navigation to future uncompleted steps
+            set({ error: 'Vous devez compléter les étapes précédentes avant de continuer.' });
           }
         },
 
@@ -286,6 +325,16 @@ const useOnboardingStore = create<OnboardingState>()(
         },
 
         async completeOnboarding() {
+          // First, check if all required steps are completed
+          const allRequiredStepsCompleted = get().getAllRequiredStepsCompleted();
+
+          if (!allRequiredStepsCompleted) {
+            set({
+              error: 'Vous devez remplir toutes les étapes obligatoires avant de terminer l\'onboarding.'
+            });
+            return false;
+          }
+
           set({ isSaving: true, error: null });
 
           try {

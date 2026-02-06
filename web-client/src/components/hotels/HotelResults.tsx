@@ -3,6 +3,7 @@ import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Eye, Car, Utens
 import type { HotelOffer } from '../../services/api/types';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 import { FavoriteButton } from '@/components/favorites';
+import { FavoriteType } from '@/services/api/FavoritesService';
 
 interface HotelResultsProps {
   hotels: HotelOffer[];
@@ -23,7 +24,7 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
   });
 
   // History tracking hook
-  const { trackHotelView, trackHotelFavorite, trackHotelUnfavorite } = useHistoryTracking();
+  const { trackHotelView } = useHistoryTracking();
 
   // Memoize the sorting and filtering logic to prevent unnecessary recalculations
   const sortedAndFilteredHotels = useMemo(() => {
@@ -86,17 +87,6 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
       }
     });
   }, [hotels, sortBy, filters]);
-
-  // Handle favorite toggle with history tracking
-  const handleFavoriteToggle = useCallback((hotel: HotelOffer, isFavorited: boolean) => {
-    if (isFavorited) {
-      console.log('[HotelResults] Tracking favorite');
-      trackHotelFavorite(hotel.id, hotel.name);
-    } else {
-      console.log('[HotelResults] Tracking unfavorite');
-      trackHotelUnfavorite(hotel.id, hotel.name);
-    }
-  }, [trackHotelFavorite, trackHotelUnfavorite]);
 
   const handleHotelSelect = useCallback((hotel: HotelOffer) => {
     console.log('[HotelResults] handleHotelSelect called:', { id: hotel.id, name: hotel.name });
@@ -283,25 +273,24 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                   alt={hotel.name}
                   className="w-full h-64 lg:h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
                 {/* Favorite Button */}
-                <div className="absolute top-4 right-4">
-                  <FavoriteButton
-                    entityType="HOTEL"
-                    entityId={hotel.id}
-                    entityData={{
-                      name: hotel.name,
-                      rating: hotel.rating,
-                      price: hotel.price?.total,
-                      currency: hotel.price?.currency,
-                      media: hotel.media?.[0]?.uri,
-                      chainCode: hotel.chainCode,
-                    }}
-                    size="md"
-                    onToggle={(isFavorited) => handleFavoriteToggle(hotel, isFavorited)}
-                  />
-                </div>
+                <FavoriteButton
+                  entityType={FavoriteType.HOTEL}
+                  entityId={hotel.id}
+                  entityData={{
+                    name: hotel.name,
+                    location: hotel.chainCode || 'City Location',
+                    rating: parseInt(hotel.rating),
+                    pricePerNight: parseFloat(hotel.price?.total || '0'),
+                    currency: hotel.price?.currency || 'USD',
+                    imageUrl: hotel.media?.[0]?.uri,
+                    amenities: hotel.amenities,
+                  }}
+                  size="md"
+                  className="absolute top-4 right-4 z-10"
+                />
 
                 {/* Image Count */}
                 {hotel.media && hotel.media.length > 1 && (

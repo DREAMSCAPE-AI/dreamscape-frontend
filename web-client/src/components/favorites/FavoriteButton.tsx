@@ -1,122 +1,140 @@
-import React, { useState } from 'react';
+/**
+ * Favorite Button Component
+ * Reusable button to add/remove items from favorites
+ */
+
+import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
-import { FavoriteType } from '../../services/favoritesService';
-import { useFavoritesStore } from '../../store/favoritesStore';
+import FavoritesService, { FavoriteType } from '@/services/api/FavoritesService';
+import { useAuth } from '@/services/auth/AuthService';
+import { useFavoritesBatch } from '@/contexts/FavoritesBatchContext';
 
 interface FavoriteButtonProps {
   entityType: FavoriteType;
   entityId: string;
   entityData?: any;
-  size?: 'sm' | 'md' | 'lg';
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
-  onToggle?: (isFavorited: boolean) => void;
-  onError?: (error: Error) => void;
 }
 
-const FavoriteButton: React.FC<FavoriteButtonProps> = ({
+const FavoriteButton = ({
   entityType,
   entityId,
   entityData,
-  size = 'md',
   className = '',
+  size = 'md',
   showLabel = false,
-  onToggle,
-  onError,
-}) => {
+}: FavoriteButtonProps) => {
+  const { user } = useAuth();
+  const { checkFavorite } = useFavoritesBatch();
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favoriteId, setFavoriteId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Get state and actions from Zustand store
-  const isFavorited = useFavoritesStore((state) => state.isFavorited(entityType, entityId));
-  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
-  const storeLoading = useFavoritesStore((state) => state.isLoading);
-
-  // Size configurations
+  // Size classes
   const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-5 h-5',
-    lg: 'w-6 h-6',
+    sm: 'h-8 w-8 text-sm',
+    md: 'h-10 w-10 text-base',
+    lg: 'h-12 w-12 text-lg',
   };
 
-  const buttonSizeClasses = {
-    sm: 'p-1.5',
-    md: 'p-2',
-    lg: 'p-2.5',
+  const iconSizes = {
+    sm: 16,
+    md: 20,
+    lg: 24,
   };
 
-  const handleToggle = async (e: React.MouseEvent) => {
+  // Check if item is already favorited using batch context
+  useEffect(() => {
+    if (!user) return;
+
+    // Use batch context for efficient checking
+    checkFavorite(entityType, entityId, (result) => {
+      setIsFavorited(result.isFavorited);
+      if (result.favorite) {
+        setFavoriteId(result.favorite.id);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entityType, entityId, user]);
+
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (isLoading || storeLoading) return;
+    if (!user) {
+      // TODO: Show login modal or redirect to login
+      console.warn('[FavoriteButton] User must be logged in to add favorites');
+      return;
+    }
 
     setIsLoading(true);
+
     try {
-      const newFavoritedState = await toggleFavorite(
-        entityType,
-        entityId,
-        entityData
-      );
-
-      // Call onToggle callback if provided
-      if (onToggle) {
-        onToggle(newFavoritedState);
+      if (isFavorited && favoriteId) {
+        // Remove from favorites
+        await FavoritesService.deleteFavorite(favoriteId);
+        setIsFavorited(false);
+        setFavoriteId(null);
+        console.log('[FavoriteButton] Removed from favorites');
+      } else {
+        // Add to favorites
+        const response = await FavoritesService.addFavorite({
+          entityType,
+          entityId,
+          entityData,
+        });
+        setIsFavorited(true);
+        setFavoriteId(response.data.id);
+        console.log('[FavoriteButton] Added to favorites');
       }
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
+    } catch (error: any) {
+      console.error('[FavoriteButton] Error toggling favorite:', error);
 
-      // Call onError callback if provided
-      if (onError && error instanceof Error) {
-        onError(error);
+      // Handle specific error cases
+      if (error.response?.status === 409) {
+        console.log('[FavoriteButton] Item already in favorites');
+        setIsFavorited(true);
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const disabled = isLoading || storeLoading;
+  if (!user) {
+    return null; // Don't show button if user is not logged in
+  }
 
   return (
     <button
-      onClick={handleToggle}
-      disabled={disabled}
+      onClick={handleToggleFavorite}
+      disabled={isLoading}
       className={`
-        group relative inline-flex items-center gap-2
-        ${buttonSizeClasses[size]}
-        rounded-lg
-        transition-all duration-200
-        ${isFavorited
-          ? 'text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100'
-          : 'text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50'
-        }
-        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${sizeClasses[size]}
         ${className}
+        flex items-center justify-center gap-2
+        rounded-full
+        transition-all duration-200
+        ${
+          isFavorited
+            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600'
+            : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-300'
+        }
+        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}
+        shadow-md hover:shadow-lg
       `}
-      aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
       title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
     >
-      {/* Heart Icon */}
       <Heart
-        className={`
-          ${sizeClasses[size]}
-          transition-all duration-200
-          ${isFavorited ? 'fill-current' : ''}
-          ${isLoading ? 'animate-pulse' : ''}
-        `}
+        size={iconSizes[size]}
+        className={`${isFavorited ? 'fill-current' : ''} ${isLoading ? 'animate-pulse' : ''}`}
       />
-
-      {/* Optional Label */}
       {showLabel && (
-        <span className="text-xs font-medium">
-          {isFavorited ? 'Saved' : 'Save'}
+        <span className="font-medium">
+          {isFavorited ? 'Favorited' : 'Favorite'}
         </span>
-      )}
-
-      {/* Loading Spinner Overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded-lg">
-          <div className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-        </div>
       )}
     </button>
   );
