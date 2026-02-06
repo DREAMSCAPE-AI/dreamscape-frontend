@@ -14,7 +14,7 @@ class OnboardingService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${API_BASE_URL}/users/onboarding`,
+      baseURL: `${API_BASE_URL}/v1/users/onboarding`,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
