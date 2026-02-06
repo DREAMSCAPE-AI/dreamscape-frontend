@@ -9,6 +9,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Text } from '@react-three/drei';
 import VRScene from './VRScene';
+import useHotspotPanel from '../hooks/useHotspotPanel';
 import parisEnvironment from '../data/paris-environment';
 
 /**
@@ -89,6 +90,9 @@ function ParisEnvironment() {
 
   }, [handleSceneChange]);
 
+  // Utiliser le hook pour gérer le panneau de hotspots
+  useHotspotPanel(currentScene?.hotspots, handleHotspotClick);
+
   if (!currentScene) {
     return (
       <Text
@@ -137,18 +141,29 @@ function ParisEnvironment() {
 }
 
 /**
- * UI de navigation en VR
+ * UI de navigation en VR - Tous les éléments en bas à gauche
  */
 function NavigationUI({ currentScene, canGoBack, onGoBack, environment }) {
   return (
-    <>
-      {/* Titre de la scène actuelle (en haut) */}
+    <group position={[-4.5, -2.8, -5]}>
+      {/* Badge de l'environnement */}
       <Text
-        position={[0, 3.5, -5]}
-        fontSize={0.25}
+        position={[0, 0, 0]}
+        fontSize={0.1}
+        color="#10B981"
+        anchorX="left"
+        anchorY="bottom"
+      >
+        {`🗼 ${environment.name} VR`}
+      </Text>
+
+      {/* Titre de la scène actuelle */}
+      <Text
+        position={[0, 0.3, 0]}
+        fontSize={0.18}
         color="#FFFFFF"
-        anchorX="center"
-        anchorY="middle"
+        anchorX="left"
+        anchorY="bottom"
         outlineWidth={0.02}
         outlineColor="#000000"
       >
@@ -157,20 +172,20 @@ function NavigationUI({ currentScene, canGoBack, onGoBack, environment }) {
 
       {/* Description de la scène */}
       <Text
-        position={[0, 3, -5]}
-        fontSize={0.12}
+        position={[0, 0.55, 0]}
+        fontSize={0.1}
         color="#CCCCCC"
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={4}
-        textAlign="center"
+        anchorX="left"
+        anchorY="bottom"
+        maxWidth={3.5}
+        textAlign="left"
       >
         {currentScene.description}
       </Text>
 
       {/* Bouton retour (si possible) */}
       {canGoBack && (
-        <group position={[-4, 1.6, -3]}>
+        <group position={[0, 0.95, 0]}>
           <mesh
             onClick={onGoBack}
             onPointerOver={() => { document.body.style.cursor = 'pointer'; }}
@@ -194,18 +209,7 @@ function NavigationUI({ currentScene, canGoBack, onGoBack, environment }) {
           </Text>
         </group>
       )}
-
-      {/* Badge de l'environnement (en bas à gauche) */}
-      <Text
-        position={[-4, -2.5, -5]}
-        fontSize={0.1}
-        color="#10B981"
-        anchorX="left"
-        anchorY="bottom"
-      >
-        {`🗼 ${environment.name} VR`}
-      </Text>
-    </>
+    </group>
   );
 }
 
