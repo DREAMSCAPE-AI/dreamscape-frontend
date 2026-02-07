@@ -22,7 +22,7 @@ class HistoryService {
   private api: AxiosInstance;
 
   constructor() {
-    const fullBaseUrl = `${HISTORY_API_BASE_URL}/users/history`;
+    const fullBaseUrl = `${HISTORY_API_BASE_URL}/v1/users/history`;
     console.log('[HistoryService] Full API URL:', fullBaseUrl);
 
     this.api = axios.create({
