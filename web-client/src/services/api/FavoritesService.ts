@@ -62,7 +62,7 @@ class FavoritesService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${USER_API_BASE_URL}/v1/users/favorites`,
+      baseURL: `${USER_API_BASE_URL}/users/favorites`,
       headers: {
         'Content-Type': 'application/json',
       },
