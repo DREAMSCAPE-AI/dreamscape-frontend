@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Users, Search, AlertCircle, ArrowLeftRight, Calendar, Filter } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import DateRangePicker from '../shared/DateRangePicker';
 import Dropdown from '../shared/Dropdown';
 import AirportSearch from '../shared/AirportSearch';
@@ -22,12 +23,13 @@ interface FlightSearchProps {
 
 type TripType = 'round-trip' | 'one-way' | 'multi-city';
 
-const FlightSearch: React.FC<FlightSearchProps> = ({ 
-  onSearch, 
+const FlightSearch: React.FC<FlightSearchProps> = ({
+  onSearch,
   initialValues,
   loading = false,
   error = null
 }) => {
+  const { t } = useTranslation('flights');
   const [tripType, setTripType] = useState<TripType>('round-trip');
   const [searchParams, setSearchParams] = useState<UIFlightSearchParams>({
     origin: initialValues?.origin || '',
@@ -65,43 +67,43 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
 
     // Origin validation
     if (!searchParams.origin.trim()) {
-      errors.origin = 'Please enter a departure city';
+      errors.origin = t('search.validation.enterDeparture');
     } else if (searchParams.origin.length < 3) {
-      errors.origin = 'Please enter a valid city name';
+      errors.origin = t('search.validation.validCityName');
     }
 
     // Destination validation
     if (!searchParams.destination.trim()) {
-      errors.destination = 'Please enter an arrival city';
+      errors.destination = t('search.validation.enterArrival');
     } else if (searchParams.destination.length < 3) {
-      errors.destination = 'Please enter a valid city name';
+      errors.destination = t('search.validation.validCityName');
     }
 
     // Same city validation
     if (searchParams.origin.trim().toLowerCase() === searchParams.destination.trim().toLowerCase()) {
-      errors.destination = 'Departure and arrival cities cannot be the same';
+      errors.destination = t('search.validation.sameCities');
     }
 
     // Date validation
     if (!searchParams.departureDate) {
-      errors.dates = 'Please select a departure date';
+      errors.dates = t('search.validation.selectDeparture');
     } else {
       const departureDate = new Date(searchParams.departureDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       if (departureDate < today) {
-        errors.dates = 'Departure date cannot be in the past';
+        errors.dates = t('search.validation.pastDate');
       }
 
       if (tripType === 'round-trip' && !searchParams.returnDate) {
-        errors.dates = 'Please select a return date for round-trip flights';
+        errors.dates = t('search.validation.selectReturn');
       }
 
       if (searchParams.returnDate) {
         const returnDate = new Date(searchParams.returnDate);
         if (returnDate < departureDate) {
-          errors.dates = 'Return date must be after departure date';
+          errors.dates = t('search.validation.returnAfterDeparture');
         }
       }
     }
@@ -109,11 +111,11 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
     // Passenger validation
     const totalPassengers = (searchParams.adults || 0) + (searchParams.children || 0) + (searchParams.infants || 0);
     if (totalPassengers === 0) {
-      errors.passengers = 'At least one passenger is required';
+      errors.passengers = t('search.validation.atLeastOnePassenger');
     } else if (totalPassengers > 9) {
-      errors.passengers = 'Maximum 9 passengers allowed';
+      errors.passengers = t('search.validation.maxPassengers');
     } else if ((searchParams.infants || 0) > (searchParams.adults || 0)) {
-      errors.passengers = 'Number of infants cannot exceed number of adults';
+      errors.passengers = t('search.validation.infantsExceedAdults');
     }
 
     setValidationErrors(errors);
@@ -186,9 +188,9 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
 
   const getPassengerLabel = () => {
     const total = getTotalPassengers();
-    if (total === 0) return 'Select passengers';
-    if (total === 1) return '1 Passenger';
-    return `${total} Passengers`;
+    if (total === 0) return t('search.passengers.selectLabel');
+    if (total === 1) return t('search.passengers.onePassenger');
+    return t('search.passengers.multiplePassengers', { count: total });
   };
 
   const renderError = (field: keyof ValidationErrors) => {
@@ -205,19 +207,19 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-2xl font-semibold mb-6">Find Your Flight</h2>
-      
+      <h2 className="text-2xl font-semibold mb-6">{t('search.title')}</h2>
+
       <div className="space-y-6">
         {/* Trip Type Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Trip Type
+            {t('search.tripType.label')}
           </label>
           <div className="flex gap-2">
             {[
-              { value: 'round-trip', label: 'Round-trip' },
-              { value: 'one-way', label: 'One-way' },
-              { value: 'multi-city', label: 'Multi-city' }
+              { value: 'round-trip', label: t('search.tripType.roundTrip') },
+              { value: 'one-way', label: t('search.tripType.oneWay') },
+              { value: 'multi-city', label: t('search.tripType.multiCity') }
             ].map((option) => (
               <button
                 key={option.value}
@@ -240,7 +242,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                From
+                {t('search.origin.label')}
               </label>
               <AirportSearch
                 value={searchParams.origin}
@@ -255,7 +257,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                To
+                {t('search.destination.label')}
               </label>
               <AirportSearch
                 value={searchParams.destination}
@@ -274,7 +276,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
             type="button"
             onClick={swapAirports}
             className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10 bg-white border border-gray-300 rounded-full p-2 hover:border-orange-300"
-            title="Swap airports"
+            title={t('search.swapButton')}
           >
             <ArrowLeftRight className="w-4 h-4 text-gray-600" />
           </button>
@@ -283,7 +285,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
         {/* Dates */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            {tripType === 'one-way' ? 'Departure Date' : 'Travel Dates'}
+            {tripType === 'one-way' ? t('search.dates.departureLabel') : t('search.dates.travelDatesLabel')}
           </label>
           <DateRangePicker
             onChange={handleDateChange}
@@ -306,7 +308,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                 className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
               />
               <Calendar className="w-4 h-4" />
-              <span>My dates are flexible</span>
+              <span>{t('search.dates.flexibleDates')}</span>
             </label>
           </div>
         </div>
@@ -315,7 +317,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Passengers
+              {t('search.passengers.label')}
             </label>
             <div className="relative" ref={passengerDropdownRef}>
               <button
@@ -339,8 +341,8 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                     {/* Adults */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-gray-900">Adults</div>
-                        <div className="text-sm text-gray-500">12+ years</div>
+                        <div className="font-medium text-gray-900">{t('search.passengers.adults')}</div>
+                        <div className="text-sm text-gray-500">{t('search.passengers.adultsAge')}</div>
                       </div>
                       <div className="flex items-center gap-3">
                         <button
@@ -372,8 +374,8 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                     {/* Children */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-gray-900">Children</div>
-                        <div className="text-sm text-gray-500">2-11 years</div>
+                        <div className="font-medium text-gray-900">{t('search.passengers.children')}</div>
+                        <div className="text-sm text-gray-500">{t('search.passengers.childrenAge')}</div>
                       </div>
                       <div className="flex items-center gap-3">
                         <button
@@ -405,8 +407,8 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                     {/* Infants */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-gray-900">Infants</div>
-                        <div className="text-sm text-gray-500">Under 2 years</div>
+                        <div className="font-medium text-gray-900">{t('search.passengers.infants')}</div>
+                        <div className="text-sm text-gray-500">{t('search.passengers.infantsAge')}</div>
                       </div>
                       <div className="flex items-center gap-3">
                         <button
@@ -442,7 +444,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                         onClick={() => setShowPassengerDropdown(false)}
                         className="w-full py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
                       >
-                        Done
+                        {t('search.passengers.doneButton')}
                       </button>
                     </div>
                   </div>
@@ -454,14 +456,14 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Cabin Class
+              {t('search.cabinClass.label')}
             </label>
             <Dropdown
               options={[
-                { value: 'economy', label: 'Economy' },
-                { value: 'premium', label: 'Premium Economy' },
-                { value: 'business', label: 'Business' },
-                { value: 'first', label: 'First Class' }
+                { value: 'economy', label: t('search.cabinClass.economy') },
+                { value: 'premium', label: t('search.cabinClass.premium') },
+                { value: 'business', label: t('search.cabinClass.business') },
+                { value: 'first', label: t('search.cabinClass.first') }
               ]}
               value={searchParams.cabinClass || 'economy'}
               onChange={(value) => setSearchParams({ 
@@ -486,7 +488,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                 className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
               />
               <Filter className="w-4 h-4" />
-              <span>Non-stop flights only</span>
+              <span>{t('search.advancedOptions.nonStop')}</span>
             </label>
 
             <label className="flex items-center gap-2 text-gray-600">
@@ -496,7 +498,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                 onChange={(e) => setNearbyAirports(e.target.checked)}
                 className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
               />
-              <span>Include nearby airports</span>
+              <span>{t('search.advancedOptions.nearbyAirports')}</span>
             </label>
           </div>
         </div>
@@ -512,7 +514,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
           ) : (
             <>
               <Search className="w-5 h-5" />
-              <span>Search Flights</span>
+              <span>{t('search.searchButton')}</span>
             </>
           )}
         </button>

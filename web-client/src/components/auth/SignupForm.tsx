@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface SignupFormProps {
   onSubmit: (name: string, email: string, password: string) => void;
@@ -9,6 +10,7 @@ interface SignupFormProps {
 
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLoading }) => {
+  const { t } = useTranslation('auth');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -33,27 +35,27 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
     } = {};
 
     if (!firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = t('validation.required');
     }
 
     if (!lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = t('validation.required');
     }
 
     if (!email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('validation.required');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = t('validation.invalidEmail');
     }
 
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('validation.required');
     } else if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = t('validation.passwordMin');
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('validation.passwordMatch');
     }
 
     setErrors(newErrors);
@@ -72,13 +74,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
   return (
     <div className="w-full max-w-md">
       <div className="bg-white rounded-xl shadow-sm p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">Create Account</h2>
+        <h2 className="text-2xl font-bold text-center mb-8">{t('signup.title')}</h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* First Name Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              First Name
+              {t('signup.firstName')}
             </label>
             <div className="relative">
               <input
@@ -88,7 +90,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.firstName ? 'border-red-500' : 'border-gray-200'
                 }`}
-                placeholder="Enter your first name"
+                placeholder={t('signup.firstNamePlaceholder')}
               />
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
@@ -100,7 +102,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
           {/* Last Name Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Last Name
+              {t('signup.lastName')}
             </label>
             <div className="relative">
               <input
@@ -110,7 +112,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.lastName ? 'border-red-500' : 'border-gray-200'
                 }`}
-                placeholder="Enter your last name"
+                placeholder={t('signup.lastNamePlaceholder')}
               />
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
@@ -122,7 +124,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
           {/* Email Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
+              {t('signup.email')}
             </label>
             <div className="relative">
               <input
@@ -132,7 +134,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.email ? 'border-red-500' : 'border-gray-200'
                 }`}
-                placeholder="Enter your email"
+                placeholder={t('signup.emailPlaceholder')}
               />
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
@@ -144,7 +146,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
           {/* Password Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              {t('signup.password')}
             </label>
             <div className="relative">
               <input
@@ -154,7 +156,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.password ? 'border-red-500' : 'border-gray-200'
                 }`}
-                placeholder="Create a password"
+                placeholder={t('signup.passwordPlaceholder')}
               />
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <button
@@ -177,7 +179,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
           {/* Confirm Password Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm Password
+              {t('signup.confirmPassword')}
             </label>
             <div className="relative">
               <input
@@ -187,7 +189,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
                 }`}
-                placeholder="Confirm your password"
+                placeholder={t('signup.confirmPasswordPlaceholder')}
               />
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
@@ -206,19 +208,19 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
             ) : (
-              'Create Account'
+              t('signup.submit')
             )}
           </button>
 
           {/* Login Link */}
           <p className="text-center text-sm text-gray-600">
-            Already have an account?{' '}
+            {t('signup.hasAccount')}{' '}
             <button
               type="button"
               onClick={onSwitchToLogin}
               className="text-orange-500 hover:text-orange-600"
             >
-              Sign in
+              {t('signup.signIn')}
             </button>
           </p>
         </form>

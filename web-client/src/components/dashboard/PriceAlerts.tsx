@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, Plus, X, TrendingDown, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface PriceAlert {
   id: string;
@@ -18,6 +19,8 @@ interface PriceAlertsProps {
 }
 
 const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
+  const { t } = useTranslation('dashboard');
+
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newAlert, setNewAlert] = useState({
     origin: '',
@@ -53,7 +56,7 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Bell className="w-5 h-5 text-orange-500" />
-          <h3 className="text-lg font-semibold text-gray-800">Price Alerts</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('priceAlerts.title')}</h3>
         </div>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
@@ -66,19 +69,19 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
       {/* Create Alert Form */}
       {showCreateForm && (
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <h4 className="font-medium text-gray-800 mb-3">Create New Alert</h4>
+          <h4 className="font-medium text-gray-800 mb-3">{t('priceAlerts.createNewAlert')}</h4>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <input
                 type="text"
-                placeholder="From (e.g., NYC)"
+                placeholder={t('priceAlerts.fromPlaceholder')}
                 value={newAlert.origin}
                 onChange={(e) => setNewAlert(prev => ({ ...prev, origin: e.target.value }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
               />
               <input
                 type="text"
-                placeholder="To (e.g., LAX)"
+                placeholder={t('priceAlerts.toPlaceholder')}
                 value={newAlert.destination}
                 onChange={(e) => setNewAlert(prev => ({ ...prev, destination: e.target.value }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
@@ -87,7 +90,7 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
             <div className="grid grid-cols-2 gap-3">
               <input
                 type="number"
-                placeholder="Target price ($)"
+                placeholder={t('priceAlerts.targetPricePlaceholder')}
                 value={newAlert.targetPrice}
                 onChange={(e) => setNewAlert(prev => ({ ...prev, targetPrice: e.target.value }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
@@ -104,7 +107,7 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
               disabled={isCreating || !newAlert.origin || !newAlert.destination || !newAlert.targetPrice}
               className="w-full px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm"
             >
-              {isCreating ? 'Creating...' : 'Create Alert'}
+              {isCreating ? t('priceAlerts.creating') : t('priceAlerts.createAlert')}
             </button>
           </div>
         </div>
@@ -115,8 +118,8 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
         {alerts.length === 0 ? (
           <div className="text-center py-8">
             <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">No price alerts set</p>
-            <p className="text-gray-400 text-xs mt-1">Create an alert to track flight prices</p>
+            <p className="text-gray-500 text-sm">{t('priceAlerts.noAlerts')}</p>
+            <p className="text-gray-400 text-xs mt-1">{t('priceAlerts.noAlertsHint')}</p>
           </div>
         ) : (
           alerts.map((alert) => (
@@ -125,9 +128,9 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
                 <div className="flex-1">
                   <p className="font-medium text-gray-800 text-sm">{alert.route}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-gray-500">Target: ${alert.targetPrice}</span>
+                    <span className="text-xs text-gray-500">{t('priceAlerts.target')}: ${alert.targetPrice}</span>
                     <span className="text-xs text-gray-500">•</span>
-                    <span className="text-xs text-gray-500">Current: ${alert.currentPrice}</span>
+                    <span className="text-xs text-gray-500">{t('priceAlerts.current')}: ${alert.currentPrice}</span>
                   </div>
                   {alert.priceChange && (
                     <div className="flex items-center gap-1 mt-1">
@@ -157,7 +160,7 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
       {alerts.length > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-100">
           <p className="text-xs text-gray-500 text-center">
-            You'll be notified when prices drop below your target
+            {t('priceAlerts.notificationHint')}
           </p>
         </div>
       )}

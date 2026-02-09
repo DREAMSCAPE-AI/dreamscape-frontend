@@ -4,6 +4,7 @@
  */
 
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { X, ShoppingCart, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
@@ -12,6 +13,7 @@ import CartItem from './CartItem';
 import CartSummary from './CartSummary';
 
 export const CartDrawer = () => {
+  const { t } = useTranslation('checkout');
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const userId = user?.id || 'guest';
@@ -58,7 +60,7 @@ export const CartDrawer = () => {
   };
 
   const handleClearCart = async () => {
-    if (!confirm('Are you sure you want to clear your cart?')) return;
+    if (!confirm(t('cart.confirmClear', 'Are you sure you want to clear your cart?'))) return;
 
     try {
       await clearCart(userId);
@@ -111,7 +113,7 @@ export const CartDrawer = () => {
         <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-pink-50">
           <div className="flex items-center gap-2">
             <ShoppingCart className="w-6 h-6 text-orange-600" />
-            <h2 className="text-xl font-bold text-gray-900">Shopping Cart</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('cart.title', 'Shopping Cart')}</h2>
             <span className="px-2 py-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-semibold rounded-full">
               {getItemCount()}
             </span>
@@ -120,7 +122,7 @@ export const CartDrawer = () => {
           <button
             onClick={closeDrawer}
             className="p-2 hover:bg-orange-100 rounded-lg transition-colors"
-            aria-label="Close cart"
+            aria-label={t('cart.close', 'Close cart')}
           >
             <X className="w-6 h-6 text-gray-600" />
           </button>
@@ -151,16 +153,16 @@ export const CartDrawer = () => {
             <div className="flex flex-col items-center justify-center h-full p-8 text-center">
               <ShoppingCart className="w-16 h-16 text-gray-300 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Your cart is empty
+                {t('cart.empty.title', 'Your cart is empty')}
               </h3>
               <p className="text-sm text-gray-600 mb-6">
-                Add flights, hotels, or activities to get started
+                {t('cart.empty.message', 'Add flights, hotels, or activities to get started')}
               </p>
               <button
                 onClick={closeDrawer}
                 className="px-6 py-2 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-medium rounded-lg transition-colors"
               >
-                Continue Shopping
+                {t('cart.empty.continue', 'Continue Shopping')}
               </button>
             </div>
           ) : (
@@ -187,7 +189,7 @@ export const CartDrawer = () => {
                     className="w-full py-2 px-4 border border-red-300 text-red-600 hover:bg-red-50 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Trash2 className="w-4 h-4" />
-                    Clear Cart
+                    {t('cart.clearCart', 'Clear Cart')}
                   </button>
                 </div>
               )}

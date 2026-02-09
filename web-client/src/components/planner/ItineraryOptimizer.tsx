@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Sparkles, Clock, MapPin, Sun, Cloud, Umbrella, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Sparkles, Clock, MapPin, Sun, Cloud, Umbrella, AlertCircle, Users } from 'lucide-react';
 import type { DayPlan } from './ItineraryBuilder';
 
 interface ItineraryOptimizerProps {
@@ -11,33 +12,34 @@ const ItineraryOptimizer: React.FC<ItineraryOptimizerProps> = ({
   itinerary,
   onOptimize
 }) => {
+  const { t } = useTranslation('planner');
   const [optimizing, setOptimizing] = useState(false);
   const [selectedFactors, setSelectedFactors] = useState<string[]>([]);
 
   const optimizationFactors = [
     {
       id: 'weather',
-      label: 'Weather Conditions',
+      label: t('optimizer.weatherConditions'),
       icon: Sun,
-      description: 'Adjust schedule based on weather forecasts'
+      description: t('optimizer.weatherDescription')
     },
     {
       id: 'crowds',
-      label: 'Crowd Levels',
+      label: t('optimizer.crowdLevels'),
       icon: Users,
-      description: 'Optimize timing to avoid peak crowds'
+      description: t('optimizer.crowdDescription')
     },
     {
       id: 'distance',
-      label: 'Travel Distance',
+      label: t('optimizer.travelDistance'),
       icon: MapPin,
-      description: 'Minimize travel time between activities'
+      description: t('optimizer.distanceDescription')
     },
     {
       id: 'hours',
-      label: 'Opening Hours',
+      label: t('optimizer.openingHours'),
       icon: Clock,
-      description: 'Consider venue operating hours'
+      description: t('optimizer.hoursDescription')
     }
   ];
 
@@ -59,7 +61,7 @@ const ItineraryOptimizer: React.FC<ItineraryOptimizerProps> = ({
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex items-center gap-2 mb-6">
         <Sparkles className="w-5 h-5 text-orange-500" />
-        <h2 className="text-xl font-semibold">Optimize Your Itinerary</h2>
+        <h2 className="text-xl font-semibold">{t('optimizer.title')}</h2>
       </div>
 
       {/* Optimization Factors */}
@@ -94,15 +96,15 @@ const ItineraryOptimizer: React.FC<ItineraryOptimizerProps> = ({
 
       {/* Current Issues */}
       <div className="mb-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">Potential Issues</h3>
+        <h3 className="text-sm font-medium text-gray-700 mb-3">{t('optimizer.potentialIssues')}</h3>
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-orange-600 bg-orange-50 px-3 py-2 rounded-lg">
             <AlertCircle className="w-4 h-4" />
-            <span className="text-sm">High chance of rain during outdoor activities on Day 2</span>
+            <span className="text-sm">{t('optimizer.rainWarning')}</span>
           </div>
           <div className="flex items-center gap-2 text-orange-600 bg-orange-50 px-3 py-2 rounded-lg">
             <Clock className="w-4 h-4" />
-            <span className="text-sm">Museum visit scheduled outside opening hours on Day 3</span>
+            <span className="text-sm">{t('optimizer.hoursWarning')}</span>
           </div>
         </div>
       </div>
@@ -118,7 +120,7 @@ const ItineraryOptimizer: React.FC<ItineraryOptimizerProps> = ({
         ) : (
           <>
             <Sparkles className="w-5 h-5" />
-            <span>Optimize Itinerary</span>
+            <span>{t('optimizer.optimizeButton')}</span>
           </>
         )}
       </button>

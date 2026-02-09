@@ -1,0 +1,101 @@
+{
+  "page": {
+    "title": "Planificateur de voyage",
+    "goBack": "Retour"
+  },
+  "header": {
+    "collaborators": "collaborateurs",
+    "dates": "Dates"
+  },
+  "tabs": {
+    "timeline": "Chronologie",
+    "budget": "Budget",
+    "collaborators": "Collaborateurs",
+    "info": "Infos pratiques"
+  },
+  "timeline": {
+    "title": "Jour {{day}} - {{date}}",
+    "addActivity": "Ajouter une activité",
+    "duration": "Durée",
+    "location": "Lieu",
+    "cost": "Coût",
+    "placeholders": {
+      "duration": "Durée",
+      "location": "Lieu"
+    },
+    "booking": {
+      "confirmed": "Réservation confirmée",
+      "pending": "Réservation en attente",
+      "required": "Réservation requise"
+    },
+    "actions": {
+      "cancel": "Annuler",
+      "save": "Sauvegarder",
+      "edit": "Modifier",
+      "remove": "Supprimer"
+    }
+  },
+  "itinerary": {
+    "title": "Jours du voyage",
+    "day": "Jour {{number}}",
+    "aiSuggestions": "Suggestions IA",
+    "generate": "Générer",
+    "newActivity": "Nouvelle activité"
+  },
+  "budget": {
+    "overview": "Vue d'ensemble du budget",
+    "totalBudget": "Budget total",
+    "spent": "Dépensé",
+    "remaining": "Restant",
+    "spendingByCategory": "Dépenses par catégorie",
+    "addExpense": "Ajouter une dépense",
+    "categories": {
+      "accommodation": "Hébergement",
+      "transportation": "Transport",
+      "activities": "Activités",
+      "foodDining": "Repas et restauration"
+    }
+  },
+  "collaborators": {
+    "inviteCollaborators": "Inviter des collaborateurs",
+    "currentCollaborators": "Collaborateurs actuels",
+    "invite": "Inviter",
+    "enterEmail": "Saisissez une adresse e-mail",
+    "roles": {
+      "editor": "Éditeur",
+      "viewer": "Observateur",
+      "owner": "Propriétaire"
+    }
+  },
+  "weather": {
+    "forecast": "Prévisions météo",
+    "conditions": {
+      "sunny": "Ensoleillé",
+      "cloudy": "Nuageux",
+      "rainy": "Pluvieux",
+      "windy": "Venteux"
+    }
+  },
+  "optimizer": {
+    "title": "Optimiseur de voyage"
+  },
+  "list": {
+    "title": "Mes Itinéraires",
+    "tripsPlanned": "{{count}} voyage planifié",
+    "tripsPlanned_other": "{{count}} voyages planifiés",
+    "newItinerary": "Nouvel Itinéraire",
+    "emptyState": {
+      "title": "Aucun itinéraire pour le moment",
+      "description": "Commencez à planifier votre prochaine aventure en créant votre premier itinéraire",
+      "createButton": "Créer un Itinéraire"
+    },
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet itinéraire ?",
+    "day": "jour",
+    "day_other": "jours",
+    "items": "{{count}} élément",
+    "items_other": "{{count}} éléments",
+    "editItinerary": "Modifier l'itinéraire",
+    "deleteItinerary": "Supprimer l'itinéraire",
+    "aiGenerated": "IA"
+  }
+}

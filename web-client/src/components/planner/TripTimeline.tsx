@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Clock, MapPin, DollarSign, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TripTimeline = () => {
+  const { t } = useTranslation('planner');
   const [activities, setActivities] = useState([
     // Day 1 - April 5
     {
@@ -216,10 +218,10 @@ const TripTimeline = () => {
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold">Day 1 - June 15, 2024</h2>
+        <h2 className="text-xl font-semibold">{t('timeline.dayTitle')}</h2>
         <button className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors">
           <Plus className="w-4 h-4" />
-          Add Activity
+          {t('timeline.addActivity')}
         </button>
       </div>
 

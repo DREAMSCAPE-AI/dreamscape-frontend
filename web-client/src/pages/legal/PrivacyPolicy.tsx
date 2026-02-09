@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Shield, Check, AlertCircle } from 'lucide-react';
 import GdprService, { PrivacyPolicy as PrivacyPolicyType } from '@/services/api/GdprService';
 
 const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation('gdpr');
   const [policy, setPolicy] = useState<PrivacyPolicyType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,11 +27,11 @@ const PrivacyPolicy: React.FC = () => {
       if (response.success && response.data) {
         setPolicy(response.data);
       } else {
-        setError('No privacy policy found');
+        setError(t('privacy.errorDescription'));
       }
     } catch (err) {
       console.error('[PrivacyPolicy] Failed to load policy:', err);
-      setError('Failed to load privacy policy');
+      setError(t('privacy.error'));
     } finally {
       setLoading(false);
     }
@@ -84,14 +86,14 @@ const PrivacyPolicy: React.FC = () => {
       }
     } catch (err) {
       console.error('[PrivacyPolicy] Failed to accept policy:', err);
-      alert('Failed to accept policy. Please try again.');
+      alert(t('privacy.error'));
     } finally {
       setAccepting(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -106,7 +108,7 @@ const PrivacyPolicy: React.FC = () => {
             <div className="flex items-center justify-center py-16">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading privacy policy...</p>
+                <p className="text-gray-600">{t('privacy.loading')}</p>
               </div>
             </div>
           </div>
@@ -128,14 +130,14 @@ const PrivacyPolicy: React.FC = () => {
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <h1 className="text-2xl font-bold">Privacy Policy</h1>
+              <h1 className="text-2xl font-bold">{t('privacy.title')}</h1>
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <div className="flex items-center gap-3 text-red-600 mb-4">
                 <AlertCircle className="w-6 h-6" />
-                <h2 className="text-lg font-semibold">Error Loading Policy</h2>
+                <h2 className="text-lg font-semibold">{t('privacy.error')}</h2>
               </div>
-              <p className="text-gray-600">{error || 'Privacy policy not found'}</p>
+              <p className="text-gray-600">{error || t('privacy.errorDescription')}</p>
             </div>
           </div>
         </div>
@@ -158,7 +160,7 @@ const PrivacyPolicy: React.FC = () => {
             </button>
             <div className="flex items-center gap-3">
               <Shield className="w-8 h-8 text-orange-500" />
-              <h1 className="text-2xl font-bold">Privacy Policy</h1>
+              <h1 className="text-2xl font-bold">{t('privacy.title')}</h1>
             </div>
           </div>
 
@@ -167,7 +169,7 @@ const PrivacyPolicy: React.FC = () => {
             <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
               <Check className="w-5 h-5 text-green-600" />
               <span className="text-green-800 font-medium">
-                Privacy policy accepted successfully!
+                {t('privacy.accept.success')}
               </span>
             </div>
           )}
@@ -182,7 +184,7 @@ const PrivacyPolicy: React.FC = () => {
                   Version {policy.version}
                 </span>
                 <span className="text-gray-600">
-                  Effective Date: {formatDate(policy.effectiveAt)}
+                  {t('privacy.effectiveDate')}: {formatDate(policy.effectiveAt)}
                 </span>
               </div>
             </div>
@@ -212,10 +214,10 @@ const PrivacyPolicy: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">
-                      Accept this Privacy Policy
+                      {t('privacy.accept.title')}
                     </h3>
                     <p className="text-sm text-gray-600">
-                      By accepting, you agree to our data collection and usage practices.
+                      {t('privacy.accept.description')}
                     </p>
                   </div>
                   <button
@@ -226,12 +228,12 @@ const PrivacyPolicy: React.FC = () => {
                     {accepting ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Accepting...
+                        {t('privacy.accept.accepting')}
                       </>
                     ) : (
                       <>
                         <Check className="w-5 h-5" />
-                        I Accept This Policy
+                        {t('privacy.accept.button')}
                       </>
                     )}
                   </button>
@@ -245,7 +247,7 @@ const PrivacyPolicy: React.FC = () => {
                 <div className="flex items-center gap-3 text-green-700">
                   <Check className="w-5 h-5" />
                   <span className="font-medium">
-                    You have accepted this privacy policy
+                    {t('privacy.accept.accepted')}
                   </span>
                 </div>
               </div>
@@ -255,10 +257,10 @@ const PrivacyPolicy: React.FC = () => {
           {/* Additional Info */}
           <div className="mt-6 text-center text-sm text-gray-500">
             <p>
-              Last updated: {formatDate(policy.createdAt)}
+              {t('privacy.lastUpdated')}: {formatDate(policy.createdAt)}
             </p>
             <p className="mt-2">
-              For questions about this policy, please contact{' '}
+              {t('privacy.contactText')}{' '}
               <a href="mailto:privacy@dreamscape.com" className="text-orange-500 hover:text-orange-600 font-medium">
                 privacy@dreamscape.com
               </a>

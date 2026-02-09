@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import useOnboardingStore from '@/store/onboardingStore';
 import { useAuth } from '@/services/auth/AuthService';
 import { ONBOARDING_EXEMPT_ROUTES } from '@/constants/routes';
@@ -14,6 +15,7 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
   requireOnboarding = true
 }) => {
   const location = useLocation();
+  const { t } = useTranslation('auth');
   const { isAuthenticated, user } = useAuth();
   const [authChecked, setAuthChecked] = useState(false);
   const {
@@ -48,8 +50,8 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Vérification de votre profil</h2>
-          <p className="text-gray-600">Un instant, nous préparons votre expérience...</p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('onboardingGuard.verifying')}</h2>
+          <p className="text-gray-600">{t('onboardingGuard.preparing')}</p>
         </div>
       </div>
     );

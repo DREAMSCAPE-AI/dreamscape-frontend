@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 import { useAuth } from '@/services/auth/AuthService';
@@ -9,6 +10,7 @@ import LeisureDashboard from '@/components/leisure/LeisureDashboard';
 import BleisureDashboard from '@/components/bleisure/BleisureDashboard';
 
 const OnboardingPage: React.FC = () => {
+  const { t } = useTranslation('onboarding');
   const { isAuthenticated, user } = useAuth();
   const { initializeOnboarding, getOnboardingStatus } = useOnboardingStore();
 
@@ -43,8 +45,8 @@ const OnboardingPage: React.FC = () => {
         <main className="min-h-screen bg-gray-50 pt-20">
           <div className="container mx-auto px-4 py-8">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
-              <div className="text-sm text-gray-600">Business Account</div>
+              <h1 className="text-2xl font-bold">{t('welcome', { name: user?.name })}</h1>
+              <div className="text-sm text-gray-600">{t('businessAccount')}</div>
             </div>
             <BusinessDashboard />
           </div>
@@ -57,8 +59,8 @@ const OnboardingPage: React.FC = () => {
         <main className="min-h-screen bg-gray-50 pt-20">
           <div className="container mx-auto px-4 py-8">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
-              <div className="text-sm text-gray-600">Leisure Account</div>
+              <h1 className="text-2xl font-bold">{t('welcome', { name: user?.name })}</h1>
+              <div className="text-sm text-gray-600">{t('leisureAccount')}</div>
             </div>
             <LeisureDashboard />
           </div>
@@ -71,8 +73,8 @@ const OnboardingPage: React.FC = () => {
         <main className="min-h-screen bg-gray-50 pt-20">
           <div className="container mx-auto px-4 py-8">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
-              <div className="text-sm text-gray-600">Bleisure Account</div>
+              <h1 className="text-2xl font-bold">{t('welcome', { name: user?.name })}</h1>
+              <div className="text-sm text-gray-600">{t('bleisureAccount')}</div>
             </div>
             <BleisureDashboard />
           </div>
@@ -84,9 +86,9 @@ const OnboardingPage: React.FC = () => {
       <main className="min-h-screen bg-gray-50 pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
+            <h1 className="text-2xl font-bold">{t('welcome', { name: user?.name })}</h1>
             <div className="text-sm text-gray-600">
-              {user?.type && `${user.type.charAt(0).toUpperCase() + user.type.slice(1)} Account`}
+              {user?.type && t('accountType', { type: user.type.charAt(0).toUpperCase() + user.type.slice(1) })}
             </div>
           </div>
           <UserDashboard />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sliders, Clock, Plane, DollarSign, Shield, Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface FlightFilters {
   price: {
@@ -18,6 +19,7 @@ interface FlightFiltersProps {
 }
 
 const FlightFilters: React.FC<FlightFiltersProps> = ({ onFilterChange, initialFilters = {} }) => {
+  const { t } = useTranslation('flights');
   const [filters, setFilters] = useState<FlightFilters>({
     price: { min: 0, max: 2000, ...initialFilters.price },
     airlines: initialFilters.airlines || [],
@@ -36,13 +38,13 @@ const FlightFilters: React.FC<FlightFiltersProps> = ({ onFilterChange, initialFi
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex items-center gap-2 mb-6">
         <Sliders className="w-5 h-5 text-orange-500" />
-        <h2 className="text-lg font-semibold">Filters</h2>
+        <h2 className="text-lg font-semibold">{t('filters.title')}</h2>
       </div>
 
       {/* Price Range */}
       <div className="mb-8">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Price Range
+          {t('filters.priceRange.label')}
         </label>
         <div className="space-y-2">
           <div className="flex items-center gap-4">
@@ -63,8 +65,8 @@ const FlightFilters: React.FC<FlightFiltersProps> = ({ onFilterChange, initialFi
             </div>
           </div>
           <div className="flex justify-between text-sm text-gray-600">
-            <span>$0</span>
-            <span>$2000+</span>
+            <span>{t('filters.priceRange.min')}</span>
+            <span>{t('filters.priceRange.max')}</span>
           </div>
         </div>
       </div>
@@ -72,7 +74,7 @@ const FlightFilters: React.FC<FlightFiltersProps> = ({ onFilterChange, initialFi
       {/* Airlines */}
       <div className="mb-8">
         <label className="block text-sm font-medium text-gray-700 mb-4">
-          Airlines
+          {t('filters.airlines')}
         </label>
         <div className="space-y-3">
           {[
@@ -105,14 +107,14 @@ const FlightFilters: React.FC<FlightFiltersProps> = ({ onFilterChange, initialFi
       {/* Departure Times */}
       <div className="mb-8">
         <label className="block text-sm font-medium text-gray-700 mb-4">
-          Departure Time
+          {t('filters.departureTime.label')}
         </label>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: 'Early Morning', value: 'early', time: '12am - 6am' },
-            { label: 'Morning', value: 'morning', time: '6am - 12pm' },
-            { label: 'Afternoon', value: 'afternoon', time: '12pm - 6pm' },
-            { label: 'Evening', value: 'evening', time: '6pm - 12am' }
+            { label: t('filters.departureTime.earlyMorning'), value: 'early', time: t('filters.departureTime.earlyMorningTime') },
+            { label: t('filters.departureTime.morning'), value: 'morning', time: t('filters.departureTime.morningTime') },
+            { label: t('filters.departureTime.afternoon'), value: 'afternoon', time: t('filters.departureTime.afternoonTime') },
+            { label: t('filters.departureTime.evening'), value: 'evening', time: t('filters.departureTime.eveningTime') }
           ].map((time) => (
             <button
               key={time.value}
@@ -138,13 +140,13 @@ const FlightFilters: React.FC<FlightFiltersProps> = ({ onFilterChange, initialFi
       {/* Stops */}
       <div className="mb-8">
         <label className="block text-sm font-medium text-gray-700 mb-4">
-          Stops
+          {t('filters.stops.label')}
         </label>
         <div className="space-y-3">
           {[
-            { label: 'Non-stop', value: '0' },
-            { label: '1 Stop', value: '1' },
-            { label: '2+ Stops', value: '2' }
+            { label: t('filters.stops.nonStop'), value: '0' },
+            { label: t('filters.stops.oneStop'), value: '1' },
+            { label: t('filters.stops.twoPlus'), value: '2' }
           ].map((stop) => (
             <label key={stop.value} className="flex items-center gap-3 cursor-pointer group">
               <input
@@ -169,14 +171,14 @@ const FlightFilters: React.FC<FlightFiltersProps> = ({ onFilterChange, initialFi
       {/* Cabin Class */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-4">
-          Cabin Class
+          {t('filters.cabinClass.label')}
         </label>
         <div className="space-y-3">
           {[
-            { label: 'Economy', value: 'economy' },
-            { label: 'Premium Economy', value: 'premium' },
-            { label: 'Business', value: 'business' },
-            { label: 'First Class', value: 'first' }
+            { label: t('search.cabinClass.economy'), value: 'economy' },
+            { label: t('search.cabinClass.premium'), value: 'premium' },
+            { label: t('search.cabinClass.business'), value: 'business' },
+            { label: t('search.cabinClass.first'), value: 'first' }
           ].map((cabin) => (
             <label key={cabin.value} className="flex items-center gap-3 cursor-pointer group">
               <input

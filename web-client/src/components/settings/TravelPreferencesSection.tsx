@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -21,6 +22,7 @@ import {
 } from '@/types/onboarding';
 
 const TravelPreferencesSection: React.FC = () => {
+  const { t } = useTranslation('settings');
   const {
     profile,
     progress,
@@ -87,7 +89,7 @@ const TravelPreferencesSection: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-            <span className="ml-3 text-gray-600">Chargement de vos préférences...</span>
+            <span className="ml-3 text-gray-600">{t('travelPreferences.loading')}</span>
           </div>
         </div>
       </div>
@@ -100,11 +102,11 @@ const TravelPreferencesSection: React.FC = () => {
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm p-6 border border-blue-200">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-blue-900">Profil de voyage</h2>
+            <h2 className="text-lg font-semibold text-blue-900">{t('travelPreferences.title')}</h2>
             <p className="text-blue-700 text-sm">
               {completionPercentage === 100
-                ? 'Votre profil de voyage est complet !'
-                : 'Complétez votre profil pour des recommandations personnalisées'
+                ? t('travelPreferences.complete')
+                : t('travelPreferences.incomplete')
               }
             </p>
           </div>
@@ -119,10 +121,10 @@ const TravelPreferencesSection: React.FC = () => {
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-blue-800">
-              {Math.round(completionPercentage)}% complété
+              {Math.round(completionPercentage)}% {t('travelPreferences.progress.completed')}
             </span>
             <span className="text-sm text-blue-600">
-              {completedSteps.length} étapes sur 13
+              {completedSteps.length} {t('travelPreferences.progress.steps')}
             </span>
           </div>
           <div className="w-full bg-blue-200 rounded-full h-3">
@@ -144,17 +146,17 @@ const TravelPreferencesSection: React.FC = () => {
             {completionPercentage === 0 ? (
               <>
                 <Settings className="w-4 h-4" />
-                Commencer le questionnaire
+                {t('travelPreferences.actions.start')}
               </>
             ) : completionPercentage === 100 ? (
               <>
                 <Settings className="w-4 h-4" />
-                Modifier mes préférences
+                {t('travelPreferences.actions.modify')}
               </>
             ) : (
               <>
                 <Settings className="w-4 h-4" />
-                Continuer ({currentStep.title})
+                {t('travelPreferences.actions.continue')} ({currentStep.title})
               </>
             )}
             <ExternalLink className="w-3 h-3" />
@@ -165,7 +167,7 @@ const TravelPreferencesSection: React.FC = () => {
               to="/onboarding"
               className="flex items-center gap-2 px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors text-sm"
             >
-              Voir le questionnaire complet
+              {t('travelPreferences.actions.viewFull')}
               <ChevronRight className="w-3 h-3" />
             </Link>
           )}
@@ -180,7 +182,7 @@ const TravelPreferencesSection: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <MapPin className="w-5 h-5 text-blue-600" />
-                <h3 className="font-semibold">Destinations préférées</h3>
+                <h3 className="font-semibold">{t('travelPreferences.sections.destinations')}</h3>
               </div>
 
               {profile.preferredDestinations.destinations?.length > 0 ? (
@@ -193,13 +195,13 @@ const TravelPreferencesSection: React.FC = () => {
                     ))}
                     {profile.preferredDestinations.destinations.length > 3 && (
                       <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
-                        +{profile.preferredDestinations.destinations.length - 3} autres
+                        +{profile.preferredDestinations.destinations.length - 3}
                       </span>
                     )}
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm">Aucune destination définie</p>
+                <p className="text-gray-500 text-sm">{t('travelPreferences.sections.noDestination')}</p>
               )}
             </div>
           )}
@@ -209,7 +211,7 @@ const TravelPreferencesSection: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <DollarSign className="w-5 h-5 text-green-600" />
-                <h3 className="font-semibold">Budget de voyage</h3>
+                <h3 className="font-semibold">{t('travelPreferences.sections.budget')}</h3>
               </div>
 
               <div className="space-y-2">
@@ -218,7 +220,7 @@ const TravelPreferencesSection: React.FC = () => {
                 </div>
                 {profile.budgetFlexibility && (
                   <div className="text-sm text-gray-600">
-                    Flexibilité : {formatBudgetFlexibility(profile.budgetFlexibility)}
+                    {t('travelPreferences.sections.flexibility')}: {formatBudgetFlexibility(profile.budgetFlexibility)}
                   </div>
                 )}
               </div>
@@ -230,7 +232,7 @@ const TravelPreferencesSection: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Plane className="w-5 h-5 text-purple-600" />
-                <h3 className="font-semibold">Types de voyage</h3>
+                <h3 className="font-semibold">{t('travelPreferences.sections.travelTypes')}</h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -253,18 +255,18 @@ const TravelPreferencesSection: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Hotel className="w-5 h-5 text-orange-600" />
-                <h3 className="font-semibold">Style de voyage</h3>
+                <h3 className="font-semibold">{t('travelPreferences.sections.style')}</h3>
               </div>
 
               <div className="space-y-2">
                 {profile.travelStyle && (
                   <div className="text-sm">
-                    <span className="font-medium">Style :</span> {profile.travelStyle}
+                    <span className="font-medium">{t('travelPreferences.sections.style_label')}:</span> {profile.travelStyle}
                   </div>
                 )}
                 {profile.comfortLevel && (
                   <div className="text-sm">
-                    <span className="font-medium">Confort :</span> {profile.comfortLevel}
+                    <span className="font-medium">{t('travelPreferences.sections.comfort')}:</span> {profile.comfortLevel}
                   </div>
                 )}
               </div>
@@ -276,7 +278,7 @@ const TravelPreferencesSection: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Activity className="w-5 h-5 text-red-600" />
-                <h3 className="font-semibold">Activités préférées</h3>
+                <h3 className="font-semibold">{t('travelPreferences.sections.activities')}</h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -299,7 +301,7 @@ const TravelPreferencesSection: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Users className="w-5 h-5 text-indigo-600" />
-                <h3 className="font-semibold">Groupes de voyage</h3>
+                <h3 className="font-semibold">{t('travelPreferences.sections.groups')}</h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -326,18 +328,17 @@ const TravelPreferencesSection: React.FC = () => {
             <Settings className="w-8 h-8 text-blue-600" />
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Configurez vos préférences de voyage
+            {t('travelPreferences.empty.title')}
           </h3>
           <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Répondez à notre questionnaire personnalisé pour recevoir des recommandations
-            adaptées à vos goûts et votre style de voyage.
+            {t('travelPreferences.empty.description')}
           </p>
           <Link
             to="/onboarding"
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             <Settings className="w-5 h-5" />
-            Commencer le questionnaire
+            {t('travelPreferences.empty.action')}
             <ExternalLink className="w-4 h-4" />
           </Link>
         </div>
@@ -345,12 +346,12 @@ const TravelPreferencesSection: React.FC = () => {
 
       {/* Help Section */}
       <div className="bg-gray-50 rounded-xl p-6">
-        <h3 className="font-semibold text-gray-900 mb-2">💡 À propos de vos préférences</h3>
+        <h3 className="font-semibold text-gray-900 mb-2">{t('travelPreferences.help.title')}</h3>
         <div className="text-sm text-gray-600 space-y-2">
-          <p>• Vos préférences sont sauvegardées automatiquement à chaque étape</p>
-          <p>• Vous pouvez modifier vos réponses à tout moment</p>
-          <p>• Plus votre profil est complet, plus nos recommandations seront précises</p>
-          <p>• Toutes vos données sont privées et sécurisées</p>
+          <p>• {t('travelPreferences.help.autoSave')}</p>
+          <p>• {t('travelPreferences.help.modify')}</p>
+          <p>• {t('travelPreferences.help.accuracy')}</p>
+          <p>• {t('travelPreferences.help.privacy')}</p>
         </div>
       </div>
     </div>

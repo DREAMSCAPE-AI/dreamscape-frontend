@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DestinationCard from '@/components/DestinationCard';
 import voyageService from '@/services/api/VoyageService';
@@ -12,6 +13,7 @@ interface Destination {
 }
 
 export default function DestinationsPage() {
+  const { t } = useTranslation('destinations');
   const navigate = useNavigate();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +81,7 @@ export default function DestinationsPage() {
                 id: location.iataCode || cityCode,
                 title: locationName,
                 image: imageUrl,
-                description: `Explore the wonders of ${locationName}`
+                description: t('list.exploreWonders', { city: locationName })
               });
               
               console.log(`Successfully fetched destination: ${locationName}`);
@@ -135,7 +137,7 @@ export default function DestinationsPage() {
         
       } catch (err: any) {
         console.error('Error fetching destinations:', err);
-        setError('Failed to load destinations. Using offline data.');
+        setError(t('list.errorLoading'));
         
         // Always provide fallback data
         const defaultDestinations = await getDefaultDestinations();
@@ -165,39 +167,39 @@ export default function DestinationsPage() {
       PAR: {
         name: 'Paris',
         image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop',
-        description: 'The City of Light awaits with its iconic landmarks and romantic charm'
+        description: t('cities.paris.description')
       },
       NRT: {
         name: 'Tokyo',
         image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop',
-        description: 'Experience the perfect blend of traditional culture and modern innovation'
+        description: t('cities.tokyo.description')
       },
       DXB: {
         name: 'Dubai',
         image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop',
-        description: 'Discover luxury and adventure in this futuristic desert metropolis'
+        description: t('cities.dubai.description')
       },
       JFK: {
         name: 'New York',
         image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop',
-        description: 'The city that never sleeps offers endless possibilities and iconic sights'
+        description: t('cities.newYork.description')
       },
       LHR: {
         name: 'London',
         image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop',
-        description: 'Explore centuries of history in this vibrant and culturally rich capital'
+        description: t('cities.london.description')
       },
       BKK: {
         name: 'Bangkok',
         image: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&h=600&fit=crop',
-        description: 'Immerse yourself in the vibrant street life and rich cultural heritage'
+        description: t('cities.bangkok.description')
       }
     };
 
     return cityMap[cityCode] || {
       name: getDefaultCityName(cityCode),
       image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop',
-      description: 'Discover amazing experiences in this beautiful destination'
+      description: t('cities.default.description')
     };
   };
 
@@ -242,8 +244,8 @@ export default function DestinationsPage() {
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Popular Destinations</h1>
-            <p className="text-xl text-gray-600">Discover amazing places around the world</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('list.title')}</h1>
+            <p className="text-xl text-gray-600">{t('list.subtitle')}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, index) => (
@@ -265,8 +267,8 @@ export default function DestinationsPage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Popular Destinations</h1>
-          <p className="text-xl text-gray-600">Discover amazing places around the world</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('list.title')}</h1>
+          <p className="text-xl text-gray-600">{t('list.subtitle')}</p>
           {error && (
             <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
               <p className="text-yellow-800">{error}</p>

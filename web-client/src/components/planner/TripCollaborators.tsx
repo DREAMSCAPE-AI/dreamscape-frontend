@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UserPlus, Shield, X, Mail, Crown } from 'lucide-react';
 
 interface Collaborator {
@@ -14,6 +15,7 @@ interface TripCollaboratorsProps {
 }
 
 const TripCollaborators: React.FC<TripCollaboratorsProps> = ({ collaborators: initialCollaborators }) => {
+  const { t } = useTranslation('planner');
   const [collaborators, setCollaborators] = useState<Collaborator[]>(initialCollaborators);
   const [inviteEmail, setInviteEmail] = useState('');
   const [selectedRole, setSelectedRole] = useState<'editor' | 'viewer'>('editor');
@@ -45,7 +47,7 @@ const TripCollaborators: React.FC<TripCollaboratorsProps> = ({ collaborators: in
     <div className="space-y-6">
       {/* Invite Form */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-6">Invite Collaborators</h2>
+        <h2 className="text-xl font-semibold mb-6">{t('collaborators.inviteTitle')}</h2>
         <form onSubmit={handleInvite} className="space-y-4">
           <div className="flex gap-4">
             <div className="flex-1">
@@ -53,7 +55,7 @@ const TripCollaborators: React.FC<TripCollaboratorsProps> = ({ collaborators: in
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="Enter email address"
+                placeholder={t('collaborators.emailPlaceholder')}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
@@ -62,15 +64,15 @@ const TripCollaborators: React.FC<TripCollaboratorsProps> = ({ collaborators: in
               onChange={(e) => setSelectedRole(e.target.value as 'editor' | 'viewer')}
               className="px-4 py-2 border border-gray-200 rounded-lg bg-white"
             >
-              <option value="editor">Editor</option>
-              <option value="viewer">Viewer</option>
+              <option value="editor">{t('collaborators.editor')}</option>
+              <option value="viewer">{t('collaborators.viewer')}</option>
             </select>
             <button
               type="submit"
               className="flex items-center gap-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
             >
               <UserPlus className="w-4 h-4" />
-              Invite
+              {t('collaborators.invite')}
             </button>
           </div>
         </form>
@@ -78,7 +80,7 @@ const TripCollaborators: React.FC<TripCollaboratorsProps> = ({ collaborators: in
 
       {/* Collaborators List */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-6">Current Collaborators</h2>
+        <h2 className="text-xl font-semibold mb-6">{t('collaborators.currentCollaborators')}</h2>
         <div className="space-y-4">
           {collaborators.map((collaborator) => (
             <div

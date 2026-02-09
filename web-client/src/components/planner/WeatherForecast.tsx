@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DivideIcon as LucideIcon } from 'lucide-react';
 
 interface WeatherForecastProps {
@@ -11,9 +12,10 @@ interface WeatherForecastProps {
 }
 
 const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecast }) => {
+  const { t } = useTranslation('planner');
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold mb-4">Weather Forecast</h2>
+      <h2 className="text-lg font-semibold mb-4">{t('weather.title')}</h2>
       <div className="space-y-4">
         {forecast.map((day) => {
           const Icon = day.icon;
