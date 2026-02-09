@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Calendar, MapPin, Users, Clock, Sun, Cloud, Umbrella, Wind } from 'lucide-react';
 import TripTimeline from './TripTimeline';
@@ -9,6 +10,7 @@ import PracticalInfo from './PracticalInfo';
 import TripOptimizer from './TripOptimizer';
 
 const TripPlanner = () => {
+  const { t } = useTranslation('planner');
   const { tripId } = useParams();
   const [activeTab, setActiveTab] = useState('timeline');
 
@@ -55,7 +57,7 @@ const TripPlanner = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="w-4 h-4" />
-                  <span>{trip.collaborators.length} collaborators</span>
+                  <span>{trip.collaborators.length} {t('tripPlanner.collaborators')}</span>
                 </div>
               </div>
             </div>
@@ -64,10 +66,10 @@ const TripPlanner = () => {
           {/* Navigation Tabs */}
           <div className="flex gap-4 mt-6">
             {[
-              { id: 'timeline', label: 'Timeline' },
-              { id: 'budget', label: 'Budget' },
-              { id: 'collaborators', label: 'Collaborators' },
-              { id: 'info', label: 'Practical Info' }
+              { id: 'timeline', label: t('tripPlanner.timeline') },
+              { id: 'budget', label: t('tripPlanner.budget') },
+              { id: 'collaborators', label: t('tripPlanner.collaboratorsTab') },
+              { id: 'info', label: t('tripPlanner.practicalInfo') }
             ].map((tab) => (
               <button
                 key={tab.id}

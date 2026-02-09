@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, RotateCcw, Check, AlertCircle, Loader2, X, ArrowRight } from 'lucide-react';
@@ -17,20 +18,21 @@ import TransportStep from './steps/TransportStep';
 import ActivitiesStep from './steps/ActivitiesStep';
 
 // Placeholder components for remaining steps
-const PlaceholderStep: React.FC<{ stepId: string; title: string; icon: string }> = ({ stepId, title, icon }) => (
+const PlaceholderStep: React.FC<{ stepId: string; title: string; icon: string; t: any }> = ({ stepId, title, icon, t }) => (
   <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
     <div className="text-6xl mb-4">{icon}</div>
     <h2 className="text-2xl font-semibold text-gray-900 mb-4">{title}</h2>
-    <p className="text-gray-600 mb-6">Cette étape est en cours de développement.</p>
+    <p className="text-gray-600 mb-6">{t('wizard.stepInDevelopment')}</p>
     <div className="bg-orange-50 rounded-lg p-4">
       <p className="text-sm text-orange-800">
-        Step ID: <code className="font-mono bg-orange-100 px-2 py-1 rounded">{stepId}</code>
+        {t('wizard.stepId')}: <code className="font-mono bg-orange-100 px-2 py-1 rounded">{stepId}</code>
       </p>
     </div>
   </div>
 );
 
 const OnboardingWizard: React.FC = () => {
+  const { t } = useTranslation('onboarding');
   const navigate = useNavigate();
   const location = useLocation();
   const { updateUser } = useAuth();
@@ -71,7 +73,7 @@ const OnboardingWizard: React.FC = () => {
 
   // Handle skip entire onboarding
   const handleSkipOnboarding = () => {
-    if (confirm('Êtes-vous sûr de vouloir passer l\'onboarding ? Vous pourrez le reprendre plus tard dans vos paramètres.')) {
+    if (confirm(t('wizard.confirmSkip'))) {
       skipOnboarding();
       // Update user in auth store to mark onboarding as completed (skipped counts as completed)
       updateUser({
@@ -119,7 +121,7 @@ const OnboardingWizard: React.FC = () => {
       case 'activities':
         return <ActivitiesStep />;
       default:
-        return <PlaceholderStep stepId={currentStep.id} title={currentStep.title} icon={currentStep.icon} />;
+        return <PlaceholderStep stepId={currentStep.id} title={currentStep.title} icon={currentStep.icon} t={t} />;
     }
   };
 
@@ -127,8 +129,8 @@ const OnboardingWizard: React.FC = () => {
     return (
       <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
         <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Chargement de votre profil</h2>
-        <p className="text-gray-600">Préparation de votre questionnaire personnalisé...</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('wizard.loadingProfile')}</h2>
+        <p className="text-gray-600">{t('wizard.preparingQuestionnaire')}</p>
       </div>
     );
   }

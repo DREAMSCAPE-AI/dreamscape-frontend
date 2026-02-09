@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Clock, MapPin, DollarSign, Sparkles, Edit2, Save, Plus, X } from 'lucide-react';
 import type { Experience } from '../../services/api/types';
 
@@ -43,6 +44,7 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
   onUpdateItinerary,
   onGenerateAISuggestions
 }) => {
+  const { t } = useTranslation('planner');
   const [selectedDay, setSelectedDay] = useState<number>(0);
   const [editingActivity, setEditingActivity] = useState<string | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
@@ -95,7 +97,7 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
       {/* Days Navigation */}
       <div className="lg:col-span-1 space-y-4">
         <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold mb-4">Trip Days</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('itineraryBuilder.tripDays')}</h2>
           <div className="space-y-2">
             {itinerary.map((day, index) => (
               <button
@@ -109,12 +111,12 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
               >
                 <div className="flex items-center gap-3">
                   <Calendar className="w-5 h-5" />
-                  <span>Day {index + 1}</span>
+                  <span>{t('itineraryBuilder.day', { number: index + 1 })}</span>
                 </div>
                 <span className="text-sm">
-                  {new Date(day.date).toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric' 
+                  {new Date(day.date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
                   })}
                 </span>
               </button>
@@ -125,14 +127,14 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
         {/* AI Suggestions */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">AI Suggestions</h2>
+            <h2 className="text-xl font-semibold">{t('itineraryBuilder.aiSuggestions')}</h2>
             <button
               onClick={handleGenerateSuggestions}
               disabled={loading}
               className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors"
             >
               <Sparkles className="w-4 h-4" />
-              <span>Generate</span>
+              <span>{t('itineraryBuilder.generate')}</span>
             </button>
           </div>
 
@@ -181,7 +183,7 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold">
-              Day {selectedDay + 1} - {new Date(itinerary[selectedDay].date).toLocaleDateString()}
+              {t('itineraryBuilder.day', { number: selectedDay + 1 })} - {new Date(itinerary[selectedDay].date).toLocaleDateString()}
             </h2>
             <button
               onClick={() => handleAddActivity({
@@ -196,7 +198,7 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
               className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Activity</span>
+              <span>{t('itineraryBuilder.addActivity')}</span>
             </button>
           </div>
 
@@ -236,7 +238,7 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
                             value={activity.duration}
                             onChange={(e) => handleUpdateActivity(activity.id, { duration: e.target.value })}
                             className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                            placeholder="Duration"
+                            placeholder={t('itineraryBuilder.duration')}
                           />
                         </div>
                         <input
@@ -244,20 +246,20 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
                           value={activity.location}
                           onChange={(e) => handleUpdateActivity(activity.id, { location: e.target.value })}
                           className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                          placeholder="Location"
+                          placeholder={t('itineraryBuilder.location')}
                         />
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => setEditingActivity(null)}
                             className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
                           >
-                            Cancel
+                            {t('itineraryBuilder.cancel')}
                           </button>
                           <button
                             onClick={() => setEditingActivity(null)}
                             className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
                           >
-                            Save
+                            {t('itineraryBuilder.save')}
                           </button>
                         </div>
                       </div>
@@ -308,9 +310,9 @@ const ItineraryBuilder: React.FC<ItineraryBuilderProps> = ({
                               : 'bg-red-50 text-red-600'
                           }`}>
                             <span>
-                              {activity.booking.status === 'confirmed' ? 'Booking Confirmed' :
-                               activity.booking.status === 'pending' ? 'Booking Pending' :
-                               'Booking Required'}
+                              {activity.booking.status === 'confirmed' ? t('itineraryBuilder.bookingConfirmed') :
+                               activity.booking.status === 'pending' ? t('itineraryBuilder.bookingPending') :
+                               t('itineraryBuilder.bookingRequired')}
                             </span>
                           </div>
                         )}

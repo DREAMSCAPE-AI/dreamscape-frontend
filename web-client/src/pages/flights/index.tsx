@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FlightBookingFlow from '@/components/flights/FlightBookingFlow';
 import FlightPriceAnalysis from '@/components/flights/FlightPriceAnalysis';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp } from 'lucide-react';
 
 export default function FlightsPage() {
+  const { t } = useTranslation('flights');
   const navigate = useNavigate();
   const [showPriceAnalysis, setShowPriceAnalysis] = useState(false);
 
@@ -20,14 +22,14 @@ export default function FlightsPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold">Find Your Flight</h1>
+          <h1 className="text-2xl font-bold">{t('page.title')}</h1>
           </div>
           <button
             onClick={() => setShowPriceAnalysis(!showPriceAnalysis)}
             className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors"
           >
             <TrendingUp className="w-5 h-5" />
-            <span>Price Analysis</span>
+            <span>{t('page.priceAnalysisButton')}</span>
           </button>
         </div>
         {showPriceAnalysis ? (

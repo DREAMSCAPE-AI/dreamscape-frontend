@@ -1,15 +1,17 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DollarSign, CreditCard, Wallet, PieChart } from 'lucide-react';
 
 const TripBudget = () => {
+  const { t } = useTranslation('planner');
   const budget = {
     total: 2500,
     spent: 1200,
     categories: [
-      { name: 'Accommodation', amount: 800, color: 'bg-orange-500' },
-      { name: 'Transportation', amount: 300, color: 'bg-pink-500' },
-      { name: 'Activities', amount: 400, color: 'bg-cyan-500' },
-      { name: 'Food & Dining', amount: 200, color: 'bg-purple-500' }
+      { name: t('budget.accommodation'), amount: 800, color: 'bg-orange-500' },
+      { name: t('budget.transportation'), amount: 300, color: 'bg-pink-500' },
+      { name: t('budget.activities'), amount: 400, color: 'bg-cyan-500' },
+      { name: t('budget.foodDining'), amount: 200, color: 'bg-purple-500' }
     ]
   };
 
@@ -17,26 +19,26 @@ const TripBudget = () => {
     <div className="space-y-6">
       {/* Overview */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-6">Budget Overview</h2>
+        <h2 className="text-xl font-semibold mb-6">{t('budget.overview')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-2 text-gray-600 mb-2">
               <Wallet className="w-4 h-4" />
-              <span>Total Budget</span>
+              <span>{t('budget.totalBudget')}</span>
             </div>
             <div className="text-2xl font-bold">€{budget.total}</div>
           </div>
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-2 text-gray-600 mb-2">
               <CreditCard className="w-4 h-4" />
-              <span>Spent</span>
+              <span>{t('budget.spent')}</span>
             </div>
             <div className="text-2xl font-bold">€{budget.spent}</div>
           </div>
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-2 text-gray-600 mb-2">
               <DollarSign className="w-4 h-4" />
-              <span>Remaining</span>
+              <span>{t('budget.remaining')}</span>
             </div>
             <div className="text-2xl font-bold">€{budget.total - budget.spent}</div>
           </div>
@@ -46,9 +48,9 @@ const TripBudget = () => {
       {/* Categories */}
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">Spending by Category</h2>
+          <h2 className="text-xl font-semibold">{t('budget.spendingByCategory')}</h2>
           <button className="text-orange-500 hover:text-orange-600 transition-colors">
-            Add Expense
+            {t('budget.addExpense')}
           </button>
         </div>
         <div className="space-y-4">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { 
+import {
   Plane,
   Calendar,
   Luggage,
@@ -13,6 +13,7 @@ import {
   Coffee,
   Star
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { FlightOffer } from '../../services/api/types';
 import airlineService from '../../services/airlineService';
 
@@ -29,6 +30,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
   onAccept,
   onBack
 }) => {
+  const { t } = useTranslation('flights');
   const [showFareRules, setShowFareRules] = useState(false);
   const [showBaggage, setShowBaggage] = useState(false);
 
@@ -61,7 +63,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Flight Details</h2>
+            <h2 className="text-2xl font-semibold">{t('details.title')}</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -113,9 +115,9 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
               <div className="text-3xl font-bold text-gray-900 mb-1">
                 {flight.price.currency} {flight.price.total}
               </div>
-              <div className="text-sm text-gray-500">per passenger</div>
+              <div className="text-sm text-gray-500">{t('results.perPerson')}</div>
               {flight.price.fees && flight.price.fees.length > 0 && (
-                <div className="text-xs text-gray-400 mt-1">+ taxes & fees</div>
+                <div className="text-xs text-gray-400 mt-1">{t('results.taxesAndFees')}</div>
               )}
             </div>
           </div>
@@ -125,7 +127,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
         <div className="p-6 space-y-8">
           {/* Itinerary */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Flight Itinerary</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('details.flightItinerary')}</h3>
             {flight.itineraries[0].segments.map((segment) => {
               const departure = formatDateTime(segment.departure.at);
               const arrival = formatDateTime(segment.arrival.at);
@@ -181,7 +183,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm text-gray-500">Duration</div>
+                          <div className="text-sm text-gray-500">{t('details.duration')}</div>
                           <div className="font-medium">{formatDuration(segment.duration)}</div>
                         </div>
                       </div>
@@ -204,7 +206,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                             </div>
                           </div>
                           <div className="text-xs text-gray-500 mt-2">
-                            {segment.numberOfStops === 0 ? 'Direct' : `${segment.numberOfStops} stop${segment.numberOfStops > 1 ? 's' : ''}`}
+                            {segment.numberOfStops === 0 ? t('results.direct') : segment.numberOfStops === 1 ? t('results.stops.one') : t('results.stops.multiple', { count: segment.numberOfStops })}
                           </div>
                         </div>
 
@@ -220,7 +222,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
 
                       {/* Amenities */}
                       <div className="flex items-center gap-4 pt-3 border-t border-gray-200">
-                        <div className="text-sm text-gray-500">Amenities:</div>
+                        <div className="text-sm text-gray-500">{t('details.amenitiesLabel')}</div>
                         <div className="flex items-center gap-3">
                           {amenities.map((amenity, idx) => (
                             <div key={idx} className={`flex items-center gap-1 text-sm ${amenity.color}`}>
@@ -245,7 +247,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
             >
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-gray-400" />
-                <span className="font-medium">Fare Rules & Conditions</span>
+                <span className="font-medium">{t('details.fareRules')}</span>
               </div>
               {showFareRules ? (
                 <ChevronUp className="w-5 h-5 text-gray-400" />
@@ -258,20 +260,18 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                 <div className="flex items-start gap-2 text-sm">
                   <AlertCircle className="w-4 h-4 text-orange-500 mt-0.5" />
                   <div>
-                    <div className="font-medium">Cancellation Policy</div>
+                    <div className="font-medium">{t('details.cancellationPolicy')}</div>
                     <p className="text-gray-600">
-                      Cancellation permitted up to 24 hours before departure for a fee.
-                      After that, tickets are non-refundable.
+                      {t('details.cancellationText')}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 text-sm">
                   <Calendar className="w-4 h-4 text-orange-500 mt-0.5" />
                   <div>
-                    <div className="font-medium">Change Policy</div>
+                    <div className="font-medium">{t('details.changePolicy')}</div>
                     <p className="text-gray-600">
-                      Flight changes allowed subject to fare difference and change fee.
-                      Must be made at least 3 hours before departure.
+                      {t('details.changeText')}
                     </p>
                   </div>
                 </div>
@@ -287,7 +287,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
             >
               <div className="flex items-center gap-2">
                 <Luggage className="w-5 h-5 text-gray-400" />
-                <span className="font-medium">Baggage Information</span>
+                <span className="font-medium">{t('details.baggageInfo')}</span>
               </div>
               {showBaggage ? (
                 <ChevronUp className="w-5 h-5 text-gray-400" />
@@ -299,18 +299,17 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
               <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 bg-white rounded-lg">
-                    <h4 className="font-medium mb-2">Cabin Baggage</h4>
+                    <h4 className="font-medium mb-2">{t('details.cabinBaggage')}</h4>
                     <p className="text-sm text-gray-600">
-                      1 personal item (under seat) - max 8 kg<br />
-                      1 carry-on bag (overhead) - max 10 kg
+                      {t('details.cabinBaggageText')}
                     </p>
                   </div>
                   <div className="p-4 bg-white rounded-lg">
-                    <h4 className="font-medium mb-2">Checked Baggage</h4>
+                    <h4 className="font-medium mb-2">{t('details.checkedBaggage')}</h4>
                     <p className="text-sm text-gray-600">
                       {flight.pricingOptions.includedCheckedBagsOnly
-                        ? '1 checked bag included - max 23 kg'
-                        : 'No checked bags included - available for purchase'}
+                        ? t('details.checkedIncluded')
+                        : t('details.checkedNotIncluded')}
                     </p>
                   </div>
                 </div>
@@ -320,10 +319,10 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
 
           {/* Price Breakdown */}
           <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold mb-4">Price Breakdown</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('details.priceBreakdown')}</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Base fare</span>
+                <span className="text-gray-600">{t('details.baseFare')}</span>
                 <span>{flight.price.currency} {flight.price.base}</span>
               </div>
               {flight.price.fees.map((fee, index) => (
@@ -333,7 +332,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                 </div>
               ))}
               <div className="flex justify-between font-bold pt-2 border-t border-gray-200">
-                <span>Total Price</span>
+                <span>{t('details.totalPrice')}</span>
                 <span>{flight.price.currency} {flight.price.grandTotal}</span>
               </div>
             </div>
@@ -347,13 +346,13 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
               onClick={onBack}
               className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
             >
-              Back to Results
+              {t('details.backToResults')}
             </button>
             <button
               onClick={() => onAccept(flight)}
               className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
             >
-              <span>Continue to Booking</span>
+              <span>{t('details.continueToBooking')}</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>

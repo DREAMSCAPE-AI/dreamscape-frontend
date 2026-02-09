@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import { useAuth } from '@/services/auth/AuthService';
@@ -8,6 +9,7 @@ import { AlertCircle } from 'lucide-react';
 
 export default function AuthPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export default function AuthPage() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred. Please try again.');
+        setError(t('error.unexpected'));
       }
     } finally {
       setIsLoading(false);
@@ -64,7 +66,7 @@ export default function AuthPage() {
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Failed to create account. Please try again.');
+        setError(t('error.signupFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -79,7 +81,7 @@ export default function AuthPage() {
           <div className="mb-8 p-6 bg-orange-50 rounded-xl">
             <div className="flex items-center gap-2 text-orange-600 mb-4">
               <AlertCircle className="w-5 h-5" />
-              <h3 className="font-semibold">Authentication System</h3>
+              <h3 className="font-semibold">{t('authInfo.title')}</h3>
             </div>
             <div className="space-y-3 text-sm">
               <div className="text-gray-700">
@@ -101,7 +103,7 @@ export default function AuthPage() {
             <div className="mb-4 p-4 bg-red-50 rounded-lg flex items-start gap-2">
               <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-red-600 font-medium">Authentication Error</p>
+                <p className="text-red-600 font-medium">{t('error.authError')}</p>
                 <p className="text-red-500 text-sm">{error}</p>
               </div>
             </div>

@@ -3,6 +3,7 @@
  * Displays item details with quantity controls and remove button
  */
 
+import { useTranslation } from 'react-i18next';
 import { Minus, Plus, Trash2, Plane, Hotel, MapPin } from 'lucide-react';
 import type { CartItem as CartItemType, FlightItemData, HotelItemData } from '@/types/cart';
 import { getAirportInfo } from '@/utils/airportCodes';
@@ -15,6 +16,8 @@ interface CartItemProps {
 }
 
 export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartItemProps) => {
+  const { t } = useTranslation('checkout');
+
   const handleDecrement = () => {
     if (item.quantity > 1) {
       onUpdateQuantity(item.id, item.quantity - 1);
@@ -87,7 +90,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
               }) : ''}
             </p>
             <p className="text-xs text-gray-500">
-              {carrier}{flightNum ? ` ${flightNum}` : ''}{carrier || flightNum ? '' : 'Flight'}
+              {carrier}{flightNum ? ` ${flightNum}` : ''}{carrier || flightNum ? '' : t('cart.item.flight', 'Flight')}
             </p>
           </div>
         );
@@ -116,7 +119,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
       if (data.name || data.checkInDate) {
         return (
           <div className="flex-1">
-            <h4 className="font-semibold text-gray-900">{data.name || 'Hotel Booking'}</h4>
+            <h4 className="font-semibold text-gray-900">{data.name || t('cart.item.hotelBooking', 'Hotel Booking')}</h4>
             {(data.location || data.address?.cityName) && (
               <p className="text-sm text-gray-600">{data.location || data.address?.cityName}</p>
             )}
@@ -145,7 +148,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
           <p className="text-xs text-gray-500">
             {new Date(typedData.checkInDate).toLocaleDateString()} - {new Date(typedData.checkOutDate).toLocaleDateString()}
             {' • '}
-            {typedData.nights} {typedData.nights === 1 ? 'night' : 'nights'}
+            {typedData.nights} {typedData.nights === 1 ? t('cart.item.night', 'night') : t('cart.item.nights', 'nights')}
           </p>
         </div>
       );
@@ -156,7 +159,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
       const data = item.itemData as any;
 
       // Handle both data structures
-      const activityName = data.name || 'Activity Booking';
+      const activityName = data.name || t('cart.item.activityBooking', 'Activity Booking');
       const activityLocation = data.location?.name || data.location;
       const activityDate = data.date;
       const activityDuration = data.duration;
@@ -201,7 +204,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
             onClick={handleDecrement}
             disabled={isLoading || item.quantity <= 1}
             className="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Decrease quantity"
+            aria-label={t('cart.item.decrease', 'Decrease quantity')}
           >
             <Minus className="w-4 h-4" />
           </button>
@@ -214,7 +217,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
             onClick={handleIncrement}
             disabled={isLoading}
             className="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Increase quantity"
+            aria-label={t('cart.item.increase', 'Increase quantity')}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -225,7 +228,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
           onClick={() => onRemove(item.id)}
           disabled={isLoading}
           className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label="Remove item"
+          aria-label={t('cart.item.remove', 'Remove item')}
         >
           <Trash2 className="w-4 h-4" />
         </button>

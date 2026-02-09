@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { useAuth } from '@/services/auth/AuthService';
@@ -73,6 +73,11 @@ const AuthChecker = React.memo(() => {
 
 function App() {
   return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+      </div>
+    }>
     <BrowserRouter
       future={{
         v7_startTransition: true,
@@ -171,6 +176,7 @@ function App() {
         </ErrorBoundary>
       </FavoritesBatchProvider>
     </BrowserRouter>
+    </Suspense>
   );
 }
 

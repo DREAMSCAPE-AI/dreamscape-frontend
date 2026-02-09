@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import type { RegisterData, LoginCredentials } from './types';
 import { useItineraryStore } from '@/store/itineraryStore';
+import i18n from '@/i18n';
+import { languageNameToCode } from '@/i18n/languageMapping';
 
 const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   const trimmed = (envValue || '').trim();
@@ -75,6 +77,21 @@ class AuthApiService {
     });
     return response.data;
   }
+
+  async getUserSettings(token: string): Promise<any> {
+    try {
+      // Fetch from user service
+      const userServiceUrl = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_API_URL);
+      const response = await axios.get(`${userServiceUrl}/v1/users/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 5000
+      });
+      return response.data;
+    } catch (error) {
+      console.warn('Could not fetch user settings:', error);
+      return null;
+    }
+  }
 }
 
 // Create singleton instance
@@ -134,6 +151,22 @@ const useAuth = create<AuthState>()(
               token,
               isAuthenticated: true
             });
+
+            // Fetch user settings and sync language preference
+            try {
+              const userSettings = await authApiService.getUserSettings(token);
+              if (userSettings?.preferences?.language) {
+                const languageName = userSettings.preferences.language;
+                const languageCode = languageNameToCode[languageName];
+                if (languageCode) {
+                  await i18n.changeLanguage(languageCode);
+                  console.log(`Language synced: ${languageName} (${languageCode})`);
+                }
+              }
+            } catch (langError) {
+              console.warn('Could not sync language preference:', langError);
+              // Non-critical error, don't fail login
+            }
           } else {
             throw new Error(response.message || 'Login failed');
           }
@@ -176,6 +209,10 @@ const useAuth = create<AuthState>()(
               token,
               isAuthenticated: true
             });
+
+            // For new users, language preference is not set yet
+            // They will use the default language from i18next-browser-languagedetector
+            // (either from localStorage or browser navigator language)
           } else {
             throw new Error(response.message || 'Registration failed');
           }

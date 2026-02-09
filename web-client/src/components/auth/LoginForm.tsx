@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => void;
@@ -8,6 +9,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoading }) => {
+  const { t } = useTranslation('auth');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -17,15 +19,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
     const newErrors: { email?: string; password?: string } = {};
     
     if (!email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('validation.required');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = t('validation.invalidEmail');
     }
 
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('validation.required');
     } else if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = t('validation.passwordMin');
     }
 
     setErrors(newErrors);
@@ -42,13 +44,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
   return (
     <div className="w-full max-w-md">
       <div className="bg-white rounded-xl shadow-sm p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">Welcome Back</h2>
+        <h2 className="text-2xl font-bold text-center mb-8">{t('login.title')}</h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
+              {t('login.email')}
             </label>
             <div className="relative">
               <input
@@ -58,7 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.email ? 'border-red-500' : 'border-gray-200'
                 }`}
-                placeholder="Enter your email"
+                placeholder={t('login.emailPlaceholder')}
               />
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
@@ -70,7 +72,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
           {/* Password Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              {t('login.password')}
             </label>
             <div className="relative">
               <input
@@ -80,7 +82,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
                 className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.password ? 'border-red-500' : 'border-gray-200'
                 }`}
-                placeholder="Enter your password"
+                placeholder={t('login.passwordPlaceholder')}
               />
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <button
@@ -106,7 +108,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
               type="button"
               className="text-sm text-orange-500 hover:text-orange-600"
             >
-              Forgot Password?
+              {t('login.forgotPassword')}
             </button>
           </div>
 
@@ -119,19 +121,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
             ) : (
-              'Sign In'
+              t('login.submit')
             )}
           </button>
 
           {/* Sign Up Link */}
           <p className="text-center text-sm text-gray-600">
-            Don't have an account?{' '}
+            {t('login.noAccount')}{' '}
             <button
               type="button"
               onClick={onSwitchToSignup}
               className="text-orange-500 hover:text-orange-600"
             >
-              Sign up
+              {t('login.signUp')}
             </button>
           </p>
         </form>

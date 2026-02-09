@@ -3,10 +3,12 @@
  * Displayed in navbar to open cart drawer
  */
 
+import { useTranslation } from 'react-i18next';
 import { ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 
 export const CartButton = () => {
+  const { t } = useTranslation('checkout');
   const { toggleDrawer, getItemCount } = useCartStore();
   const itemCount = getItemCount();
 
@@ -14,7 +16,7 @@ export const CartButton = () => {
     <button
       onClick={toggleDrawer}
       className="relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
-      aria-label="Shopping cart"
+      aria-label={t('cart.label', 'Shopping cart')}
     >
       <ShoppingCart className="w-6 h-6" />
 

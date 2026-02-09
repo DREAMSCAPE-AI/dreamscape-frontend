@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ExperienceCard from './ExperienceCard';
 import SectionTitle from '../shared/SectionTitle';
 import voyageService from '@/services/api/VoyageService';
@@ -16,6 +17,7 @@ interface FeaturedExperience {
 }
 
 const FeaturedExperiences = () => {
+  const { t } = useTranslation('common');
   const [experiences, setExperiences] = useState<FeaturedExperience[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -175,9 +177,9 @@ const FeaturedExperiences = () => {
     return (
       <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
         <div className="container mx-auto px-4">
-          <SectionTitle 
-            title="Featured Experiences" 
-            subtitle="Discover curated adventures tailored just for you"
+          <SectionTitle
+            title={t('home.featuredExperiences')}
+            subtitle={t('home.featuredExperiencesSubtitle')}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
             {[1, 2, 3, 4].map((i) => (
@@ -200,17 +202,17 @@ const FeaturedExperiences = () => {
     return (
       <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
         <div className="container mx-auto px-4">
-          <SectionTitle 
-            title="Featured Experiences" 
-            subtitle="Discover curated adventures tailored just for you"
+          <SectionTitle
+            title={t('home.featuredExperiences')}
+            subtitle={t('home.featuredExperiencesSubtitle')}
           />
           <div className="text-center py-8">
             <p className="text-red-600 mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              onClick={() => window.location.reload()}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              Try Again
+              {t('buttons.retry')}
             </button>
           </div>
         </div>
@@ -221,9 +223,9 @@ const FeaturedExperiences = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
       <div className="container mx-auto px-4">
-        <SectionTitle 
-          title="Featured Experiences" 
-          subtitle="Discover curated adventures tailored just for you"
+        <SectionTitle
+          title={t('home.featuredExperiences')}
+          subtitle={t('home.featuredExperiencesSubtitle')}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
           {experiences.map((exp, index) => (

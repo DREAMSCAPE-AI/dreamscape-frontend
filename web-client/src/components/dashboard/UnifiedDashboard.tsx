@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../services/auth/AuthService';
 import { useDashboard } from '../../hooks/useDashboard';
 import { 
@@ -49,6 +50,7 @@ interface UnifiedDashboardProps {
 }
 
 const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propUserCategory }) => {
+  const { t } = useTranslation('dashboard');
   const { user, isAuthenticated } = useAuth();
   const {
     profile,
@@ -164,50 +166,50 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
   // Dynamic navigation based on user category
   const navigationTabs = useMemo(() => {
     const baseNav = [
-      { id: 'overview', label: 'Overview', icon: Globe }
+      { id: 'overview', label: t('unified.tabs.overview'), icon: Globe }
     ];
 
     if (userCategory === 'BUSINESS') {
       return [
         ...baseNav,
-        { id: 'itinerary', label: 'Business Itinerary', icon: Calendar },
-        { id: 'expenses', label: 'Expense Management', icon: DollarSign },
-        { id: 'documents', label: 'Travel Documents', icon: FileText }
+        { id: 'itinerary', label: t('unified.tabs.businessItinerary'), icon: Calendar },
+        { id: 'expenses', label: t('unified.tabs.expenseManagement'), icon: DollarSign },
+        { id: 'documents', label: t('unified.tabs.travelDocuments'), icon: FileText }
       ];
     } else {
       return [
         ...baseNav,
-        { id: 'community', label: 'Community', icon: Users },
-        { id: 'saved', label: 'Saved', icon: Heart }
+        { id: 'community', label: t('unified.tabs.community'), icon: Users },
+        { id: 'saved', label: t('unified.tabs.saved'), icon: Heart }
       ];
     }
-  }, [userCategory]);
+  }, [userCategory, t]);
 
   // Dynamic stats based on user category
   const dashboardStats = useMemo(() => {
     if (userCategory === 'BUSINESS') {
       return [
-        { title: 'Next Meeting', value: '10:00 AM', icon: Clock, color: 'bg-blue-50 text-blue-600' },
-        { title: 'Monthly Expenses', value: '$2,450', icon: DollarSign, color: 'bg-green-50 text-green-600' },
-        { title: 'Policy Compliance', value: '98%', icon: Shield, color: 'bg-orange-50 text-orange-600' },
-        { title: 'Pending Reports', value: '2', icon: FileText, color: 'bg-purple-50 text-purple-600' }
+        { title: t('unified.businessStats.nextMeeting'), value: '10:00 AM', icon: Clock, color: 'bg-blue-50 text-blue-600' },
+        { title: t('unified.businessStats.monthlyExpenses'), value: '$2,450', icon: DollarSign, color: 'bg-green-50 text-green-600' },
+        { title: t('unified.businessStats.policyCompliance'), value: '98%', icon: Shield, color: 'bg-orange-50 text-orange-600' },
+        { title: t('unified.businessStats.pendingReports'), value: '2', icon: FileText, color: 'bg-purple-50 text-purple-600' }
       ];
     } else {
       return [
-        { title: 'Countries Visited', value: '12', icon: Globe, color: 'bg-blue-50 text-blue-600' },
-        { title: 'Cities Explored', value: '35', icon: Map, color: 'bg-green-50 text-green-600' },
-        { title: 'Experiences', value: '48', icon: Camera, color: 'bg-orange-50 text-orange-600' },
-        { title: 'Photos Shared', value: '156', icon: Share2, color: 'bg-purple-50 text-purple-600' }
+        { title: t('unified.leisureStats.countriesVisited'), value: '12', icon: Globe, color: 'bg-blue-50 text-blue-600' },
+        { title: t('unified.leisureStats.citiesExplored'), value: '35', icon: Map, color: 'bg-green-50 text-green-600' },
+        { title: t('unified.leisureStats.experiences'), value: '48', icon: Camera, color: 'bg-orange-50 text-orange-600' },
+        { title: t('unified.leisureStats.photosShared'), value: '156', icon: Share2, color: 'bg-purple-50 text-purple-600' }
       ];
     }
-  }, [userCategory]);
+  }, [userCategory, t]);
 
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-20 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Please log in to view your dashboard</h2>
-          <p className="text-gray-600">Access your personalized travel dashboard by logging in.</p>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">{t('unified.loginRequired')}</h2>
+          <p className="text-gray-600">{t('unified.loginDescription')}</p>
         </div>
       </div>
     );
@@ -264,7 +266,7 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
           />
           {userCategory === 'LEISURE' && (
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-xl font-semibold mb-6">Featured Destinations</h3>
+              <h3 className="text-xl font-semibold mb-6">{t('unified.featuredDestinations')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {destinations.map((destination) => (
                   <div key={destination.id} className="group cursor-pointer">
@@ -443,7 +445,7 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
 
   const renderSavedContent = () => (
     <div className="bg-white rounded-xl shadow-sm p-6">
-      <h3 className="text-xl font-semibold mb-6">Saved Experiences</h3>
+      <h3 className="text-xl font-semibold mb-6">{t('unified.savedExperiences')}</h3>
       <LuxuryExperiences
         experiences={[]}
         onBook={() => {}}
@@ -478,12 +480,12 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              {userCategory === 'BUSINESS' ? 'Business Dashboard' : 'Travel Dashboard'}
+              {userCategory === 'BUSINESS' ? t('unified.businessDashboard') : t('unified.travelDashboard')}
             </h1>
             <p className="text-gray-600 mt-1">
-              {userCategory === 'BUSINESS' 
-                ? 'Manage your business travel efficiently' 
-                : 'Discover and plan your next adventure'
+              {userCategory === 'BUSINESS'
+                ? t('unified.businessSubtitle')
+                : t('unified.leisureSubtitle')
               }
             </p>
           </div>
@@ -491,12 +493,12 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
           {/* User Category Badge */}
           <div className="flex items-center gap-3">
             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
-              userCategory === 'BUSINESS' 
-                ? 'bg-blue-100 text-blue-700' 
+              userCategory === 'BUSINESS'
+                ? 'bg-blue-100 text-blue-700'
                 : 'bg-orange-100 text-orange-700'
             }`}>
               {userCategory === 'BUSINESS' ? <Briefcase className="w-4 h-4" /> : <Compass className="w-4 h-4" />}
-              {userCategory === 'BUSINESS' ? 'Business' : 'Leisure'}
+              {userCategory === 'BUSINESS' ? t('unified.badges.business') : t('unified.badges.leisure')}
             </div>
             <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
               <Settings className="w-5 h-5" />

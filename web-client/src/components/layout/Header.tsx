@@ -24,8 +24,10 @@ import {
   Calendar,
   History
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Logo from './Logo';
 import { CartButton } from '@/components/cart';
+import LanguageSelector from '@/components/common/LanguageSelector';
 import FavoritesService from '@/services/api/FavoritesService';
 
 interface HeaderProps {
@@ -34,6 +36,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDiscoverMenu, setShowDiscoverMenu] = useState(false);
@@ -82,20 +85,20 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   };
 
   const mainLinks = [
-    { name: 'Flights', path: '/flights', icon: Plane },
-    { name: 'Hotels', path: '/hotels', icon: Building2 },
-    { name: 'Activities', path: '/activities', icon: Route },
-    { name: 'Map', path: '/map', icon: Map },
-    { name: 'Destinations', path: '/destinations', icon: Compass }
+    { name: t('nav.flights'), path: '/flights', icon: Plane },
+    { name: t('nav.hotels'), path: '/hotels', icon: Building2 },
+    { name: t('nav.activities'), path: '/activities', icon: Route },
+    { name: t('nav.map'), path: '/map', icon: Map },
+    { name: t('nav.destinations'), path: '/destinations', icon: Compass }
   ];
 
   const toolsMenuItems = [
-    { name: 'Flight Analytics', path: '/analytics', icon: BarChart3, description: 'Travel trends and insights' },
-    { name: 'Flight Status', path: '/flight-status', icon: Plane, description: 'Track flights and delays' },
-    { name: 'Airport Info', path: '/airports', icon: MapPin, description: 'Airport performance and routes' },
-    { name: 'Airline Lookup', path: '/airlines', icon: Building, description: 'Airline information and routes' },
-    { name: 'Transfers', path: '/transfers', icon: Car, description: 'Book ground transportation' },
-    { name: 'Travel Insights', path: '/insights', icon: Brain, description: 'AI-powered recommendations' }
+    { name: t('nav.toolsMenu.flightAnalytics'), path: '/analytics', icon: BarChart3, description: t('nav.toolsMenu.flightAnalyticsDesc') },
+    { name: t('nav.toolsMenu.flightStatus'), path: '/flight-status', icon: Plane, description: t('nav.toolsMenu.flightStatusDesc') },
+    { name: t('nav.toolsMenu.airportInfo'), path: '/airports', icon: MapPin, description: t('nav.toolsMenu.airportInfoDesc') },
+    { name: t('nav.toolsMenu.airlineLookup'), path: '/airlines', icon: Building, description: t('nav.toolsMenu.airlineLookupDesc') },
+    { name: t('nav.toolsMenu.transfers'), path: '/transfers', icon: Car, description: t('nav.toolsMenu.transfersDesc') },
+    { name: t('nav.toolsMenu.travelInsights'), path: '/insights', icon: Brain, description: t('nav.toolsMenu.travelInsightsDesc') }
   ];
 
   return (
@@ -129,10 +132,10 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   onMouseLeave={() => setShowDiscoverMenu(false)}
                   className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
                 >
-                  <span>Discover</span>
+                  <span>{t('nav.discover')}</span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
-                
+
                 {showDiscoverMenu && (
                   <div
                     onMouseEnter={() => setShowDiscoverMenu(true)}
@@ -140,9 +143,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                     className="absolute top-full left-0 w-64 bg-white rounded-lg shadow-lg py-2 mt-2"
                   >
                     {[
-                      { name: 'Culture', path: '/destination/culture', icon: Compass },
-                      { name: 'Adventure', path: '/destination/adventure', icon: Map },
-                      { name: 'Relaxation', path: '/destination/relaxation', icon: User }
+                      { name: t('nav.discoverMenu.culture'), path: '/destination/culture', icon: Compass },
+                      { name: t('nav.discoverMenu.adventure'), path: '/destination/adventure', icon: Map },
+                      { name: t('nav.discoverMenu.relaxation'), path: '/destination/relaxation', icon: User }
                     ].map((category) => (
                       <Link
                         key={category.name}
@@ -165,7 +168,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
                 >
                   <Wrench className="w-4 h-4" />
-                  <span>Tools</span>
+                  <span>{t('nav.tools')}</span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
                 
@@ -193,12 +196,12 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
               </div>
             </div>
 
-            <Link 
+            <Link
               to="/planner"
               className="hidden md:flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-500 rounded-lg hover:bg-orange-100 transition-colors"
             >
               <Route className="w-4 h-4" />
-              <span>Plan Trip</span>
+              <span>{t('nav.planTrip')}</span>
             </Link>
           </div>
 
@@ -206,6 +209,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <>
+                {/* Language Selector */}
+                <LanguageSelector variant="compact" />
+
                 {/* Shopping Cart */}
                 <CartButton />
 
@@ -213,7 +219,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 <Link
                   to="/favorites"
                   className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
-                  title="View favorites"
+                  title={t('nav.viewFavorites')}
                 >
                   <Heart className="w-6 h-6" />
                   {favoritesCount > 0 && (
@@ -250,7 +256,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <User className="w-4 h-4" />
-                        <span>Profile</span>
+                        <span>{t('nav.userMenu.profile')}</span>
                       </Link>
                       <Link
                         to="/planner"
@@ -258,7 +264,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <Route className="w-4 h-4" />
-                        <span>My Trips</span>
+                        <span>{t('nav.userMenu.myTrips')}</span>
                       </Link>
                       <Link
                         to="/favorites"
@@ -266,7 +272,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <Heart className="w-4 h-4" />
-                        <span>Favorites</span>
+                        <span>{t('nav.userMenu.favorites')}</span>
                       </Link>
                       <Link
                         to="/bookings"
@@ -274,7 +280,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <Calendar className="w-4 h-4" />
-                        <span>My Bookings</span>
+                        <span>{t('nav.userMenu.myBookings')}</span>
                       </Link>
                       <Link
                         to="/history"
@@ -282,7 +288,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <History className="w-4 h-4" />
-                        <span>History</span>
+                        <span>{t('nav.userMenu.history')}</span>
                       </Link>
                       <Link
                         to="/settings"
@@ -290,7 +296,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <Settings className="w-4 h-4" />
-                        <span>Settings</span>
+                        <span>{t('nav.userMenu.settings')}</span>
                       </Link>
                       <Link
                         to="/support"
@@ -298,14 +304,14 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         onClick={() => setShowUserMenu(false)}
                       >
                         <HelpCircle className="w-4 h-4" />
-                        <span>Help</span>
+                        <span>{t('nav.userMenu.help')}</span>
                       </Link>
                       <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 w-full"
                       >
                         <LogOut className="w-4 h-4" />
-                        <span>Logout</span>
+                        <span>{t('nav.userMenu.logout')}</span>
                       </button>
                     </div>
                   )}
@@ -313,17 +319,20 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
               </>
             ) : (
               <>
-                <Link 
-                  to="/auth" 
+                {/* Language Selector for logged-out users */}
+                <LanguageSelector variant="compact" />
+
+                <Link
+                  to="/auth"
                   className="hidden md:block px-4 py-2 text-gray-700 hover:text-orange-500"
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
-                <Link 
+                <Link
                   to="/auth"
                   className="hidden md:block px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
                 >
-                  Sign Up
+                  {t('nav.signUp')}
                 </Link>
               </>
             )}
