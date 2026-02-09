@@ -1,0 +1,101 @@
+{
+  "page": {
+    "title": "Trip Planner",
+    "goBack": "Go back"
+  },
+  "header": {
+    "collaborators": "collaborators",
+    "dates": "Dates"
+  },
+  "tabs": {
+    "timeline": "Timeline",
+    "budget": "Budget",
+    "collaborators": "Collaborators",
+    "info": "Practical Info"
+  },
+  "timeline": {
+    "title": "Day {{day}} - {{date}}",
+    "addActivity": "Add Activity",
+    "duration": "Duration",
+    "location": "Location",
+    "cost": "Cost",
+    "placeholders": {
+      "duration": "Duration",
+      "location": "Location"
+    },
+    "booking": {
+      "confirmed": "Booking Confirmed",
+      "pending": "Booking Pending",
+      "required": "Booking Required"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "edit": "Edit",
+      "remove": "Remove"
+    }
+  },
+  "itinerary": {
+    "title": "Trip Days",
+    "day": "Day {{number}}",
+    "aiSuggestions": "AI Suggestions",
+    "generate": "Generate",
+    "newActivity": "New Activity"
+  },
+  "budget": {
+    "overview": "Budget Overview",
+    "totalBudget": "Total Budget",
+    "spent": "Spent",
+    "remaining": "Remaining",
+    "spendingByCategory": "Spending by Category",
+    "addExpense": "Add Expense",
+    "categories": {
+      "accommodation": "Accommodation",
+      "transportation": "Transportation",
+      "activities": "Activities",
+      "foodDining": "Food & Dining"
+    }
+  },
+  "collaborators": {
+    "inviteCollaborators": "Invite Collaborators",
+    "currentCollaborators": "Current Collaborators",
+    "invite": "Invite",
+    "enterEmail": "Enter email address",
+    "roles": {
+      "editor": "Editor",
+      "viewer": "Viewer",
+      "owner": "Owner"
+    }
+  },
+  "weather": {
+    "forecast": "Weather Forecast",
+    "conditions": {
+      "sunny": "Sunny",
+      "cloudy": "Cloudy",
+      "rainy": "Rainy",
+      "windy": "Windy"
+    }
+  },
+  "optimizer": {
+    "title": "Trip Optimizer"
+  },
+  "list": {
+    "title": "My Itineraries",
+    "tripsPlanned": "{{count}} trip planned",
+    "tripsPlanned_other": "{{count}} trips planned",
+    "newItinerary": "New Itinerary",
+    "emptyState": {
+      "title": "No itineraries yet",
+      "description": "Start planning your next adventure by creating your first itinerary",
+      "createButton": "Create Itinerary"
+    },
+    "deleteConfirm": "Are you sure you want to delete this itinerary?",
+    "day": "day",
+    "day_other": "days",
+    "items": "{{count}} item",
+    "items_other": "{{count}} items",
+    "editItinerary": "Edit itinerary",
+    "deleteItinerary": "Delete itinerary",
+    "aiGenerated": "AI"
+  }
+}

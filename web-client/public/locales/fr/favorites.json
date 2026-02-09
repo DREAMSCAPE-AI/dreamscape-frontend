@@ -1,0 +1,31 @@
+{
+  "page": {
+    "title": "Mes Favoris",
+    "subtitle": "Enregistrez et organisez vos options de voyage préférées"
+  },
+  "filters": {
+    "all": "Tous les Favoris",
+    "flights": "Vols",
+    "hotels": "Hôtels",
+    "activities": "Activités",
+    "destinations": "Destinations"
+  },
+  "card": {
+    "removeFromFavorites": "Retirer des favoris",
+    "route": "Itinéraire",
+    "location": "Emplacement",
+    "price": "Prix",
+    "pricePerNight": "{{price}}/nuit",
+    "added": "Ajouté",
+    "untitled": "Sans titre"
+  },
+  "emptyState": {
+    "title": "Aucun favori pour le moment",
+    "description": "Commencez à ajouter des éléments à vos favoris pour les voir ici",
+    "exploreButton": "Explorer les Destinations"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement des favoris. Veuillez réessayer.",
+    "deleteFailed": "Échec de la suppression du favori. Veuillez réessayer."
+  }
+}

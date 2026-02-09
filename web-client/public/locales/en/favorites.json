@@ -1,0 +1,31 @@
+{
+  "page": {
+    "title": "My Favorites",
+    "subtitle": "Save and organize your favorite travel options"
+  },
+  "filters": {
+    "all": "All Favorites",
+    "flights": "Flights",
+    "hotels": "Hotels",
+    "activities": "Activities",
+    "destinations": "Destinations"
+  },
+  "card": {
+    "removeFromFavorites": "Remove from favorites",
+    "route": "Route",
+    "location": "Location",
+    "price": "Price",
+    "pricePerNight": "{{price}}/night",
+    "added": "Added",
+    "untitled": "Untitled"
+  },
+  "emptyState": {
+    "title": "No favorites yet",
+    "description": "Start adding items to your favorites to see them here",
+    "exploreButton": "Explore Destinations"
+  },
+  "errors": {
+    "loadFailed": "Failed to load favorites. Please try again.",
+    "deleteFailed": "Failed to delete favorite. Please try again."
+  }
+}
