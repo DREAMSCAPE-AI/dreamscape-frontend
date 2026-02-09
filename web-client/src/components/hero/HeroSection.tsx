@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Plane, Building2, Calendar, Users, Search, MapPin } from 'lucide-react';
 import SearchBox from './SearchBox';
 import BackgroundOverlay from './BackgroundOverlay';
@@ -10,6 +11,7 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onDashboardClick }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
   const [searchType, setSearchType] = useState<'destination' | 'flight' | 'hotel'>('destination');
   const [searchParams, setSearchParams] = useState({
     location: '',
@@ -49,20 +51,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onDashboardClick }) => {
       
       <div className="relative z-10 container mx-auto px-4 h-screen flex flex-col justify-center pt-20">
         <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-pink-600">
-          Your Journey,<br />Perfectly Personalized
+          {t('hero.title')}<br />{t('hero.titleLine2')}
         </h1>
-        
+
         <p className="text-xl md:text-2xl mb-12 max-w-2xl text-cyan-100">
-          AI-powered travel experiences tailored to your preferences
+          {t('hero.subtitle')}
         </p>
         
         <div className="space-y-6 max-w-4xl">
           {/* Search Type Selector */}
           <div className="flex gap-2 bg-white/10 backdrop-blur-md p-1 rounded-lg w-fit">
             {[
-              { type: 'destination', label: 'Destinations', icon: MapPin },
-              { type: 'flight', label: 'Flights', icon: Plane },
-              { type: 'hotel', label: 'Hotels', icon: Building2 }
+              { type: 'destination', label: t('nav.destinations'), icon: MapPin },
+              { type: 'flight', label: t('nav.flights'), icon: Plane },
+              { type: 'hotel', label: t('nav.hotels'), icon: Building2 }
             ].map(({ type, label, icon: Icon }) => (
               <button
                 key={type}
@@ -85,17 +87,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onDashboardClick }) => {
               {/* Location Input */}
               <div className="md:col-span-2">
                 <label className="block text-white text-sm mb-2">
-                  {searchType === 'flight' ? 'Where to?' : 'Location'}
+                  {searchType === 'flight' ? t('hero.whereTo') : t('hero.location')}
                 </label>
                 <div className="relative">
                   <input
                     type="text"
                     placeholder={
                       searchType === 'flight'
-                        ? 'Enter destination city'
+                        ? t('hero.placeholderFlight')
                         : searchType === 'hotel'
-                        ? 'Enter city or hotel name'
-                        : 'Where would you like to go?'
+                        ? t('hero.placeholderHotel')
+                        : t('hero.placeholderDestination')
                     }
                     className="w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white placeholder-white/70 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
                     value={searchParams.location}
@@ -107,21 +109,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onDashboardClick }) => {
 
               {/* Date Selection */}
               <div>
-                <label className="block text-white text-sm mb-2">Dates</label>
+                <label className="block text-white text-sm mb-2">{t('hero.dates')}</label>
                 <button className="w-full flex items-center gap-2 px-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white border border-white/20 hover:bg-white/20 transition-colors">
                   <Calendar className="w-5 h-5 text-white/70" />
-                  <span>Select dates</span>
+                  <span>{t('hero.selectDates')}</span>
                 </button>
               </div>
 
               {/* Guests/Travelers */}
               <div>
                 <label className="block text-white text-sm mb-2">
-                  {searchType === 'flight' ? 'Travelers' : 'Guests'}
+                  {searchType === 'flight' ? t('hero.travelers') : t('hero.guests')}
                 </label>
                 <button className="w-full flex items-center gap-2 px-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white border border-white/20 hover:bg-white/20 transition-colors">
                   <Users className="w-5 h-5 text-white/70" />
-                  <span>{searchParams.guests} {searchParams.guests === 1 ? 'person' : 'people'}</span>
+                  <span>{searchParams.guests} {searchParams.guests === 1 ? t('hero.person') : t('hero.people')}</span>
                 </button>
               </div>
             </div>
@@ -134,10 +136,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onDashboardClick }) => {
               <Search className="w-5 h-5" />
               <span>
                 {searchType === 'flight'
-                  ? 'Search Flights'
+                  ? t('hero.searchFlights')
                   : searchType === 'hotel'
-                  ? 'Find Hotels'
-                  : 'Explore Destinations'}
+                  ? t('hero.findHotels')
+                  : t('hero.exploreDestinations')}
               </span>
             </button>
           </div>
@@ -148,14 +150,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onDashboardClick }) => {
               onClick={() => navigate('/planner')}
               className="px-6 py-3 bg-white/10 backdrop-blur-md text-white rounded-lg hover:bg-white/20 transition-colors"
             >
-              Plan Your Trip
+              {t('hero.planYourTrip')}
             </button>
             {onDashboardClick && (
               <button
                 onClick={onDashboardClick}
                 className="px-6 py-3 bg-white/10 backdrop-blur-md text-white rounded-lg hover:bg-white/20 transition-colors"
               >
-                Access Your Travel Dashboard
+                {t('hero.accessDashboard')}
               </button>
             )}
           </div>

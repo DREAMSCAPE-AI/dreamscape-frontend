@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Cookie, Settings, X, Shield, Check } from 'lucide-react';
 import GdprService from '@/services/api/GdprService';
 
@@ -11,6 +12,7 @@ interface CookiePreferences {
 }
 
 const CookieConsent: React.FC = () => {
+  const { t } = useTranslation('gdpr');
   const [isVisible, setIsVisible] = useState(false);
   const [showCustomize, setShowCustomize] = useState(false);
   const [analytics, setAnalytics] = useState(false);
@@ -117,11 +119,10 @@ const CookieConsent: React.FC = () => {
                 <Cookie className="w-6 h-6 text-orange-500 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    We value your privacy
+                    {t('cookie.title')}
                   </h3>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic.
-                    By clicking "Accept All", you consent to our use of cookies.
+                    {t('cookie.description')}
                   </p>
                 </div>
               </div>
@@ -132,7 +133,7 @@ const CookieConsent: React.FC = () => {
                   disabled={isLoading}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Reject All
+                  {t('cookie.rejectAll')}
                 </button>
                 <button
                   onClick={handleCustomize}
@@ -140,14 +141,14 @@ const CookieConsent: React.FC = () => {
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Settings className="w-4 h-4" />
-                  Customize
+                  {t('cookie.customize')}
                 </button>
                 <button
                   onClick={handleAcceptAll}
                   disabled={isLoading}
                   className="px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Saving...' : 'Accept All'}
+                  {isLoading ? t('cookie.saving') : t('cookie.acceptAll')}
                 </button>
               </div>
             </div>
@@ -158,7 +159,7 @@ const CookieConsent: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-orange-500" />
                   <h3 className="text-lg font-semibold text-gray-900">
-                    Cookie Preferences
+                    {t('cookie.preferences.title')}
                   </h3>
                 </div>
                 <button
@@ -174,11 +175,11 @@ const CookieConsent: React.FC = () => {
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-medium text-gray-900">Functional Cookies</h4>
-                      <span className="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">Required</span>
+                      <h4 className="text-sm font-medium text-gray-900">{t('cookie.preferences.functional.title')}</h4>
+                      <span className="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">{t('cookie.preferences.functional.required')}</span>
                     </div>
                     <p className="text-xs text-gray-600 mt-1">
-                      Essential for the website to function properly. Cannot be disabled.
+                      {t('cookie.preferences.functional.description')}
                     </p>
                   </div>
                   <div className="ml-4 flex items-center">
@@ -193,9 +194,9 @@ const CookieConsent: React.FC = () => {
                 {/* Analytics cookies */}
                 <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">Analytics Cookies</h4>
+                    <h4 className="text-sm font-medium text-gray-900">{t('cookie.preferences.analytics.title')}</h4>
                     <p className="text-xs text-gray-600 mt-1">
-                      Help us understand how visitors interact with our website.
+                      {t('cookie.preferences.analytics.description')}
                     </p>
                   </div>
                   <div className="ml-4 flex items-center">
@@ -213,9 +214,9 @@ const CookieConsent: React.FC = () => {
                 {/* Marketing cookies */}
                 <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">Marketing Cookies</h4>
+                    <h4 className="text-sm font-medium text-gray-900">{t('cookie.preferences.marketing.title')}</h4>
                     <p className="text-xs text-gray-600 mt-1">
-                      Used to deliver personalized advertisements and track campaign performance.
+                      {t('cookie.preferences.marketing.description')}
                     </p>
                   </div>
                   <div className="ml-4 flex items-center">
@@ -233,9 +234,9 @@ const CookieConsent: React.FC = () => {
                 {/* Preferences cookies */}
                 <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">Preference Cookies</h4>
+                    <h4 className="text-sm font-medium text-gray-900">{t('cookie.preferences.preference.title')}</h4>
                     <p className="text-xs text-gray-600 mt-1">
-                      Remember your settings and preferences for a better experience.
+                      {t('cookie.preferences.preference.description')}
                     </p>
                   </div>
                   <div className="ml-4 flex items-center">
@@ -257,14 +258,14 @@ const CookieConsent: React.FC = () => {
                   disabled={isLoading}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Cancel
+                  {t('cookie.preferences.cancel')}
                 </button>
                 <button
                   onClick={handleSavePreferences}
                   disabled={isLoading}
                   className="px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Saving...' : 'Save Preferences'}
+                  {isLoading ? t('cookie.saving') : t('cookie.preferences.save')}
                 </button>
               </div>
             </div>

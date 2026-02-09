@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUpDown, DollarSign, Plane, Clock, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { SortOption, FilterState } from '@/types/flights';
 
 interface FlightResultsToolbarProps {
@@ -19,13 +20,15 @@ const FlightResultsToolbar: React.FC<FlightResultsToolbarProps> = ({
   onResetFilters,
   totalResults
 }) => {
+  const { t } = useTranslation('flights');
+
   const sortOptions: Array<{ value: SortOption; label: string }> = [
-    { value: 'departure-asc', label: 'Départ: Plus tôt' },
-    { value: 'departure-desc', label: 'Départ: Plus tard' },
-    { value: 'price-asc', label: 'Prix: Croissant' },
-    { value: 'price-desc', label: 'Prix: Décroissant' },
-    { value: 'duration-asc', label: 'Durée: Plus court' },
-    { value: 'duration-desc', label: 'Durée: Plus long' }
+    { value: 'departure-asc', label: t('toolbar.sort.departureEarly') },
+    { value: 'departure-desc', label: t('toolbar.sort.departureLate') },
+    { value: 'price-asc', label: t('toolbar.sort.priceAsc') },
+    { value: 'price-desc', label: t('toolbar.sort.priceDesc') },
+    { value: 'duration-asc', label: t('toolbar.sort.durationShort') },
+    { value: 'duration-desc', label: t('toolbar.sort.durationLong') }
   ];
 
   const handleStopsChange = (stop: number, checked: boolean) => {
@@ -73,10 +76,10 @@ const FlightResultsToolbar: React.FC<FlightResultsToolbarProps> = ({
         {/* Price Range Filters */}
         <div className="flex items-center gap-2">
           <DollarSign className="w-5 h-5 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Prix:</span>
+          <span className="text-sm font-medium text-gray-700">{t('toolbar.price')}</span>
           <input
             type="number"
-            placeholder="Min"
+            placeholder={t('toolbar.priceMin')}
             value={filters.priceMin ?? ''}
             onChange={(e) => onFilterChange({
               ...filters,
@@ -87,7 +90,7 @@ const FlightResultsToolbar: React.FC<FlightResultsToolbarProps> = ({
           <span className="text-gray-500">-</span>
           <input
             type="number"
-            placeholder="Max"
+            placeholder={t('toolbar.priceMax')}
             value={filters.priceMax ?? ''}
             onChange={(e) => onFilterChange({
               ...filters,
@@ -103,11 +106,11 @@ const FlightResultsToolbar: React.FC<FlightResultsToolbarProps> = ({
         {/* Stops Filter */}
         <div className="flex items-center gap-2">
           <Plane className="w-5 h-5 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Escales:</span>
+          <span className="text-sm font-medium text-gray-700">{t('toolbar.stops')}</span>
           {[
-            { label: 'Direct', value: 0 },
-            { label: '1 escale', value: 1 },
-            { label: '2+', value: 2 }
+            { label: t('toolbar.stopsOptions.direct'), value: 0 },
+            { label: t('toolbar.stopsOptions.oneStop'), value: 1 },
+            { label: t('toolbar.stopsOptions.twoPlus'), value: 2 }
           ].map((stop) => (
             <label key={stop.value} className="flex items-center gap-1.5 cursor-pointer">
               <input
@@ -127,12 +130,12 @@ const FlightResultsToolbar: React.FC<FlightResultsToolbarProps> = ({
         {/* Departure Time Filter */}
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Départ:</span>
+          <span className="text-sm font-medium text-gray-700">{t('toolbar.departure')}</span>
           {[
-            { label: 'Tôt (0h-6h)', value: 'early' },
-            { label: 'Matin (6h-12h)', value: 'morning' },
-            { label: 'Après-midi (12h-18h)', value: 'afternoon' },
-            { label: 'Soir (18h-0h)', value: 'evening' }
+            { label: t('toolbar.departureOptions.early'), value: 'early' },
+            { label: t('toolbar.departureOptions.morning'), value: 'morning' },
+            { label: t('toolbar.departureOptions.afternoon'), value: 'afternoon' },
+            { label: t('toolbar.departureOptions.evening'), value: 'evening' }
           ].map((time) => (
             <button
               key={time.value}
@@ -153,7 +156,7 @@ const FlightResultsToolbar: React.FC<FlightResultsToolbarProps> = ({
 
         {/* Results Count */}
         <div className="text-sm text-gray-600 font-medium">
-          {totalResults} vol{totalResults !== 1 ? 's' : ''} trouvé{totalResults !== 1 ? 's' : ''}
+          {t('toolbar.resultsCount', { count: totalResults })}
         </div>
 
         {/* Reset Filters Button */}
@@ -163,7 +166,7 @@ const FlightResultsToolbar: React.FC<FlightResultsToolbarProps> = ({
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-orange-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
           >
             <X className="w-4 h-4" />
-            Réinitialiser
+            {t('toolbar.resetFilters')}
           </button>
         )}
       </div>

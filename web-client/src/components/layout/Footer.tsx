@@ -1,7 +1,10 @@
 import React from 'react';
-import { Plane, Instagram, Twitter, Facebook, Youtube, ChevronDown, Send } from 'lucide-react';
+import { Plane, Instagram, Twitter, Facebook, Youtube, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '@/components/common/LanguageSelector';
 
 const Footer = () => {
+  const { t } = useTranslation('common');
   return (
     <footer className="bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-16">
@@ -15,7 +18,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-gray-600 mb-6">
-              Crafting personalized travel experiences through the power of AI, making every journey uniquely yours.
+              {t('footer.description')}
             </p>
             <div className="flex gap-4">
               {[Instagram, Twitter, Facebook, Youtube].map((Icon, index) => (
@@ -32,12 +35,18 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-6 text-gray-800">Destinations</h3>
+            <h3 className="text-lg font-semibold mb-6 text-gray-800">{t('footer.destinations')}</h3>
             <ul className="space-y-3">
-              {['Popular Cities', 'Adventure Spots', 'Beach Getaways', 'Cultural Sites', 'Hidden Gems'].map((item) => (
-                <li key={item}>
+              {[
+                { key: 'popularCities', label: t('footer.popularCities') },
+                { key: 'adventureSpots', label: t('footer.adventureSpots') },
+                { key: 'beachGetaways', label: t('footer.beachGetaways') },
+                { key: 'culturalSites', label: t('footer.culturalSites') },
+                { key: 'hiddenGems', label: t('footer.hiddenGems') }
+              ].map((item) => (
+                <li key={item.key}>
                   <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors">
-                    {item}
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -45,12 +54,18 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-6 text-gray-800">Resources</h3>
+            <h3 className="text-lg font-semibold mb-6 text-gray-800">{t('footer.resources')}</h3>
             <ul className="space-y-3">
-              {['Travel Guide', 'FAQs', 'Customer Support', 'Travel Insurance', 'Blog'].map((item) => (
-                <li key={item}>
+              {[
+                { key: 'travelGuide', label: t('footer.travelGuide') },
+                { key: 'faqs', label: t('footer.faqs') },
+                { key: 'customerSupport', label: t('footer.customerSupport') },
+                { key: 'travelInsurance', label: t('footer.travelInsurance') },
+                { key: 'blog', label: t('footer.blog') }
+              ].map((item) => (
+                <li key={item.key}>
                   <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors">
-                    {item}
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -59,14 +74,14 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-lg font-semibold mb-6 text-gray-800">Stay Inspired</h3>
+            <h3 className="text-lg font-semibold mb-6 text-gray-800">{t('footer.stayInspired')}</h3>
             <p className="text-gray-600 mb-4">
-              Subscribe to receive personalized travel recommendations and exclusive offers.
+              {t('footer.newsletterDesc')}
             </p>
             <div className="relative">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('footer.emailPlaceholder')}
                 className="w-full px-4 py-3 rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
               />
               <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-gradient-to-r from-orange-500 to-pink-500 rounded-md text-white hover:opacity-90 transition-opacity">
@@ -82,15 +97,12 @@ const Footer = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-wrap gap-6 text-sm text-gray-600">
-              <a href="#" className="hover:text-orange-500 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-orange-500 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-orange-500 transition-colors">Cookie Settings</a>
-              <span>© 2024 DreamScape. All rights reserved.</span>
+              <a href="#" className="hover:text-orange-500 transition-colors">{t('footer.privacyPolicy')}</a>
+              <a href="#" className="hover:text-orange-500 transition-colors">{t('footer.termsOfService')}</a>
+              <a href="#" className="hover:text-orange-500 transition-colors">{t('footer.cookieSettings')}</a>
+              <span>{t('footer.copyright')}</span>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-              <span>English (US)</span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
+            <LanguageSelector variant="full" />
           </div>
         </div>
       </div>

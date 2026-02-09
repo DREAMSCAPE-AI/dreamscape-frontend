@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import UserDashboard from '@/components/dashboard/UserDashboard';
 import BusinessDashboard from '@/components/business/BusinessDashboard';
@@ -7,6 +8,7 @@ import BleisureDashboard from '@/components/bleisure/BleisureDashboard';
 import { useAuth } from '@/services/auth/AuthService';
 
 export default function DashboardPage() {
+  const { t } = useTranslation('dashboard');
   const { isAuthenticated, user } = useAuth();
 
   if (!isAuthenticated) {
@@ -19,8 +21,8 @@ export default function DashboardPage() {
       <main className="min-h-screen bg-gray-50 pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
-            <div className="text-sm text-gray-600">Business Account</div>
+            <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
+            <div className="text-sm text-gray-600">{t('welcome.accountType.business')}</div>
           </div>
           <BusinessDashboard />
         </div>
@@ -34,8 +36,8 @@ export default function DashboardPage() {
       <main className="min-h-screen bg-gray-50 pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
-            <div className="text-sm text-gray-600">Leisure Account</div>
+            <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
+            <div className="text-sm text-gray-600">{t('welcome.accountType.leisure')}</div>
           </div>
           <LeisureDashboard />
         </div>
@@ -49,8 +51,8 @@ export default function DashboardPage() {
       <main className="min-h-screen bg-gray-50 pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
-            <div className="text-sm text-gray-600">Bleisure Account</div>
+            <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
+            <div className="text-sm text-gray-600">{t('welcome.accountType.bleisure')}</div>
           </div>
           <BleisureDashboard />
         </div>
@@ -62,9 +64,9 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-gray-50 pt-20">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
+          <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
           <div className="text-sm text-gray-600">
-            {user?.type && `${user.type.charAt(0).toUpperCase() + user.type.slice(1)} Account`}
+            {user?.type && t(`welcome.accountType.${user.type}`)}
           </div>
         </div>
         <UserDashboard />

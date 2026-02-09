@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import FlightSearch from './FlightSearch';
 import FlightResults from './FlightResults';
 import FlightResultsToolbar from './FlightResultsToolbar';
@@ -27,6 +28,7 @@ import { useAuth } from '@/services/auth/AuthService';
 type BookingStep = 'search' | 'results' | 'details' | 'seats' | 'meals' | 'baggage' | 'passengers' | 'payment';
 
 const FlightBookingFlow: React.FC = () => {
+  const { t } = useTranslation('flights');
   const location = useLocation();
   const navigate = useNavigate();
   const { setSelectedFlight: setFlightInStore } = useFlightBookingStore();
@@ -387,13 +389,13 @@ const FlightBookingFlow: React.FC = () => {
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center justify-between">
             {[
-              { step: 'search', label: 'Search' },
-              { step: 'results', label: 'Select Flight' },
-              { step: 'seats', label: 'Choose Seats' },
-              { step: 'meals', label: 'Select Meals' },
-              { step: 'baggage', label: 'Add Baggage' },
-              { step: 'passengers', label: 'Passenger Info' },
-              { step: 'payment', label: 'Payment' }
+              { step: 'search', label: t('bookingFlow.steps.search') },
+              { step: 'results', label: t('bookingFlow.steps.selectFlight') },
+              { step: 'seats', label: t('bookingFlow.steps.chooseSeats') },
+              { step: 'meals', label: t('bookingFlow.steps.selectMeals') },
+              { step: 'baggage', label: t('bookingFlow.steps.addBaggage') },
+              { step: 'passengers', label: t('bookingFlow.steps.passengerInfo') },
+              { step: 'payment', label: t('bookingFlow.steps.payment') }
             ].map(({ step, label }, index) => (
               <div
                 key={step}
@@ -454,12 +456,12 @@ const FlightBookingFlow: React.FC = () => {
                     <div>
                       <p className="text-blue-900 font-semibold">
                         {isSelectingReturnFlight
-                          ? 'Sélectionnez votre vol retour'
-                          : 'Sélectionnez votre vol aller'}
+                          ? t('roundTripIndicator.return')
+                          : t('roundTripIndicator.outbound')}
                       </p>
                       {selectedFlight && isSelectingReturnFlight && (
                         <p className="text-blue-700 text-sm">
-                          Vol aller sélectionné - Continuez avec le vol retour
+                          {t('roundTripIndicator.outboundSelected')}
                         </p>
                       )}
                     </div>
@@ -552,38 +554,38 @@ const FlightBookingFlow: React.FC = () => {
 
           {currentStep === 'payment' && (
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4">Payment Summary</h2>
-              
+              <h2 className="text-xl font-semibold mb-4">{t('payment.title')}</h2>
+
               {/* Price Breakdown */}
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
-                  <span>Base Flight Price</span>
+                  <span>{t('payment.baseFlightPrice')}</span>
                   <span>${selectedFlight?.price.total || 0}</span>
                 </div>
-                
+
                 {selectedSeats.length > 0 && (
                   <div className="flex justify-between">
-                    <span>Seat Selection Fees</span>
+                    <span>{t('payment.seatFees')}</span>
                     <span>+${selectedSeats.reduce((sum, seat) => sum + seat.price, 0)}</span>
                   </div>
                 )}
-                
+
                 {selectedMeals.length > 0 && (
                   <div className="flex justify-between">
-                    <span>Meal Fees</span>
+                    <span>{t('payment.mealFees')}</span>
                     <span>+${selectedMeals.reduce((sum, meal) => sum + meal.price, 0)}</span>
                   </div>
                 )}
-                
+
                 {selectedBaggage.length > 0 && (
                   <div className="flex justify-between">
-                    <span>Baggage Fees</span>
+                    <span>{t('payment.baggageFees')}</span>
                     <span>+${selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0)}</span>
                   </div>
                 )}
-                
+
                 <div className="border-t pt-3 flex justify-between font-bold text-lg">
-                  <span>Total Amount</span>
+                  <span>{t('payment.totalAmount')}</span>
                   <span>
                     ${(
                       parseFloat(selectedFlight?.price.total || '0') +
@@ -642,7 +644,7 @@ const FlightBookingFlow: React.FC = () => {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
-                  Add to Cart
+                  {t('payment.addToCart')}
                 </button>
 
                 {/* Pay Now Button */}
@@ -698,12 +700,14 @@ const FlightBookingFlow: React.FC = () => {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
-                  Pay Now - ${(
-                    parseFloat(selectedFlight?.price.total || '0') +
-                    selectedSeats.reduce((sum, seat) => sum + seat.price, 0) +
-                    selectedMeals.reduce((sum, meal) => sum + meal.price, 0) +
-                    selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0)
-                  ).toFixed(2)}
+                  {t('payment.payNow', {
+                    amount: (
+                      parseFloat(selectedFlight?.price.total || '0') +
+                      selectedSeats.reduce((sum, seat) => sum + seat.price, 0) +
+                      selectedMeals.reduce((sum, meal) => sum + meal.price, 0) +
+                      selectedBaggage.reduce((sum, baggage) => sum + baggage.price, 0)
+                    ).toFixed(2)
+                  })}
                 </button>
               </div>
             </div>

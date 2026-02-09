@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Settings, Edit2, Save, X, DollarSign, Globe, Plane, Bell } from 'lucide-react';
 import { UserProfile } from '../../services/dashboardService';
 
@@ -8,6 +9,7 @@ interface TravelPreferencesProps {
 }
 
 const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdateProfile }) => {
+  const { t } = useTranslation('dashboard');
   const [isEditing, setIsEditing] = useState(false);
   const [editedPreferences, setEditedPreferences] = useState(profile?.preferences || {
     preferredCurrency: 'USD',
@@ -51,7 +53,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Settings className="w-5 h-5 text-orange-500" />
-          <h3 className="text-lg font-semibold text-gray-800">Travel Preferences</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('travelPreferences.title')}</h3>
         </div>
         {!isEditing ? (
           <button
@@ -84,7 +86,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Currency</span>
+            <span className="text-sm font-medium text-gray-700">{t('travelPreferences.currency')}</span>
           </div>
           {isEditing ? (
             <select
@@ -107,7 +109,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Language</span>
+            <span className="text-sm font-medium text-gray-700">{t('travelPreferences.language')}</span>
           </div>
           {isEditing ? (
             <select
@@ -115,20 +117,20 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
               onChange={(e) => setEditedPreferences(prev => ({ ...prev, preferredLanguage: e.target.value }))}
               className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-              <option value="ja">Japanese</option>
+              <option value="en">{t('travelPreferences.languages.en')}</option>
+              <option value="es">{t('travelPreferences.languages.es')}</option>
+              <option value="fr">{t('travelPreferences.languages.fr')}</option>
+              <option value="de">{t('travelPreferences.languages.de')}</option>
+              <option value="ja">{t('travelPreferences.languages.ja')}</option>
             </select>
           ) : (
             <span className="text-sm text-gray-600">
-              {preferences.preferredLanguage === 'en' ? 'English' :
-               preferences.preferredLanguage === 'es' ? 'Spanish' :
-               preferences.preferredLanguage === 'fr' ? 'French' :
-               preferences.preferredLanguage === 'de' ? 'German' :
-               preferences.preferredLanguage === 'ja' ? 'Japanese' :
-               preferences.preferredLanguage?.toUpperCase() || 'English'}
+              {preferences.preferredLanguage === 'en' ? t('travelPreferences.languages.en') :
+               preferences.preferredLanguage === 'es' ? t('travelPreferences.languages.es') :
+               preferences.preferredLanguage === 'fr' ? t('travelPreferences.languages.fr') :
+               preferences.preferredLanguage === 'de' ? t('travelPreferences.languages.de') :
+               preferences.preferredLanguage === 'ja' ? t('travelPreferences.languages.ja') :
+               preferences.preferredLanguage?.toUpperCase() || t('travelPreferences.languages.en')}
             </span>
           )}
         </div>
@@ -137,7 +139,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Plane className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Travel Class</span>
+            <span className="text-sm font-medium text-gray-700">{t('travelPreferences.travelClass')}</span>
           </div>
           {isEditing ? (
             <select
@@ -145,9 +147,9 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
               onChange={(e) => setEditedPreferences(prev => ({ ...prev, travelClass: e.target.value as 'economy' | 'business' | 'first' }))}
               className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
-              <option value="economy">Economy</option>
-              <option value="business">Business</option>
-              <option value="first">First</option>
+              <option value="economy">{t('travelPreferences.classes.economy')}</option>
+              <option value="business">{t('travelPreferences.classes.business')}</option>
+              <option value="first">{t('travelPreferences.classes.first')}</option>
             </select>
           ) : (
             <span className="text-sm text-gray-600 capitalize">{preferences.travelClass}</span>
@@ -158,7 +160,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Settings className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Seat</span>
+            <span className="text-sm font-medium text-gray-700">{t('travelPreferences.seat')}</span>
           </div>
           {isEditing ? (
             <select
@@ -166,9 +168,9 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
               onChange={(e) => setEditedPreferences(prev => ({ ...prev, seatPreference: e.target.value as 'window' | 'aisle' | 'middle' }))}
               className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
-              <option value="window">Window</option>
-              <option value="aisle">Aisle</option>
-              <option value="middle">Middle</option>
+              <option value="window">{t('travelPreferences.seats.window')}</option>
+              <option value="aisle">{t('travelPreferences.seats.aisle')}</option>
+              <option value="middle">{t('travelPreferences.seats.middle')}</option>
             </select>
           ) : (
             <span className="text-sm text-gray-600 capitalize">{preferences.seatPreference}</span>
@@ -179,7 +181,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Budget Range</span>
+            <span className="text-sm font-medium text-gray-700">{t('travelPreferences.budgetRange')}</span>
           </div>
           {isEditing ? (
             <div className="flex items-center gap-2">
@@ -216,7 +218,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Settings className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Travel Style</span>
+            <span className="text-sm font-medium text-gray-700">{t('travelPreferences.travelStyle')}</span>
           </div>
           {isEditing ? (
             <select
@@ -224,9 +226,9 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
               onChange={(e) => setEditedPreferences(prev => ({ ...prev, travelStyle: e.target.value as 'luxury' | 'budget' | 'mid-range' }))}
               className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
-              <option value="budget">Budget</option>
-              <option value="mid-range">Mid-range</option>
-              <option value="luxury">Luxury</option>
+              <option value="budget">{t('travelPreferences.styles.budget')}</option>
+              <option value="mid-range">{t('travelPreferences.styles.midRange')}</option>
+              <option value="luxury">{t('travelPreferences.styles.luxury')}</option>
             </select>
           ) : (
             <span className="text-sm text-gray-600 capitalize">{preferences.travelStyle}</span>
@@ -237,7 +239,7 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 mb-3">
             <Bell className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Notifications</span>
+            <span className="text-sm font-medium text-gray-700">{t('travelPreferences.notifications')}</span>
           </div>
           <div className="space-y-2 ml-6">
             {Object.entries(preferences.notifications || {}).map(([key, value]) => (
@@ -272,14 +274,14 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
               onClick={handleCancel}
               className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
             >
-              Cancel
+              {t('travelPreferences.cancel')}
             </button>
             <button
               onClick={handleSave}
               disabled={isSaving}
               className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-colors"
             >
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? t('travelPreferences.saving') : t('travelPreferences.saveChanges')}
             </button>
           </div>
         </div>

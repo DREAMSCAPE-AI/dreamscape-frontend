@@ -1,9 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import HotelBookingFlow from '@/components/hotels/HotelBookingFlow';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
 export default function HotelsPage() {
+  const { t } = useTranslation('hotels');
   const navigate = useNavigate();
 
   return (
@@ -13,11 +15,11 @@ export default function HotelsPage() {
           <button
             onClick={() => navigate(-1)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Go back"
+            aria-label={t('page.ariaLabel.goBack')}
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold">Find Your Perfect Stay</h1>
+          <h1 className="text-2xl font-bold">{t('page.title')}</h1>
         </div>
         <HotelBookingFlow />
       </div>

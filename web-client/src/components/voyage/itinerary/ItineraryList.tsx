@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Plus, Calendar, MapPin, Trash2, Edit, Loader2 } from 'lucide-react';
 import { useItineraryStore } from '@/store/itineraryStore';
 import CreateItineraryModal from './CreateItineraryModal';
 import type { Itinerary } from '@/services/api/ItineraryService';
 
 const ItineraryList: React.FC = () => {
+  const { t } = useTranslation('planner');
   const navigate = useNavigate();
   const { itineraries, isLoading, fetchItineraries, deleteItinerary } = useItineraryStore();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -17,7 +19,7 @@ const ItineraryList: React.FC = () => {
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Are you sure you want to delete this itinerary?')) return;
+    if (!confirm(t('list.deleteConfirm'))) return;
 
     setDeletingId(id);
     try {
@@ -49,7 +51,7 @@ const ItineraryList: React.FC = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    return `${days} ${days === 1 ? 'day' : 'days'}`;
+    return `${days} ${t('list.day', { count: days })}`;
   };
 
   if (isLoading) {
@@ -65,9 +67,9 @@ const ItineraryList: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">My Itineraries</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('list.title')}</h2>
           <p className="text-gray-600 mt-1">
-            {itineraries.length} {itineraries.length === 1 ? 'trip' : 'trips'} planned
+            {t('list.tripsPlanned', { count: itineraries.length })}
           </p>
         </div>
         <button
@@ -75,7 +77,7 @@ const ItineraryList: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
         >
           <Plus className="w-5 h-5" />
-          <span>New Itinerary</span>
+          <span>{t('list.newItinerary')}</span>
         </button>
       </div>
 
@@ -86,17 +88,17 @@ const ItineraryList: React.FC = () => {
             <Calendar className="w-8 h-8 text-orange-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No itineraries yet
+            {t('list.emptyState.title')}
           </h3>
           <p className="text-gray-600 mb-6">
-            Start planning your next adventure by creating your first itinerary
+            {t('list.emptyState.description')}
           </p>
           <button
             onClick={handleCreateNew}
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
           >
             <Plus className="w-5 h-5" />
-            <span>Create Itinerary</span>
+            <span>{t('list.emptyState.createButton')}</span>
           </button>
         </div>
       )}
@@ -118,7 +120,7 @@ const ItineraryList: React.FC = () => {
                   </h3>
                   {itinerary.aiGenerated && (
                     <span className="ml-2 px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
-                      AI
+                      {t('list.aiGenerated')}
                     </span>
                   )}
                 </div>
@@ -150,7 +152,7 @@ const ItineraryList: React.FC = () => {
               {/* Card Footer */}
               <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                 <span className="text-sm text-gray-600">
-                  {itinerary.items?.length || 0} items
+                  {t('list.items', { count: itinerary.items?.length || 0 })}
                 </span>
                 <div className="flex items-center gap-2">
                   <button
@@ -159,7 +161,7 @@ const ItineraryList: React.FC = () => {
                       navigate(`/planner/${itinerary.id}/edit`);
                     }}
                     className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-                    title="Edit itinerary"
+                    title={t('list.editItinerary')}
                   >
                     <Edit className="w-4 h-4" />
                   </button>
@@ -167,7 +169,7 @@ const ItineraryList: React.FC = () => {
                     onClick={(e) => handleDelete(itinerary.id, e)}
                     disabled={deletingId === itinerary.id}
                     className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                    title="Delete itinerary"
+                    title={t('list.deleteItinerary')}
                   >
                     {deletingId === itinerary.id ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

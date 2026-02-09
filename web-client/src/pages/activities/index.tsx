@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import ActivityBookingFlow from '@/components/activities/ActivityBookingFlow';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
 export default function ActivitiesPage() {
+  const { t } = useTranslation('activities');
   const navigate = useNavigate();
 
   return (
@@ -12,11 +14,11 @@ export default function ActivitiesPage() {
           <button
             onClick={() => navigate(-1)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Go back"
+            aria-label={t('page.ariaLabel.goBack')}
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold">Find Your Activity</h1>
+          <h1 className="text-2xl font-bold">{t('page.title')}</h1>
         </div>
         <ActivityBookingFlow />
       </div>

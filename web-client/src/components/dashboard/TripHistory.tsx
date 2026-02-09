@@ -1,6 +1,7 @@
 import React from 'react';
 import { History, Calendar, MapPin, RefreshCw, Plane, Hotel, Car, MapPin as Activity, Star } from 'lucide-react';
 import { Booking } from '../../services/dashboardService';
+import { useTranslation } from 'react-i18next';
 
 interface TripHistoryProps {
   bookings: Booking[];
@@ -8,6 +9,8 @@ interface TripHistoryProps {
 }
 
 const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
+  const { t, i18n } = useTranslation('dashboard');
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'flight':
@@ -38,8 +41,8 @@ const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
+    return date.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US', {
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
@@ -56,18 +59,18 @@ const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <History className="w-5 h-5 text-orange-500" />
-          <h2 className="text-xl font-semibold text-gray-800">Trip History</h2>
+          <h2 className="text-xl font-semibold text-gray-800">{t('tripHistory.title')}</h2>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onRefresh}
             className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
-            title="Refresh trip history"
+            title={t('tripHistory.refreshHistory')}
           >
             <RefreshCw className="w-4 h-4" />
           </button>
           <button className="text-orange-500 hover:text-orange-600 transition-colors">
-            View All
+            {t('tripHistory.viewAll')}
           </button>
         </div>
       </div>
@@ -113,7 +116,7 @@ const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
                   <div className="flex items-center gap-2">
                     <button className="flex items-center gap-1 px-3 py-1 text-sm text-orange-500 hover:bg-orange-50 rounded-lg transition-colors">
                       <Star className="w-4 h-4" />
-                      Rate
+                      {t('tripHistory.rate')}
                     </button>
                   </div>
                 </div>
@@ -124,9 +127,9 @@ const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
       ) : (
         <div className="text-center py-8">
           <History className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No trip history</p>
+          <p className="text-gray-500">{t('tripHistory.noTrips')}</p>
           <p className="text-gray-400 text-sm mt-1">
-            Your completed trips will appear here
+            {t('tripHistory.noTripsHint')}
           </p>
         </div>
       )}
@@ -134,7 +137,7 @@ const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
       {completedBookings.length > 3 && (
         <div className="mt-6 text-center">
           <button className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
-            View All {completedBookings.length} Trips
+            {t('tripHistory.viewAllCount', { count: completedBookings.length })}
           </button>
         </div>
       )}
@@ -142,11 +145,11 @@ const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
       {completedBookings.length > 0 && (
         <div className="mt-6 pt-6 border-t border-gray-100">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Total trips completed:</span>
+            <span className="text-gray-600">{t('tripHistory.totalCompleted')}</span>
             <span className="font-semibold text-gray-800">{completedBookings.length}</span>
           </div>
           <div className="flex items-center justify-between text-sm mt-1">
-            <span className="text-gray-600">Total spent:</span>
+            <span className="text-gray-600">{t('tripHistory.totalSpent')}</span>
             <span className="font-semibold text-gray-800">
               ${completedBookings.reduce((sum, booking) => sum + booking.totalAmount, 0).toLocaleString()}
             </span>

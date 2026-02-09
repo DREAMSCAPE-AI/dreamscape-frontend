@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bookmark, Calendar, MapPin, RefreshCw, Plane, Hotel, Car, MapPin as Activity } from 'lucide-react';
 import { Booking } from '../../services/dashboardService';
 
@@ -8,6 +9,8 @@ interface SavedItinerariesProps {
 }
 
 const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh }) => {
+  const { t, i18n } = useTranslation('dashboard');
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'flight':
@@ -38,8 +41,8 @@ const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
+    return date.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US', {
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
@@ -50,18 +53,18 @@ const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Bookmark className="w-5 h-5 text-orange-500" />
-          <h2 className="text-xl font-semibold text-gray-800">Saved Itineraries</h2>
+          <h2 className="text-xl font-semibold text-gray-800">{t('savedItineraries.title')}</h2>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onRefresh}
             className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
-            title="Refresh bookings"
+            title={t('savedItineraries.refreshBookings')}
           >
             <RefreshCw className="w-4 h-4" />
           </button>
           <button className="text-orange-500 hover:text-orange-600 transition-colors">
-            View All
+            {t('savedItineraries.viewAll')}
           </button>
         </div>
       </div>
@@ -115,9 +118,9 @@ const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh
       ) : (
         <div className="text-center py-8">
           <Bookmark className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No saved itineraries</p>
+          <p className="text-gray-500">{t('savedItineraries.noItineraries')}</p>
           <p className="text-gray-400 text-sm mt-1">
-            Your saved trips and bookings will appear here
+            {t('savedItineraries.noItinerariesHint')}
           </p>
         </div>
       )}
@@ -125,7 +128,7 @@ const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh
       {bookings.length > 3 && (
         <div className="mt-6 text-center">
           <button className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
-            View All {bookings.length} Itineraries
+            {t('savedItineraries.viewAllCount', { count: bookings.length })}
           </button>
         </div>
       )}

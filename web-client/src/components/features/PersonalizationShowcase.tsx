@@ -1,32 +1,35 @@
 import React from 'react';
 import { Brain, Zap, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import SectionTitle from '../shared/SectionTitle';
 
-const benefits = [
-  {
-    icon: <Brain className="w-12 h-12 text-orange-400" />,
-    title: "AI-Powered Recommendations",
-    description: "Get personalized suggestions based on your preferences and travel history"
-  },
-  {
-    icon: <Zap className="w-12 h-12 text-cyan-400" />,
-    title: "Real-Time Personalization",
-    description: "Experience dynamic adjustments as you explore and interact"
-  },
-  {
-    icon: <Calendar className="w-12 h-12 text-pink-400" />,
-    title: "Seamless Booking Experience",
-    description: "Book your perfect trip with just a few clicks"
-  }
-];
-
 const PersonalizationShowcase = () => {
+  const { t } = useTranslation('common');
+
+  const benefits = [
+    {
+      icon: <Brain className="w-12 h-12 text-orange-400" />,
+      title: t('home.aiRecommendations'),
+      description: t('home.aiRecommendationsDesc')
+    },
+    {
+      icon: <Zap className="w-12 h-12 text-cyan-400" />,
+      title: t('home.realTimePersonalization'),
+      description: t('home.realTimePersonalizationDesc')
+    },
+    {
+      icon: <Calendar className="w-12 h-12 text-pink-400" />,
+      title: t('home.seamlessBooking'),
+      description: t('home.seamlessBookingDesc')
+    }
+  ];
+
   return (
     <section className="py-20 bg-gradient-to-b from-amber-50 to-sky-50">
       <div className="container mx-auto px-4">
-        <SectionTitle 
-          title="Travel Tailored to You"
-          subtitle="Experience travel like never before"
+        <SectionTitle
+          title={t('home.travelTailored')}
+          subtitle={t('home.travelTailoredSubtitle')}
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
           {benefits.map((benefit, index) => (
@@ -41,7 +44,7 @@ const PersonalizationShowcase = () => {
         </div>
         <div className="text-center mt-12">
           <button className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity">
-            How It Works
+            {t('home.howItWorks')}
           </button>
         </div>
       </div>

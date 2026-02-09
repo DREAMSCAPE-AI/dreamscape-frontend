@@ -2,6 +2,7 @@
  * CartSummary - Cart summary with total price and checkout button
  */
 
+import { useTranslation } from 'react-i18next';
 import { ShoppingBag, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -24,6 +25,7 @@ export const CartSummary = ({
   onExtendExpiry,
   isCheckingOut,
 }: CartSummaryProps) => {
+  const { t } = useTranslation('checkout');
   const [timeRemaining, setTimeRemaining] = useState<string>('');
   const [isExpiringSoon, setIsExpiringSoon] = useState(false);
 
@@ -36,7 +38,7 @@ export const CartSummary = ({
       const diff = expiry - now;
 
       if (diff <= 0) {
-        setTimeRemaining('Expired');
+        setTimeRemaining(t('cart.summary.expired', 'Expired'));
         setIsExpiringSoon(true);
         return;
       }
@@ -64,7 +66,7 @@ export const CartSummary = ({
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
             <span className="text-sm font-medium">
-              Cart expires in: {timeRemaining}
+              {t('cart.summary.expiresIn', 'Cart expires in')}: {timeRemaining}
             </span>
           </div>
           {isExpiringSoon && (
@@ -72,7 +74,7 @@ export const CartSummary = ({
               onClick={onExtendExpiry}
               className="text-xs font-semibold underline hover:no-underline"
             >
-              Extend
+              {t('cart.summary.extend', 'Extend')}
             </button>
           )}
         </div>
@@ -81,7 +83,7 @@ export const CartSummary = ({
       {/* Summary */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-gray-600">
-          <span>Items ({itemCount})</span>
+          <span>{t('cart.summary.items', 'Items')} ({itemCount})</span>
           <span>{currency} {Number(totalPrice).toFixed(2)}</span>
         </div>
 
@@ -93,7 +95,7 @@ export const CartSummary = ({
 
         <div className="pt-2 border-t border-gray-300">
           <div className="flex justify-between items-center">
-            <span className="text-lg font-bold text-gray-900">Total</span>
+            <span className="text-lg font-bold text-gray-900">{t('cart.summary.total', 'Total')}</span>
             <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
               {currency} {Number(totalPrice).toFixed(2)}
             </span>
@@ -110,19 +112,19 @@ export const CartSummary = ({
         {isCheckingOut ? (
           <>
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            Processing...
+            {t('cart.summary.processing', 'Processing...')}
           </>
         ) : (
           <>
             <ShoppingBag className="w-5 h-5" />
-            Proceed to Checkout
+            {t('cart.summary.checkout', 'Proceed to Checkout')}
           </>
         )}
       </button>
 
       {/* Security Message */}
       <p className="text-xs text-center text-gray-500">
-        🔒 Secure checkout with encryption
+        {t('cart.summary.secure', '🔒 Secure checkout with encryption')}
       </p>
     </div>
   );

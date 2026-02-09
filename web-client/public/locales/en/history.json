@@ -1,0 +1,68 @@
+{
+  "page": {
+    "title": "History",
+    "subtitle": "View and manage your activity",
+    "goBack": "Go back",
+    "clearAll": "Clear All"
+  },
+  "filters": {
+    "title": "Filters",
+    "actionType": "Action Type",
+    "category": "Category",
+    "allActions": "All Actions",
+    "allCategories": "All Categories"
+  },
+  "actions": {
+    "viewed": "Viewed",
+    "searched": "Searched",
+    "favorited": "Favorited",
+    "unfavorited": "Unfavorited",
+    "created": "Created",
+    "updated": "Updated",
+    "deleted": "Deleted"
+  },
+  "categories": {
+    "hotels": "Hotels",
+    "flights": "Flights",
+    "destinations": "Destinations",
+    "bookings": "Bookings",
+    "activities": "Activities",
+    "searches": "Searches",
+    "favorites": "Favorites"
+  },
+  "emptyState": {
+    "title": "No history yet",
+    "description": "Your activity will appear here as you explore DreamScape.",
+    "noMatch": "No activity matches your filters. Try adjusting them."
+  },
+  "deleteConfirm": {
+    "title": "Delete Entry",
+    "message": "Are you sure you want to delete this history entry? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "clearConfirm": {
+    "title": "Clear History",
+    "message": "Are you sure you want to clear all your history? This action cannot be undone.",
+    "messageFiltered": "Are you sure you want to clear all {{type}} history? This action cannot be undone.",
+    "cancel": "Cancel",
+    "clearAll": "Clear All"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minuteAgo": "{{count}} minute ago",
+    "minuteAgo_other": "{{count}} minutes ago",
+    "hourAgo": "{{count}} hour ago",
+    "hourAgo_other": "{{count}} hours ago",
+    "dayAgo": "{{count}} day ago",
+    "dayAgo_other": "{{count}} days ago"
+  },
+  "pagination": {
+    "showing": "Showing {{from}} to {{to}} of {{total}} entries",
+    "page": "Page {{current}} of {{total}}",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "loading": "Loading your history...",
+  "deleteEntry": "Delete entry"
+}

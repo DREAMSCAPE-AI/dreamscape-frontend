@@ -3,10 +3,12 @@
  * Step 6 of flight booking workflow
  */
 
+import { useTranslation } from 'react-i18next';
 import { useFlightBookingStore, PassengerInfo, ContactInfo } from '@/store/flightBookingStore';
 import { User, Mail, Phone } from 'lucide-react';
 
 export default function FlightPassengerInfo() {
+  const { t } = useTranslation('flights');
   const { passengers, contactInfo, updatePassenger, setContactInfo } = useFlightBookingStore();
 
   const handlePassengerChange = (passengerId: string, field: keyof PassengerInfo, value: string) => {
@@ -22,7 +24,7 @@ export default function FlightPassengerInfo() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Passenger Information</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('passengerInfo.title')}</h2>
 
       {/* Info Banner */}
       <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -39,10 +41,9 @@ export default function FlightPassengerInfo() {
             />
           </svg>
           <div>
-            <h3 className="font-semibold text-yellow-900 mb-1">Important</h3>
+            <h3 className="font-semibold text-yellow-900 mb-1">{t('passengerInfo.importantTitle')}</h3>
             <p className="text-sm text-yellow-800">
-              Please ensure all passenger names match exactly as they appear on government-issued ID or passport.
-              For international flights, passport information is required.
+              {t('passengerInfo.importantText')}
             </p>
           </div>
         </div>
@@ -61,7 +62,7 @@ export default function FlightPassengerInfo() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Passenger {index + 1}
+                  {t('passengerInfo.passenger', { number: index + 1 })}
                 </h3>
                 <p className="text-sm text-gray-600 capitalize">{passenger.type}</p>
               </div>
@@ -71,7 +72,7 @@ export default function FlightPassengerInfo() {
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Title <span className="text-red-500">*</span>
+                  {t('passengerInfo.title_field')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={passenger.title}
@@ -79,24 +80,24 @@ export default function FlightPassengerInfo() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   required
                 >
-                  <option value="Mr">Mr</option>
-                  <option value="Ms">Ms</option>
-                  <option value="Mrs">Mrs</option>
-                  <option value="Dr">Dr</option>
+                  <option value="Mr">{t('passengerInfo.titleOptions.mr')}</option>
+                  <option value="Ms">{t('passengerInfo.titleOptions.ms')}</option>
+                  <option value="Mrs">{t('passengerInfo.titleOptions.mrs')}</option>
+                  <option value="Dr">{t('passengerInfo.titleOptions.dr')}</option>
                 </select>
               </div>
 
               {/* First Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name <span className="text-red-500">*</span>
+                  {t('passengerInfo.firstName')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={passenger.firstName}
                   onChange={(e) => handlePassengerChange(passenger.id, 'firstName', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="First Name"
+                  placeholder={t('passengerInfo.firstName')}
                   required
                 />
               </div>
@@ -104,14 +105,14 @@ export default function FlightPassengerInfo() {
               {/* Last Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name <span className="text-red-500">*</span>
+                  {t('passengerInfo.lastName')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={passenger.lastName}
                   onChange={(e) => handlePassengerChange(passenger.id, 'lastName', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="Last Name"
+                  placeholder={t('passengerInfo.lastName')}
                   required
                 />
               </div>
@@ -119,7 +120,7 @@ export default function FlightPassengerInfo() {
               {/* Date of Birth */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Date of Birth <span className="text-red-500">*</span>
+                  {t('passengerInfo.dateOfBirth')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -133,14 +134,14 @@ export default function FlightPassengerInfo() {
               {/* Nationality */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nationality <span className="text-red-500">*</span>
+                  {t('passengerInfo.nationality')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={passenger.nationality}
                   onChange={(e) => handlePassengerChange(passenger.id, 'nationality', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="e.g., United States"
+                  placeholder={t('passengerInfo.nationalityPlaceholder')}
                   required
                 />
               </div>
@@ -148,14 +149,14 @@ export default function FlightPassengerInfo() {
               {/* Passport Number (Optional for domestic) */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Passport Number
+                  {t('passengerInfo.passportNumber')}
                 </label>
                 <input
                   type="text"
                   value={passenger.passportNumber || ''}
                   onChange={(e) => handlePassengerChange(passenger.id, 'passportNumber', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="Optional for domestic flights"
+                  placeholder={t('passengerInfo.passportPlaceholder')}
                 />
               </div>
 
@@ -163,7 +164,7 @@ export default function FlightPassengerInfo() {
               {passenger.passportNumber && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Passport Expiry Date
+                    {t('passengerInfo.passportExpiry')}
                   </label>
                   <input
                     type="date"
@@ -178,14 +179,14 @@ export default function FlightPassengerInfo() {
               {/* Frequent Flyer Number */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Frequent Flyer Number
+                  {t('passengerInfo.frequentFlyer')}
                 </label>
                 <input
                   type="text"
                   value={passenger.frequentFlyerNumber || ''}
                   onChange={(e) => handlePassengerChange(passenger.id, 'frequentFlyerNumber', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="Optional"
+                  placeholder={t('passengerInfo.frequentFlyerPlaceholder')}
                 />
               </div>
             </div>
@@ -197,25 +198,25 @@ export default function FlightPassengerInfo() {
       <div className="bg-white rounded-lg p-6 border-2 border-orange-300">
         <div className="flex items-center gap-3 mb-4">
           <Mail className="w-6 h-6 text-orange-500" />
-          <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('passengerInfo.contactInfo')}</h3>
         </div>
 
         <p className="text-sm text-gray-600 mb-4">
-          We'll send your booking confirmation and flight updates to this email and phone number.
+          {t('passengerInfo.contactText')}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address <span className="text-red-500">*</span>
+              {t('passengerInfo.email')} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               value={contactInfo?.email || ''}
               onChange={(e) => handleContactChange('email', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="your.email@example.com"
+              placeholder={t('passengerInfo.emailPlaceholder')}
               required
             />
           </div>
@@ -223,14 +224,14 @@ export default function FlightPassengerInfo() {
           {/* Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone Number <span className="text-red-500">*</span>
+              {t('passengerInfo.phone')} <span className="text-red-500">*</span>
             </label>
             <input
               type="tel"
               value={contactInfo?.phone || ''}
               onChange={(e) => handleContactChange('phone', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="+1 (555) 123-4567"
+              placeholder={t('passengerInfo.phonePlaceholder')}
               required
             />
           </div>
@@ -240,7 +241,7 @@ export default function FlightPassengerInfo() {
       {/* Required Fields Notice */}
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-500">
-          <span className="text-red-500">*</span> Required fields
+          <span className="text-red-500">*</span> {t('passengerInfo.requiredFields')}
         </p>
       </div>
     </div>

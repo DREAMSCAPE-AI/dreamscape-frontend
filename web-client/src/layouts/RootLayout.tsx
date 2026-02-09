@@ -4,11 +4,13 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart';
 import { useAuth } from '@/services/auth/AuthService';
+import { useLanguageSync } from '@/i18n/useLanguageSync';
 
 export default function RootLayout() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  useLanguageSync();
 
   const handleLogout = () => {
     logout();

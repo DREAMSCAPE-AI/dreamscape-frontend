@@ -5,11 +5,13 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Heart, Plane, Building2, Compass, Calendar, Trash2, Filter } from 'lucide-react';
 import FavoritesService, { Favorite, FavoriteType } from '@/services/api/FavoritesService';
 import { useAuth } from '@/services/auth/AuthService';
 
 const FavoritesPage = () => {
+  const { t } = useTranslation('favorites');
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -20,11 +22,11 @@ const FavoritesPage = () => {
 
   // Filter options
   const filterOptions = [
-    { value: 'ALL', label: 'All Favorites', icon: Heart },
-    { value: FavoriteType.FLIGHT, label: 'Flights', icon: Plane },
-    { value: FavoriteType.HOTEL, label: 'Hotels', icon: Building2 },
-    { value: FavoriteType.ACTIVITY, label: 'Activities', icon: Compass },
-    { value: FavoriteType.DESTINATION, label: 'Destinations', icon: Calendar },
+    { value: 'ALL', label: t('filters.all'), icon: Heart },
+    { value: FavoriteType.FLIGHT, label: t('filters.flights'), icon: Plane },
+    { value: FavoriteType.HOTEL, label: t('filters.hotels'), icon: Building2 },
+    { value: FavoriteType.ACTIVITY, label: t('filters.activities'), icon: Compass },
+    { value: FavoriteType.DESTINATION, label: t('filters.destinations'), icon: Calendar },
   ];
 
   // Load favorites
@@ -44,7 +46,7 @@ const FavoritesPage = () => {
         setFavorites(response.data);
       } catch (err: any) {
         console.error('[FavoritesPage] Error loading favorites:', err);
-        setError('Failed to load favorites. Please try again.');
+        setError(t('errors.loadFailed'));
       } finally {
         setIsLoading(false);
       }
@@ -60,7 +62,7 @@ const FavoritesPage = () => {
       setFavorites(favorites.filter((fav) => fav.id !== id));
     } catch (err) {
       console.error('[FavoritesPage] Error deleting favorite:', err);
-      setError('Failed to delete favorite. Please try again.');
+      setError(t('errors.deleteFailed'));
     }
   };
 
@@ -80,7 +82,7 @@ const FavoritesPage = () => {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">
-                {favorite.entityData?.title || favorite.entityData?.name || 'Untitled'}
+                {favorite.entityData?.title || favorite.entityData?.name || t('card.untitled')}
               </h3>
               <span className="text-xs text-gray-500 capitalize">{favorite.entityType.toLowerCase()}</span>
             </div>
@@ -88,7 +90,7 @@ const FavoritesPage = () => {
           <button
             onClick={() => handleDelete(favorite.id)}
             className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-            title="Remove from favorites"
+            title={t('card.removeFromFavorites')}
           >
             <Trash2 className="w-5 h-5" />
           </button>
@@ -99,12 +101,12 @@ const FavoritesPage = () => {
           {favorite.entityType === FavoriteType.FLIGHT && favorite.entityData && (
             <>
               <p>
-                <span className="font-medium">Route:</span> {favorite.entityData.origin} →{' '}
+                <span className="font-medium">{t('card.route')}:</span> {favorite.entityData.origin} →{' '}
                 {favorite.entityData.destination}
               </p>
               {favorite.entityData.price && (
                 <p>
-                  <span className="font-medium">Price:</span> {favorite.entityData.currency}{' '}
+                  <span className="font-medium">{t('card.price')}:</span> {favorite.entityData.currency}{' '}
                   {favorite.entityData.price.toFixed(2)}
                 </p>
               )}
@@ -115,13 +117,15 @@ const FavoritesPage = () => {
             <>
               {favorite.entityData.location && (
                 <p>
-                  <span className="font-medium">Location:</span> {favorite.entityData.location}
+                  <span className="font-medium">{t('card.location')}:</span> {favorite.entityData.location}
                 </p>
               )}
               {favorite.entityData.pricePerNight && (
                 <p>
-                  <span className="font-medium">Price:</span> {favorite.entityData.currency}{' '}
-                  {favorite.entityData.pricePerNight.toFixed(2)}/night
+                  <span className="font-medium">{t('card.price')}:</span>{' '}
+                  {t('card.pricePerNight', {
+                    price: `${favorite.entityData.currency} ${favorite.entityData.pricePerNight.toFixed(2)}`
+                  })}
                 </p>
               )}
             </>
@@ -131,12 +135,12 @@ const FavoritesPage = () => {
             <>
               {favorite.entityData.location && (
                 <p>
-                  <span className="font-medium">Location:</span> {favorite.entityData.location}
+                  <span className="font-medium">{t('card.location')}:</span> {favorite.entityData.location}
                 </p>
               )}
               {favorite.entityData.price && (
                 <p>
-                  <span className="font-medium">Price:</span> {favorite.entityData.currency}{' '}
+                  <span className="font-medium">{t('card.price')}:</span> {favorite.entityData.currency}{' '}
                   {favorite.entityData.price.toFixed(2)}
                 </p>
               )}
@@ -159,7 +163,7 @@ const FavoritesPage = () => {
 
         {/* Added date */}
         <div className="mt-3 text-xs text-gray-400">
-          Added {new Date(favorite.createdAt).toLocaleDateString()}
+          {t('card.added')} {new Date(favorite.createdAt).toLocaleDateString()}
         </div>
       </div>
     );
@@ -176,9 +180,9 @@ const FavoritesPage = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
             <Heart className="w-8 h-8 text-pink-500 fill-pink-500" />
-            My Favorites
+            {t('page.title')}
           </h1>
-          <p className="text-gray-600">Save and organize your favorite travel options</p>
+          <p className="text-gray-600">{t('page.subtitle')}</p>
         </div>
 
         {/* Filters */}
@@ -221,13 +225,13 @@ const FavoritesPage = () => {
         {!isLoading && favorites.length === 0 && (
           <div className="text-center py-20">
             <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">No favorites yet</h3>
-            <p className="text-gray-500 mb-6">Start adding items to your favorites to see them here</p>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('emptyState.title')}</h3>
+            <p className="text-gray-500 mb-6">{t('emptyState.description')}</p>
             <button
               onClick={() => navigate('/destinations')}
               className="px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-pink-600 transition-colors"
             >
-              Explore Destinations
+              {t('emptyState.exploreButton')}
             </button>
           </div>
         )}

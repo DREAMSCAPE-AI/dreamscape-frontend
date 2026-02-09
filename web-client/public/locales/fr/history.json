@@ -1,0 +1,68 @@
+{
+  "page": {
+    "title": "Historique",
+    "subtitle": "Consultez et gérez votre activité",
+    "goBack": "Retour",
+    "clearAll": "Tout Effacer"
+  },
+  "filters": {
+    "title": "Filtres",
+    "actionType": "Type d'Action",
+    "category": "Catégorie",
+    "allActions": "Toutes les Actions",
+    "allCategories": "Toutes les Catégories"
+  },
+  "actions": {
+    "viewed": "Consulté",
+    "searched": "Recherché",
+    "favorited": "Ajouté aux favoris",
+    "unfavorited": "Retiré des favoris",
+    "created": "Créé",
+    "updated": "Modifié",
+    "deleted": "Supprimé"
+  },
+  "categories": {
+    "hotels": "Hôtels",
+    "flights": "Vols",
+    "destinations": "Destinations",
+    "bookings": "Réservations",
+    "activities": "Activités",
+    "searches": "Recherches",
+    "favorites": "Favoris"
+  },
+  "emptyState": {
+    "title": "Aucun historique pour le moment",
+    "description": "Votre activité apparaîtra ici au fur et à mesure que vous explorez DreamScape.",
+    "noMatch": "Aucune activité ne correspond à vos filtres. Essayez de les ajuster."
+  },
+  "deleteConfirm": {
+    "title": "Supprimer l'Entrée",
+    "message": "Êtes-vous sûr de vouloir supprimer cette entrée de l'historique ? Cette action ne peut pas être annulée.",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
+  },
+  "clearConfirm": {
+    "title": "Effacer l'Historique",
+    "message": "Êtes-vous sûr de vouloir effacer tout votre historique ? Cette action ne peut pas être annulée.",
+    "messageFiltered": "Êtes-vous sûr de vouloir effacer tout l'historique de {{type}} ? Cette action ne peut pas être annulée.",
+    "cancel": "Annuler",
+    "clearAll": "Tout Effacer"
+  },
+  "time": {
+    "justNow": "À l'instant",
+    "minuteAgo": "Il y a {{count}} minute",
+    "minuteAgo_other": "Il y a {{count}} minutes",
+    "hourAgo": "Il y a {{count}} heure",
+    "hourAgo_other": "Il y a {{count}} heures",
+    "dayAgo": "Il y a {{count}} jour",
+    "dayAgo_other": "Il y a {{count}} jours"
+  },
+  "pagination": {
+    "showing": "Affichage de {{from}} à {{to}} sur {{total}} entrées",
+    "page": "Page {{current}} sur {{total}}",
+    "previous": "Page précédente",
+    "next": "Page suivante"
+  },
+  "loading": "Chargement de votre historique...",
+  "deleteEntry": "Supprimer l'entrée"
+}

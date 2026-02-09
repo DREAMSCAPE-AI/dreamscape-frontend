@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Shield, Check, AlertCircle, Clock } from 'lucide-react';
 import GdprService, { UserConsent, ConsentHistory } from '@/services/api/GdprService';
 
 const ConsentManager: React.FC = () => {
+  const { t } = useTranslation('gdpr');
   const [consent, setConsent] = useState<UserConsent | null>(null);
   const [history, setHistory] = useState<ConsentHistory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ const ConsentManager: React.FC = () => {
       }
     } catch (err) {
       console.error('[ConsentManager] Failed to load consent data:', err);
-      showMessage('error', 'Failed to load consent settings');
+      showMessage('error', t('consent.updateError'));
     } finally {
       setLoading(false);
     }
@@ -50,7 +52,7 @@ const ConsentManager: React.FC = () => {
 
       if (response.success && response.data) {
         setConsent(response.data);
-        showMessage('success', response.message || 'Consent updated successfully');
+        showMessage('success', response.message || t('consent.updateSuccess'));
 
         // Reload history to show the new change
         const historyResponse = await GdprService.getConsentHistory();
@@ -60,7 +62,7 @@ const ConsentManager: React.FC = () => {
       }
     } catch (err: any) {
       console.error('[ConsentManager] Failed to update consent:', err);
-      showMessage('error', err?.response?.data?.message || 'Failed to update consent');
+      showMessage('error', err?.response?.data?.message || t('consent.updateError'));
     } finally {
       setUpdating(false);
     }
@@ -77,19 +79,19 @@ const ConsentManager: React.FC = () => {
   };
 
   const getChangedFields = (historyItem: ConsentHistory, prevItem?: ConsentHistory) => {
-    if (!prevItem) return ['Initial consent'];
+    if (!prevItem) return [t('consent.history.initial')];
 
     const changes: string[] = [];
     if (historyItem.analytics !== prevItem.analytics) {
-      changes.push(`Analytics: ${historyItem.analytics ? 'enabled' : 'disabled'}`);
+      changes.push(historyItem.analytics ? t('consent.history.analyticsEnabled') : t('consent.history.analyticsDisabled'));
     }
     if (historyItem.marketing !== prevItem.marketing) {
-      changes.push(`Marketing: ${historyItem.marketing ? 'enabled' : 'disabled'}`);
+      changes.push(historyItem.marketing ? t('consent.history.marketingEnabled') : t('consent.history.marketingDisabled'));
     }
     if (historyItem.preferences !== prevItem.preferences) {
-      changes.push(`Preferences: ${historyItem.preferences ? 'enabled' : 'disabled'}`);
+      changes.push(historyItem.preferences ? t('consent.history.preferencesEnabled') : t('consent.history.preferencesDisabled'));
     }
-    return changes.length > 0 ? changes : ['No changes'];
+    return changes.length > 0 ? changes : [t('consent.history.noChanges')];
   };
 
   if (loading) {
@@ -98,7 +100,7 @@ const ConsentManager: React.FC = () => {
         <div className="flex items-center justify-center py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto mb-3"></div>
-            <p className="text-gray-600 text-sm">Loading consent settings...</p>
+            <p className="text-gray-600 text-sm">{t('consent.loading')}</p>
           </div>
         </div>
       </div>
@@ -110,9 +112,9 @@ const ConsentManager: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-3 text-orange-600 mb-4">
           <AlertCircle className="w-6 h-6" />
-          <h2 className="text-lg font-semibold">No Consent Data</h2>
+          <h2 className="text-lg font-semibold">{t('consent.noData')}</h2>
         </div>
-        <p className="text-gray-600">Unable to load your consent settings. Please try again later.</p>
+        <p className="text-gray-600">{t('consent.noDataDescription')}</p>
       </div>
     );
   }
@@ -123,7 +125,7 @@ const ConsentManager: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-6">
           <Shield className="w-6 h-6 text-orange-500" />
-          <h2 className="text-lg font-semibold">Consent Management</h2>
+          <h2 className="text-lg font-semibold">{t('consent.title')}</h2>
         </div>
 
         {/* Message Toast */}
@@ -149,13 +151,13 @@ const ConsentManager: React.FC = () => {
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-medium text-gray-900">Functional Cookies</h3>
+                <h3 className="font-medium text-gray-900">{t('consent.functional.title')}</h3>
                 <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                  Required
+                  {t('consent.functional.required')}
                 </span>
               </div>
               <p className="text-sm text-gray-600">
-                Essential for the website to function properly. Cannot be disabled.
+                {t('consent.functional.description')}
               </p>
             </div>
             <div className="ml-4 flex items-center">
@@ -170,9 +172,9 @@ const ConsentManager: React.FC = () => {
           {/* Analytics */}
           <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
             <div className="flex-1">
-              <h3 className="font-medium text-gray-900 mb-1">Analytics Cookies</h3>
+              <h3 className="font-medium text-gray-900 mb-1">{t('consent.analytics.title')}</h3>
               <p className="text-sm text-gray-600">
-                Help us understand how visitors interact with our website to improve your experience.
+                {t('consent.analytics.description')}
               </p>
             </div>
             <div className="ml-4 flex items-center">
@@ -194,9 +196,9 @@ const ConsentManager: React.FC = () => {
           {/* Marketing */}
           <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
             <div className="flex-1">
-              <h3 className="font-medium text-gray-900 mb-1">Marketing Cookies</h3>
+              <h3 className="font-medium text-gray-900 mb-1">{t('consent.marketing.title')}</h3>
               <p className="text-sm text-gray-600">
-                Used to deliver personalized advertisements and track campaign performance.
+                {t('consent.marketing.description')}
               </p>
             </div>
             <div className="ml-4 flex items-center">
@@ -218,9 +220,9 @@ const ConsentManager: React.FC = () => {
           {/* Preferences */}
           <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
             <div className="flex-1">
-              <h3 className="font-medium text-gray-900 mb-1">Preference Cookies</h3>
+              <h3 className="font-medium text-gray-900 mb-1">{t('consent.preferences.title')}</h3>
               <p className="text-sm text-gray-600">
-                Remember your settings and preferences for a better experience.
+                {t('consent.preferences.description')}
               </p>
             </div>
             <div className="ml-4 flex items-center">
@@ -241,7 +243,7 @@ const ConsentManager: React.FC = () => {
         </div>
 
         <div className="mt-4 text-xs text-gray-500">
-          Last updated: {formatDate(consent.lastUpdatedAt)}
+          {t('consent.lastUpdated')}: {formatDate(consent.lastUpdatedAt)}
         </div>
       </div>
 
@@ -250,7 +252,7 @@ const ConsentManager: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-4">
             <Clock className="w-5 h-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Consent History</h3>
+            <h3 className="text-lg font-semibold">{t('consent.history.title')}</h3>
           </div>
           <div className="space-y-3">
             {history.slice(0, 5).map((item, index) => {
@@ -272,7 +274,7 @@ const ConsentManager: React.FC = () => {
                     </div>
                     {item.changeReason && (
                       <div className="text-gray-500 text-xs mt-1 italic">
-                        Reason: {item.changeReason}
+                        {t('consent.history.reason')}: {item.changeReason}
                       </div>
                     )}
                   </div>
@@ -282,7 +284,7 @@ const ConsentManager: React.FC = () => {
           </div>
           {history.length > 5 && (
             <div className="mt-3 text-center text-sm text-gray-500">
-              Showing 5 of {history.length} changes
+              {t('consent.history.showing')} 5 {t('consent.history.of')} {history.length} {t('consent.history.changes')}
             </div>
           )}
         </div>

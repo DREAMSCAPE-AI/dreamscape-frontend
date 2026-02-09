@@ -1,5 +1,6 @@
 import React from 'react';
 import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee, Loader } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { FlightOffer } from '@/services/api/types';
 import airlineService from '@/services/airlineService';
 import { FavoriteButton } from '@/components/favorites';
@@ -22,6 +23,8 @@ const FlightResults: React.FC<FlightResultsProps> = ({
   onLoadMore,
   loadingMore
 }) => {
+  const { t } = useTranslation('flights');
+
   const formatDuration = (duration: string) => {
     // Convert ISO duration to readable format
     const hours = duration.match(/(\d+)H/)?.[1] || '0';
@@ -153,11 +156,11 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                       </span>
                       {flight.oneWay ? (
                         <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
-                          One Way
+                          {t('results.oneWay')}
                         </span>
                       ) : (
                         <span className="px-2 py-1 bg-green-50 text-green-600 rounded-full text-xs font-medium">
-                          Round Trip
+                          {t('results.roundTrip')}
                         </span>
                       )}
                     </div>
@@ -176,7 +179,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                         </div>
                         {firstSegment.departure.terminal && (
                           <div className="text-xs text-gray-500">
-                            Terminal {firstSegment.departure.terminal}
+                            {t('results.terminal', { number: firstSegment.departure.terminal })}
                           </div>
                         )}
                       </div>
@@ -192,7 +195,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                           </div>
                         </div>
                         <div className="text-xs text-gray-500 mt-2">
-                          {firstSegment.numberOfStops === 0 ? 'Direct' : `${firstSegment.numberOfStops} stop${firstSegment.numberOfStops > 1 ? 's' : ''}`}
+                          {firstSegment.numberOfStops === 0 ? t('results.direct') : firstSegment.numberOfStops === 1 ? t('results.stops.one') : t('results.stops.multiple', { count: firstSegment.numberOfStops })}
                         </div>
                       </div>
 
@@ -208,7 +211,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                         </div>
                         {firstSegment.arrival.terminal && (
                           <div className="text-xs text-gray-500">
-                            Terminal {firstSegment.arrival.terminal}
+                            {t('results.terminal', { number: firstSegment.arrival.terminal })}
                           </div>
                         )}
                       </div>
@@ -232,7 +235,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                       <div>•</div>
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
-                        <span>{flight.numberOfBookableSeats} seats left</span>
+                        <span>{t('results.seatsLeft', { count: flight.numberOfBookableSeats })}</span>
                       </div>
                     </div>
                   </div>
@@ -246,10 +249,10 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                         {flight.price.currency} {flight.price.total}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-500">per person</div>
+                    <div className="text-sm text-gray-500">{t('results.perPerson')}</div>
                     {flight.price.fees && flight.price.fees.length > 0 && (
                       <div className="text-xs text-gray-400 mt-1">
-                        + taxes & fees
+                        {t('results.taxesAndFees')}
                       </div>
                     )}
                   </div>
@@ -258,7 +261,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                       onClick={() => onSelect(flight)}
                       className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold shadow-lg"
                     >
-                      View Details
+                      {t('results.viewDetailsButton')}
                     </button>
                   </div>
                 </div>
@@ -274,19 +277,19 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                     {amenities.includes('WiFi') && (
                       <div className="flex items-center gap-1 text-blue-600">
                         <Wifi className="w-4 h-4" />
-                        <span>WiFi</span>
+                        <span>{t('results.amenities.wifi')}</span>
                       </div>
                     )}
                     {amenities.includes('Entertainment') && (
                       <div className="flex items-center gap-1 text-purple-600">
                         <Star className="w-4 h-4" />
-                        <span>Entertainment</span>
+                        <span>{t('results.amenities.entertainment')}</span>
                       </div>
                     )}
                     {amenities.includes('Meals') && (
                       <div className="flex items-center gap-1 text-orange-600">
                         <Coffee className="w-4 h-4" />
-                        <span>Meals</span>
+                        <span>{t('results.amenities.meals')}</span>
                       </div>
                     )}
                   </div>
@@ -295,7 +298,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                   <div className="flex items-center gap-4 text-sm text-gray-600">
                     <div className="flex items-center gap-1">
                       <Shield className="w-4 h-4 text-green-500" />
-                      <span>Free cancellation 24h</span>
+                      <span>{t('results.benefits.freeCancellation')}</span>
                     </div>
                   </div>
                 </div>
@@ -303,7 +306,7 @@ const FlightResults: React.FC<FlightResultsProps> = ({
                 {/* CO2 Emissions */}
                 <div className="flex items-center gap-2 text-sm text-green-600">
                   <Leaf className="w-4 h-4" />
-                  <span>{co2Emissions} kg CO₂e per passenger</span>
+                  <span>{t('results.emissions', { amount: co2Emissions })}</span>
                 </div>
               </div>
             </div>
@@ -322,10 +325,10 @@ const FlightResults: React.FC<FlightResultsProps> = ({
             {loadingMore ? (
               <>
                 <Loader className="w-5 h-5 animate-spin" />
-                Chargement...
+                {t('results.loadingButton')}
               </>
             ) : (
-              'Afficher les vols suivants'
+              t('results.loadMoreButton')
             )}
           </button>
         </div>
@@ -337,9 +340,9 @@ const FlightResults: React.FC<FlightResultsProps> = ({
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Plane className="w-10 h-10 text-gray-400" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucun vol trouvé</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('results.noResultsTitle')}</h3>
           <p className="text-gray-600 max-w-md mx-auto">
-            Nous n'avons trouvé aucun vol correspondant à vos critères. Essayez d'ajuster vos paramètres de recherche ou de sélectionner d'autres dates.
+            {t('results.noResultsMessage')}
           </p>
         </div>
       )}
