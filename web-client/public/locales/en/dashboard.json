@@ -1,0 +1,205 @@
+{
+  "welcome": {
+    "title": "Welcome back, {{name}}!",
+    "greeting": "Welcome back, {{name}}!",
+    "fallbackName": "Traveler",
+    "nextAdventure": "Your next adventure awaits",
+    "readyForAdventure": "Ready for your next adventure?",
+    "exploreDestinations": "Explore destinations",
+    "planTrip": "Plan your trip",
+    "viewItinerary": "View Itinerary",
+    "startPlanning": "Start Planning",
+    "status": "Status",
+    "total": "Total",
+    "upcomingTrips": "You have {{count}} upcoming trips planned",
+    "refreshTrips": "Refresh trips",
+    "accountType": {
+      "business": "Business Account",
+      "leisure": "Leisure Account",
+      "bleisure": "Bleisure Account"
+    }
+  },
+  "stats": {
+    "title": "Travel Stats",
+    "loading": "Loading stats...",
+    "totalTrips": "Total Trips",
+    "totalSpent": "Total Spent",
+    "countriesVisited": "Countries Visited",
+    "avgTripDuration": "Avg Trip Duration",
+    "days": "{{count}} days",
+    "upcomingTrips": "Upcoming Trips",
+    "favoriteDestination": "Favorite Destination",
+    "notSet": "Not set",
+    "nextMilestone": "Next Milestone",
+    "trips": "trips",
+    "milestone": {
+      "title": "Next Milestone",
+      "trips": "trips",
+      "remaining": "{{count}} more trips to unlock Explorer status!",
+      "unlocked": "Explorer status unlocked!"
+    }
+  },
+  "quickActions": {
+    "title": "Quick Search",
+    "flights": "Flights",
+    "hotels": "Hotels",
+    "activities": "Activities",
+    "searchTypes": {
+      "flights": "Flights",
+      "hotels": "Hotels",
+      "activities": "Activities"
+    },
+    "form": {
+      "from": "From",
+      "to": "To",
+      "destination": "Destination",
+      "location": "Location",
+      "departure": "Departure",
+      "return": "Return",
+      "checkOut": "Check-out",
+      "date": "Date",
+      "passengers": "Passengers",
+      "guests": "Guests",
+      "people": "People",
+      "search": "Search",
+      "searching": "Searching...",
+      "placeholders": {
+        "origin": "Origin city",
+        "destination": "Destination city",
+        "hotel": "City or hotel name",
+        "activity": "Activity location"
+      }
+    }
+  },
+  "recommendations": {
+    "title": "Recommended for You",
+    "forYou": "For You",
+    "loading": "Loading recommendations...",
+    "noRecommendations": "No recommendations available",
+    "noRecommendationsHint": "Start searching to get personalized recommendations",
+    "viewDetails": "View Details",
+    "bookNow": "Book Now",
+    "viewAll": "View All",
+    "viewAllCount": "View All {{count}} Recommendations",
+    "refreshRecommendations": "Refresh recommendations",
+    "recentSearches": "Recent Searches",
+    "aiRecommendations": "AI Recommendations"
+  },
+  "savedItineraries": {
+    "title": "Saved Itineraries",
+    "loading": "Loading itineraries...",
+    "noItineraries": "No saved itineraries",
+    "noItinerariesHint": "Your saved trips and bookings will appear here",
+    "createNew": "Create New Itinerary",
+    "viewAll": "View All",
+    "viewAllCount": "View All {{count}} Itineraries",
+    "refreshBookings": "Refresh bookings"
+  },
+  "tripHistory": {
+    "title": "Trip History",
+    "loading": "Loading history...",
+    "noTrips": "No trip history",
+    "noTripsHint": "Your completed trips will appear here",
+    "viewAll": "View All",
+    "viewAllCount": "View All {{count}} Trips",
+    "completed": "Completed",
+    "upcoming": "Upcoming",
+    "cancelled": "Cancelled",
+    "refreshHistory": "Refresh trip history",
+    "rate": "Rate",
+    "totalCompleted": "Total trips completed:",
+    "totalSpent": "Total spent:"
+  },
+  "priceAlerts": {
+    "title": "Price Alerts",
+    "loading": "Loading alerts...",
+    "noAlerts": "No price alerts set",
+    "noAlertsHint": "Create an alert to track flight prices",
+    "priceDropped": "Price dropped",
+    "priceIncreased": "Price increased",
+    "createAlert": "Create Alert",
+    "createNewAlert": "Create New Alert",
+    "creating": "Creating...",
+    "target": "Target",
+    "current": "Current",
+    "fromPlaceholder": "From (e.g., NYC)",
+    "toPlaceholder": "To (e.g., LAX)",
+    "targetPricePlaceholder": "Target price ($)",
+    "notificationHint": "You'll be notified when prices drop below your target"
+  },
+  "travelPreferences": {
+    "title": "Travel Preferences",
+    "currency": "Currency",
+    "language": "Language",
+    "travelClass": "Travel Class",
+    "seat": "Seat",
+    "budgetRange": "Budget Range",
+    "travelStyle": "Travel Style",
+    "notifications": "Notifications",
+    "cancel": "Cancel",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "classes": {
+      "economy": "Economy",
+      "business": "Business",
+      "first": "First"
+    },
+    "seats": {
+      "window": "Window",
+      "aisle": "Aisle",
+      "middle": "Middle"
+    },
+    "styles": {
+      "budget": "Budget",
+      "midRange": "Mid-range",
+      "luxury": "Luxury"
+    },
+    "languages": {
+      "en": "English",
+      "es": "Spanish",
+      "fr": "French",
+      "de": "German",
+      "ja": "Japanese"
+    }
+  },
+  "onboardingPromotion": {
+    "title": "Complete Your Travel Profile",
+    "description": "Get personalized recommendations based on your preferences",
+    "button": "Start Questionnaire",
+    "dismiss": "Maybe Later"
+  },
+  "unified": {
+    "loginRequired": "Please log in to view your dashboard",
+    "loginDescription": "Access your personalized travel dashboard by logging in.",
+    "businessDashboard": "Business Dashboard",
+    "travelDashboard": "Travel Dashboard",
+    "businessSubtitle": "Manage your business travel efficiently",
+    "leisureSubtitle": "Discover and plan your next adventure",
+    "tabs": {
+      "overview": "Overview",
+      "businessItinerary": "Business Itinerary",
+      "expenseManagement": "Expense Management",
+      "travelDocuments": "Travel Documents",
+      "community": "Community",
+      "saved": "Saved"
+    },
+    "businessStats": {
+      "nextMeeting": "Next Meeting",
+      "monthlyExpenses": "Monthly Expenses",
+      "policyCompliance": "Policy Compliance",
+      "pendingReports": "Pending Reports"
+    },
+    "leisureStats": {
+      "countriesVisited": "Countries Visited",
+      "citiesExplored": "Cities Explored",
+      "experiences": "Experiences",
+      "photosShared": "Photos Shared"
+    },
+    "badges": {
+      "business": "Business",
+      "leisure": "Leisure"
+    },
+    "featuredDestinations": "Featured Destinations",
+    "savedExperiences": "Saved Experiences"
+  }
+}

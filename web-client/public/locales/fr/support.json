@@ -1,0 +1,68 @@
+{
+  "header": {
+    "title": "Comment pouvons-nous vous aider ?",
+    "searchPlaceholder": "Rechercher des articles d'aide..."
+  },
+  "navigation": {
+    "helpCenter": "Centre d'aide",
+    "guides": "Guides de voyage",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "vrTutorials": "Tutoriels VR",
+    "sustainability": "Durabilité"
+  },
+  "liveChat": {
+    "button": "Besoin d'aide ?",
+    "title": "Chat Support",
+    "subtitle": "Nous répondons généralement en quelques minutes",
+    "placeholder": "Tapez votre message...",
+    "greeting": "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
+    "autoResponse": "Merci pour votre message. Un agent du support va vous répondre sous peu."
+  },
+  "search": {
+    "title": "Résultats de recherche",
+    "placeholder": "Rechercher des articles d'aide...",
+    "recentSearches": "Recherches récentes",
+    "popularTopics": "Sujets populaires",
+    "noResults": "Aucune FAQ ne correspond à votre recherche. Essayez des mots-clés différents ou parcourez toutes les questions.",
+    "relevance": "{{percent}}% de correspondance"
+  },
+  "faq": {
+    "searchPlaceholder": "Rechercher dans la FAQ...",
+    "categories": {
+      "booking": "Réservations et Modifications",
+      "aiFeatures": "Utilisation des fonctionnalités IA"
+    },
+    "feedback": {
+      "question": "Cette réponse vous a-t-elle été utile ?",
+      "yes": "Oui",
+      "no": "Non",
+      "thanks": "Merci pour votre retour !"
+    },
+    "questions": {
+      "modifyBooking": "Comment modifier ou annuler ma réservation ?",
+      "modifyBookingAnswer": "Vous pouvez modifier ou annuler votre réservation via votre tableau de bord. Allez dans \"Mes Voyages\" et sélectionnez la réservation que vous souhaitez modifier. Veuillez noter que les politiques d'annulation varient selon le type de réservation et le délai d'annulation.",
+      "paymentMethods": "Quels moyens de paiement acceptez-vous ?",
+      "paymentMethodsAnswer": "Nous acceptons toutes les principales cartes de crédit (Visa, MasterCard, American Express), PayPal, ainsi que divers moyens de paiement locaux selon votre région. Tous les paiements sont traités de manière sécurisée par nos partenaires.",
+      "aiPlanner": "Comment fonctionne le planificateur de voyage IA ?",
+      "aiPlannerAnswer": "Notre planificateur de voyage IA analyse vos préférences, votre historique de voyage et les tendances actuelles pour créer des itinéraires personnalisés. Il prend en compte des facteurs tels que la météo, les événements locaux et vos centres d'intérêt pour vous suggérer les meilleures expériences.",
+      "customizeAI": "Puis-je personnaliser les recommandations IA ?",
+      "customizeAIAnswer": "Oui ! Vous pouvez affiner les recommandations IA en ajustant vos préférences dans les paramètres de votre profil. Vous pouvez également modifier directement les itinéraires suggérés et l'IA apprendra de vos modifications pour les futures recommandations."
+    }
+  },
+  "topics": {
+    "planItinerary": "Comment planifier un itinéraire",
+    "cancellation": "Politique d'annulation de réservation",
+    "vrSetup": "Configuration de l'expérience VR",
+    "payment": "Moyens de paiement",
+    "insurance": "Assurance voyage",
+    "createPlan": "Comment créer et partager des plans de voyage",
+    "protection": "Comprendre notre protection de réservation",
+    "aiRecommendations": "Utilisation des recommandations IA"
+  },
+  "categories": {
+    "planning": "Planification",
+    "policies": "Politiques",
+    "features": "Fonctionnalités"
+  }
+}

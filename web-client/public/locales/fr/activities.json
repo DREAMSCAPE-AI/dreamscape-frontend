@@ -1,0 +1,193 @@
+{
+  "page": {
+    "title": "Trouvez votre activité",
+    "backButton": "Retour"
+  },
+  "search": {
+    "title": "Rechercher des activités",
+    "location": {
+      "label": "Lieu",
+      "placeholder": "Sélectionner un lieu",
+      "allLocations": "Tous les lieux"
+    },
+    "category": {
+      "label": "Catégorie",
+      "all": "Toutes les catégories",
+      "sightseeing": "Visites touristiques",
+      "attraction": "Attractions",
+      "tour": "Tours",
+      "museum": "Musées",
+      "entertainment": "Divertissement",
+      "adventure": "Aventure",
+      "cultural": "Culturel",
+      "foodAndDrink": "Gastronomie",
+      "nature": "Nature",
+      "wellness": "Bien-être"
+    },
+    "duration": {
+      "label": "Durée",
+      "all": "Toute durée",
+      "short": "Court (< 2 heures)",
+      "medium": "Moyen (2-4 heures)",
+      "long": "Long (4-8 heures)",
+      "fullDay": "Journée complète (8+ heures)"
+    },
+    "priceRange": {
+      "label": "Fourchette de prix",
+      "min": "Prix minimum",
+      "max": "Prix maximum"
+    },
+    "searchButton": "Rechercher des activités"
+  },
+  "results": {
+    "loading": "Chargement des activités...",
+    "noResults": "Aucune activité trouvée",
+    "noResultsMessage": "Essayez d'ajuster vos filtres de recherche",
+    "resultsCount": "{{count}} activité trouvée",
+    "resultsCount_plural": "{{count}} activités trouvées"
+  },
+  "card": {
+    "from": "À partir de",
+    "perPerson": "par personne",
+    "rating": "{{rating}} ({{count}} avis)",
+    "duration": "Durée",
+    "groupSize": "Taille du groupe",
+    "bookNow": "Réserver maintenant",
+    "viewDetails": "Voir les détails",
+    "category": "Catégorie"
+  },
+  "details": {
+    "overview": "Aperçu",
+    "description": "Description",
+    "highlights": "Points forts",
+    "included": "Ce qui est inclus",
+    "notIncluded": "Ce qui n'est pas inclus",
+    "meetingPoint": "Point de rendez-vous",
+    "duration": "Durée",
+    "groupSize": "Taille du groupe",
+    "availability": "Disponibilité",
+    "cancellationPolicy": "Politique d'annulation",
+    "bookingInfo": "Informations de réservation",
+    "reviews": "Avis",
+    "location": "Lieu",
+    "price": "Prix"
+  },
+  "bookingFlow": {
+    "steps": {
+      "search": "Recherche",
+      "selectActivity": "Sélection de l'activité",
+      "details": "Détails",
+      "participants": "Participants",
+      "payment": "Paiement"
+    }
+  },
+  "participants": {
+    "title": "Informations sur les participants",
+    "numberOfParticipants": "Nombre de participants",
+    "participantDetails": "Détails du participant {{number}}",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "E-mail",
+    "phone": "Numéro de téléphone",
+    "age": "Âge",
+    "specialRequests": "Demandes spéciales",
+    "backButton": "Retour aux détails",
+    "continueButton": "Continuer vers le paiement"
+  },
+  "payment": {
+    "title": "Paiement",
+    "summary": "Récapitulatif de la réservation",
+    "activityName": "Activité",
+    "date": "Date",
+    "participants": "Participants",
+    "price": "Prix",
+    "total": "Total",
+    "addToCart": "Ajouter au panier",
+    "payNow": "Payer maintenant",
+    "backButton": "Retour"
+  },
+  "tags": {
+    "guidedTour": "Visite guidée",
+    "photography": "Photographie",
+    "walking": "À pied",
+    "mustSee": "Incontournable",
+    "popular": "Populaire",
+    "familyFriendly": "Adapté aux familles",
+    "expertGuide": "Guide expert",
+    "smallGroup": "Petit groupe",
+    "historical": "Historique",
+    "art": "Art",
+    "history": "Histoire",
+    "educational": "Éducatif",
+    "fun": "Amusant",
+    "evening": "Soirée",
+    "liveShow": "Spectacle en direct",
+    "outdoor": "Plein air",
+    "active": "Actif",
+    "thrilling": "Palpitant",
+    "traditional": "Traditionnel",
+    "localExperience": "Expérience locale",
+    "authentic": "Authentique",
+    "tasting": "Dégustation",
+    "localCuisine": "Cuisine locale",
+    "culinary": "Culinaire",
+    "scenic": "Panoramique",
+    "wildlife": "Faune",
+    "relaxing": "Relaxant",
+    "spa": "Spa",
+    "meditation": "Méditation"
+  },
+  "supportedCities": {
+    "paris": "Paris",
+    "london": "Londres",
+    "barcelona": "Barcelone",
+    "berlin": "Berlin",
+    "newYork": "New York",
+    "sanFrancisco": "San Francisco",
+    "dallas": "Dallas",
+    "bangalore": "Bangalore",
+    "tokyo": "Tokyo",
+    "dubai": "Dubaï",
+    "bangkok": "Bangkok",
+    "rome": "Rome",
+    "amsterdam": "Amsterdam",
+    "singapore": "Singapour"
+  },
+  "fallbackActivities": {
+    "historicWalkingTour": {
+      "name": "Visite à pied historique de la ville",
+      "description": "Découvrez la riche histoire et les trésors cachés de la ville avec notre guide local expert. Promenez-vous dans les rues anciennes, visitez des monuments emblématiques et apprenez des histoires fascinantes sur la culture et les traditions locales."
+    },
+    "artMuseum": {
+      "name": "Expérience au musée d'art",
+      "description": "Plongez dans des collections d'art de classe mondiale présentant des chefs-d'œuvre classiques et des œuvres contemporaines. Évitez les files d'attente avec nos billets à accès prioritaire."
+    },
+    "foodWineTour": {
+      "name": "Circuit gastronomique et dégustation de vins",
+      "description": "Savourez les saveurs authentiques de la cuisine locale avec des visites de marchés traditionnels, de restaurants familiaux et de caves locales."
+    },
+    "adventurePark": {
+      "name": "Expérience au parc d'aventure",
+      "description": "Faites monter l'adrénaline avec des activités de plein air passionnantes, notamment la tyrolienne, l'escalade et des parcours d'obstacles adaptés à tous les niveaux."
+    },
+    "culturalHeritage": {
+      "name": "Visite d'un site du patrimoine culturel",
+      "description": "Explorez les sites du patrimoine mondial de l'UNESCO et découvrez les civilisations anciennes, les merveilles architecturales et la signification culturelle."
+    },
+    "natureSafari": {
+      "name": "Safari nature et faune",
+      "description": "Découvrez la beauté naturelle et la faune dans leur habitat naturel. Parfait pour les amoureux de la nature et les passionnés de photographie."
+    }
+  },
+  "errors": {
+    "searchFailed": "Échec du chargement des activités. Veuillez réessayer plus tard.",
+    "noResults": "Aucune activité trouvée correspondant à vos critères."
+  },
+  "bookingInfo": {
+    "instantConfirmation": "Confirmation instantanée",
+    "freeCancellation": "Annulation gratuite",
+    "cancellationPolicy": "Annulation gratuite jusqu'à 24 heures avant l'activité",
+    "available": "Disponible",
+    "nextAvailable": "Prochaine disponibilité : {{date}}"
+  }
+}

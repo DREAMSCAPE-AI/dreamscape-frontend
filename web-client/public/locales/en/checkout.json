@@ -1,0 +1,100 @@
+{
+  "page": {
+    "title": "Checkout"
+  },
+  "confirmation": {
+    "success": {
+      "title": "Payment Successful!",
+      "subtitle": "Your booking has been confirmed"
+    },
+    "processing": {
+      "title": "Payment Processing",
+      "subtitle": "We're processing your payment",
+      "message": "Your payment is being processed. This can take a few minutes depending on your payment method. You'll receive a confirmation email once the payment is complete."
+    },
+    "failed": {
+      "title": "Payment Failed",
+      "subtitle": "We couldn't process your payment",
+      "message": "Your payment could not be processed. Please check your payment details and try again.",
+      "reasons": {
+        "title": "Common reasons for payment failure:",
+        "insufficientFunds": "Insufficient funds",
+        "incorrectDetails": "Incorrect card details",
+        "declined": "Card declined by your bank",
+        "unsupported": "Payment method not supported"
+      }
+    },
+    "auth": {
+      "title": "Authentication Required",
+      "message": "Please log in to view your payment confirmation.",
+      "redirecting": "Redirecting to login..."
+    },
+    "loading": "Loading confirmation..."
+  },
+  "details": {
+    "title": "Booking Details",
+    "reference": "Booking Reference:",
+    "bookingId": "Booking ID:",
+    "paymentId": "Payment ID:",
+    "amountPaid": "Amount Paid:",
+    "yourBooking": "Your Booking",
+    "amount": "Amount:"
+  },
+  "whatsNext": {
+    "title": "What happens next?",
+    "emailSent": "A confirmation email has been sent to your registered email address",
+    "viewDashboard": "You can view and manage your booking in your account dashboard",
+    "keepReference": "Keep your booking reference handy for future correspondence"
+  },
+  "whatsHappening": {
+    "title": "What's happening?",
+    "bookingReference": "Booking Reference:",
+    "amount": "Amount:"
+  },
+  "booking": {
+    "title": "Your Booking",
+    "created": "Your booking ({{reference}}) has been created but not confirmed. You can return to your cart to try the payment again."
+  },
+  "actions": {
+    "viewBookings": "View My Bookings",
+    "backHome": "Back to Home",
+    "tryAgain": "Try Again",
+    "print": "Print",
+    "downloadReceipt": "Download Receipt (PDF)"
+  },
+  "support": {
+    "needHelp": "Need help?",
+    "contactSupport": "Contact Support"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "emptyMessage": "Browse flights, hotels, and activities to add items to your cart.",
+    "continueShopping": "Continue Shopping",
+    "summary": {
+      "items": "Items",
+      "total": "Total",
+      "checkout": "Proceed to Checkout",
+      "processing": "Processing...",
+      "secure": "Secure checkout with encryption",
+      "expiresIn": "Cart expires in",
+      "expired": "Expired",
+      "extend": "Extend"
+    },
+    "item": {
+      "remove": "Remove item",
+      "flight": "Flight",
+      "hotel": "Hotel",
+      "activity": "Activity",
+      "perNight": "per night",
+      "perPerson": "per person"
+    },
+    "drawer": {
+      "title": "Shopping Cart",
+      "itemCount": "{{count}} item",
+      "itemCount_plural": "{{count}} items",
+      "viewCart": "View Full Cart",
+      "close": "Close cart"
+    }
+  }
+}

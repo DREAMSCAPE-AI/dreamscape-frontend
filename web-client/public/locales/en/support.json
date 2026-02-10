@@ -1,0 +1,68 @@
+{
+  "header": {
+    "title": "How can we help you?",
+    "searchPlaceholder": "Search for help articles..."
+  },
+  "navigation": {
+    "helpCenter": "Help Center",
+    "guides": "Travel Guides",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "vrTutorials": "VR Tutorials",
+    "sustainability": "Sustainability"
+  },
+  "liveChat": {
+    "button": "Need Help?",
+    "title": "Support Chat",
+    "subtitle": "We typically reply in a few minutes",
+    "placeholder": "Type your message...",
+    "greeting": "Hello! How can I help you today?",
+    "autoResponse": "Thank you for your message. A support agent will respond shortly."
+  },
+  "search": {
+    "title": "Search Results",
+    "placeholder": "Search for help articles...",
+    "recentSearches": "Recent Searches",
+    "popularTopics": "Popular Topics",
+    "noResults": "No FAQ matches your search. Try different keywords or browse all questions.",
+    "relevance": "{{percent}}% match"
+  },
+  "faq": {
+    "searchPlaceholder": "Search FAQ...",
+    "categories": {
+      "booking": "Booking & Reservations",
+      "aiFeatures": "Using AI Features"
+    },
+    "feedback": {
+      "question": "Was this answer helpful?",
+      "yes": "Yes",
+      "no": "No",
+      "thanks": "Thank you for your feedback!"
+    },
+    "questions": {
+      "modifyBooking": "How do I modify or cancel my booking?",
+      "modifyBookingAnswer": "You can modify or cancel your booking through your account dashboard. Go to \"My Trips\" and select the booking you wish to change. Please note that cancellation policies vary depending on the type of booking and how far in advance you cancel.",
+      "paymentMethods": "What payment methods do you accept?",
+      "paymentMethodsAnswer": "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and various local payment methods depending on your region. All payments are processed securely through our payment partners.",
+      "aiPlanner": "How does the AI trip planner work?",
+      "aiPlannerAnswer": "Our AI trip planner analyzes your preferences, travel history, and current trends to create personalized itineraries. It considers factors like weather, local events, and your interests to suggest the best experiences for you.",
+      "customizeAI": "Can I customize AI recommendations?",
+      "customizeAIAnswer": "Yes! You can fine-tune AI recommendations by adjusting your preferences in your profile settings. You can also modify suggested itineraries directly and the AI will learn from your changes for future recommendations."
+    }
+  },
+  "topics": {
+    "planItinerary": "How to plan an itinerary",
+    "cancellation": "Booking cancellation policy",
+    "vrSetup": "VR experience setup",
+    "payment": "Payment methods",
+    "insurance": "Travel insurance",
+    "createPlan": "How to create and share travel plans",
+    "protection": "Understanding our booking protection",
+    "aiRecommendations": "Using AI recommendations"
+  },
+  "categories": {
+    "planning": "Planning",
+    "policies": "Policies",
+    "features": "Features"
+  }
+}

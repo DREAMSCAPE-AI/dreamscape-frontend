@@ -1,0 +1,274 @@
+{
+  "progress": {
+    "step": "Étape {{current}} sur {{total}}",
+    "completed": "{{count}} étapes complétées",
+    "loading": "Chargement de votre profil",
+    "preparing": "Préparation de votre questionnaire personnalisé..."
+  },
+  "navigation": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "skip": "Passer",
+    "finish": "Terminer",
+    "restart": "Recommencer",
+    "saving": "Sauvegarde...",
+    "finalizing": "Finalisation..."
+  },
+  "banner": {
+    "skipMessage": "Vous pouvez passer ce questionnaire et explorer DreamScape immédiatement",
+    "skipOnboarding": "Passer l'onboarding"
+  },
+  "messages": {
+    "unsavedChanges": "Vous avez des modifications non sauvegardées qui seront perdues si vous quittez cette page.",
+    "requiredFields": "Veuillez compléter les champs requis pour continuer",
+    "allRequiredSteps": "Vous devez compléter toutes les étapes obligatoires avant de terminer l'onboarding",
+    "confirmRestart": "Êtes-vous sûr de vouloir recommencer ? Toutes vos réponses seront perdues.",
+    "confirmSkip": "Êtes-vous sûr de vouloir passer l'onboarding ? Vous pourrez le reprendre plus tard dans vos paramètres."
+  },
+  "help": {
+    "title": "Besoin d'aide ?",
+    "description": "Ce questionnaire nous aide à personnaliser vos recommandations de voyage. Toutes vos réponses peuvent être modifiées plus tard.",
+    "contact": "Contactez notre support"
+  },
+  "destinations": {
+    "title": "Destinations préférées",
+    "description": "Partagez vos destinations de rêve et celles que vous avez déjà visitées",
+    "icon": "🌍",
+    "visited": {
+      "title": "Destinations visitées ou préférées",
+      "description": "Ajoutez les destinations que vous avez visitées ou que vous aimeriez revisiter",
+      "placeholder": "Ex: Paris, Tokyo, New York..."
+    },
+    "bucketList": {
+      "title": "Liste de rêve (Bucket List)",
+      "description": "Destinations que vous rêvez de découvrir un jour",
+      "placeholder": "Ex: Maldives, Islande, Patagonie..."
+    },
+    "types": {
+      "title": "Types de destinations préférées",
+      "urban": "Urbain",
+      "urbanDesc": "Grandes villes",
+      "beach": "Plage",
+      "beachDesc": "Côtes et îles",
+      "mountain": "Montagne",
+      "mountainDesc": "Altitude et nature",
+      "cultural": "Culturel",
+      "culturalDesc": "Histoire et art",
+      "adventure": "Aventure",
+      "adventureDesc": "Sports et défis",
+      "nature": "Nature",
+      "natureDesc": "Parcs et wildlife"
+    },
+    "regions": {
+      "europe": "Europe",
+      "asia": "Asie",
+      "northAmerica": "Amérique du Nord",
+      "southAmerica": "Amérique du Sud",
+      "africa": "Afrique",
+      "oceania": "Océanie"
+    },
+    "summary": {
+      "title": "Résumé de vos préférences",
+      "visitedCount": "{{count}} destinations visitées/préférées",
+      "bucketListCount": "{{count}} destinations de rêve"
+    }
+  },
+  "budget": {
+    "title": "Budget de voyage",
+    "description": "Définissez votre budget habituel pour mieux personnaliser vos recommandations",
+    "icon": "💰",
+    "currency": {
+      "title": "Devise préférée"
+    },
+    "range": {
+      "title": "Budget par voyage (tout compris)",
+      "categories": {
+        "tight": "Budget serré",
+        "tightDesc": "Voyages économiques, auberges, transports locaux",
+        "moderate": "Budget modéré",
+        "moderateDesc": "Hôtels 3-4 étoiles, vols directs, restaurants locaux",
+        "comfortable": "Budget confortable",
+        "comfortableDesc": "Hôtels de qualité, business class occasionnelle",
+        "premium": "Budget premium",
+        "premiumDesc": "Hôtels de luxe, première classe, expériences exclusives"
+      }
+    },
+    "flexibility": {
+      "title": "Flexibilité budgétaire",
+      "description": "À quel point êtes-vous flexible avec votre budget si une opportunité exceptionnelle se présente ?",
+      "strict": "Budget strict",
+      "strictDesc": "Je ne peux pas dépasser mon budget",
+      "flexible": "Flexible",
+      "flexibleDesc": "Je peux dépasser de 20-30% pour un voyage exceptionnel",
+      "veryFlexible": "Très flexible",
+      "veryFlexibleDesc": "Le budget peut varier selon la qualité de l'expérience"
+    },
+    "breakdown": {
+      "title": "Répartition budgétaire suggérée",
+      "transport": "Transport",
+      "accommodation": "Hébergement",
+      "meals": "Repas",
+      "activities": "Activités"
+    },
+    "summary": {
+      "title": "Résumé de votre budget",
+      "typicalBudget": "Budget habituel : {{min}} - {{max}}",
+      "flexibility": "Flexibilité : {{level}}",
+      "category": "Catégorie : {{category}}"
+    }
+  },
+  "travelTypes": {
+    "title": "Types de voyage",
+    "description": "Sélectionnez tous les types de voyages qui vous intéressent",
+    "icon": "🧳",
+    "progress": {
+      "selected": "{{count}} type(s) sélectionné(s)",
+      "minimum": "Minimum recommandé : {{count}}"
+    },
+    "groups": {
+      "experience": "Voyages d'expérience",
+      "personal": "Voyages personnels",
+      "professional": "Voyages professionnels & éducatifs",
+      "themed": "Voyages par thème",
+      "destination": "Voyages par destination"
+    },
+    "types": {
+      "adventure": "Aventure",
+      "adventureDesc": "Sports extrêmes, défis, adrénaline",
+      "cultural": "Culturel",
+      "culturalDesc": "Musées, histoire, patrimoine",
+      "relaxation": "Détente",
+      "relaxationDesc": "Repos, relaxation, vacances tranquilles",
+      "wellness": "Bien-être",
+      "wellnessDesc": "Spa, yoga, détox, santé",
+      "nature": "Nature",
+      "natureDesc": "Parcs, wildlife, écotourisme",
+      "romantic": "Romantique",
+      "romanticDesc": "Lune de miel, anniversaire, couple",
+      "family": "Famille",
+      "familyDesc": "Voyages avec enfants, famille élargie",
+      "business": "Affaires",
+      "businessDesc": "Réunions, conférences, networking",
+      "educational": "Éducatif",
+      "educationalDesc": "Formations, séminaires, apprentissage",
+      "culinary": "Gastronomie",
+      "culinaryDesc": "Découvertes culinaires, restaurants",
+      "shopping": "Shopping",
+      "shoppingDesc": "Boutiques, marchés, achats",
+      "nightlife": "Vie nocturne",
+      "nightlifeDesc": "Bars, clubs, sorties",
+      "historical": "Historique",
+      "historicalDesc": "Sites historiques, monuments",
+      "urban": "Urbain",
+      "urbanDesc": "Grandes villes, métropoles",
+      "beach": "Plage",
+      "beachDesc": "Côtes, îles, stations balnéaires",
+      "mountain": "Montagne",
+      "mountainDesc": "Altitude, ski, randonnée"
+    },
+    "summary": {
+      "title": "Vos types de voyage sélectionnés :",
+      "recommendations": "Recommandations personnalisées basées sur vos choix :",
+      "adventureRec": "Activités outdoor et sports d'aventure",
+      "culturalRec": "Visites guidées et expériences culturelles",
+      "familyRec": "Activités family-friendly et hébergements adaptés",
+      "wellnessRec": "Spas, centres de bien-être et retraites santé",
+      "culinaryRec": "Expériences gastronomiques et cours de cuisine",
+      "beachRec": "Destinations balnéaires et activités nautiques"
+    },
+    "tips": {
+      "title": "Conseils",
+      "minimum": "Sélectionnez au moins 3 types pour des recommandations plus précises",
+      "multiple": "Vous pouvez choisir plusieurs types - nous adaptons nos suggestions",
+      "editable": "Ces préférences peuvent être modifiées à tout moment dans votre profil"
+    }
+  },
+  "accommodation": {
+    "title": "Hébergement",
+    "description": "Quels types d'hébergements préférez-vous ?",
+    "icon": "🏨",
+    "types": {
+      "title": "Types d'hébergement",
+      "description": "Sélectionnez tous les types qui vous intéressent (minimum 1)",
+      "hotel": "Hôtel",
+      "hotelDesc": "Hôtels classiques avec services",
+      "apartment": "Appartement",
+      "apartmentDesc": "Locations avec cuisine et espace",
+      "resort": "Resort",
+      "resortDesc": "Complexes tout-inclus",
+      "hostel": "Auberge",
+      "hostelDesc": "Hébergements économiques",
+      "villa": "Villa",
+      "villaDesc": "Maisons de luxe privées",
+      "boutiqueHotel": "Hôtel Boutique",
+      "boutiqueHotelDesc": "Petits hôtels de charme",
+      "guesthouse": "Chambre d'hôtes",
+      "guesthouseDesc": "Hébergements chez l'habitant",
+      "camping": "Camping",
+      "campingDesc": "Campings et nature"
+    },
+    "comfort": {
+      "title": "Niveau de confort habituel",
+      "description": "Quel niveau de confort recherchez-vous généralement ?",
+      "basic": "Basique",
+      "basicDesc": "Simple et fonctionnel",
+      "standard": "Standard",
+      "standardDesc": "Confortable et pratique",
+      "premium": "Premium",
+      "premiumDesc": "Haute qualité et services",
+      "luxury": "Luxe",
+      "luxuryDesc": "Excellence et raffinement"
+    },
+    "summary": {
+      "title": "Vos préférences d'hébergement",
+      "typesSelected": "{{count}} type(s) sélectionné(s)",
+      "level": "Niveau : {{level}}"
+    }
+  },
+  "activities": {
+    "title": "Activités",
+    "description": "Quelles activités vous plaisent lors de vos voyages ?",
+    "icon": "🎯",
+    "types": {
+      "title": "Types d'activités",
+      "description": "Sélectionnez toutes les activités qui vous intéressent",
+      "museums": "Musées",
+      "museumsDesc": "Visites culturelles",
+      "nature": "Nature",
+      "natureDesc": "Randonnées et plein air",
+      "beaches": "Plages",
+      "beachesDesc": "Détente au soleil",
+      "adventure": "Aventure",
+      "adventureDesc": "Sports extrêmes",
+      "nightlife": "Vie nocturne",
+      "nightlifeDesc": "Bars et clubs",
+      "shopping": "Shopping",
+      "shoppingDesc": "Boutiques et marchés",
+      "food": "Gastronomie",
+      "foodDesc": "Restaurants et cuisine locale",
+      "sports": "Sports",
+      "sportsDesc": "Activités sportives",
+      "wellness": "Bien-être",
+      "wellnessDesc": "Spa et relaxation",
+      "waterSports": "Sports aquatiques",
+      "waterSportsDesc": "Plongée, surf, voile"
+    },
+    "level": {
+      "title": "Niveau d'activité",
+      "description": "À quel rythme préférez-vous voyager ?",
+      "low": "Tranquille",
+      "lowDesc": "Activités douces et détente",
+      "moderate": "Modéré",
+      "moderateDesc": "Mix équilibré d'activités",
+      "high": "Actif",
+      "highDesc": "Journées bien remplies",
+      "veryHigh": "Très actif",
+      "veryHighDesc": "Programme intense et sportif"
+    },
+    "summary": {
+      "title": "Votre profil d'activités",
+      "activitiesSelected": "{{count}} activité(s) sélectionnée(s)",
+      "pace": "Rythme : {{pace}}"
+    }
+  }
+}

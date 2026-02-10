@@ -1,0 +1,27 @@
+{
+  "boundary": {
+    "title": "Une erreur s'est produite",
+    "description": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "home": "Accueil"
+  },
+  "notFound": {
+    "title": "Page non trouvée",
+    "description": "La page que vous recherchez n'existe pas.",
+    "home": "Accueil"
+  },
+  "network": {
+    "title": "Erreur de connexion",
+    "description": "Impossible de se connecter. Veuillez vérifier votre connexion Internet.",
+    "retry": "Réessayer"
+  },
+  "unauthorized": {
+    "title": "Non autorisé",
+    "description": "Vous devez vous connecter pour accéder à cette page.",
+    "login": "Aller à la connexion"
+  },
+  "server": {
+    "title": "Erreur du serveur",
+    "description": "Une erreur s'est produite de notre côté. Veuillez réessayer plus tard."
+  }
+}

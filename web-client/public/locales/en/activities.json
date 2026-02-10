@@ -1,0 +1,193 @@
+{
+  "page": {
+    "title": "Find Your Activity",
+    "backButton": "Go back"
+  },
+  "search": {
+    "title": "Search Activities",
+    "location": {
+      "label": "Location",
+      "placeholder": "Select a location",
+      "allLocations": "All Locations"
+    },
+    "category": {
+      "label": "Category",
+      "all": "All Categories",
+      "sightseeing": "Sightseeing",
+      "attraction": "Attractions",
+      "tour": "Tours",
+      "museum": "Museums",
+      "entertainment": "Entertainment",
+      "adventure": "Adventure",
+      "cultural": "Cultural",
+      "foodAndDrink": "Food & Drink",
+      "nature": "Nature",
+      "wellness": "Wellness"
+    },
+    "duration": {
+      "label": "Duration",
+      "all": "Any Duration",
+      "short": "Short (< 2 hours)",
+      "medium": "Medium (2-4 hours)",
+      "long": "Long (4-8 hours)",
+      "fullDay": "Full Day (8+ hours)"
+    },
+    "priceRange": {
+      "label": "Price Range",
+      "min": "Min Price",
+      "max": "Max Price"
+    },
+    "searchButton": "Search Activities"
+  },
+  "results": {
+    "loading": "Loading activities...",
+    "noResults": "No activities found",
+    "noResultsMessage": "Try adjusting your search filters",
+    "resultsCount": "{{count}} activity found",
+    "resultsCount_plural": "{{count}} activities found"
+  },
+  "card": {
+    "from": "From",
+    "perPerson": "per person",
+    "rating": "{{rating}} ({{count}} reviews)",
+    "duration": "Duration",
+    "groupSize": "Group Size",
+    "bookNow": "Book Now",
+    "viewDetails": "View Details",
+    "category": "Category"
+  },
+  "details": {
+    "overview": "Overview",
+    "description": "Description",
+    "highlights": "Highlights",
+    "included": "What's Included",
+    "notIncluded": "What's Not Included",
+    "meetingPoint": "Meeting Point",
+    "duration": "Duration",
+    "groupSize": "Group Size",
+    "availability": "Availability",
+    "cancellationPolicy": "Cancellation Policy",
+    "bookingInfo": "Booking Information",
+    "reviews": "Reviews",
+    "location": "Location",
+    "price": "Price"
+  },
+  "bookingFlow": {
+    "steps": {
+      "search": "Search",
+      "selectActivity": "Select Activity",
+      "details": "Details",
+      "participants": "Participants",
+      "payment": "Payment"
+    }
+  },
+  "participants": {
+    "title": "Participant Information",
+    "numberOfParticipants": "Number of Participants",
+    "participantDetails": "Participant {{number}} Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "age": "Age",
+    "specialRequests": "Special Requests",
+    "backButton": "Back to Details",
+    "continueButton": "Continue to Payment"
+  },
+  "payment": {
+    "title": "Payment",
+    "summary": "Booking Summary",
+    "activityName": "Activity",
+    "date": "Date",
+    "participants": "Participants",
+    "price": "Price",
+    "total": "Total",
+    "addToCart": "Add to Cart",
+    "payNow": "Pay Now",
+    "backButton": "Back"
+  },
+  "tags": {
+    "guidedTour": "Guided Tour",
+    "photography": "Photography",
+    "walking": "Walking",
+    "mustSee": "Must-See",
+    "popular": "Popular",
+    "familyFriendly": "Family-Friendly",
+    "expertGuide": "Expert Guide",
+    "smallGroup": "Small Group",
+    "historical": "Historical",
+    "art": "Art",
+    "history": "History",
+    "educational": "Educational",
+    "fun": "Fun",
+    "evening": "Evening",
+    "liveShow": "Live Show",
+    "outdoor": "Outdoor",
+    "active": "Active",
+    "thrilling": "Thrilling",
+    "traditional": "Traditional",
+    "localExperience": "Local Experience",
+    "authentic": "Authentic",
+    "tasting": "Tasting",
+    "localCuisine": "Local Cuisine",
+    "culinary": "Culinary",
+    "scenic": "Scenic",
+    "wildlife": "Wildlife",
+    "relaxing": "Relaxing",
+    "spa": "Spa",
+    "meditation": "Meditation"
+  },
+  "supportedCities": {
+    "paris": "Paris",
+    "london": "London",
+    "barcelona": "Barcelona",
+    "berlin": "Berlin",
+    "newYork": "New York",
+    "sanFrancisco": "San Francisco",
+    "dallas": "Dallas",
+    "bangalore": "Bangalore",
+    "tokyo": "Tokyo",
+    "dubai": "Dubai",
+    "bangkok": "Bangkok",
+    "rome": "Rome",
+    "amsterdam": "Amsterdam",
+    "singapore": "Singapore"
+  },
+  "fallbackActivities": {
+    "historicWalkingTour": {
+      "name": "Historic City Walking Tour",
+      "description": "Discover the rich history and hidden gems of the city with our expert local guide. Walk through ancient streets, visit iconic landmarks, and learn fascinating stories about the local culture and traditions."
+    },
+    "artMuseum": {
+      "name": "Art Museum Experience",
+      "description": "Immerse yourself in world-class art collections featuring both classical masterpieces and contemporary works. Skip the lines with our priority access tickets."
+    },
+    "foodWineTour": {
+      "name": "Food & Wine Tasting Tour",
+      "description": "Savor the authentic flavors of local cuisine with visits to traditional markets, family-run restaurants, and local wine cellars."
+    },
+    "adventurePark": {
+      "name": "Adventure Park Experience",
+      "description": "Get your adrenaline pumping with exciting outdoor activities including zip-lining, rock climbing, and obstacle courses suitable for all skill levels."
+    },
+    "culturalHeritage": {
+      "name": "Cultural Heritage Site Visit",
+      "description": "Explore UNESCO World Heritage sites and learn about ancient civilizations, architectural marvels, and cultural significance."
+    },
+    "natureSafari": {
+      "name": "Nature & Wildlife Safari",
+      "description": "Experience the natural beauty and wildlife in their natural habitat. Perfect for nature lovers and photography enthusiasts."
+    }
+  },
+  "errors": {
+    "searchFailed": "Failed to load activities. Please try again later.",
+    "noResults": "No activities found matching your criteria."
+  },
+  "bookingInfo": {
+    "instantConfirmation": "Instant Confirmation",
+    "freeCancellation": "Free Cancellation",
+    "cancellationPolicy": "Free cancellation up to 24 hours before the activity",
+    "available": "Available",
+    "nextAvailable": "Next available: {{date}}"
+  }
+}

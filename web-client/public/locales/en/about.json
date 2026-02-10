@@ -1,0 +1,35 @@
+{
+  "page": {
+    "title": "About DreamScape",
+    "subtitle": "Your AI-Powered Travel Companion"
+  },
+  "mission": {
+    "title": "Our Mission",
+    "description": "To revolutionize travel planning through cutting-edge AI technology and immersive VR experiences"
+  },
+  "vision": {
+    "title": "Our Vision",
+    "description": "Making travel accessible, personalized, and unforgettable for everyone"
+  },
+  "values": {
+    "title": "Our Values",
+    "innovation": "Innovation",
+    "innovationDesc": "Pioneering new technologies in travel",
+    "personalization": "Personalization",
+    "personalizationDesc": "Tailored experiences for every traveler",
+    "sustainability": "Sustainability",
+    "sustainabilityDesc": "Responsible and eco-friendly travel",
+    "excellence": "Excellence",
+    "excellenceDesc": "Uncompromising quality in service"
+  },
+  "team": {
+    "title": "Meet Our Team",
+    "description": "Passionate experts in travel, technology, and user experience"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address"
+  }
+}

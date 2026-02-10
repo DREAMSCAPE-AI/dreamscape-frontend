@@ -1,0 +1,105 @@
+{
+  "page": {
+    "title": "Mes Réservations",
+    "subtitle": "Gérez et suivez vos réservations",
+    "goBack": "Retour"
+  },
+  "stats": {
+    "total": "Total",
+    "confirmed": "Confirmées",
+    "inProgress": "En cours",
+    "totalSpent": "Total dépensé"
+  },
+  "filters": {
+    "title": "Filtres",
+    "search": "Rechercher par référence...",
+    "allStatuses": "Tous les statuts",
+    "allTypes": "Tous les types",
+    "sortBy": {
+      "createdAt": "Date de création",
+      "updatedAt": "Dernière modification",
+      "totalAmount": "Montant",
+      "status": "Statut"
+    },
+    "order": {
+      "asc": "Croissant",
+      "desc": "Décroissant"
+    },
+    "active": {
+      "search": "Recherche : {{query}}",
+      "status": "Statut : {{status}}",
+      "type": "Type : {{type}}"
+    }
+  },
+  "status": {
+    "confirmed": "Confirmée",
+    "completed": "Terminée",
+    "pending": "En attente",
+    "pendingPayment": "Paiement en attente",
+    "cancelled": "Annulée",
+    "failed": "Échouée",
+    "draft": "Brouillon"
+  },
+  "types": {
+    "flight": "Vol",
+    "hotel": "Hôtel",
+    "activity": "Activité",
+    "package": "Package",
+    "transfer": "Transfert",
+    "flights": "Vols",
+    "hotels": "Hôtels",
+    "activities": "Activités",
+    "packages": "Packages",
+    "transfers": "Transferts"
+  },
+  "empty": {
+    "title": "Aucune réservation",
+    "withFilters": "Aucune réservation ne correspond à vos filtres. Essayez de les ajuster.",
+    "noBookings": "Vous n'avez pas encore de réservations. Commencez à explorer !",
+    "explore": "Explorer les vols"
+  },
+  "pagination": {
+    "showing": "Affichage {{from}} à {{to}} sur {{total}} réservations",
+    "page": "Page {{current}} sur {{total}}",
+    "previous": "Page précédente",
+    "next": "Page suivante"
+  },
+  "cancel": {
+    "title": "Annuler la réservation",
+    "message": "Êtes-vous sûr de vouloir annuler cette réservation ?",
+    "reference": "Réf : {{reference}}",
+    "amount": "Montant : {{amount}}",
+    "warning": "Cette action peut être irréversible selon les conditions d'annulation.",
+    "confirm": "Confirmer l'annulation",
+    "back": "Retour"
+  },
+  "detail": {
+    "title": "Réservation",
+    "reference": "Réf :",
+    "copy": "Copier la référence",
+    "createdAt": "Créée le {{date}}",
+    "confirmedAt": "Confirmée le {{date}}",
+    "total": "Total",
+    "items": "Éléments de la réservation ({{count}})",
+    "quantity": "x{{count}}",
+    "actions": {
+      "title": "Actions",
+      "cancel": "Annuler la réservation",
+      "print": "Imprimer"
+    },
+    "notFound": "Réservation non trouvée",
+    "backToBookings": "Retour aux réservations",
+    "loading": "Chargement des détails..."
+  },
+  "flight": {
+    "departure": "Départ :",
+    "airline": "Compagnie :"
+  },
+  "hotel": {
+    "checkIn": "Arrivée :",
+    "checkOut": "Départ :"
+  },
+  "activity": {
+    "duration": "Durée :"
+  }
+}

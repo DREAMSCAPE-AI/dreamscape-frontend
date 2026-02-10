@@ -1,0 +1,234 @@
+{
+  "page": {
+    "title": "Trouvez votre vol",
+    "backButton": "Retour",
+    "priceAnalysisButton": "Analyse des prix"
+  },
+  "search": {
+    "title": "Trouvez votre vol",
+    "tripType": {
+      "label": "Type de voyage",
+      "roundTrip": "Aller-retour",
+      "oneWay": "Aller simple",
+      "multiCity": "Multi-destinations"
+    },
+    "origin": {
+      "label": "De",
+      "placeholder": "Ville de départ"
+    },
+    "destination": {
+      "label": "À",
+      "placeholder": "Ville d'arrivée"
+    },
+    "swapButton": "Inverser les aéroports",
+    "dates": {
+      "departureLabel": "Date de départ",
+      "travelDatesLabel": "Dates de voyage",
+      "flexibleDates": "Mes dates sont flexibles"
+    },
+    "passengers": {
+      "label": "Passagers",
+      "selectLabel": "Sélectionner les passagers",
+      "onePassenger": "1 Passager",
+      "multiplePassengers": "{{count}} Passagers",
+      "adults": "Adultes",
+      "adultsAge": "12 ans et plus",
+      "children": "Enfants",
+      "childrenAge": "2-11 ans",
+      "infants": "Bébés",
+      "infantsAge": "Moins de 2 ans",
+      "doneButton": "Terminé"
+    },
+    "cabinClass": {
+      "label": "Classe de cabine",
+      "economy": "Économique",
+      "premium": "Économique Premium",
+      "business": "Affaires",
+      "first": "Première Classe"
+    },
+    "advancedOptions": {
+      "nonStop": "Vols directs uniquement",
+      "nearbyAirports": "Inclure les aéroports à proximité"
+    },
+    "searchButton": "Rechercher des vols",
+    "validation": {
+      "enterDeparture": "Veuillez saisir une ville de départ",
+      "enterArrival": "Veuillez saisir une ville d'arrivée",
+      "validCityName": "Veuillez saisir un nom de ville valide",
+      "sameCities": "Les villes de départ et d'arrivée ne peuvent pas être identiques",
+      "selectDeparture": "Veuillez sélectionner une date de départ",
+      "pastDate": "La date de départ ne peut pas être dans le passé",
+      "selectReturn": "Veuillez sélectionner une date de retour pour les vols aller-retour",
+      "returnAfterDeparture": "La date de retour doit être après la date de départ",
+      "atLeastOnePassenger": "Au moins un passager est requis",
+      "maxPassengers": "Maximum 9 passagers autorisés",
+      "infantsExceedAdults": "Le nombre de bébés ne peut pas dépasser le nombre d'adultes"
+    }
+  },
+  "results": {
+    "oneWay": "Aller simple",
+    "roundTrip": "Aller-retour",
+    "direct": "Direct",
+    "stops": {
+      "one": "1 escale",
+      "multiple": "{{count}} escales"
+    },
+    "terminal": "Terminal {{number}}",
+    "seatsLeft": "{{count}} sièges restants",
+    "perPerson": "par personne",
+    "taxesAndFees": "+ taxes et frais",
+    "viewDetailsButton": "Voir les détails",
+    "loadMoreButton": "Afficher les vols suivants",
+    "loadingButton": "Chargement...",
+    "amenities": {
+      "wifi": "WiFi",
+      "entertainment": "Divertissement",
+      "meals": "Repas"
+    },
+    "benefits": {
+      "freeCancellation": "Annulation gratuite 24h"
+    },
+    "emissions": "{{amount}} kg CO₂e par passager",
+    "noResultsTitle": "Aucun vol trouvé",
+    "noResultsMessage": "Nous n'avons trouvé aucun vol correspondant à vos critères. Essayez d'ajuster vos paramètres de recherche ou de sélectionner d'autres dates."
+  },
+  "roundTripIndicator": {
+    "outbound": "Sélectionnez votre vol aller",
+    "return": "Sélectionnez votre vol retour",
+    "outboundSelected": "Vol aller sélectionné - Continuez avec le vol retour"
+  },
+  "filters": {
+    "title": "Filtres",
+    "priceRange": {
+      "label": "Fourchette de prix",
+      "min": "0€",
+      "max": "2000€+"
+    },
+    "airlines": "Compagnies aériennes",
+    "departureTime": {
+      "label": "Heure de départ",
+      "earlyMorning": "Tôt le matin",
+      "earlyMorningTime": "0h - 6h",
+      "morning": "Matin",
+      "morningTime": "6h - 12h",
+      "afternoon": "Après-midi",
+      "afternoonTime": "12h - 18h",
+      "evening": "Soir",
+      "eveningTime": "18h - 0h"
+    },
+    "stops": {
+      "label": "Escales",
+      "nonStop": "Direct",
+      "oneStop": "1 escale",
+      "twoPlus": "2+ escales"
+    },
+    "cabinClass": {
+      "label": "Classe de cabine"
+    }
+  },
+  "bookingFlow": {
+    "steps": {
+      "search": "Recherche",
+      "selectFlight": "Sélection du vol",
+      "chooseSeats": "Choix des sièges",
+      "selectMeals": "Sélection des repas",
+      "addBaggage": "Ajout de bagages",
+      "passengerInfo": "Infos passagers",
+      "payment": "Paiement"
+    }
+  },
+  "payment": {
+    "title": "Récapitulatif du paiement",
+    "baseFlightPrice": "Prix du vol de base",
+    "seatFees": "Frais de sélection de siège",
+    "mealFees": "Frais de repas",
+    "baggageFees": "Frais de bagages",
+    "totalAmount": "Montant total",
+    "addToCart": "Ajouter au panier",
+    "payNow": "Payer maintenant - {{amount}}€"
+  },
+  "errors": {
+    "searchFailed": "Échec de la recherche de vols. Veuillez réessayer."
+  },
+  "details": {
+    "title": "Détails du vol",
+    "flightItinerary": "Itinéraire du vol",
+    "duration": "Durée",
+    "amenitiesLabel": "Équipements :",
+    "fareRules": "Règles tarifaires et conditions",
+    "cancellationPolicy": "Politique d'annulation",
+    "cancellationText": "Annulation autorisée jusqu'à 24 heures avant le départ moyennant des frais. Après cela, les billets ne sont pas remboursables.",
+    "changePolicy": "Politique de modification",
+    "changeText": "Les modifications de vol sont autorisées sous réserve de la différence tarifaire et des frais de modification. Doivent être effectuées au moins 3 heures avant le départ.",
+    "baggageInfo": "Informations sur les bagages",
+    "cabinBaggage": "Bagage cabine",
+    "cabinBaggageText": "1 article personnel (sous le siège) - max 8 kg\n1 bagage à main (compartiment supérieur) - max 10 kg",
+    "checkedBaggage": "Bagage en soute",
+    "checkedIncluded": "1 bagage en soute inclus - max 23 kg",
+    "checkedNotIncluded": "Aucun bagage en soute inclus - disponible à l'achat",
+    "priceBreakdown": "Détail du prix",
+    "baseFare": "Tarif de base",
+    "totalPrice": "Prix total",
+    "backToResults": "Retour aux résultats",
+    "continueToBooking": "Continuer la réservation"
+  },
+  "toolbar": {
+    "sort": {
+      "departureEarly": "Départ : Plus tôt",
+      "departureLate": "Départ : Plus tard",
+      "priceAsc": "Prix : Croissant",
+      "priceDesc": "Prix : Décroissant",
+      "durationShort": "Durée : Plus court",
+      "durationLong": "Durée : Plus long"
+    },
+    "price": "Prix :",
+    "priceMin": "Min",
+    "priceMax": "Max",
+    "stops": "Escales :",
+    "stopsOptions": {
+      "direct": "Direct",
+      "oneStop": "1 escale",
+      "twoPlus": "2+"
+    },
+    "departure": "Départ :",
+    "departureOptions": {
+      "early": "Tôt (0h-6h)",
+      "morning": "Matin (6h-12h)",
+      "afternoon": "Après-midi (12h-18h)",
+      "evening": "Soir (18h-0h)"
+    },
+    "resultsCount": "{{count}} vol trouvé",
+    "resultsCount_plural": "{{count}} vols trouvés",
+    "resetFilters": "Réinitialiser"
+  },
+  "passengerInfo": {
+    "title": "Informations passagers",
+    "importantTitle": "Important",
+    "importantText": "Veuillez vous assurer que tous les noms de passagers correspondent exactement à ceux figurant sur une pièce d'identité officielle ou un passeport. Pour les vols internationaux, les informations de passeport sont obligatoires.",
+    "passenger": "Passager {{number}}",
+    "title_field": "Titre",
+    "titleOptions": {
+      "mr": "M.",
+      "ms": "Mlle",
+      "mrs": "Mme",
+      "dr": "Dr"
+    },
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "dateOfBirth": "Date de naissance",
+    "nationality": "Nationalité",
+    "nationalityPlaceholder": "ex. France",
+    "passportNumber": "Numéro de passeport",
+    "passportPlaceholder": "Facultatif pour les vols nationaux",
+    "passportExpiry": "Date d'expiration du passeport",
+    "frequentFlyer": "Numéro de voyageur fréquent",
+    "frequentFlyerPlaceholder": "Facultatif",
+    "contactInfo": "Coordonnées",
+    "contactText": "Nous enverrons votre confirmation de réservation et les mises à jour de vol à cet e-mail et ce numéro de téléphone.",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "votre.email@exemple.com",
+    "phone": "Numéro de téléphone",
+    "phonePlaceholder": "+33 1 23 45 67 89",
+    "requiredFields": "Champs obligatoires"
+  }
+}

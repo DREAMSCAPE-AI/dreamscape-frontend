@@ -1,0 +1,136 @@
+{
+  "tabs": {
+    "profile": "Profile",
+    "account": "Account",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "travel": "Travel Preferences",
+    "dataPrivacy": "Data & Privacy"
+  },
+  "header": {
+    "title": "Settings",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "loading": "Loading your settings...",
+    "saved": "Profile saved successfully!"
+  },
+  "profile": {
+    "photo": {
+      "title": "Profile Photo",
+      "change": "Change Photo",
+      "uploading": "Uploading...",
+      "selectImage": "Please select an image"
+    },
+    "personal": {
+      "title": "Personal Information",
+      "fullName": "Full Name",
+      "email": "Email Address"
+    },
+    "payment": {
+      "title": "Payment Methods",
+      "addNew": "Add New",
+      "expires": "Expires",
+      "edit": "Edit"
+    }
+  },
+  "account": {
+    "language": {
+      "title": "Language & Region",
+      "language": "Language",
+      "currency": "Currency",
+      "options": {
+        "english": "English",
+        "french": "French",
+        "spanish": "Spanish"
+      },
+      "currencies": {
+        "usd": "USD ($)",
+        "eur": "EUR (€)",
+        "gbp": "GBP (£)"
+      }
+    },
+    "security": {
+      "title": "Security",
+      "changePassword": "Change Password",
+      "twoFactor": "Two-Factor Authentication",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "passwordMismatch": "Passwords do not match",
+      "cancel": "Cancel"
+    }
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "dealAlerts": {
+      "label": "Deal Alerts",
+      "description": "Get notified about special offers and deals"
+    },
+    "tripReminders": {
+      "label": "Trip Reminders",
+      "description": "Receive important trip updates and reminders"
+    },
+    "priceAlerts": {
+      "label": "Price Alerts",
+      "description": "Monitor price changes for your saved trips"
+    },
+    "newsletter": {
+      "label": "Newsletter",
+      "description": "Stay updated with travel tips and inspiration"
+    }
+  },
+  "privacy": {
+    "visibility": {
+      "title": "Profile Visibility",
+      "publicProfile": "Public Profile",
+      "publicDescription": "Allow others to see your travel history and reviews"
+    },
+    "data": {
+      "title": "Data & Privacy",
+      "dataSharing": "Data Sharing",
+      "dataSharingDescription": "Share anonymous travel data to improve recommendations",
+      "marketing": "Marketing Communications",
+      "marketingDescription": "Receive personalized travel offers and updates"
+    }
+  },
+  "travelPreferences": {
+    "title": "Travel Profile",
+    "complete": "Your travel profile is complete!",
+    "incomplete": "Complete your profile for personalized recommendations",
+    "progress": {
+      "completed": "completed",
+      "steps": "steps out of 13"
+    },
+    "actions": {
+      "start": "Start Questionnaire",
+      "continue": "Continue",
+      "modify": "Modify My Preferences",
+      "viewFull": "View Full Questionnaire"
+    },
+    "sections": {
+      "destinations": "Preferred Destinations",
+      "budget": "Travel Budget",
+      "travelTypes": "Travel Types",
+      "style": "Travel Style",
+      "activities": "Preferred Activities",
+      "groups": "Travel Groups",
+      "noDestination": "No destination set",
+      "flexibility": "Flexibility",
+      "style_label": "Style",
+      "comfort": "Comfort"
+    },
+    "help": {
+      "title": "About Your Preferences",
+      "autoSave": "Your preferences are saved automatically at each step",
+      "modify": "You can modify your answers at any time",
+      "accuracy": "The more complete your profile is, the more accurate our recommendations will be",
+      "privacy": "All your data is private and secure"
+    },
+    "empty": {
+      "title": "Configure Your Travel Preferences",
+      "description": "Answer our personalized questionnaire to receive recommendations tailored to your tastes and travel style.",
+      "action": "Start Questionnaire"
+    },
+    "loading": "Loading your preferences..."
+  }
+}

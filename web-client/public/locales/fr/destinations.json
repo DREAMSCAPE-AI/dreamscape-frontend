@@ -1,0 +1,66 @@
+{
+  "list": {
+    "title": "Destinations populaires",
+    "subtitle": "Découvrez des endroits extraordinaires dans le monde entier"
+  },
+  "page": {
+    "title": "Destinations populaires",
+    "subtitle": "Découvrez des endroits extraordinaires dans le monde entier",
+    "loading": "Chargement des destinations...",
+    "error": "Échec du chargement des destinations. Utilisation des données hors ligne."
+  },
+  "card": {
+    "explore": "Explorer",
+    "viewDetails": "Voir les détails",
+    "learnMore": "En savoir plus",
+    "from": "À partir de",
+    "startingAt": "Dès"
+  },
+  "categories": {
+    "popular": "Populaire",
+    "trending": "Tendances",
+    "featured": "À la une",
+    "newDestinations": "Nouvelles destinations",
+    "topRated": "Mieux notées",
+    "budget": "Bon marché",
+    "luxury": "Luxe"
+  },
+  "regions": {
+    "europe": "Europe",
+    "asia": "Asie",
+    "americas": "Amériques",
+    "africa": "Afrique",
+    "oceania": "Océanie",
+    "middleEast": "Moyen-Orient"
+  },
+  "cities": {
+    "paris": "Paris",
+    "tokyo": "Tokyo",
+    "dubai": "Dubaï",
+    "newYork": "New York",
+    "london": "Londres",
+    "bangkok": "Bangkok"
+  },
+  "descriptions": {
+    "paris": "La Ville Lumière vous attend avec ses monuments emblématiques et son charme romantique",
+    "tokyo": "Découvrez le mélange parfait entre culture traditionnelle et innovation moderne",
+    "dubai": "Découvrez le luxe et l'aventure dans cette métropole futuriste du désert",
+    "newYork": "La ville qui ne dort jamais offre des possibilités infinies et des sites emblématiques",
+    "london": "Explorez des siècles d'histoire dans cette capitale dynamique et riche culturellement",
+    "bangkok": "Plongez dans la vie de rue animée et le riche patrimoine culturel",
+    "default": "Découvrez des expériences incroyables dans cette belle destination"
+  },
+  "filters": {
+    "sortBy": "Trier par",
+    "filterBy": "Filtrer par",
+    "priceRange": "Fourchette de prix",
+    "travelStyle": "Style de voyage",
+    "climate": "Climat",
+    "activities": "Activités"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement des destinations",
+    "noResults": "Aucune destination trouvée",
+    "tryAgain": "Réessayer"
+  }
+}

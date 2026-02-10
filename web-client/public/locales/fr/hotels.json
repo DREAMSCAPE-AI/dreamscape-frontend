@@ -1,0 +1,127 @@
+{
+  "page": {
+    "title": "Trouvez votre séjour idéal",
+    "backButton": "Retour"
+  },
+  "search": {
+    "title": "Trouvez votre séjour idéal",
+    "destination": {
+      "label": "Destination",
+      "placeholder": "Où allez-vous ?"
+    },
+    "dates": {
+      "label": "Arrivée / Départ"
+    },
+    "guests": {
+      "label": "Voyageurs et chambres",
+      "summary": {
+        "adults": "{{count}} Adulte",
+        "adults_plural": "{{count}} Adultes",
+        "children": "{{count}} Enfant",
+        "children_plural": "{{count}} Enfants",
+        "rooms": "{{count}} Chambre",
+        "rooms_plural": "{{count}} Chambres"
+      },
+      "adults": "Adultes",
+      "adultsAge": "18 ans et plus",
+      "children": "Enfants",
+      "childrenAge": "0-17 ans",
+      "childAges": "Âges des enfants",
+      "childAgeOption": "{{age}} an",
+      "childAgeOption_plural": "{{age}} ans",
+      "rooms": "Chambres"
+    },
+    "advancedFilters": {
+      "showButton": "Afficher les filtres avancés",
+      "hideButton": "Masquer les filtres avancés",
+      "starRating": {
+        "label": "Classement étoiles",
+        "threePlus": "3+ étoiles",
+        "fourPlus": "4+ étoiles",
+        "fivePlus": "5+ étoiles"
+      },
+      "amenities": {
+        "label": "Équipements",
+        "wifi": "WiFi gratuit",
+        "pool": "Piscine",
+        "spa": "Spa",
+        "fitnessCenter": "Salle de sport",
+        "restaurant": "Restaurant",
+        "parking": "Parking"
+      },
+      "priceRange": {
+        "label": "Fourchette de prix (par nuit)",
+        "under100": "Moins de 100€",
+        "100to200": "100€ - 200€",
+        "200to300": "200€ - 300€",
+        "300plus": "300€+"
+      }
+    },
+    "searchButton": "Rechercher des hôtels"
+  },
+  "results": {
+    "loading": "Chargement des hôtels...",
+    "noResults": "Aucun hôtel trouvé",
+    "noResultsMessage": "Essayez d'ajuster vos critères de recherche"
+  },
+  "card": {
+    "perNight": "par nuit",
+    "starRating": "Hôtel {{rating}} étoiles",
+    "viewDetails": "Voir les détails",
+    "bookNow": "Réserver maintenant"
+  },
+  "details": {
+    "amenities": "Équipements",
+    "roomType": "Type de chambre",
+    "policies": "Conditions",
+    "cancellation": "Annulation",
+    "description": "Description",
+    "selectRoom": "Sélectionner la chambre",
+    "backButton": "Retour aux résultats"
+  },
+  "amenities": {
+    "WIFI": "WiFi",
+    "POOL": "Piscine",
+    "SPA": "Spa",
+    "FITNESS_CENTER": "Salle de sport",
+    "RESTAURANT": "Restaurant",
+    "PARKING": "Parking",
+    "BUSINESS_CENTER": "Centre d'affaires",
+    "ROOM_SERVICE": "Service en chambre",
+    "AIR_CONDITIONING": "Climatisation",
+    "CONCIERGE": "Conciergerie"
+  },
+  "roomTypes": {
+    "STANDARD": "Chambre standard",
+    "DELUXE": "Chambre de luxe",
+    "SUITE": "Suite",
+    "EXECUTIVE": "Chambre exécutive",
+    "FAMILY": "Chambre familiale"
+  },
+  "bookingFlow": {
+    "steps": {
+      "search": "Recherche",
+      "selectHotel": "Sélection de l'hôtel",
+      "hotelDetails": "Détails de l'hôtel",
+      "passengerInfo": "Infos voyageurs",
+      "payment": "Paiement"
+    }
+  },
+  "payment": {
+    "title": "Paiement",
+    "summary": "Récapitulatif de l'hôtel",
+    "checkIn": "Arrivée : {{date}}",
+    "checkOut": "Départ : {{date}}",
+    "total": "Total : {{amount}} {{currency}}",
+    "addToCart": "Ajouter au panier",
+    "payNow": "Payer maintenant - {{amount}} {{currency}}",
+    "backButton": "Retour",
+    "guestInfoTitle": "Informations sur les voyageurs",
+    "guestInfoMessage": "Veuillez fournir les détails des voyageurs pour votre réservation.",
+    "continueToPayment": "Continuer vers le paiement"
+  },
+  "errors": {
+    "searchFailed": "Échec de la recherche d'hôtels. Veuillez réessayer.",
+    "loadingError": "Impossible de charger les hôtels. Utilisation des données hors ligne."
+  }
+}
