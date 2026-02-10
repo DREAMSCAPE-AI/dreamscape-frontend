@@ -1,0 +1,234 @@
+{
+  "page": {
+    "title": "Find Your Flight",
+    "backButton": "Go back",
+    "priceAnalysisButton": "Price Analysis"
+  },
+  "search": {
+    "title": "Find Your Flight",
+    "tripType": {
+      "label": "Trip Type",
+      "roundTrip": "Round-trip",
+      "oneWay": "One-way",
+      "multiCity": "Multi-city"
+    },
+    "origin": {
+      "label": "From",
+      "placeholder": "Departure city"
+    },
+    "destination": {
+      "label": "To",
+      "placeholder": "Arrival city"
+    },
+    "swapButton": "Swap airports",
+    "dates": {
+      "departureLabel": "Departure Date",
+      "travelDatesLabel": "Travel Dates",
+      "flexibleDates": "My dates are flexible"
+    },
+    "passengers": {
+      "label": "Passengers",
+      "selectLabel": "Select passengers",
+      "onePassenger": "1 Passenger",
+      "multiplePassengers": "{{count}} Passengers",
+      "adults": "Adults",
+      "adultsAge": "12+ years",
+      "children": "Children",
+      "childrenAge": "2-11 years",
+      "infants": "Infants",
+      "infantsAge": "Under 2 years",
+      "doneButton": "Done"
+    },
+    "cabinClass": {
+      "label": "Cabin Class",
+      "economy": "Economy",
+      "premium": "Premium Economy",
+      "business": "Business",
+      "first": "First Class"
+    },
+    "advancedOptions": {
+      "nonStop": "Non-stop flights only",
+      "nearbyAirports": "Include nearby airports"
+    },
+    "searchButton": "Search Flights",
+    "validation": {
+      "enterDeparture": "Please enter a departure city",
+      "enterArrival": "Please enter an arrival city",
+      "validCityName": "Please enter a valid city name",
+      "sameCities": "Departure and arrival cities cannot be the same",
+      "selectDeparture": "Please select a departure date",
+      "pastDate": "Departure date cannot be in the past",
+      "selectReturn": "Please select a return date for round-trip flights",
+      "returnAfterDeparture": "Return date must be after departure date",
+      "atLeastOnePassenger": "At least one passenger is required",
+      "maxPassengers": "Maximum 9 passengers allowed",
+      "infantsExceedAdults": "Number of infants cannot exceed number of adults"
+    }
+  },
+  "results": {
+    "oneWay": "One Way",
+    "roundTrip": "Round Trip",
+    "direct": "Direct",
+    "stops": {
+      "one": "1 stop",
+      "multiple": "{{count}} stops"
+    },
+    "terminal": "Terminal {{number}}",
+    "seatsLeft": "{{count}} seats left",
+    "perPerson": "per person",
+    "taxesAndFees": "+ taxes & fees",
+    "viewDetailsButton": "View Details",
+    "loadMoreButton": "Show next flights",
+    "loadingButton": "Loading...",
+    "amenities": {
+      "wifi": "WiFi",
+      "entertainment": "Entertainment",
+      "meals": "Meals"
+    },
+    "benefits": {
+      "freeCancellation": "Free cancellation 24h"
+    },
+    "emissions": "{{amount}} kg CO₂e per passenger",
+    "noResultsTitle": "No flights found",
+    "noResultsMessage": "We couldn't find any flights matching your criteria. Try adjusting your search parameters or selecting different dates."
+  },
+  "roundTripIndicator": {
+    "outbound": "Select your outbound flight",
+    "return": "Select your return flight",
+    "outboundSelected": "Outbound flight selected - Continue with return flight"
+  },
+  "filters": {
+    "title": "Filters",
+    "priceRange": {
+      "label": "Price Range",
+      "min": "$0",
+      "max": "$2000+"
+    },
+    "airlines": "Airlines",
+    "departureTime": {
+      "label": "Departure Time",
+      "earlyMorning": "Early Morning",
+      "earlyMorningTime": "12am - 6am",
+      "morning": "Morning",
+      "morningTime": "6am - 12pm",
+      "afternoon": "Afternoon",
+      "afternoonTime": "12pm - 6pm",
+      "evening": "Evening",
+      "eveningTime": "6pm - 12am"
+    },
+    "stops": {
+      "label": "Stops",
+      "nonStop": "Non-stop",
+      "oneStop": "1 Stop",
+      "twoPlus": "2+ Stops"
+    },
+    "cabinClass": {
+      "label": "Cabin Class"
+    }
+  },
+  "bookingFlow": {
+    "steps": {
+      "search": "Search",
+      "selectFlight": "Select Flight",
+      "chooseSeats": "Choose Seats",
+      "selectMeals": "Select Meals",
+      "addBaggage": "Add Baggage",
+      "passengerInfo": "Passenger Info",
+      "payment": "Payment"
+    }
+  },
+  "payment": {
+    "title": "Payment Summary",
+    "baseFlightPrice": "Base Flight Price",
+    "seatFees": "Seat Selection Fees",
+    "mealFees": "Meal Fees",
+    "baggageFees": "Baggage Fees",
+    "totalAmount": "Total Amount",
+    "addToCart": "Add to Cart",
+    "payNow": "Pay Now - ${{amount}}"
+  },
+  "errors": {
+    "searchFailed": "Failed to search flights. Please try again."
+  },
+  "details": {
+    "title": "Flight Details",
+    "flightItinerary": "Flight Itinerary",
+    "duration": "Duration",
+    "amenitiesLabel": "Amenities:",
+    "fareRules": "Fare Rules & Conditions",
+    "cancellationPolicy": "Cancellation Policy",
+    "cancellationText": "Cancellation permitted up to 24 hours before departure for a fee. After that, tickets are non-refundable.",
+    "changePolicy": "Change Policy",
+    "changeText": "Flight changes allowed subject to fare difference and change fee. Must be made at least 3 hours before departure.",
+    "baggageInfo": "Baggage Information",
+    "cabinBaggage": "Cabin Baggage",
+    "cabinBaggageText": "1 personal item (under seat) - max 8 kg\n1 carry-on bag (overhead) - max 10 kg",
+    "checkedBaggage": "Checked Baggage",
+    "checkedIncluded": "1 checked bag included - max 23 kg",
+    "checkedNotIncluded": "No checked bags included - available for purchase",
+    "priceBreakdown": "Price Breakdown",
+    "baseFare": "Base fare",
+    "totalPrice": "Total Price",
+    "backToResults": "Back to Results",
+    "continueToBooking": "Continue to Booking"
+  },
+  "toolbar": {
+    "sort": {
+      "departureEarly": "Departure: Earliest",
+      "departureLate": "Departure: Latest",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "durationShort": "Duration: Shortest",
+      "durationLong": "Duration: Longest"
+    },
+    "price": "Price:",
+    "priceMin": "Min",
+    "priceMax": "Max",
+    "stops": "Stops:",
+    "stopsOptions": {
+      "direct": "Direct",
+      "oneStop": "1 stop",
+      "twoPlus": "2+"
+    },
+    "departure": "Departure:",
+    "departureOptions": {
+      "early": "Early (0h-6h)",
+      "morning": "Morning (6h-12h)",
+      "afternoon": "Afternoon (12h-18h)",
+      "evening": "Evening (18h-0h)"
+    },
+    "resultsCount": "{{count}} flight found",
+    "resultsCount_plural": "{{count}} flights found",
+    "resetFilters": "Reset"
+  },
+  "passengerInfo": {
+    "title": "Passenger Information",
+    "importantTitle": "Important",
+    "importantText": "Please ensure all passenger names match exactly as they appear on government-issued ID or passport. For international flights, passport information is required.",
+    "passenger": "Passenger {{number}}",
+    "title_field": "Title",
+    "titleOptions": {
+      "mr": "Mr",
+      "ms": "Ms",
+      "mrs": "Mrs",
+      "dr": "Dr"
+    },
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "dateOfBirth": "Date of Birth",
+    "nationality": "Nationality",
+    "nationalityPlaceholder": "e.g., United States",
+    "passportNumber": "Passport Number",
+    "passportPlaceholder": "Optional for domestic flights",
+    "passportExpiry": "Passport Expiry Date",
+    "frequentFlyer": "Frequent Flyer Number",
+    "frequentFlyerPlaceholder": "Optional",
+    "contactInfo": "Contact Information",
+    "contactText": "We'll send your booking confirmation and flight updates to this email and phone number.",
+    "email": "Email Address",
+    "emailPlaceholder": "your.email@example.com",
+    "phone": "Phone Number",
+    "phonePlaceholder": "+1 (555) 123-4567",
+    "requiredFields": "Required fields"
+  }
+}

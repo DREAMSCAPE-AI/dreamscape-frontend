@@ -1,0 +1,105 @@
+{
+  "page": {
+    "title": "My Bookings",
+    "subtitle": "Manage and track your reservations",
+    "goBack": "Go back"
+  },
+  "stats": {
+    "total": "Total",
+    "confirmed": "Confirmed",
+    "inProgress": "In Progress",
+    "totalSpent": "Total spent"
+  },
+  "filters": {
+    "title": "Filters",
+    "search": "Search by reference...",
+    "allStatuses": "All statuses",
+    "allTypes": "All types",
+    "sortBy": {
+      "createdAt": "Creation date",
+      "updatedAt": "Last modified",
+      "totalAmount": "Amount",
+      "status": "Status"
+    },
+    "order": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
+    "active": {
+      "search": "Search: {{query}}",
+      "status": "Status: {{status}}",
+      "type": "Type: {{type}}"
+    }
+  },
+  "status": {
+    "confirmed": "Confirmed",
+    "completed": "Completed",
+    "pending": "Pending",
+    "pendingPayment": "Payment pending",
+    "cancelled": "Cancelled",
+    "failed": "Failed",
+    "draft": "Draft"
+  },
+  "types": {
+    "flight": "Flight",
+    "hotel": "Hotel",
+    "activity": "Activity",
+    "package": "Package",
+    "transfer": "Transfer",
+    "flights": "Flights",
+    "hotels": "Hotels",
+    "activities": "Activities",
+    "packages": "Packages",
+    "transfers": "Transfers"
+  },
+  "empty": {
+    "title": "No bookings",
+    "withFilters": "No bookings match your filters. Try adjusting them.",
+    "noBookings": "You don't have any bookings yet. Start exploring!",
+    "explore": "Explore flights"
+  },
+  "pagination": {
+    "showing": "Showing {{from}} to {{to}} of {{total}} bookings",
+    "page": "Page {{current}} of {{total}}",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "cancel": {
+    "title": "Cancel booking",
+    "message": "Are you sure you want to cancel this booking?",
+    "reference": "Ref: {{reference}}",
+    "amount": "Amount: {{amount}}",
+    "warning": "This action may be irreversible depending on the cancellation conditions.",
+    "confirm": "Confirm cancellation",
+    "back": "Back"
+  },
+  "detail": {
+    "title": "Booking",
+    "reference": "Ref:",
+    "copy": "Copy reference",
+    "createdAt": "Created on {{date}}",
+    "confirmedAt": "Confirmed on {{date}}",
+    "total": "Total",
+    "items": "Booking items ({{count}})",
+    "quantity": "x{{count}}",
+    "actions": {
+      "title": "Actions",
+      "cancel": "Cancel booking",
+      "print": "Print"
+    },
+    "notFound": "Booking not found",
+    "backToBookings": "Back to bookings",
+    "loading": "Loading details..."
+  },
+  "flight": {
+    "departure": "Departure:",
+    "airline": "Airline:"
+  },
+  "hotel": {
+    "checkIn": "Check-in:",
+    "checkOut": "Check-out:"
+  },
+  "activity": {
+    "duration": "Duration:"
+  }
+}

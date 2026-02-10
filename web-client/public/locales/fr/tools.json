@@ -1,0 +1,115 @@
+{
+  "analytics": {
+    "title": "Tableau de bord analytique",
+    "subtitle": "Suivez et analysez vos données de voyage"
+  },
+  "flightStatus": {
+    "title": "Suivi du statut des vols",
+    "subtitle": "Consultez les informations de vol en temps réel",
+    "search": {
+      "placeholder": "Saisissez le numéro de vol...",
+      "button": "Rechercher un vol"
+    },
+    "status": {
+      "onTime": "À l'heure",
+      "delayed": "Retardé",
+      "cancelled": "Annulé",
+      "boarding": "Embarquement",
+      "departed": "Parti",
+      "arrived": "Arrivé"
+    },
+    "details": {
+      "flightNumber": "Numéro de vol",
+      "airline": "Compagnie aérienne",
+      "departure": "Départ",
+      "arrival": "Arrivée",
+      "terminal": "Terminal",
+      "gate": "Porte",
+      "scheduledTime": "Prévu",
+      "estimatedTime": "Estimé",
+      "actualTime": "Réel"
+    }
+  },
+  "airports": {
+    "title": "Informations sur les aéroports",
+    "subtitle": "Trouvez des informations sur les aéroports du monde entier",
+    "search": {
+      "placeholder": "Rechercher par nom ou code d'aéroport...",
+      "button": "Rechercher"
+    },
+    "details": {
+      "code": "Code aéroport",
+      "name": "Nom de l'aéroport",
+      "city": "Ville",
+      "country": "Pays",
+      "timezone": "Fuseau horaire",
+      "terminals": "Terminaux",
+      "facilities": "Installations"
+    }
+  },
+  "airlines": {
+    "title": "Répertoire des compagnies aériennes",
+    "subtitle": "Parcourez les informations sur les compagnies aériennes",
+    "search": {
+      "placeholder": "Rechercher une compagnie aérienne...",
+      "button": "Rechercher"
+    },
+    "details": {
+      "code": "Code de la compagnie",
+      "name": "Nom de la compagnie",
+      "alliance": "Alliance",
+      "fleetSize": "Taille de la flotte",
+      "destinations": "Destinations",
+      "hubAirports": "Aéroports de correspondance"
+    }
+  },
+  "transfers": {
+    "title": "Transferts terrestres",
+    "subtitle": "Réservez des transferts d'aéroport et en ville",
+    "types": {
+      "airport": "Transfert aéroport",
+      "city": "Transfert en ville",
+      "intercity": "Transfert inter-villes"
+    },
+    "search": {
+      "from": "Depuis",
+      "to": "Vers",
+      "date": "Date",
+      "time": "Heure",
+      "passengers": "Passagers",
+      "button": "Rechercher des transferts"
+    },
+    "vehicle": {
+      "sedan": "Berline",
+      "suv": "SUV",
+      "van": "Van",
+      "luxury": "Luxe"
+    }
+  },
+  "insights": {
+    "title": "Aperçus de voyage",
+    "subtitle": "Découvrez les tendances et recommandations",
+    "categories": {
+      "trending": "Destinations tendance",
+      "bestTime": "Meilleure période pour visiter",
+      "priceAlerts": "Alertes de prix",
+      "seasonal": "Recommandations saisonnières"
+    },
+    "metrics": {
+      "popularity": "Popularité",
+      "avgPrice": "Prix moyen",
+      "weatherScore": "Score météo",
+      "crowdLevel": "Niveau d'affluence"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat trouvé",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "viewMore": "Voir plus",
+    "filters": "Filtres",
+    "sort": "Trier par",
+    "export": "Exporter les données"
+  }
+}

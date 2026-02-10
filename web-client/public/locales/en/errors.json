@@ -1,0 +1,27 @@
+{
+  "boundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "retry": "Try Again",
+    "home": "Go Home"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist.",
+    "home": "Go Home"
+  },
+  "network": {
+    "title": "Connection Error",
+    "description": "Unable to connect. Please check your internet connection.",
+    "retry": "Retry"
+  },
+  "unauthorized": {
+    "title": "Unauthorized",
+    "description": "You need to log in to access this page.",
+    "login": "Go to Login"
+  },
+  "server": {
+    "title": "Server Error",
+    "description": "Something went wrong on our end. Please try again later."
+  }
+}

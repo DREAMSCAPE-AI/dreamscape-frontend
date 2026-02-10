@@ -1,0 +1,205 @@
+{
+  "welcome": {
+    "title": "Bon retour, {{name}} !",
+    "greeting": "Bon retour, {{name}} !",
+    "fallbackName": "Voyageur",
+    "nextAdventure": "Votre prochaine aventure vous attend",
+    "readyForAdventure": "Prêt pour votre prochaine aventure ?",
+    "exploreDestinations": "Explorer les destinations",
+    "planTrip": "Planifier votre voyage",
+    "viewItinerary": "Voir l'Itinéraire",
+    "startPlanning": "Commencer la Planification",
+    "status": "Statut",
+    "total": "Total",
+    "upcomingTrips": "Vous avez {{count}} voyages à venir planifiés",
+    "refreshTrips": "Actualiser les voyages",
+    "accountType": {
+      "business": "Compte Professionnel",
+      "leisure": "Compte Loisirs",
+      "bleisure": "Compte Bleisure"
+    }
+  },
+  "stats": {
+    "title": "Statistiques de Voyage",
+    "loading": "Chargement des statistiques...",
+    "totalTrips": "Total de Voyages",
+    "totalSpent": "Total Dépensé",
+    "countriesVisited": "Pays Visités",
+    "avgTripDuration": "Durée Moy. de Voyage",
+    "days": "{{count}} jours",
+    "upcomingTrips": "Voyages à Venir",
+    "favoriteDestination": "Destination Préférée",
+    "notSet": "Non défini",
+    "nextMilestone": "Prochain Jalon",
+    "trips": "voyages",
+    "milestone": {
+      "title": "Prochain Jalon",
+      "trips": "voyages",
+      "remaining": "Encore {{count}} voyages pour débloquer le statut Explorateur !",
+      "unlocked": "Statut Explorateur débloqué !"
+    }
+  },
+  "quickActions": {
+    "title": "Recherche Rapide",
+    "flights": "Vols",
+    "hotels": "Hôtels",
+    "activities": "Activités",
+    "searchTypes": {
+      "flights": "Vols",
+      "hotels": "Hôtels",
+      "activities": "Activités"
+    },
+    "form": {
+      "from": "Depuis",
+      "to": "Vers",
+      "destination": "Destination",
+      "location": "Lieu",
+      "departure": "Départ",
+      "return": "Retour",
+      "checkOut": "Départ",
+      "date": "Date",
+      "passengers": "Passagers",
+      "guests": "Invités",
+      "people": "Personnes",
+      "search": "Rechercher",
+      "searching": "Recherche...",
+      "placeholders": {
+        "origin": "Ville de départ",
+        "destination": "Ville de destination",
+        "hotel": "Ville ou nom d'hôtel",
+        "activity": "Lieu de l'activité"
+      }
+    }
+  },
+  "recommendations": {
+    "title": "Recommandé pour Vous",
+    "forYou": "Pour Vous",
+    "loading": "Chargement des recommandations...",
+    "noRecommendations": "Aucune recommandation disponible",
+    "noRecommendationsHint": "Commencez à rechercher pour obtenir des recommandations personnalisées",
+    "viewDetails": "Voir les Détails",
+    "bookNow": "Réserver Maintenant",
+    "viewAll": "Voir Tout",
+    "viewAllCount": "Voir les {{count}} Recommandations",
+    "refreshRecommendations": "Actualiser les recommandations",
+    "recentSearches": "Recherches Récentes",
+    "aiRecommendations": "Recommandations IA"
+  },
+  "savedItineraries": {
+    "title": "Itinéraires Sauvegardés",
+    "loading": "Chargement des itinéraires...",
+    "noItineraries": "Aucun itinéraire sauvegardé",
+    "noItinerariesHint": "Vos voyages et réservations sauvegardés apparaîtront ici",
+    "createNew": "Créer un Nouvel Itinéraire",
+    "viewAll": "Voir Tout",
+    "viewAllCount": "Voir les {{count}} Itinéraires",
+    "refreshBookings": "Actualiser les réservations"
+  },
+  "tripHistory": {
+    "title": "Historique des Voyages",
+    "loading": "Chargement de l'historique...",
+    "noTrips": "Aucun historique de voyage",
+    "noTripsHint": "Vos voyages terminés apparaîtront ici",
+    "viewAll": "Voir Tout",
+    "viewAllCount": "Voir les {{count}} Voyages",
+    "completed": "Terminé",
+    "upcoming": "À Venir",
+    "cancelled": "Annulé",
+    "refreshHistory": "Actualiser l'historique",
+    "rate": "Noter",
+    "totalCompleted": "Total voyages terminés :",
+    "totalSpent": "Total dépensé :"
+  },
+  "priceAlerts": {
+    "title": "Alertes Prix",
+    "loading": "Chargement des alertes...",
+    "noAlerts": "Aucune alerte prix définie",
+    "noAlertsHint": "Créez une alerte pour suivre les prix des vols",
+    "priceDropped": "Prix baissé",
+    "priceIncreased": "Prix augmenté",
+    "createAlert": "Créer une Alerte",
+    "createNewAlert": "Créer une Nouvelle Alerte",
+    "creating": "Création...",
+    "target": "Cible",
+    "current": "Actuel",
+    "fromPlaceholder": "Depuis (ex. CDG)",
+    "toPlaceholder": "Vers (ex. ORY)",
+    "targetPricePlaceholder": "Prix cible (€)",
+    "notificationHint": "Vous serez notifié lorsque les prix descendront en dessous de votre cible"
+  },
+  "travelPreferences": {
+    "title": "Préférences de Voyage",
+    "currency": "Devise",
+    "language": "Langue",
+    "travelClass": "Classe de Voyage",
+    "seat": "Siège",
+    "budgetRange": "Fourchette de Budget",
+    "travelStyle": "Style de Voyage",
+    "notifications": "Notifications",
+    "cancel": "Annuler",
+    "saveChanges": "Enregistrer",
+    "saving": "Enregistrement...",
+    "classes": {
+      "economy": "Économique",
+      "business": "Affaires",
+      "first": "Première"
+    },
+    "seats": {
+      "window": "Hublot",
+      "aisle": "Couloir",
+      "middle": "Milieu"
+    },
+    "styles": {
+      "budget": "Économique",
+      "midRange": "Milieu de gamme",
+      "luxury": "Luxe"
+    },
+    "languages": {
+      "en": "Anglais",
+      "es": "Espagnol",
+      "fr": "Français",
+      "de": "Allemand",
+      "ja": "Japonais"
+    }
+  },
+  "onboardingPromotion": {
+    "title": "Complétez Votre Profil de Voyage",
+    "description": "Obtenez des recommandations personnalisées basées sur vos préférences",
+    "button": "Commencer le Questionnaire",
+    "dismiss": "Peut-être Plus Tard"
+  },
+  "unified": {
+    "loginRequired": "Veuillez vous connecter pour voir votre tableau de bord",
+    "loginDescription": "Accédez à votre tableau de bord voyage personnalisé en vous connectant.",
+    "businessDashboard": "Tableau de Bord Professionnel",
+    "travelDashboard": "Tableau de Bord Voyage",
+    "businessSubtitle": "Gérez vos voyages professionnels efficacement",
+    "leisureSubtitle": "Découvrez et planifiez votre prochaine aventure",
+    "tabs": {
+      "overview": "Aperçu",
+      "businessItinerary": "Itinéraire Professionnel",
+      "expenseManagement": "Gestion des Dépenses",
+      "travelDocuments": "Documents de Voyage",
+      "community": "Communauté",
+      "saved": "Sauvegardés"
+    },
+    "businessStats": {
+      "nextMeeting": "Prochaine Réunion",
+      "monthlyExpenses": "Dépenses Mensuelles",
+      "policyCompliance": "Conformité",
+      "pendingReports": "Rapports en Attente"
+    },
+    "leisureStats": {
+      "countriesVisited": "Pays Visités",
+      "citiesExplored": "Villes Explorées",
+      "experiences": "Expériences",
+      "photosShared": "Photos Partagées"
+    },
+    "badges": {
+      "business": "Professionnel",
+      "leisure": "Loisirs"
+    },
+    "featuredDestinations": "Destinations à la Une",
+    "savedExperiences": "Expériences Sauvegardées"
+  }
+}

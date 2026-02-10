@@ -1,0 +1,100 @@
+{
+  "page": {
+    "title": "Paiement"
+  },
+  "confirmation": {
+    "success": {
+      "title": "Paiement réussi !",
+      "subtitle": "Votre réservation a été confirmée"
+    },
+    "processing": {
+      "title": "Traitement du paiement",
+      "subtitle": "Nous traitons votre paiement",
+      "message": "Votre paiement est en cours de traitement. Cela peut prendre quelques minutes selon votre méthode de paiement. Vous recevrez un e-mail de confirmation une fois le paiement terminé."
+    },
+    "failed": {
+      "title": "Échec du paiement",
+      "subtitle": "Nous n'avons pas pu traiter votre paiement",
+      "message": "Votre paiement n'a pas pu être traité. Veuillez vérifier vos informations de paiement et réessayer.",
+      "reasons": {
+        "title": "Raisons courantes d'échec de paiement :",
+        "insufficientFunds": "Fonds insuffisants",
+        "incorrectDetails": "Informations de carte incorrectes",
+        "declined": "Carte refusée par votre banque",
+        "unsupported": "Méthode de paiement non supportée"
+      }
+    },
+    "auth": {
+      "title": "Authentification requise",
+      "message": "Veuillez vous connecter pour voir votre confirmation de paiement.",
+      "redirecting": "Redirection vers la connexion..."
+    },
+    "loading": "Chargement de la confirmation..."
+  },
+  "details": {
+    "title": "Détails de la réservation",
+    "reference": "Référence de réservation :",
+    "bookingId": "ID de réservation :",
+    "paymentId": "ID de paiement :",
+    "amountPaid": "Montant payé :",
+    "yourBooking": "Votre réservation",
+    "amount": "Montant :"
+  },
+  "whatsNext": {
+    "title": "Et maintenant ?",
+    "emailSent": "Un e-mail de confirmation a été envoyé à votre adresse e-mail enregistrée",
+    "viewDashboard": "Vous pouvez consulter et gérer votre réservation dans votre tableau de bord",
+    "keepReference": "Gardez votre référence de réservation à portée de main pour toute correspondance future"
+  },
+  "whatsHappening": {
+    "title": "Que se passe-t-il ?",
+    "bookingReference": "Référence de réservation :",
+    "amount": "Montant :"
+  },
+  "booking": {
+    "title": "Votre réservation",
+    "created": "Votre réservation ({{reference}}) a été créée mais non confirmée. Vous pouvez retourner à votre panier pour réessayer le paiement."
+  },
+  "actions": {
+    "viewBookings": "Voir mes réservations",
+    "backHome": "Retour à l'accueil",
+    "tryAgain": "Réessayer",
+    "print": "Imprimer",
+    "downloadReceipt": "Télécharger le reçu (PDF)"
+  },
+  "support": {
+    "needHelp": "Besoin d'aide ?",
+    "contactSupport": "Contacter le support"
+  },
+  "cart": {
+    "title": "Votre panier",
+    "empty": "Votre panier est vide",
+    "emptyMessage": "Parcourez les vols, hôtels et activités pour ajouter des articles à votre panier.",
+    "continueShopping": "Continuer les achats",
+    "summary": {
+      "items": "Articles",
+      "total": "Total",
+      "checkout": "Passer au paiement",
+      "processing": "Traitement en cours...",
+      "secure": "Paiement sécurisé avec chiffrement",
+      "expiresIn": "Le panier expire dans",
+      "expired": "Expiré",
+      "extend": "Prolonger"
+    },
+    "item": {
+      "remove": "Supprimer l'article",
+      "flight": "Vol",
+      "hotel": "Hôtel",
+      "activity": "Activité",
+      "perNight": "par nuit",
+      "perPerson": "par personne"
+    },
+    "drawer": {
+      "title": "Panier",
+      "itemCount": "{{count}} article",
+      "itemCount_plural": "{{count}} articles",
+      "viewCart": "Voir le panier complet",
+      "close": "Fermer le panier"
+    }
+  }
+}

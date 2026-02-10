@@ -1,0 +1,148 @@
+{
+  "cookie": {
+    "title": "We value your privacy",
+    "description": "We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking \"Accept All\", you consent to our use of cookies.",
+    "acceptAll": "Accept All",
+    "rejectAll": "Reject All",
+    "customize": "Customize",
+    "saving": "Saving...",
+    "preferences": {
+      "title": "Cookie Preferences",
+      "functional": {
+        "title": "Functional Cookies",
+        "description": "Essential for the website to function properly. Cannot be disabled.",
+        "required": "Required"
+      },
+      "analytics": {
+        "title": "Analytics Cookies",
+        "description": "Help us understand how visitors interact with our website."
+      },
+      "marketing": {
+        "title": "Marketing Cookies",
+        "description": "Used to deliver personalized advertisements and track campaign performance."
+      },
+      "preference": {
+        "title": "Preference Cookies",
+        "description": "Remember your settings and preferences for a better experience."
+      },
+      "save": "Save Preferences",
+      "cancel": "Cancel"
+    }
+  },
+  "consent": {
+    "title": "Consent Management",
+    "loading": "Loading consent settings...",
+    "noData": "No Consent Data",
+    "noDataDescription": "Unable to load your consent settings. Please try again later.",
+    "updateSuccess": "Consent updated successfully",
+    "updateError": "Failed to update consent",
+    "functional": {
+      "title": "Functional Cookies",
+      "description": "Essential for the website to function properly. Cannot be disabled.",
+      "required": "Required"
+    },
+    "analytics": {
+      "title": "Analytics Cookies",
+      "description": "Help us understand how visitors interact with our website to improve your experience."
+    },
+    "marketing": {
+      "title": "Marketing Cookies",
+      "description": "Used to deliver personalized advertisements and track campaign performance."
+    },
+    "preferences": {
+      "title": "Preference Cookies",
+      "description": "Remember your settings and preferences for a better experience."
+    },
+    "lastUpdated": "Last updated",
+    "history": {
+      "title": "Consent History",
+      "initial": "Initial consent",
+      "analyticsEnabled": "Analytics: enabled",
+      "analyticsDisabled": "Analytics: disabled",
+      "marketingEnabled": "Marketing: enabled",
+      "marketingDisabled": "Marketing: disabled",
+      "preferencesEnabled": "Preferences: enabled",
+      "preferencesDisabled": "Preferences: disabled",
+      "noChanges": "No changes",
+      "reason": "Reason",
+      "showing": "Showing",
+      "of": "of",
+      "changes": "changes"
+    }
+  },
+  "dataRights": {
+    "title": "Your Data Rights",
+    "export": {
+      "title": "Export My Data",
+      "description": "Download a copy of all your personal data stored in our system.",
+      "button": "Request Data Export",
+      "success": "Data export requested successfully. You will be notified when it is ready.",
+      "error": "Failed to request data export",
+      "download": "Download",
+      "downloadSuccess": "Data export downloaded successfully",
+      "downloadError": "Failed to download data export"
+    },
+    "delete": {
+      "title": "Delete My Account",
+      "description": "Permanently delete your account and all associated data.",
+      "button": "Request Account Deletion",
+      "success": "Account deletion requested successfully. Your request will be processed within 30 days.",
+      "error": "Failed to request account deletion",
+      "modal": {
+        "title": "Delete Account",
+        "warning": "Warning: This action cannot be undone!",
+        "warningDescription": "Deleting your account will permanently remove all your data, including bookings, preferences, and history.",
+        "reasonLabel": "Reason for deletion (optional)",
+        "reasonPlaceholder": "Help us improve by letting us know why you're leaving...",
+        "confirmLabel": "Type DELETE to confirm",
+        "confirmPlaceholder": "DELETE",
+        "confirmError": "Please type DELETE to confirm",
+        "cancel": "Cancel",
+        "confirm": "Delete My Account",
+        "processing": "Processing..."
+      }
+    },
+    "history": {
+      "title": "Request History",
+      "loading": "Loading requests...",
+      "noRequests": "No requests yet",
+      "types": {
+        "dataExport": "Data Export",
+        "dataDeletion": "Account Deletion",
+        "dataRectification": "Data Rectification",
+        "accessRequest": "Access Request"
+      },
+      "status": {
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "requested": "Requested",
+      "processed": "Processed",
+      "completed": "Completed",
+      "reason": "Reason",
+      "note": "Note"
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "loading": "Loading privacy policy...",
+    "error": "Error Loading Policy",
+    "errorDescription": "Privacy policy not found",
+    "version": "Version",
+    "effectiveDate": "Effective Date",
+    "lastUpdated": "Last updated",
+    "contactEmail": "privacy@dreamscape.com",
+    "contactText": "For questions about this policy, please contact",
+    "accept": {
+      "title": "Accept this Privacy Policy",
+      "description": "By accepting, you agree to our data collection and usage practices.",
+      "button": "I Accept This Policy",
+      "accepting": "Accepting...",
+      "accepted": "You have accepted this privacy policy",
+      "success": "Privacy policy accepted successfully!"
+    }
+  }
+}

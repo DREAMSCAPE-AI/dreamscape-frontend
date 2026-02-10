@@ -1,0 +1,35 @@
+{
+  "page": {
+    "title": "À propos de DreamScape",
+    "subtitle": "Votre compagnon de voyage alimenté par l'IA"
+  },
+  "mission": {
+    "title": "Notre Mission",
+    "description": "Révolutionner la planification de voyages grâce à une technologie IA de pointe et des expériences VR immersives"
+  },
+  "vision": {
+    "title": "Notre Vision",
+    "description": "Rendre le voyage accessible, personnalisé et inoubliable pour tous"
+  },
+  "values": {
+    "title": "Nos Valeurs",
+    "innovation": "Innovation",
+    "innovationDesc": "Pionniers des nouvelles technologies du voyage",
+    "personalization": "Personnalisation",
+    "personalizationDesc": "Des expériences sur mesure pour chaque voyageur",
+    "sustainability": "Durabilité",
+    "sustainabilityDesc": "Voyage responsable et écologique",
+    "excellence": "Excellence",
+    "excellenceDesc": "Qualité de service sans compromis"
+  },
+  "team": {
+    "title": "Rencontrez notre équipe",
+    "description": "Des experts passionnés en voyage, technologie et expérience utilisateur"
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address": "Adresse"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "page": {
+    "title": "Expériences uniques",
+    "subtitle": "Découvrez des activités et expériences inoubliables dans le monde entier",
+    "loading": "Chargement des expériences...",
+    "error": "Échec du chargement des expériences"
+  },
+  "search": {
+    "placeholder": "Rechercher des expériences...",
+    "searchButton": "Rechercher"
+  },
+  "categories": {
+    "all": "Toutes les expériences",
+    "adventure": "Aventure",
+    "culture": "Culture",
+    "food": "Gastronomie",
+    "nature": "Nature",
+    "wellness": "Bien-être",
+    "entertainment": "Divertissement"
+  },
+  "card": {
+    "rating": "Note {{rating}}",
+    "bookNow": "Réserver maintenant",
+    "viewDetails": "Voir les détails",
+    "from": "À partir de"
+  },
+  "details": {
+    "duration": "Durée",
+    "groupSize": "Taille du groupe",
+    "location": "Lieu",
+    "rating": "Note",
+    "reviews": "{{count}} avis",
+    "reviews_plural": "{{count}} avis",
+    "price": "Prix",
+    "description": "Description",
+    "included": "Ce qui est inclus",
+    "notIncluded": "Ce qui n'est pas inclus",
+    "meetingPoint": "Point de rendez-vous",
+    "availability": "Disponibilité",
+    "bookingInfo": "Informations de réservation"
+  },
+  "filters": {
+    "priceRange": "Fourchette de prix",
+    "duration": "Durée",
+    "rating": "Note",
+    "sortBy": "Trier par"
+  },
+  "defaultExperiences": {
+    "eiffelTower": {
+      "name": "Visite de la Tour Eiffel - Coupe-file",
+      "description": "Découvrez l'emblématique Tour Eiffel avec accès prioritaire et guide expert"
+    },
+    "tokyoFood": {
+      "name": "Circuit gastronomique à Tokyo",
+      "description": "Découvrez la cuisine japonaise authentique dans des endroits locaux cachés"
+    },
+    "dubaiDesert": {
+      "name": "Safari dans le désert de Dubaï",
+      "description": "Aventure palpitante dans le désert avec dune bashing et balade à dos de chameau"
+    },
+    "centralPark": {
+      "name": "Tour à vélo de Central Park",
+      "description": "Explorez le parc le plus célèbre de New York à vélo"
+    },
+    "thamesRiver": {
+      "name": "Croisière sur la Tamise",
+      "description": "Admirez les monuments de Londres depuis l'eau avec commentaires"
+    },
+    "thaiCooking": {
+      "name": "Cours de cuisine thaïlandaise",
+      "description": "Apprenez à cuisiner des plats thaïlandais authentiques avec des ingrédients locaux"
+    }
+  },
+  "groupSizes": {
+    "upTo": "Jusqu'à {{count}} personnes"
+  },
+  "durations": {
+    "hours": "{{count}} heure",
+    "hours_plural": "{{count}} heures"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement des expériences",
+    "noResults": "Aucune expérience trouvée correspondant à vos critères.",
+    "tryAgain": "Réessayer"
+  },
+  "bookingInfo": {
+    "instantConfirmation": "Confirmation instantanée",
+    "freeCancellation": "Annulation gratuite",
+    "cancellationPolicy": "Annulation gratuite jusqu'à 24 heures avant l'activité"
+  }
+}

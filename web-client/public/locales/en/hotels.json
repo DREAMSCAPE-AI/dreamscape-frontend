@@ -1,0 +1,127 @@
+{
+  "page": {
+    "title": "Find Your Perfect Stay",
+    "backButton": "Go back"
+  },
+  "search": {
+    "title": "Find Your Perfect Stay",
+    "destination": {
+      "label": "Destination",
+      "placeholder": "Where are you going?"
+    },
+    "dates": {
+      "label": "Check-in / Check-out"
+    },
+    "guests": {
+      "label": "Guests & Rooms",
+      "summary": {
+        "adults": "{{count}} Adult",
+        "adults_plural": "{{count}} Adults",
+        "children": "{{count}} Child",
+        "children_plural": "{{count}} Children",
+        "rooms": "{{count}} Room",
+        "rooms_plural": "{{count}} Rooms"
+      },
+      "adults": "Adults",
+      "adultsAge": "Ages 18+",
+      "children": "Children",
+      "childrenAge": "Ages 0-17",
+      "childAges": "Children's Ages",
+      "childAgeOption": "{{age}} year old",
+      "childAgeOption_plural": "{{age}} years old",
+      "rooms": "Rooms"
+    },
+    "advancedFilters": {
+      "showButton": "Show Advanced Filters",
+      "hideButton": "Hide Advanced Filters",
+      "starRating": {
+        "label": "Star Rating",
+        "threePlus": "3+ Stars",
+        "fourPlus": "4+ Stars",
+        "fivePlus": "5+ Stars"
+      },
+      "amenities": {
+        "label": "Amenities",
+        "wifi": "Free WiFi",
+        "pool": "Swimming Pool",
+        "spa": "Spa",
+        "fitnessCenter": "Fitness Center",
+        "restaurant": "Restaurant",
+        "parking": "Parking"
+      },
+      "priceRange": {
+        "label": "Price Range (per night)",
+        "under100": "Under $100",
+        "100to200": "$100 - $200",
+        "200to300": "$200 - $300",
+        "300plus": "$300+"
+      }
+    },
+    "searchButton": "Search Hotels"
+  },
+  "results": {
+    "loading": "Loading hotels...",
+    "noResults": "No hotels found",
+    "noResultsMessage": "Try adjusting your search criteria"
+  },
+  "card": {
+    "perNight": "per night",
+    "starRating": "{{rating}}-star hotel",
+    "viewDetails": "View Details",
+    "bookNow": "Book Now"
+  },
+  "details": {
+    "amenities": "Amenities",
+    "roomType": "Room Type",
+    "policies": "Policies",
+    "cancellation": "Cancellation",
+    "description": "Description",
+    "selectRoom": "Select Room",
+    "backButton": "Back to Results"
+  },
+  "amenities": {
+    "WIFI": "WiFi",
+    "POOL": "Swimming Pool",
+    "SPA": "Spa",
+    "FITNESS_CENTER": "Fitness Center",
+    "RESTAURANT": "Restaurant",
+    "PARKING": "Parking",
+    "BUSINESS_CENTER": "Business Center",
+    "ROOM_SERVICE": "Room Service",
+    "AIR_CONDITIONING": "Air Conditioning",
+    "CONCIERGE": "Concierge"
+  },
+  "roomTypes": {
+    "STANDARD": "Standard Room",
+    "DELUXE": "Deluxe Room",
+    "SUITE": "Suite",
+    "EXECUTIVE": "Executive Room",
+    "FAMILY": "Family Room"
+  },
+  "bookingFlow": {
+    "steps": {
+      "search": "Search",
+      "selectHotel": "Select Hotel",
+      "hotelDetails": "Hotel Details",
+      "passengerInfo": "Passenger Info",
+      "payment": "Payment"
+    }
+  },
+  "payment": {
+    "title": "Payment",
+    "summary": "Hotel Summary",
+    "checkIn": "Check-in: {{date}}",
+    "checkOut": "Check-out: {{date}}",
+    "total": "Total: {{currency}} {{amount}}",
+    "addToCart": "Add to Cart",
+    "payNow": "Pay Now - {{currency}} {{amount}}",
+    "backButton": "Back",
+    "guestInfoTitle": "Guest Information",
+    "guestInfoMessage": "Please provide guest details for your reservation.",
+    "continueToPayment": "Continue to Payment"
+  },
+  "errors": {
+    "searchFailed": "Failed to search hotels. Please try again.",
+    "loadingError": "Failed to load hotels. Using offline data."
+  }
+}

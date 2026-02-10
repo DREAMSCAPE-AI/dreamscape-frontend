@@ -1,0 +1,136 @@
+{
+  "tabs": {
+    "profile": "Profil",
+    "account": "Compte",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité",
+    "travel": "Préférences de Voyage",
+    "dataPrivacy": "Données & Confidentialité"
+  },
+  "header": {
+    "title": "Paramètres",
+    "saveChanges": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "loading": "Chargement de vos paramètres...",
+    "saved": "Profil enregistré avec succès !"
+  },
+  "profile": {
+    "photo": {
+      "title": "Photo de Profil",
+      "change": "Changer la Photo",
+      "uploading": "Téléchargement...",
+      "selectImage": "Veuillez sélectionner une image"
+    },
+    "personal": {
+      "title": "Informations Personnelles",
+      "fullName": "Nom Complet",
+      "email": "Adresse Email"
+    },
+    "payment": {
+      "title": "Moyens de Paiement",
+      "addNew": "Ajouter",
+      "expires": "Expire le",
+      "edit": "Modifier"
+    }
+  },
+  "account": {
+    "language": {
+      "title": "Langue & Région",
+      "language": "Langue",
+      "currency": "Devise",
+      "options": {
+        "english": "Anglais",
+        "french": "Français",
+        "spanish": "Espagnol"
+      },
+      "currencies": {
+        "usd": "USD ($)",
+        "eur": "EUR (€)",
+        "gbp": "GBP (£)"
+      }
+    },
+    "security": {
+      "title": "Sécurité",
+      "changePassword": "Changer le Mot de Passe",
+      "twoFactor": "Authentification à Deux Facteurs",
+      "currentPassword": "Mot de Passe Actuel",
+      "newPassword": "Nouveau Mot de Passe",
+      "confirmPassword": "Confirmer le Nouveau Mot de Passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "cancel": "Annuler"
+    }
+  },
+  "notifications": {
+    "title": "Préférences de Notification",
+    "dealAlerts": {
+      "label": "Alertes Promotions",
+      "description": "Recevez des notifications sur les offres spéciales et promotions"
+    },
+    "tripReminders": {
+      "label": "Rappels de Voyage",
+      "description": "Recevez les mises à jour importantes concernant vos voyages"
+    },
+    "priceAlerts": {
+      "label": "Alertes Prix",
+      "description": "Surveillez les changements de prix pour vos voyages sauvegardés"
+    },
+    "newsletter": {
+      "label": "Newsletter",
+      "description": "Restez informé avec des conseils de voyage et de l'inspiration"
+    }
+  },
+  "privacy": {
+    "visibility": {
+      "title": "Visibilité du Profil",
+      "publicProfile": "Profil Public",
+      "publicDescription": "Permettre aux autres de voir votre historique de voyage et vos avis"
+    },
+    "data": {
+      "title": "Données & Confidentialité",
+      "dataSharing": "Partage de Données",
+      "dataSharingDescription": "Partager des données de voyage anonymes pour améliorer les recommandations",
+      "marketing": "Communications Marketing",
+      "marketingDescription": "Recevoir des offres de voyage personnalisées et des mises à jour"
+    }
+  },
+  "travelPreferences": {
+    "title": "Profil de Voyage",
+    "complete": "Votre profil de voyage est complet !",
+    "incomplete": "Complétez votre profil pour des recommandations personnalisées",
+    "progress": {
+      "completed": "complété",
+      "steps": "étapes sur 13"
+    },
+    "actions": {
+      "start": "Commencer le Questionnaire",
+      "continue": "Continuer",
+      "modify": "Modifier Mes Préférences",
+      "viewFull": "Voir le Questionnaire Complet"
+    },
+    "sections": {
+      "destinations": "Destinations Préférées",
+      "budget": "Budget de Voyage",
+      "travelTypes": "Types de Voyage",
+      "style": "Style de Voyage",
+      "activities": "Activités Préférées",
+      "groups": "Groupes de Voyage",
+      "noDestination": "Aucune destination définie",
+      "flexibility": "Flexibilité",
+      "style_label": "Style",
+      "comfort": "Confort"
+    },
+    "help": {
+      "title": "À Propos de Vos Préférences",
+      "autoSave": "Vos préférences sont sauvegardées automatiquement à chaque étape",
+      "modify": "Vous pouvez modifier vos réponses à tout moment",
+      "accuracy": "Plus votre profil est complet, plus nos recommandations seront précises",
+      "privacy": "Toutes vos données sont privées et sécurisées"
+    },
+    "empty": {
+      "title": "Configurez Vos Préférences de Voyage",
+      "description": "Répondez à notre questionnaire personnalisé pour recevoir des recommandations adaptées à vos goûts et votre style de voyage.",
+      "action": "Commencer le Questionnaire"
+    },
+    "loading": "Chargement de vos préférences..."
+  }
+}

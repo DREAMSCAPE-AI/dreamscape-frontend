@@ -1,0 +1,115 @@
+{
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "subtitle": "Track and analyze your travel data"
+  },
+  "flightStatus": {
+    "title": "Flight Status Tracker",
+    "subtitle": "Check real-time flight information",
+    "search": {
+      "placeholder": "Enter flight number...",
+      "button": "Search Flight"
+    },
+    "status": {
+      "onTime": "On Time",
+      "delayed": "Delayed",
+      "cancelled": "Cancelled",
+      "boarding": "Boarding",
+      "departed": "Departed",
+      "arrived": "Arrived"
+    },
+    "details": {
+      "flightNumber": "Flight Number",
+      "airline": "Airline",
+      "departure": "Departure",
+      "arrival": "Arrival",
+      "terminal": "Terminal",
+      "gate": "Gate",
+      "scheduledTime": "Scheduled",
+      "estimatedTime": "Estimated",
+      "actualTime": "Actual"
+    }
+  },
+  "airports": {
+    "title": "Airport Information",
+    "subtitle": "Find information about airports worldwide",
+    "search": {
+      "placeholder": "Search by airport name or code...",
+      "button": "Search"
+    },
+    "details": {
+      "code": "Airport Code",
+      "name": "Airport Name",
+      "city": "City",
+      "country": "Country",
+      "timezone": "Timezone",
+      "terminals": "Terminals",
+      "facilities": "Facilities"
+    }
+  },
+  "airlines": {
+    "title": "Airline Directory",
+    "subtitle": "Browse information about airlines",
+    "search": {
+      "placeholder": "Search airline...",
+      "button": "Search"
+    },
+    "details": {
+      "code": "Airline Code",
+      "name": "Airline Name",
+      "alliance": "Alliance",
+      "fleetSize": "Fleet Size",
+      "destinations": "Destinations",
+      "hubAirports": "Hub Airports"
+    }
+  },
+  "transfers": {
+    "title": "Ground Transfers",
+    "subtitle": "Book airport and city transfers",
+    "types": {
+      "airport": "Airport Transfer",
+      "city": "City Transfer",
+      "intercity": "Inter-city Transfer"
+    },
+    "search": {
+      "from": "From",
+      "to": "To",
+      "date": "Date",
+      "time": "Time",
+      "passengers": "Passengers",
+      "button": "Search Transfers"
+    },
+    "vehicle": {
+      "sedan": "Sedan",
+      "suv": "SUV",
+      "van": "Van",
+      "luxury": "Luxury"
+    }
+  },
+  "insights": {
+    "title": "Travel Insights",
+    "subtitle": "Discover trends and recommendations",
+    "categories": {
+      "trending": "Trending Destinations",
+      "bestTime": "Best Time to Visit",
+      "priceAlerts": "Price Alerts",
+      "seasonal": "Seasonal Recommendations"
+    },
+    "metrics": {
+      "popularity": "Popularity",
+      "avgPrice": "Average Price",
+      "weatherScore": "Weather Score",
+      "crowdLevel": "Crowd Level"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "viewMore": "View more",
+    "filters": "Filters",
+    "sort": "Sort by",
+    "export": "Export data"
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "cookie": {
+    "title": "Nous respectons votre vie privée",
+    "description": "Nous utilisons des cookies pour améliorer votre expérience de navigation, proposer du contenu personnalisé et analyser notre trafic. En cliquant sur \"Tout Accepter\", vous consentez à l'utilisation de nos cookies.",
+    "acceptAll": "Tout Accepter",
+    "rejectAll": "Tout Refuser",
+    "customize": "Personnaliser",
+    "saving": "Enregistrement...",
+    "preferences": {
+      "title": "Préférences des Cookies",
+      "functional": {
+        "title": "Cookies Fonctionnels",
+        "description": "Essentiels au bon fonctionnement du site web. Ne peuvent pas être désactivés.",
+        "required": "Requis"
+      },
+      "analytics": {
+        "title": "Cookies Analytiques",
+        "description": "Nous aident à comprendre comment les visiteurs interagissent avec notre site web."
+      },
+      "marketing": {
+        "title": "Cookies Marketing",
+        "description": "Utilisés pour diffuser des publicités personnalisées et suivre les performances des campagnes."
+      },
+      "preference": {
+        "title": "Cookies de Préférence",
+        "description": "Mémorisent vos paramètres et préférences pour une meilleure expérience."
+      },
+      "save": "Enregistrer les Préférences",
+      "cancel": "Annuler"
+    }
+  },
+  "consent": {
+    "title": "Gestion du Consentement",
+    "loading": "Chargement des paramètres de consentement...",
+    "noData": "Aucune Donnée de Consentement",
+    "noDataDescription": "Impossible de charger vos paramètres de consentement. Veuillez réessayer plus tard.",
+    "updateSuccess": "Consentement mis à jour avec succès",
+    "updateError": "Échec de la mise à jour du consentement",
+    "functional": {
+      "title": "Cookies Fonctionnels",
+      "description": "Essentiels au bon fonctionnement du site web. Ne peuvent pas être désactivés.",
+      "required": "Requis"
+    },
+    "analytics": {
+      "title": "Cookies Analytiques",
+      "description": "Nous aident à comprendre comment les visiteurs interagissent avec notre site web pour améliorer votre expérience."
+    },
+    "marketing": {
+      "title": "Cookies Marketing",
+      "description": "Utilisés pour diffuser des publicités personnalisées et suivre les performances des campagnes."
+    },
+    "preferences": {
+      "title": "Cookies de Préférence",
+      "description": "Mémorisent vos paramètres et préférences pour une meilleure expérience."
+    },
+    "lastUpdated": "Dernière mise à jour",
+    "history": {
+      "title": "Historique du Consentement",
+      "initial": "Consentement initial",
+      "analyticsEnabled": "Analytiques : activés",
+      "analyticsDisabled": "Analytiques : désactivés",
+      "marketingEnabled": "Marketing : activé",
+      "marketingDisabled": "Marketing : désactivé",
+      "preferencesEnabled": "Préférences : activées",
+      "preferencesDisabled": "Préférences : désactivées",
+      "noChanges": "Aucun changement",
+      "reason": "Raison",
+      "showing": "Affichage de",
+      "of": "sur",
+      "changes": "modifications"
+    }
+  },
+  "dataRights": {
+    "title": "Vos Droits sur les Données",
+    "export": {
+      "title": "Exporter Mes Données",
+      "description": "Téléchargez une copie de toutes vos données personnelles stockées dans notre système.",
+      "button": "Demander l'Export de Données",
+      "success": "Export de données demandé avec succès. Vous serez notifié quand il sera prêt.",
+      "error": "Échec de la demande d'export de données",
+      "download": "Télécharger",
+      "downloadSuccess": "Export de données téléchargé avec succès",
+      "downloadError": "Échec du téléchargement de l'export de données"
+    },
+    "delete": {
+      "title": "Supprimer Mon Compte",
+      "description": "Supprimez définitivement votre compte et toutes les données associées.",
+      "button": "Demander la Suppression du Compte",
+      "success": "Suppression du compte demandée avec succès. Votre demande sera traitée dans les 30 jours.",
+      "error": "Échec de la demande de suppression du compte",
+      "modal": {
+        "title": "Supprimer le Compte",
+        "warning": "Attention : Cette action est irréversible !",
+        "warningDescription": "La suppression de votre compte supprimera définitivement toutes vos données, y compris les réservations, les préférences et l'historique.",
+        "reasonLabel": "Raison de la suppression (optionnel)",
+        "reasonPlaceholder": "Aidez-nous à nous améliorer en nous disant pourquoi vous partez...",
+        "confirmLabel": "Tapez DELETE pour confirmer",
+        "confirmPlaceholder": "DELETE",
+        "confirmError": "Veuillez taper DELETE pour confirmer",
+        "cancel": "Annuler",
+        "confirm": "Supprimer Mon Compte",
+        "processing": "Traitement..."
+      }
+    },
+    "history": {
+      "title": "Historique des Demandes",
+      "loading": "Chargement des demandes...",
+      "noRequests": "Aucune demande pour le moment",
+      "types": {
+        "dataExport": "Export de Données",
+        "dataDeletion": "Suppression du Compte",
+        "dataRectification": "Rectification de Données",
+        "accessRequest": "Demande d'Accès"
+      },
+      "status": {
+        "pending": "En Attente",
+        "inProgress": "En Cours",
+        "completed": "Terminé",
+        "rejected": "Rejeté",
+        "cancelled": "Annulé"
+      },
+      "requested": "Demandé",
+      "processed": "Traité",
+      "completed": "Terminé",
+      "reason": "Raison",
+      "note": "Note"
+    }
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "loading": "Chargement de la politique de confidentialité...",
+    "error": "Erreur de Chargement de la Politique",
+    "errorDescription": "Politique de confidentialité introuvable",
+    "version": "Version",
+    "effectiveDate": "Date d'Effet",
+    "lastUpdated": "Dernière mise à jour",
+    "contactEmail": "privacy@dreamscape.com",
+    "contactText": "Pour toute question concernant cette politique, veuillez contacter",
+    "accept": {
+      "title": "Accepter cette Politique de Confidentialité",
+      "description": "En acceptant, vous consentez à nos pratiques de collecte et d'utilisation des données.",
+      "button": "J'Accepte Cette Politique",
+      "accepting": "Acceptation...",
+      "accepted": "Vous avez accepté cette politique de confidentialité",
+      "success": "Politique de confidentialité acceptée avec succès !"
+    }
+  }
+}

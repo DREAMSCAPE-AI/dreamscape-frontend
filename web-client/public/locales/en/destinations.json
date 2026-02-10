@@ -1,0 +1,66 @@
+{
+  "list": {
+    "title": "Popular Destinations",
+    "subtitle": "Discover amazing places around the world"
+  },
+  "page": {
+    "title": "Popular Destinations",
+    "subtitle": "Discover amazing places around the world",
+    "loading": "Loading destinations...",
+    "error": "Failed to load destinations. Using offline data."
+  },
+  "card": {
+    "explore": "Explore",
+    "viewDetails": "View Details",
+    "learnMore": "Learn More",
+    "from": "From",
+    "startingAt": "Starting at"
+  },
+  "categories": {
+    "popular": "Popular",
+    "trending": "Trending",
+    "featured": "Featured",
+    "newDestinations": "New Destinations",
+    "topRated": "Top Rated",
+    "budget": "Budget-Friendly",
+    "luxury": "Luxury"
+  },
+  "regions": {
+    "europe": "Europe",
+    "asia": "Asia",
+    "americas": "Americas",
+    "africa": "Africa",
+    "oceania": "Oceania",
+    "middleEast": "Middle East"
+  },
+  "cities": {
+    "paris": "Paris",
+    "tokyo": "Tokyo",
+    "dubai": "Dubai",
+    "newYork": "New York",
+    "london": "London",
+    "bangkok": "Bangkok"
+  },
+  "descriptions": {
+    "paris": "The City of Light awaits with its iconic landmarks and romantic charm",
+    "tokyo": "Experience the perfect blend of traditional culture and modern innovation",
+    "dubai": "Discover luxury and adventure in this futuristic desert metropolis",
+    "newYork": "The city that never sleeps offers endless possibilities and iconic sights",
+    "london": "Explore centuries of history in this vibrant and culturally rich capital",
+    "bangkok": "Immerse yourself in the vibrant street life and rich cultural heritage",
+    "default": "Discover amazing experiences in this beautiful destination"
+  },
+  "filters": {
+    "sortBy": "Sort by",
+    "filterBy": "Filter by",
+    "priceRange": "Price Range",
+    "travelStyle": "Travel Style",
+    "climate": "Climate",
+    "activities": "Activities"
+  },
+  "errors": {
+    "loadFailed": "Failed to load destinations",
+    "noResults": "No destinations found",
+    "tryAgain": "Try again"
+  }
+}

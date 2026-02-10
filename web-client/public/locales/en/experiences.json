@@ -1,0 +1,91 @@
+{
+  "page": {
+    "title": "Unique Experiences",
+    "subtitle": "Discover unforgettable activities and experiences around the world",
+    "loading": "Loading experiences...",
+    "error": "Failed to load experiences"
+  },
+  "search": {
+    "placeholder": "Search experiences...",
+    "searchButton": "Search"
+  },
+  "categories": {
+    "all": "All Experiences",
+    "adventure": "Adventure",
+    "culture": "Culture",
+    "food": "Food & Drink",
+    "nature": "Nature",
+    "wellness": "Wellness",
+    "entertainment": "Entertainment"
+  },
+  "card": {
+    "rating": "{{rating}} rating",
+    "bookNow": "Book Now",
+    "viewDetails": "View Details",
+    "from": "From"
+  },
+  "details": {
+    "duration": "Duration",
+    "groupSize": "Group Size",
+    "location": "Location",
+    "rating": "Rating",
+    "reviews": "{{count}} review",
+    "reviews_plural": "{{count}} reviews",
+    "price": "Price",
+    "description": "Description",
+    "included": "What's Included",
+    "notIncluded": "What's Not Included",
+    "meetingPoint": "Meeting Point",
+    "availability": "Availability",
+    "bookingInfo": "Booking Information"
+  },
+  "filters": {
+    "priceRange": "Price Range",
+    "duration": "Duration",
+    "rating": "Rating",
+    "sortBy": "Sort By"
+  },
+  "defaultExperiences": {
+    "eiffelTower": {
+      "name": "Eiffel Tower Skip-the-Line Tour",
+      "description": "Experience the iconic Eiffel Tower with priority access and expert guide"
+    },
+    "tokyoFood": {
+      "name": "Tokyo Food Walking Tour",
+      "description": "Discover authentic Japanese cuisine in hidden local spots"
+    },
+    "dubaiDesert": {
+      "name": "Dubai Desert Safari",
+      "description": "Thrilling desert adventure with dune bashing and camel riding"
+    },
+    "centralPark": {
+      "name": "Central Park Bike Tour",
+      "description": "Explore New York's most famous park on two wheels"
+    },
+    "thamesRiver": {
+      "name": "Thames River Cruise",
+      "description": "See London's landmarks from the water with commentary"
+    },
+    "thaiCooking": {
+      "name": "Thai Cooking Class",
+      "description": "Learn to cook authentic Thai dishes with local ingredients"
+    }
+  },
+  "groupSizes": {
+    "upTo": "Up to {{count}} people"
+  },
+  "durations": {
+    "hours": "{{count}} hour",
+    "hours_plural": "{{count}} hours"
+  },
+  "errors": {
+    "loadFailed": "Failed to load experiences",
+    "noResults": "No experiences found matching your criteria.",
+    "tryAgain": "Try Again"
+  },
+  "bookingInfo": {
+    "instantConfirmation": "Instant Confirmation",
+    "freeCancellation": "Free Cancellation",
+    "cancellationPolicy": "Free cancellation up to 24 hours before the activity"
+  }
+}
