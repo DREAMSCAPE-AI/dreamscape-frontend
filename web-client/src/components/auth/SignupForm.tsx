@@ -73,13 +73,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
 
   return (
     <div className="w-full max-w-md">
-      <div className="bg-white rounded-xl shadow-sm p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">{t('signup.title')}</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="bg-white rounded-xl shadow-sm p-4 md:p-8">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-4 md:mb-8">{t('signup.title')}</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
           {/* First Name Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.firstName')}
             </label>
             <div className="relative">
@@ -87,21 +87,21 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
+                className={`w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.firstName ? 'border-red-500' : 'border-gray-200'
                 }`}
                 placeholder={t('signup.firstNamePlaceholder')}
               />
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <User className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.firstName && (
-              <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
+              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.firstName}</p>
             )}
           </div>
 
           {/* Last Name Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.lastName')}
             </label>
             <div className="relative">
@@ -109,21 +109,21 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
+                className={`w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.lastName ? 'border-red-500' : 'border-gray-200'
                 }`}
                 placeholder={t('signup.lastNamePlaceholder')}
               />
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <User className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.lastName && (
-              <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
+              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.lastName}</p>
             )}
           </div>
 
           {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.email')}
             </label>
             <div className="relative">
@@ -131,21 +131,21 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
+                className={`w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.email ? 'border-red-500' : 'border-gray-200'
                 }`}
                 placeholder={t('signup.emailPlaceholder')}
               />
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Mail className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.email}</p>
             )}
           </div>
 
           {/* Password Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.password')}
             </label>
             <div className="relative">
@@ -153,32 +153,32 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
+                className={`w-full pl-9 md:pl-10 pr-10 md:pr-12 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.password ? 'border-red-500' : 'border-gray-200'
                 }`}
                 placeholder={t('signup.passwordPlaceholder')}
               />
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                className="absolute right-2.5 md:right-3 top-1/2 -translate-y-1/2 p-1.5 md:p-1 text-gray-400 hover:text-gray-600 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center"
               >
                 {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
+                  <EyeOff className="w-4 h-4 md:w-5 md:h-5" />
                 ) : (
-                  <Eye className="w-5 h-5" />
+                  <Eye className="w-4 h-4 md:w-5 md:h-5" />
                 )}
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.password}</p>
             )}
           </div>
 
           {/* Confirm Password Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.confirmPassword')}
             </label>
             <div className="relative">
@@ -186,15 +186,15 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
+                className={`w-full pl-9 md:pl-10 pr-10 md:pr-12 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
                 }`}
                 placeholder={t('signup.confirmPasswordPlaceholder')}
               />
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
+              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.confirmPassword}</p>
             )}
           </div>
 
@@ -203,7 +203,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full min-h-[44px] py-3 text-sm md:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-medium"
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
@@ -213,12 +213,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
           </button>
 
           {/* Login Link */}
-          <p className="text-center text-sm text-gray-600">
+          <p className="text-center text-xs md:text-sm text-gray-600">
             {t('signup.hasAccount')}{' '}
             <button
               type="button"
               onClick={onSwitchToLogin}
-              className="text-orange-500 hover:text-orange-600"
+              className="text-orange-500 hover:text-orange-600 font-medium min-h-[44px] md:min-h-0 inline-flex items-center py-2 md:py-0"
             >
               {t('signup.signIn')}
             </button>

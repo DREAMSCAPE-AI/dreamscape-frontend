@@ -127,16 +127,16 @@ const OnboardingWizard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
-        <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('wizard.loadingProfile')}</h2>
-        <p className="text-gray-600">{t('wizard.preparingQuestionnaire')}</p>
+      <div className="bg-white rounded-xl md:rounded-2xl shadow-xl md:shadow-2xl p-6 md:p-8 text-center">
+        <Loader2 className="w-10 h-10 md:w-12 md:h-12 text-orange-500 animate-spin mx-auto mb-3 md:mb-4" />
+        <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">{t('wizard.loadingProfile')}</h2>
+        <p className="text-sm md:text-base text-gray-600">{t('wizard.preparingQuestionnaire')}</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="bg-white rounded-xl md:rounded-2xl shadow-xl md:shadow-2xl overflow-hidden">
       {/* Progress Indicator */}
       <ProgressIndicator
         currentStepIndex={currentStepIndex}
@@ -146,27 +146,27 @@ const OnboardingWizard: React.FC = () => {
 
       {/* Skip Onboarding Banner */}
       <div className="bg-orange-50 border-b border-orange-100">
-        <div className="px-6 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-gray-700">
+        <div className="px-4 md:px-6 py-2.5 md:py-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="text-xs md:text-sm text-gray-700">
                 Vous pouvez passer ce questionnaire et explorer DreamScape immédiatement
               </div>
             </div>
             <button
               onClick={handleSkipOnboarding}
               disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 text-orange-600 hover:text-orange-800 hover:bg-orange-100 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 min-h-[40px] text-orange-600 hover:text-orange-800 hover:bg-orange-100 rounded-lg transition-colors text-xs md:text-sm font-medium disabled:opacity-50 whitespace-nowrap"
             >
               <span>Passer l'onboarding</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 flex-shrink-0" />
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="px-8 py-6 max-h-[70vh] overflow-y-auto">
+      <div className="px-4 md:px-6 lg:px-8 py-4 md:py-6 max-h-[65vh] md:max-h-[70vh] overflow-y-auto">
         {/* Error Banner */}
         <AnimatePresence>
           {error && (
@@ -222,30 +222,31 @@ const OnboardingWizard: React.FC = () => {
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="mt-6">
-          <div className="flex items-center justify-between">
+        <div className="mt-4 md:mt-6">
+          <div className="flex items-center justify-between gap-2">
             {/* Previous Button */}
             <button
               onClick={previousStep}
               disabled={isFirstStep || isSaving}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+              className={`flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2.5 md:py-3 min-h-[44px] rounded-lg font-medium transition-all text-sm md:text-base ${
                 isFirstStep || isSaving
                   ? 'text-gray-400 cursor-not-allowed'
                   : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
               }`}
+              aria-label="Previous step"
             >
-              <ChevronLeft className="w-4 h-4" />
-              Précédent
+              <ChevronLeft className="w-4 h-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Précédent</span>
             </button>
 
             {/* Middle Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               {/* Skip Button (for optional steps) */}
               {!currentStep.required && !isLastStep && (
                 <button
                   onClick={skipStep}
                   disabled={isSaving}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors disabled:opacity-50"
+                  className="px-3 md:px-4 py-2 min-h-[44px] text-gray-600 hover:text-gray-800 font-medium transition-colors disabled:opacity-50 text-sm md:text-base"
                 >
                   Passer
                 </button>
@@ -259,8 +260,9 @@ const OnboardingWizard: React.FC = () => {
                   }
                 }}
                 disabled={isSaving}
-                className="p-2 text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50"
+                className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
                 title="Recommencer"
+                aria-label="Reset onboarding"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -271,22 +273,23 @@ const OnboardingWizard: React.FC = () => {
               <button
                 onClick={handleCompleteOnboarding}
                 disabled={!allRequiredStepsCompleted || isSaving}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+                className={`flex items-center gap-1 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 min-h-[44px] rounded-lg font-medium transition-all text-sm md:text-base ${
                   allRequiredStepsCompleted && !isSaving
                     ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:opacity-90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
                 title={!allRequiredStepsCompleted ? 'Vous devez compléter toutes les étapes obligatoires' : ''}
+                aria-label="Complete onboarding"
               >
                 {isSaving ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Finalisation...
+                    <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                    <span className="hidden sm:inline">Finalisation...</span>
                   </>
                 ) : (
                   <>
-                    <Check className="w-4 h-4" />
-                    Terminer
+                    <Check className="w-4 h-4 flex-shrink-0" />
+                    <span>Terminer</span>
                   </>
                 )}
               </button>
@@ -294,21 +297,22 @@ const OnboardingWizard: React.FC = () => {
               <button
                 onClick={nextStep}
                 disabled={!canProceed || isSaving}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+                className={`flex items-center gap-1 md:gap-2 px-4 md:px-6 py-2.5 md:py-3 min-h-[44px] rounded-lg font-medium transition-all text-sm md:text-base ${
                   canProceed && !isSaving
                     ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:opacity-90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
+                aria-label="Next step"
               >
                 {isSaving ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Sauvegarde...
+                    <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                    <span className="hidden sm:inline">Sauvegarde...</span>
                   </>
                 ) : (
                   <>
-                    Suivant
-                    <ChevronRight className="w-4 h-4" />
+                    <span>Suivant</span>
+                    <ChevronRight className="w-4 h-4 flex-shrink-0" />
                   </>
                 )}
               </button>

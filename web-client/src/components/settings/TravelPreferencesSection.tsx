@@ -97,13 +97,13 @@ const TravelPreferencesSection: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Progress Overview */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm p-6 border border-blue-200">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-semibold text-blue-900">{t('travelPreferences.title')}</h2>
-            <p className="text-blue-700 text-sm">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm p-4 md:p-6 border border-blue-200">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base md:text-lg font-semibold text-blue-900">{t('travelPreferences.title')}</h2>
+            <p className="text-blue-700 text-xs md:text-sm mt-0.5">
               {completionPercentage === 100
                 ? t('travelPreferences.complete')
                 : t('travelPreferences.incomplete')
@@ -111,25 +111,25 @@ const TravelPreferencesSection: React.FC = () => {
             </p>
           </div>
           {completionPercentage === 100 ? (
-            <CheckCircle className="w-8 h-8 text-green-600" />
+            <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-600 flex-shrink-0" />
           ) : (
-            <AlertCircle className="w-8 h-8 text-orange-500" />
+            <AlertCircle className="w-6 h-6 md:w-8 md:h-8 text-orange-500 flex-shrink-0" />
           )}
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-4">
+        <div className="mb-3 md:mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-blue-800">
+            <span className="text-xs md:text-sm font-medium text-blue-800">
               {Math.round(completionPercentage)}% {t('travelPreferences.progress.completed')}
             </span>
-            <span className="text-sm text-blue-600">
+            <span className="text-xs md:text-sm text-blue-600">
               {completedSteps.length} {t('travelPreferences.progress.steps')}
             </span>
           </div>
-          <div className="w-full bg-blue-200 rounded-full h-3">
+          <div className="w-full bg-blue-200 rounded-full h-2 md:h-3">
             <motion.div
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 md:h-3 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${completionPercentage}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
@@ -138,10 +138,10 @@ const TravelPreferencesSection: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
           <Link
             to="/onboarding"
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
           >
             {completionPercentage === 0 ? (
               <>
@@ -165,7 +165,7 @@ const TravelPreferencesSection: React.FC = () => {
           {completionPercentage > 0 && (
             <Link
               to="/onboarding"
-              className="flex items-center gap-2 px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors text-sm"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors text-sm"
             >
               {t('travelPreferences.actions.viewFull')}
               <ChevronRight className="w-3 h-3" />
@@ -176,13 +176,13 @@ const TravelPreferencesSection: React.FC = () => {
 
       {/* Current Preferences Summary */}
       {completionPercentage > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {/* Destinations */}
           {profile.preferredDestinations && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <MapPin className="w-5 h-5 text-blue-600" />
-                <h3 className="font-semibold">{t('travelPreferences.sections.destinations')}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                <MapPin className="w-4 h-4 md:w-5 md:h-5 text-blue-600 flex-shrink-0" />
+                <h3 className="font-semibold text-sm md:text-base">{t('travelPreferences.sections.destinations')}</h3>
               </div>
 
               {profile.preferredDestinations.destinations?.length > 0 ? (
@@ -201,17 +201,17 @@ const TravelPreferencesSection: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm">{t('travelPreferences.sections.noDestination')}</p>
+                <p className="text-gray-500 text-xs md:text-sm">{t('travelPreferences.sections.noDestination')}</p>
               )}
             </div>
           )}
 
           {/* Budget */}
           {profile.globalBudgetRange && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <DollarSign className="w-5 h-5 text-green-600" />
-                <h3 className="font-semibold">{t('travelPreferences.sections.budget')}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                <DollarSign className="w-4 h-4 md:w-5 md:h-5 text-green-600 flex-shrink-0" />
+                <h3 className="font-semibold text-sm md:text-base">{t('travelPreferences.sections.budget')}</h3>
               </div>
 
               <div className="space-y-2">
@@ -229,10 +229,10 @@ const TravelPreferencesSection: React.FC = () => {
 
           {/* Travel Types */}
           {profile.travelTypes && profile.travelTypes.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Plane className="w-5 h-5 text-purple-600" />
-                <h3 className="font-semibold">{t('travelPreferences.sections.travelTypes')}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                <Plane className="w-4 h-4 md:w-5 md:h-5 text-purple-600 flex-shrink-0" />
+                <h3 className="font-semibold text-sm md:text-base">{t('travelPreferences.sections.travelTypes')}</h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -252,10 +252,10 @@ const TravelPreferencesSection: React.FC = () => {
 
           {/* Style & Comfort */}
           {(profile.travelStyle || profile.comfortLevel) && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Hotel className="w-5 h-5 text-orange-600" />
-                <h3 className="font-semibold">{t('travelPreferences.sections.style')}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                <Hotel className="w-4 h-4 md:w-5 md:h-5 text-orange-600 flex-shrink-0" />
+                <h3 className="font-semibold text-sm md:text-base">{t('travelPreferences.sections.style')}</h3>
               </div>
 
               <div className="space-y-2">
@@ -275,10 +275,10 @@ const TravelPreferencesSection: React.FC = () => {
 
           {/* Activities */}
           {profile.preferredActivities && profile.preferredActivities.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Activity className="w-5 h-5 text-red-600" />
-                <h3 className="font-semibold">{t('travelPreferences.sections.activities')}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                <Activity className="w-4 h-4 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+                <h3 className="font-semibold text-sm md:text-base">{t('travelPreferences.sections.activities')}</h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -298,10 +298,10 @@ const TravelPreferencesSection: React.FC = () => {
 
           {/* Travel Groups */}
           {profile.travelGroupTypes && profile.travelGroupTypes.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Users className="w-5 h-5 text-indigo-600" />
-                <h3 className="font-semibold">{t('travelPreferences.sections.groups')}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                <Users className="w-4 h-4 md:w-5 md:h-5 text-indigo-600 flex-shrink-0" />
+                <h3 className="font-semibold text-sm md:text-base">{t('travelPreferences.sections.groups')}</h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -323,31 +323,31 @@ const TravelPreferencesSection: React.FC = () => {
 
       {/* Empty State */}
       {completionPercentage === 0 && (
-        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Settings className="w-8 h-8 text-blue-600" />
+        <div className="bg-white rounded-xl shadow-sm p-6 md:p-8 text-center">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <Settings className="w-6 h-6 md:w-8 md:h-8 text-blue-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2">
             {t('travelPreferences.empty.title')}
           </h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6 max-w-md mx-auto">
             {t('travelPreferences.empty.description')}
           </p>
           <Link
             to="/onboarding"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 md:py-3 min-h-[44px] text-sm md:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="w-4 h-4 md:w-5 md:h-5" />
             {t('travelPreferences.empty.action')}
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
           </Link>
         </div>
       )}
 
       {/* Help Section */}
-      <div className="bg-gray-50 rounded-xl p-6">
-        <h3 className="font-semibold text-gray-900 mb-2">{t('travelPreferences.help.title')}</h3>
-        <div className="text-sm text-gray-600 space-y-2">
+      <div className="bg-gray-50 rounded-xl p-4 md:p-6">
+        <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-2">{t('travelPreferences.help.title')}</h3>
+        <div className="text-xs md:text-sm text-gray-600 space-y-2">
           <p>• {t('travelPreferences.help.autoSave')}</p>
           <p>• {t('travelPreferences.help.modify')}</p>
           <p>• {t('travelPreferences.help.accuracy')}</p>

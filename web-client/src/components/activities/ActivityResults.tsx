@@ -96,24 +96,24 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
   return (
     <div>
       {/* Results Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-0 mb-4 md:mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">
             {activities.length} Activities Found
           </h2>
           {totalPages > 1 && (
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="text-xs md:text-sm text-gray-600 mt-1">
               Page {currentPage} of {totalPages}
             </div>
           )}
         </div>
-        <div className="text-sm text-gray-600">
+        <div className="text-xs md:text-sm text-gray-600">
           Showing {startIndex + 1}-{Math.min(endIndex, activities.length)} of {activities.length}
         </div>
       </div>
 
       {/* Activities Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
         {paginatedActivities.map((activity) => (
           <div
             key={activity.id}
@@ -121,7 +121,7 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
             onClick={() => handleActivitySelect(activity)}
           >
             {/* Activity Image */}
-            <div className="h-48 bg-gray-200 relative overflow-hidden">
+            <div className="h-40 md:h-48 bg-gray-200 relative overflow-hidden">
               {activity.images.length > 0 ? (
                 <img
                   src={activity.images[0]}
@@ -134,7 +134,7 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-orange-400 to-pink-400 flex items-center justify-center">
-                  <Calendar className="w-12 h-12 text-white" />
+                  <Calendar className="w-10 h-10 md:w-12 md:h-12 text-white" />
                 </div>
               )}
 
@@ -152,11 +152,11 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
                   imageUrl: activity.images[0],
                 }}
                 size="sm"
-                className="absolute top-3 left-3 z-10"
+                className="absolute top-2 md:top-3 left-2 md:left-3 z-10"
               />
 
               {/* Availability Badge */}
-              <div className="absolute top-3 right-3">
+              <div className="absolute top-2 md:top-3 right-2 md:right-3">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                   activity.availability.available
                     ? 'bg-green-100 text-green-800'
@@ -168,7 +168,7 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
             </div>
 
             {/* Activity Info */}
-            <div className="p-4">
+            <div className="p-3 md:p-4">
               {/* Category Tag */}
               <div className="mb-2">
                 <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded">
@@ -177,41 +177,41 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
               </div>
 
               {/* Activity Name */}
-              <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                 {activity.name}
               </h3>
 
               {/* Location */}
-              <div className="flex items-center text-sm text-gray-600 mb-3">
-                <MapPin className="w-4 h-4 mr-1" />
+              <div className="flex items-center text-xs md:text-sm text-gray-600 mb-2 md:mb-3">
+                <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 flex-shrink-0" />
                 <span className="truncate">{activity.location.name}</span>
               </div>
 
               {/* Rating */}
-              <div className="flex items-center mb-3">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
-                <span className="text-sm font-medium text-gray-900 mr-1">
+              <div className="flex items-center mb-2 md:mb-3">
+                <Star className="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-400 fill-yellow-400 mr-1" />
+                <span className="text-xs md:text-sm font-medium text-gray-900 mr-1">
                   {activity.rating.toFixed(1)}
                 </span>
-                <span className="text-sm text-gray-600">
+                <span className="text-xs md:text-sm text-gray-600">
                   ({activity.reviewCount} reviews)
                 </span>
               </div>
 
               {/* Activity Details */}
-              <div className="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-600">
+              <div className="grid grid-cols-2 gap-2 mb-2 md:mb-3 text-xs md:text-sm text-gray-600">
                 <div className="flex items-center">
-                  <Clock className="w-4 h-4 mr-1" />
+                  <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 flex-shrink-0" />
                   <span className="truncate">{activity.duration}</span>
                 </div>
                 <div className="flex items-center">
-                  <Users className="w-4 h-4 mr-1" />
+                  <Users className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 flex-shrink-0" />
                   <span className="truncate">{activity.groupSize}</span>
                 </div>
               </div>
 
               {/* Booking Info */}
-              <div className="flex items-center gap-2 mb-3 text-xs text-gray-600">
+              <div className="flex flex-wrap items-center gap-2 mb-2 md:mb-3 text-xs text-gray-600">
                 {activity.bookingInfo.instantConfirmation && (
                   <span className="flex items-center">
                     ⚡ Instant Confirmation
@@ -225,10 +225,10 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
               </div>
 
               {/* Price */}
-              <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 pt-2 md:pt-3 border-t border-gray-100">
                 <div>
                   <span className="text-xs text-gray-600">From</span>
-                  <div className="text-xl font-bold text-gray-900">
+                  <div className="text-lg md:text-xl font-bold text-gray-900">
                     {activity.price.formatted}
                   </div>
                   <span className="text-xs text-gray-600">per person</span>
@@ -238,7 +238,7 @@ const ActivityResults: React.FC<ActivityResultsProps> = ({
                     e.stopPropagation();
                     onSelect && onSelect(activity);
                   }}
-                  className="px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
+                  className="w-full sm:w-auto min-h-[44px] px-3 md:px-4 py-2 bg-orange-500 text-white text-xs md:text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
                 >
                   View Details
                 </button>

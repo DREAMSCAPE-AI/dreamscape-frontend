@@ -75,13 +75,13 @@ const FavoritesPage = () => {
         key={favorite.id}
         className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 border border-gray-200"
       >
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-r from-orange-100 to-pink-100 rounded-lg">
-              <Icon className="w-6 h-6 text-orange-600" />
+        <div className="flex items-start justify-between mb-3 gap-2">
+          <div className="flex items-center gap-2 md:gap-3 min-w-0">
+            <div className="p-1.5 md:p-2 bg-gradient-to-r from-orange-100 to-pink-100 rounded-lg flex-shrink-0">
+              <Icon className="w-5 h-5 md:w-6 md:h-6 text-orange-600" />
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">
+            <div className="min-w-0">
+              <h3 className="font-semibold text-sm md:text-base text-gray-900 truncate">
                 {favorite.entityData?.title || favorite.entityData?.name || t('card.untitled')}
               </h3>
               <span className="text-xs text-gray-500 capitalize">{favorite.entityType.toLowerCase()}</span>
@@ -89,15 +89,15 @@ const FavoritesPage = () => {
           </div>
           <button
             onClick={() => handleDelete(favorite.id)}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center flex-shrink-0"
             title={t('card.removeFromFavorites')}
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
           </button>
         </div>
 
         {/* Entity Data Preview */}
-        <div className="text-sm text-gray-600 space-y-1">
+        <div className="text-xs md:text-sm text-gray-600 space-y-1">
           {favorite.entityType === FavoriteType.FLIGHT && favorite.entityData && (
             <>
               <p>
@@ -150,19 +150,19 @@ const FavoritesPage = () => {
 
         {/* Category & Notes */}
         {favorite.category && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <span className="inline-block px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
+          <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-100">
+            <span className="inline-block px-2 py-0.5 md:py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
               {favorite.category}
             </span>
           </div>
         )}
 
         {favorite.notes && (
-          <p className="mt-2 text-sm text-gray-600 italic border-l-2 border-orange-300 pl-3">{favorite.notes}</p>
+          <p className="mt-2 text-xs md:text-sm text-gray-600 italic border-l-2 border-orange-300 pl-2 md:pl-3">{favorite.notes}</p>
         )}
 
         {/* Added date */}
-        <div className="mt-3 text-xs text-gray-400">
+        <div className="mt-2 md:mt-3 text-xs text-gray-400">
           {t('card.added')} {new Date(favorite.createdAt).toLocaleDateString()}
         </div>
       </div>
@@ -174,19 +174,19 @@ const FavoritesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 py-6 md:py-8 px-4 pt-20 md:pt-24">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-            <Heart className="w-8 h-8 text-pink-500 fill-pink-500" />
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2 md:gap-3">
+            <Heart className="w-6 h-6 md:w-8 md:h-8 text-pink-500 fill-pink-500" />
             {t('page.title')}
           </h1>
-          <p className="text-gray-600">{t('page.subtitle')}</p>
+          <p className="text-sm md:text-base text-gray-600">{t('page.subtitle')}</p>
         </div>
 
         {/* Filters */}
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-4 md:mb-6 flex flex-wrap gap-2">
           {filterOptions.map((option) => {
             const Icon = option.icon;
             return (
@@ -194,7 +194,7 @@ const FavoritesPage = () => {
                 key={option.value}
                 onClick={() => setSelectedFilter(option.value as any)}
                 className={`
-                  flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors
+                  flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 min-h-[44px] rounded-lg font-medium text-sm md:text-base transition-colors
                   ${
                     selectedFilter === option.value
                       ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-md'
@@ -202,8 +202,8 @@ const FavoritesPage = () => {
                   }
                 `}
               >
-                <Icon className="w-4 h-4" />
-                {option.label}
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="whitespace-nowrap">{option.label}</span>
               </button>
             );
           })}
@@ -211,25 +211,25 @@ const FavoritesPage = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">{error}</div>
+          <div className="mb-4 md:mb-6 bg-red-50 border border-red-200 rounded-lg p-3 md:p-4 text-sm md:text-base text-red-700">{error}</div>
         )}
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <div className="flex justify-center items-center py-12 md:py-20">
+            <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-orange-500"></div>
           </div>
         )}
 
         {/* Empty State */}
         {!isLoading && favorites.length === 0 && (
-          <div className="text-center py-20">
-            <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('emptyState.title')}</h3>
-            <p className="text-gray-500 mb-6">{t('emptyState.description')}</p>
+          <div className="text-center py-12 md:py-20 px-4">
+            <Heart className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-3 md:mb-4" />
+            <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-2">{t('emptyState.title')}</h3>
+            <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">{t('emptyState.description')}</p>
             <button
               onClick={() => navigate('/destinations')}
-              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-pink-600 transition-colors"
+              className="px-6 py-2.5 md:py-3 min-h-[44px] text-sm md:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-pink-600 transition-colors"
             >
               {t('emptyState.exploreButton')}
             </button>
@@ -238,7 +238,7 @@ const FavoritesPage = () => {
 
         {/* Favorites Grid */}
         {!isLoading && favorites.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {favorites.map(renderFavoriteCard)}
           </div>
         )}
