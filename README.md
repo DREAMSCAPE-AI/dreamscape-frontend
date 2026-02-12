@@ -1,6 +1,7 @@
 🌐 DreamScape Frontend
 
 > **Frontend Platform** - Interface utilisateur web et gateway API
+> Status: CI/CD with package-lock.json tracking enabled
 
 ## 📁 Structure des Applications
 
