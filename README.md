@@ -2,7 +2,7 @@
 
 > **Frontend Platform** - Interface utilisateur web et gateway API
 > Status: CI/CD with package-lock.json tracking enabled
-> Latest: AI Recommendations UI integrated
+> Latest: AI Recommendations UI integrated with i18n (FR/EN)
 
 ## 📁 Structure des Applications
 
