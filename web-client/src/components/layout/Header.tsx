@@ -107,22 +107,22 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   return (
     <header className="fixed w-full max-w-full z-50 bg-white/80 backdrop-blur-md shadow-sm overflow-x-clip">
       <div className="w-full max-w-[100vw]">
-        <nav className="flex items-center justify-between h-16 md:h-20 w-full max-w-full px-2 md:px-6 lg:px-8">
+        <nav className="flex items-center justify-between h-16 md:h-20 w-full max-w-full px-3 md:px-6 lg:px-8">
           {/* Left Section */}
-          <div className="flex items-center gap-4 md:gap-8 flex-shrink-0">
+          <div className="flex items-center gap-3 md:gap-6 lg:gap-8 flex-shrink-0">
             <Logo onClick={() => navigate('/')} />
 
             {/* Main Navigation */}
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden lg:flex items-center gap-4 xl:gap-6">
               {mainLinks.map((link) => {
                 const Icon = link.icon;
                 return (
                   <Link
                     key={link.name}
                     to={link.path}
-                    className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
+                    className="flex items-center gap-1.5 lg:gap-2 min-h-[44px] text-sm lg:text-base text-gray-700 hover:text-orange-500 transition-colors"
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-4 h-4 flex-shrink-0" />
                     <span>{link.name}</span>
                   </Link>
                 );
@@ -133,17 +133,17 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 <button
                   onMouseEnter={() => setShowDiscoverMenu(true)}
                   onMouseLeave={() => setShowDiscoverMenu(false)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
+                  className="flex items-center gap-1.5 lg:gap-2 min-h-[44px] text-sm lg:text-base text-gray-700 hover:text-orange-500 transition-colors"
                 >
                   <span>{t('nav.discover')}</span>
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-3 h-3 lg:w-4 lg:h-4" />
                 </button>
 
                 {showDiscoverMenu && (
                   <div
                     onMouseEnter={() => setShowDiscoverMenu(true)}
                     onMouseLeave={() => setShowDiscoverMenu(false)}
-                    className="absolute top-full left-0 w-64 bg-white rounded-lg shadow-lg py-2 mt-2"
+                    className="absolute top-full left-0 w-60 lg:w-64 bg-white rounded-lg shadow-lg py-2 mt-2 z-50"
                   >
                     {[
                       { name: t('nav.discoverMenu.culture'), path: '/destination/culture', icon: Compass },
@@ -153,9 +153,10 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <Link
                         key={category.name}
                         to={category.path}
-                        className="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition-colors"
+                        onClick={() => setShowDiscoverMenu(false)}
+                        className="flex items-center gap-3 px-4 py-3 min-h-[44px] text-sm lg:text-base hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition-colors"
                       >
-                        <category.icon className="w-5 h-5" />
+                        <category.icon className="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" />
                         <span>{category.name}</span>
                       </Link>
                     ))}
@@ -168,28 +169,29 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 <button
                   onMouseEnter={() => setShowToolsMenu(true)}
                   onMouseLeave={() => setShowToolsMenu(false)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
+                  className="flex items-center gap-1.5 lg:gap-2 min-h-[44px] text-sm lg:text-base text-gray-700 hover:text-orange-500 transition-colors"
                 >
-                  <Wrench className="w-4 h-4" />
+                  <Wrench className="w-4 h-4 flex-shrink-0" />
                   <span>{t('nav.tools')}</span>
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-3 h-3 lg:w-4 lg:h-4" />
                 </button>
-                
+
                 {showToolsMenu && (
                   <div
                     onMouseEnter={() => setShowToolsMenu(true)}
                     onMouseLeave={() => setShowToolsMenu(false)}
-                    className="absolute top-full left-0 w-80 bg-white rounded-lg shadow-lg py-2 mt-2"
+                    className="absolute top-full left-0 w-72 lg:w-80 bg-white rounded-lg shadow-lg py-2 mt-2 z-50"
                   >
                     {toolsMenuItems.map((tool) => (
                       <Link
                         key={tool.name}
                         to={tool.path}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition-colors"
+                        onClick={() => setShowToolsMenu(false)}
+                        className="flex items-center gap-3 px-4 py-3 min-h-[44px] hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition-colors"
                       >
-                        <tool.icon className="w-5 h-5" />
+                        <tool.icon className="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" />
                         <div>
-                          <div className="font-medium">{tool.name}</div>
+                          <div className="font-medium text-sm lg:text-base">{tool.name}</div>
                           <div className="text-xs text-gray-500">{tool.description}</div>
                         </div>
                       </Link>
@@ -201,9 +203,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
 
             <Link
               to="/planner"
-              className="hidden md:flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-500 rounded-lg hover:bg-orange-100 transition-colors"
+              className="hidden md:flex items-center gap-2 px-4 py-2 min-h-[44px] text-sm lg:text-base bg-orange-50 text-orange-500 rounded-lg hover:bg-orange-100 transition-colors"
             >
-              <Route className="w-4 h-4" />
+              <Route className="w-4 h-4 flex-shrink-0" />
               <span>{t('nav.planTrip')}</span>
             </Link>
           </div>
@@ -264,65 +266,65 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                     <div className="absolute top-full right-0 w-56 bg-white rounded-lg shadow-lg py-2 mt-2 z-50">
                       <Link
                         to="/dashboard"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <User className="w-4 h-4" />
+                        <User className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.profile')}</span>
                       </Link>
                       <Link
                         to="/planner"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Route className="w-4 h-4" />
+                        <Route className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.myTrips')}</span>
                       </Link>
                       <Link
                         to="/favorites"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Heart className="w-4 h-4" />
+                        <Heart className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.favorites')}</span>
                       </Link>
                       <Link
                         to="/bookings"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.myBookings')}</span>
                       </Link>
                       <Link
                         to="/history"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <History className="w-4 h-4" />
+                        <History className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.history')}</span>
                       </Link>
                       <Link
                         to="/settings"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Settings className="w-4 h-4" />
+                        <Settings className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.settings')}</span>
                       </Link>
                       <Link
                         to="/support"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <HelpCircle className="w-4 h-4" />
+                        <HelpCircle className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.help')}</span>
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 w-full"
+                        className="flex items-center gap-3 px-4 py-2.5 min-h-[44px] text-sm text-red-600 hover:bg-red-50 transition-colors w-full"
                       >
-                        <LogOut className="w-4 h-4" />
+                        <LogOut className="w-4 h-4 flex-shrink-0" />
                         <span>{t('nav.userMenu.logout')}</span>
                       </button>
                     </div>
@@ -338,13 +340,13 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
 
                 <Link
                   to="/auth"
-                  className="hidden md:block px-4 py-2 min-h-[44px] flex items-center text-gray-700 hover:text-orange-500 transition-colors"
+                  className="hidden md:flex items-center px-4 py-2 min-h-[44px] text-sm lg:text-base text-gray-700 hover:text-orange-500 transition-colors"
                 >
                   {t('nav.login')}
                 </Link>
                 <Link
                   to="/auth"
-                  className="hidden md:block px-4 py-2 min-h-[44px] flex items-center bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+                  className="hidden md:flex items-center px-4 py-2 min-h-[44px] text-sm lg:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
                 >
                   {t('nav.signUp')}
                 </Link>
