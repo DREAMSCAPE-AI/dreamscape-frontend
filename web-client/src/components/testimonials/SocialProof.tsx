@@ -8,7 +8,7 @@ const SocialProof = () => {
   const { t } = useTranslation('common');
 
   return (
-    <section className="py-20 bg-gradient-to-b from-amber-50 to-white">
+    <section className="py-12 md:py-20 bg-gradient-to-b from-amber-50 to-white">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={t('home.whatTravelersSay')}

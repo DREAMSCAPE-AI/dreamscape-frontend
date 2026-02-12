@@ -40,13 +40,13 @@ const DestinationCategories = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-amber-50">
+    <section className="py-12 md:py-20 bg-gradient-to-b from-white to-amber-50">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={t('home.exploreByCategory')}
           subtitle={t('home.exploreByCategorySubtitle')}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-6 md:mt-12">
           {categories.map((category, index) => (
             <CategoryCard key={index} {...category} />
           ))}

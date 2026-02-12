@@ -55,7 +55,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ user, upcomingTrips, on
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-500 to-pink-600 text-white">
+    <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-gradient-to-r from-orange-500 to-pink-600 text-white">
       <div className="absolute inset-0">
         <img
           src={nextTrip?.details?.image || defaultTrip.image}
@@ -64,67 +64,72 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ user, upcomingTrips, on
         />
         <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-600 opacity-90" />
       </div>
-      
-      <div className="relative p-8">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">{t('welcome.greeting', { name: userName })}</h1>
+
+      <div className="relative p-4 md:p-6 lg:p-8">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">{t('welcome.greeting', { name: userName })}</h1>
             {nextTrip ? (
               <div>
-                <p className="text-orange-100 mb-4">{t('welcome.nextAdventure')}</p>
-                <div className="flex items-center gap-4">
+                <p className="text-orange-100 text-sm md:text-base mb-3 md:mb-4">{t('welcome.nextAdventure')}</p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-5 h-5" />
-                    <span>{nextTrip.destination}</span>
+                    <MapPin className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                    <span className="text-sm md:text-base">{nextTrip.destination}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    <span>{formatDateRange(nextTrip.departureDate, nextTrip.returnDate)}</span>
+                    <Calendar className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                    <span className="text-sm md:text-base">{formatDateRange(nextTrip.departureDate, nextTrip.returnDate)}</span>
                   </div>
                 </div>
-                <div className="mt-3 flex items-center gap-4">
-                  <span className="text-sm text-orange-100">
+                <div className="mt-3 flex flex-wrap items-center gap-3 sm:gap-4">
+                  <span className="text-xs md:text-sm text-orange-100">
                     {t('welcome.status')}: <span className="font-semibold capitalize">{nextTrip.status}</span>
                   </span>
-                  <span className="text-sm text-orange-100">
+                  <span className="text-xs md:text-sm text-orange-100">
                     {t('welcome.total')}: <span className="font-semibold">${nextTrip.totalAmount}</span>
                   </span>
                 </div>
               </div>
             ) : (
               <div>
-                <p className="text-orange-100 mb-4">{t('welcome.readyForAdventure')}</p>
-                <div className="flex items-center gap-4">
+                <p className="text-orange-100 text-sm md:text-base mb-3 md:mb-4">{t('welcome.readyForAdventure')}</p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-5 h-5" />
-                    <span>{t('welcome.exploreDestinations')}</span>
+                    <MapPin className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                    <span className="text-sm md:text-base">{t('welcome.exploreDestinations')}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    <span>{t('welcome.planTrip')}</span>
+                    <Calendar className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                    <span className="text-sm md:text-base">{t('welcome.planTrip')}</span>
                   </div>
                 </div>
               </div>
             )}
           </div>
-          
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={onRefresh}
-              className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+              className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
               title={t('welcome.refreshTrips')}
+              aria-label={t('welcome.refreshTrips')}
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4 flex-shrink-0" />
             </button>
-            <button className="px-6 py-2 bg-white text-orange-500 rounded-lg hover:bg-orange-50 transition-colors">
-              {nextTrip ? t('welcome.viewItinerary') : t('welcome.startPlanning')}
+            <button
+              className="flex-1 sm:flex-none px-4 md:px-6 py-2.5 min-h-[44px] text-sm md:text-base font-medium bg-white text-orange-500 rounded-lg hover:bg-orange-50 transition-colors"
+              aria-label={nextTrip ? t('welcome.viewItinerary') : t('welcome.startPlanning')}
+            >
+              <span className="hidden sm:inline">{nextTrip ? t('welcome.viewItinerary') : t('welcome.startPlanning')}</span>
+              <span className="sm:hidden">{nextTrip ? t('welcome.viewItineraryShort') : t('welcome.startPlanningShort')}</span>
             </button>
           </div>
         </div>
 
         {upcomingTrips.length > 1 && (
-          <div className="mt-6 pt-6 border-t border-white/20">
-            <p className="text-orange-100 text-sm">
+          <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/20">
+            <p className="text-orange-100 text-xs md:text-sm">
               {t('welcome.upcomingTrips', { count: upcomingTrips.length })}
             </p>
           </div>

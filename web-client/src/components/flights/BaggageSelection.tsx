@@ -208,31 +208,31 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white p-6">
-        <h2 className="text-2xl font-bold">
+      <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white p-4 md:p-6">
+        <h2 className="text-lg md:text-2xl font-bold">
           {isSelectingReturnBaggage ? 'Manage Your Return Flight Baggage' : 'Manage Your Baggage'}
         </h2>
-        <p className="mt-2 opacity-90">
+        <p className="mt-1 md:mt-2 text-sm md:text-base opacity-90">
           Add extra baggage for passenger {currentPassenger + 1} of {passengers}
         </p>
       </div>
 
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Round-trip flight indicator */}
         {hasReturnFlight && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+          <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
+              <div className="flex items-center gap-2 md:gap-3">
                 <div className="flex gap-2">
-                  <div className={`px-4 py-2 rounded-lg font-medium ${!isSelectingReturnBaggage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                  <div className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-sm md:text-base font-medium ${!isSelectingReturnBaggage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
                     Vol aller
                   </div>
-                  <div className={`px-4 py-2 rounded-lg font-medium ${isSelectingReturnBaggage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
+                  <div className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-sm md:text-base font-medium ${isSelectingReturnBaggage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}>
                     Vol retour
                   </div>
                 </div>
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-xs md:text-sm text-gray-600">
                 {isSelectingReturnBaggage ? 'Sélectionnez vos bagages pour le vol retour' : 'Sélectionnez vos bagages pour le vol aller'}
               </div>
             </div>
@@ -240,13 +240,13 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
         )}
 
         {/* Passenger Selector */}
-        <div className="mb-6">
-          <div className="flex space-x-2">
+        <div className="mb-4 md:mb-6">
+          <div className="flex space-x-2 overflow-x-auto pb-2">
             {Array.from({ length: passengers }, (_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentPassenger(index)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0 ${
                   currentPassenger === index
                     ? 'bg-orange-500 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -259,17 +259,17 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
         </div>
 
         {/* Current Passenger Summary */}
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <div className="flex justify-between items-center">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-0">
             <div>
-              <h3 className="font-semibold">Passenger {currentPassenger + 1} Baggage Summary</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="text-sm md:text-base font-semibold">Passenger {currentPassenger + 1} Baggage Summary</h3>
+              <p className="text-xs md:text-sm text-gray-600">
                 Total Weight: {getTotalWeight(currentPassenger)}kg
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Additional Fees</p>
-              <p className="font-semibold text-lg">
+            <div className="text-left md:text-right">
+              <p className="text-xs md:text-sm text-gray-600">Additional Fees</p>
+              <p className="font-semibold text-base md:text-lg">
                 ${(isSelectingReturnBaggage ? returnSelectedBaggage : selectedBaggage).filter(b => b.passengerId === currentPassenger).reduce((sum, b) => sum + b.price, 0)}
               </p>
             </div>
@@ -277,20 +277,20 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
         </div>
 
         {/* Included Baggage */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-4 text-green-600">✓ Included in Your Ticket</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mb-6 md:mb-8">
+          <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4 text-green-600">✓ Included in Your Ticket</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             {getIncludedBaggage().map((option) => (
-              <div key={option.id} className="p-4 border-2 border-green-200 bg-green-50 rounded-lg">
+              <div key={option.id} className="p-3 md:p-4 border-2 border-green-200 bg-green-50 rounded-lg">
                 <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center">
-                    <span className="text-2xl mr-3">{option.icon}</span>
+                  <div className="flex items-center gap-2 md:gap-0">
+                    <span className="text-xl md:text-2xl mr-2 md:mr-3 flex-shrink-0">{option.icon}</span>
                     <div>
-                      <h4 className="font-semibold text-green-800">{option.name}</h4>
-                      <p className="text-sm text-green-700">{option.description}</p>
+                      <h4 className="text-sm md:text-base font-semibold text-green-800">{option.name}</h4>
+                      <p className="text-xs md:text-sm text-green-700">{option.description}</p>
                     </div>
                   </div>
-                  <span className="text-green-600 font-semibold">FREE</span>
+                  <span className="text-green-600 text-xs md:text-sm font-semibold flex-shrink-0 ml-2">FREE</span>
                 </div>
                 <div className="text-xs text-green-600">
                   <p>Weight: Up to {option.weight}kg</p>
@@ -302,57 +302,57 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
         </div>
 
         {/* Additional Baggage */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4">Additional Baggage Options</h3>
-          <div className="space-y-4">
+        <div className="mb-4 md:mb-6">
+          <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Additional Baggage Options</h3>
+          <div className="space-y-3 md:space-y-4">
             {getAdditionalBaggage().map((option) => {
               const currentQuantity = getBaggageQuantity(currentPassenger, option.id);
               return (
-                <div key={option.id} className="p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-                  <div className="flex items-center justify-between">
+                <div key={option.id} className="p-3 md:p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
                     <div className="flex items-start flex-1">
-                      <span className="text-2xl mr-3">{option.icon}</span>
+                      <span className="text-xl md:text-2xl mr-2 md:mr-3 flex-shrink-0">{option.icon}</span>
                       <div className="flex-1">
-                        <h4 className="font-semibold">{option.name}</h4>
-                        <p className="text-sm text-gray-600 mb-2">{option.description}</p>
+                        <h4 className="text-sm md:text-base font-semibold">{option.name}</h4>
+                        <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{option.description}</p>
                         <div className="text-xs text-gray-500">
                           <p>Weight: Up to {option.weight}kg</p>
                           {option.dimensions && <p>Dimensions: {option.dimensions}</p>}
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
-                        <p className="font-semibold text-orange-600">${option.price}</p>
+
+                    <div className="flex items-center justify-between md:justify-end md:space-x-4">
+                      <div className="text-left md:text-right">
+                        <p className="text-sm md:text-base font-semibold text-orange-600">${option.price}</p>
                         <p className="text-xs text-gray-500">per item</p>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => updateBaggageQuantity(option, currentQuantity - 1)}
                           disabled={currentQuantity === 0}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-7 h-7 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <Minus className="w-4 h-4" />
+                          <Minus className="w-3 h-3 md:w-4 md:h-4" />
                         </button>
-                        
-                        <span className="w-8 text-center font-semibold">{currentQuantity}</span>
-                        
+
+                        <span className="w-6 md:w-8 text-center text-sm md:text-base font-semibold">{currentQuantity}</span>
+
                         <button
                           onClick={() => updateBaggageQuantity(option, currentQuantity + 1)}
                           disabled={currentQuantity >= option.maxQuantity}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-7 h-7 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-3 h-3 md:w-4 md:h-4" />
                         </button>
                       </div>
                     </div>
                   </div>
-                  
+
                   {currentQuantity > 0 && (
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                      <div className="flex justify-between text-sm">
+                    <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-200">
+                      <div className="flex justify-between text-xs md:text-sm">
                         <span>Quantity: {currentQuantity}</span>
                         <span className="font-semibold">Total: ${option.price * currentQuantity}</span>
                       </div>
@@ -366,8 +366,8 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
 
         {/* All Passengers Summary */}
         {(selectedBaggage.length > 0 || returnSelectedBaggage.length > 0) && (
-          <div className="mb-6 p-4 bg-orange-50 rounded-lg">
-            <h4 className="font-semibold mb-3">Baggage Summary - All Passengers</h4>
+          <div className="mb-4 md:mb-6 p-3 md:p-4 bg-orange-50 rounded-lg">
+            <h4 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Baggage Summary - All Passengers</h4>
             <div className="space-y-2">
               {selectedBaggage.length > 0 && (
                 <>
@@ -421,9 +421,9 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
         )}
 
         {/* Important Information */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h4 className="font-semibold text-blue-800 mb-2">Important Baggage Information</h4>
-          <ul className="text-sm text-blue-700 space-y-1">
+        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h4 className="text-sm md:text-base font-semibold text-blue-800 mb-2">Important Baggage Information</h4>
+          <ul className="text-xs md:text-sm text-blue-700 space-y-1">
             <li>• Baggage fees are per direction and per passenger</li>
             <li>• Weight limits are strictly enforced - excess weight charges apply</li>
             <li>• Sports equipment must be properly packed in appropriate cases</li>
@@ -433,21 +433,21 @@ const BaggageSelection: React.FC<BaggageSelectionProps> = ({
         </div>
 
         {/* Navigation */}
-        <div className="flex justify-between">
+        <div className="flex flex-col md:flex-row md:justify-between gap-3 md:gap-0">
           <button
             onClick={onBack}
-            className="flex items-center px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors"
+            className="flex items-center justify-center md:justify-start px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base text-gray-600 hover:text-gray-800 transition-colors order-2 md:order-1"
           >
-            <ChevronLeft className="w-5 h-5 mr-2" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" />
             Back to Meals
           </button>
 
           <button
             onClick={handleContinue}
-            className="flex items-center px-8 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+            className="flex items-center justify-center px-4 md:px-8 py-2.5 md:py-3 text-sm md:text-base bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors order-1 md:order-2"
           >
-            {hasReturnFlight && !isSelectingReturnBaggage ? 'Continue to Return Flight Baggage' : 'Continue to Passenger Info'}
-            <ChevronRight className="w-5 h-5 ml-2" />
+            <span className="text-center">{hasReturnFlight && !isSelectingReturnBaggage ? 'Continue to Return Flight Baggage' : 'Continue to Passenger Info'}</span>
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2 flex-shrink-0" />
           </button>
         </div>
       </div>

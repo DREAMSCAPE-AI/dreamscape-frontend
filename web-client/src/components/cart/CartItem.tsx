@@ -183,40 +183,40 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
   };
 
   return (
-    <div className="flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+    <div className="flex items-start gap-2 md:gap-3 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
       {/* Icon */}
-      <div className="flex-shrink-0 p-2 bg-gray-50 rounded-lg">
+      <div className="flex-shrink-0 p-1.5 md:p-2 bg-gray-50 rounded-lg">
         {renderItemIcon()}
       </div>
 
       {/* Item Details */}
       {renderItemDetails()}
 
-      <div className="flex flex-col items-end gap-2">
+      <div className="flex flex-col items-end gap-1.5 md:gap-2">
         {/* Price */}
-        <p className="font-semibold text-gray-900">
+        <p className="font-semibold text-gray-900 text-sm md:text-base whitespace-nowrap">
           {item.currency} {Number(item.price).toFixed(2)}
         </p>
 
         {/* Quantity Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           <button
             onClick={handleDecrement}
             disabled={isLoading || item.quantity <= 1}
-            className="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 min-h-[36px] min-w-[36px] md:min-h-[40px] md:min-w-[40px] text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             aria-label={t('cart.item.decrease', 'Decrease quantity')}
           >
             <Minus className="w-4 h-4" />
           </button>
 
-          <span className="w-8 text-center font-medium text-gray-900">
+          <span className="w-6 md:w-8 text-center font-medium text-gray-900 text-sm">
             {item.quantity}
           </span>
 
           <button
             onClick={handleIncrement}
             disabled={isLoading}
-            className="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 min-h-[36px] min-w-[36px] md:min-h-[40px] md:min-w-[40px] text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             aria-label={t('cart.item.increase', 'Increase quantity')}
           >
             <Plus className="w-4 h-4" />
@@ -227,7 +227,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove, isLoading }: CartIt
         <button
           onClick={() => onRemove(item.id)}
           disabled={isLoading}
-          className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 min-h-[36px] min-w-[36px] md:min-h-[40px] md:min-w-[40px] text-red-600 hover:text-red-700 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
           aria-label={t('cart.item.remove', 'Remove item')}
         >
           <Trash2 className="w-4 h-4" />

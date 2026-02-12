@@ -206,16 +206,16 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-2xl font-semibold mb-6">{t('search.title')}</h2>
+    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">{t('search.title')}</h2>
 
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Trip Type Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 mb-2 md:mb-3">
             {t('search.tripType.label')}
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {[
               { value: 'round-trip', label: t('search.tripType.roundTrip') },
               { value: 'one-way', label: t('search.tripType.oneWay') },
@@ -225,7 +225,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                 key={option.value}
                 type="button"
                 onClick={() => handleTripTypeChange(option.value as TripType)}
-                className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                className={`flex-1 min-w-[100px] px-3 md:px-4 py-2.5 min-h-[44px] rounded-lg border text-sm font-medium transition-colors ${
                   tripType === option.value
                     ? 'bg-orange-500 text-white border-orange-500'
                     : 'bg-white text-gray-700 border-gray-300 hover:border-orange-300'
@@ -238,8 +238,8 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
         </div>
 
         {/* Origin & Destination */}
-        <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:relative">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('search.origin.label')}
@@ -253,6 +253,19 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                 error={showErrors && !!validationErrors.origin}
               />
               {renderError('origin')}
+            </div>
+
+            {/* Swap Button - Mobile: Between fields, Desktop: Centered */}
+            <div className="flex md:hidden justify-center -my-2">
+              <button
+                type="button"
+                onClick={swapAirports}
+                className="bg-white border-2 border-gray-300 rounded-full p-2.5 min-h-[44px] min-w-[44px] hover:border-orange-300 hover:bg-orange-50 transition-colors shadow-sm"
+                title={t('search.swapButton')}
+                aria-label={t('search.swapButton')}
+              >
+                <ArrowLeftRight className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
 
             <div>
@@ -269,17 +282,18 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
               />
               {renderError('destination')}
             </div>
-          </div>
 
-          {/* Swap Button */}
-          <button
-            type="button"
-            onClick={swapAirports}
-            className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10 bg-white border border-gray-300 rounded-full p-2 hover:border-orange-300"
-            title={t('search.swapButton')}
-          >
-            <ArrowLeftRight className="w-4 h-4 text-gray-600" />
-          </button>
+            {/* Swap Button - Desktop only: Centered between columns */}
+            <button
+              type="button"
+              onClick={swapAirports}
+              className="hidden md:block absolute top-8 left-1/2 transform -translate-x-1/2 z-10 bg-white border border-gray-300 rounded-full p-2 hover:border-orange-300 hover:bg-orange-50 transition-colors"
+              title={t('search.swapButton')}
+              aria-label={t('search.swapButton')}
+            >
+              <ArrowLeftRight className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
         </div>
 
         {/* Dates */}
@@ -322,49 +336,53 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
             <div className="relative" ref={passengerDropdownRef}>
               <button
                 type="button"
-                className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-white text-left hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full flex items-center justify-between px-3 py-2.5 min-h-[44px] border border-gray-300 rounded-lg bg-white text-left hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 onClick={() => setShowPassengerDropdown(!showPassengerDropdown)}
+                aria-expanded={showPassengerDropdown}
+                aria-label={t('search.passengers.label')}
               >
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-900">{getPassengerLabel()}</span>
+                  <Users className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  <span className="text-gray-900 text-sm md:text-base">{getPassengerLabel()}</span>
                 </div>
-                <svg className={`w-5 h-5 text-gray-400 transition-transform ${showPassengerDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${showPassengerDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               
               {/* Passenger Selection Dropdown */}
               {showPassengerDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 p-4">
-                  <div className="space-y-4">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 p-3 md:p-4 max-h-[400px] overflow-y-auto">
+                  <div className="space-y-4 md:space-y-4">
                     {/* Adults */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-gray-900">{t('search.passengers.adults')}</div>
-                        <div className="text-sm text-gray-500">{t('search.passengers.adultsAge')}</div>
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 text-sm md:text-base">{t('search.passengers.adults')}</div>
+                        <div className="text-xs md:text-sm text-gray-500">{t('search.passengers.adultsAge')}</div>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3">
                         <button
                           type="button"
                           onClick={() => setSearchParams({
                             ...searchParams,
                             adults: Math.max(1, (searchParams.adults || 1) - 1)
                           })}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg font-medium"
                           disabled={(searchParams.adults || 1) <= 1}
+                          aria-label="Decrease adults"
                         >
                           -
                         </button>
-                        <span className="w-8 text-center font-medium">{searchParams.adults || 1}</span>
+                        <span className="w-8 text-center font-medium text-lg">{searchParams.adults || 1}</span>
                         <button
                           type="button"
                           onClick={() => setSearchParams({
                             ...searchParams,
                             adults: Math.min(9, (searchParams.adults || 1) + 1)
                           })}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg font-medium"
                           disabled={getTotalPassengers() >= 9}
+                          aria-label="Increase adults"
                         >
                           +
                         </button>
@@ -372,31 +390,32 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                     </div>
 
                     {/* Children */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-gray-900">{t('search.passengers.children')}</div>
-                        <div className="text-sm text-gray-500">{t('search.passengers.childrenAge')}</div>
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 text-sm md:text-base">{t('search.passengers.children')}</div>
+                        <div className="text-xs md:text-sm text-gray-500">{t('search.passengers.childrenAge')}</div>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3">
                         <button
                           type="button"
                           onClick={() => setSearchParams({
                             ...searchParams,
                             children: Math.max(0, (searchParams.children || 0) - 1)
                           })}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg font-medium"
                           disabled={(searchParams.children || 0) <= 0}
+                          aria-label="Decrease children"
                         >
                           -
                         </button>
-                        <span className="w-8 text-center font-medium">{searchParams.children || 0}</span>
+                        <span className="w-8 text-center font-medium text-lg">{searchParams.children || 0}</span>
                         <button
                           type="button"
                           onClick={() => setSearchParams({
                             ...searchParams,
                             children: Math.min(8, (searchParams.children || 0) + 1)
                           })}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg font-medium"
                           disabled={getTotalPassengers() >= 9}
                         >
                           +
@@ -405,32 +424,34 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                     </div>
 
                     {/* Infants */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-gray-900">{t('search.passengers.infants')}</div>
-                        <div className="text-sm text-gray-500">{t('search.passengers.infantsAge')}</div>
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 text-sm md:text-base">{t('search.passengers.infants')}</div>
+                        <div className="text-xs md:text-sm text-gray-500">{t('search.passengers.infantsAge')}</div>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3">
                         <button
                           type="button"
                           onClick={() => setSearchParams({
                             ...searchParams,
                             infants: Math.max(0, (searchParams.infants || 0) - 1)
                           })}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg font-medium"
                           disabled={(searchParams.infants || 0) <= 0}
+                          aria-label="Decrease infants"
                         >
                           -
                         </button>
-                        <span className="w-8 text-center font-medium">{searchParams.infants || 0}</span>
+                        <span className="w-8 text-center font-medium text-lg">{searchParams.infants || 0}</span>
                         <button
                           type="button"
                           onClick={() => setSearchParams({
                             ...searchParams,
                             infants: Math.min((searchParams.adults || 1), (searchParams.infants || 0) + 1)
                           })}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center hover:border-orange-300 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg font-medium"
                           disabled={(searchParams.infants || 0) >= (searchParams.adults || 1) || getTotalPassengers() >= 9}
+                          aria-label="Increase infants"
                         >
                           +
                         </button>
@@ -438,11 +459,11 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                     </div>
 
                     {/* Done Button */}
-                    <div className="pt-3 border-t">
+                    <div className="pt-3 border-t border-gray-200">
                       <button
                         type="button"
                         onClick={() => setShowPassengerDropdown(false)}
-                        className="w-full py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                        className="w-full py-2.5 min-h-[44px] bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
                       >
                         {t('search.passengers.doneButton')}
                       </button>
@@ -475,9 +496,9 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
         </div>
 
         {/* Advanced Options */}
-        <div className="border-t pt-4">
-          <div className="flex items-center gap-4 text-sm">
-            <label className="flex items-center gap-2 text-gray-600">
+        <div className="border-t border-gray-200 pt-3 md:pt-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 text-sm">
+            <label className="flex items-center gap-2 min-h-[44px] text-gray-600 cursor-pointer">
               <input
                 type="checkbox"
                 checked={searchParams.nonStop || false}
@@ -485,18 +506,18 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
                   ...searchParams,
                   nonStop: e.target.checked
                 })}
-                className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 w-4 h-4"
               />
-              <Filter className="w-4 h-4" />
+              <Filter className="w-4 h-4 flex-shrink-0" />
               <span>{t('search.advancedOptions.nonStop')}</span>
             </label>
 
-            <label className="flex items-center gap-2 text-gray-600">
+            <label className="flex items-center gap-2 min-h-[44px] text-gray-600 cursor-pointer">
               <input
                 type="checkbox"
                 checked={nearbyAirports}
                 onChange={(e) => setNearbyAirports(e.target.checked)}
-                className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 w-4 h-4"
               />
               <span>{t('search.advancedOptions.nearbyAirports')}</span>
             </label>
@@ -507,7 +528,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
         <button
           onClick={handleSearch}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 py-3 min-h-[48px] md:min-h-[52px] bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-semibold text-base md:text-lg"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

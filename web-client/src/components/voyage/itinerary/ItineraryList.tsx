@@ -56,48 +56,48 @@ const ItineraryList: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
+      <div className="flex items-center justify-center py-12 md:py-20">
         <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">{t('list.title')}</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">{t('list.title')}</h2>
+          <p className="text-sm md:text-base text-gray-600 mt-0.5 md:mt-1">
             {t('list.tripsPlanned', { count: itineraries.length })}
           </p>
         </div>
         <button
           onClick={handleCreateNew}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 md:w-5 md:h-5" />
           <span>{t('list.newItinerary')}</span>
         </button>
       </div>
 
       {/* Empty State */}
       {itineraries.length === 0 && (
-        <div className="text-center py-20">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-4">
-            <Calendar className="w-8 h-8 text-orange-600" />
+        <div className="text-center py-12 md:py-20 px-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-orange-100 mb-3 md:mb-4">
+            <Calendar className="w-6 h-6 md:w-8 md:h-8 text-orange-600" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
             {t('list.emptyState.title')}
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
             {t('list.emptyState.description')}
           </p>
           <button
             onClick={handleCreateNew}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-6 py-2.5 md:py-3 min-h-[44px] text-sm md:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4 md:w-5 md:h-5" />
             <span>{t('list.emptyState.createButton')}</span>
           </button>
         </div>
@@ -105,7 +105,7 @@ const ItineraryList: React.FC = () => {
 
       {/* Itinerary Grid */}
       {itineraries.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {itineraries.map((itinerary) => (
             <div
               key={itinerary.id}
@@ -113,35 +113,35 @@ const ItineraryList: React.FC = () => {
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
             >
               {/* Card Header */}
-              <div className="p-6 pb-4">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 flex-1 group-hover:text-orange-600 transition-colors">
+              <div className="p-4 md:p-6 pb-3 md:pb-4">
+                <div className="flex items-start justify-between mb-2 md:mb-3 gap-2">
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-2 flex-1 group-hover:text-orange-600 transition-colors">
                     {itinerary.title}
                   </h3>
                   {itinerary.aiGenerated && (
-                    <span className="ml-2 px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                    <span className="ml-2 px-2 py-0.5 md:py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full flex-shrink-0">
                       {t('list.aiGenerated')}
                     </span>
                   )}
                 </div>
 
                 {/* Dates */}
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                  <Calendar className="w-4 h-4" />
-                  <span>
+                <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-600 mb-2 md:mb-3">
+                  <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
+                  <span className="truncate">
                     {formatDate(itinerary.startDate)} - {formatDate(itinerary.endDate)}
                   </span>
                 </div>
 
                 {/* Duration */}
-                <div className="text-sm text-gray-500 mb-3">
+                <div className="text-xs md:text-sm text-gray-500 mb-2 md:mb-3">
                   {getDuration(itinerary.startDate, itinerary.endDate)}
                 </div>
 
                 {/* Destinations */}
                 {itinerary.destinations.length > 0 && (
-                  <div className="flex items-start gap-2 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-1.5 md:gap-2 text-xs md:text-sm text-gray-600">
+                    <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 mt-0.5 flex-shrink-0" />
                     <span className="line-clamp-2">
                       {itinerary.destinations.join(', ')}
                     </span>
@@ -150,17 +150,17 @@ const ItineraryList: React.FC = () => {
               </div>
 
               {/* Card Footer */}
-              <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-                <span className="text-sm text-gray-600">
+              <div className="px-4 md:px-6 py-2.5 md:py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                <span className="text-xs md:text-sm text-gray-600">
                   {t('list.items', { count: itinerary.items?.length || 0 })}
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 md:gap-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/planner/${itinerary.id}/edit`);
                     }}
-                    className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                    className="p-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors flex items-center justify-center"
                     title={t('list.editItinerary')}
                   >
                     <Edit className="w-4 h-4" />
@@ -168,7 +168,7 @@ const ItineraryList: React.FC = () => {
                   <button
                     onClick={(e) => handleDelete(itinerary.id, e)}
                     disabled={deletingId === itinerary.id}
-                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center"
                     title={t('list.deleteItinerary')}
                   >
                     {deletingId === itinerary.id ? (

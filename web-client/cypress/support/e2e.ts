@@ -1,9 +1,11 @@
 // cypress/support/e2e.ts
 
 import './commands';
+import './mobile-commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+// require('./mobile-commands')
 
 // Hide fetch/XHR requests from command log
 const app = window.top;

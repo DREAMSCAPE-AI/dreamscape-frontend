@@ -15,7 +15,13 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "e2e": "cypress run",
-    "e2e:open": "cypress open"
+    "e2e:open": "cypress open",
+    "audit:responsive": "node scripts/audit-responsive.js",
+    "audit:performance": "node scripts/performance-baseline.js",
+    "audit:all": "npm run audit:responsive && npm run audit:performance",
+    "test:mobile": "cypress run --config viewportWidth=390,viewportHeight=844",
+    "test:mobile:open": "cypress open --config viewportWidth=390,viewportHeight=844",
+    "test:devices": "cypress run --spec 'cypress/e2e/mobile/**/*.cy.ts'"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

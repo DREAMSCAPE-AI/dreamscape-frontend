@@ -29,6 +29,8 @@ import Logo from './Logo';
 import { CartButton } from '@/components/cart';
 import LanguageSelector from '@/components/common/LanguageSelector';
 import FavoritesService from '@/services/api/FavoritesService';
+import { MobileDrawer } from '@/components/mobile';
+import { useMobileNavigation } from '@/hooks/useMobileNavigation';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -43,6 +45,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const { toggleDrawer } = useMobileNavigation();
 
   // Fetch favorites count when user is logged in
   useEffect(() => {
@@ -102,13 +105,13 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   ];
 
   return (
-    <header className="fixed w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="w-full px-6 lg:px-8">
-        <nav className="flex items-center justify-between h-20">
+    <header className="fixed w-full max-w-full z-50 bg-white/80 backdrop-blur-md shadow-sm overflow-x-clip">
+      <div className="w-full max-w-[100vw]">
+        <nav className="flex items-center justify-between h-16 md:h-20 w-full max-w-full px-2 md:px-6 lg:px-8">
           {/* Left Section */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4 md:gap-8 flex-shrink-0">
             <Logo onClick={() => navigate('/')} />
-            
+
             {/* Main Navigation */}
             <div className="hidden md:flex items-center gap-6">
               {mainLinks.map((link) => {
@@ -206,19 +209,23 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
             {isLoggedIn ? (
               <>
-                {/* Language Selector */}
-                <LanguageSelector variant="compact" />
+                {/* Language Selector - Hidden on mobile */}
+                <div className="hidden md:block">
+                  <LanguageSelector variant="compact" />
+                </div>
 
-                {/* Shopping Cart */}
-                <CartButton />
+                {/* Shopping Cart - Always visible with touch target */}
+                <div className="flex items-center">
+                  <CartButton />
+                </div>
 
-                {/* Favorites */}
+                {/* Favorites - Touch-optimized */}
                 <Link
                   to="/favorites"
-                  className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+                  className="hidden md:flex relative p-2 min-h-[44px] min-w-[44px] items-center justify-center text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
                   title={t('nav.viewFavorites')}
                 >
                   <Heart className="w-6 h-6" />
@@ -229,18 +236,23 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   )}
                 </Link>
 
-                {/* Notifications */}
-                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                {/* Notifications - Touch-optimized */}
+                <button
+                  className="hidden md:flex relative p-2 min-h-[44px] min-w-[44px] items-center justify-center text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+                  aria-label={t('nav.notifications')}
+                >
                   <Bell className="w-6 h-6" />
                   <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     2
                   </span>
                 </button>
 
-                <div className="relative" ref={userMenuRef}>
+                {/* User Menu - Touch-optimized on desktop, hidden on mobile (drawer handles this) */}
+                <div className="hidden md:block relative" ref={userMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 text-gray-700"
+                    className="flex items-center gap-2 p-2 min-h-[44px] text-gray-700 hover:text-orange-600 rounded-lg hover:bg-orange-50 transition-colors"
+                    aria-label={t('nav.userMenu.profile')}
                   >
                     <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
                       <User className="w-5 h-5 text-orange-500" />
@@ -249,7 +261,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   </button>
 
                   {showUserMenu && (
-                    <div className="absolute top-full right-0 w-48 bg-white rounded-lg shadow-lg py-2 mt-2">
+                    <div className="absolute top-full right-0 w-56 bg-white rounded-lg shadow-lg py-2 mt-2 z-50">
                       <Link
                         to="/dashboard"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
@@ -319,18 +331,20 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
               </>
             ) : (
               <>
-                {/* Language Selector for logged-out users */}
-                <LanguageSelector variant="compact" />
+                {/* Language Selector for logged-out users - Hidden on mobile */}
+                <div className="hidden md:block">
+                  <LanguageSelector variant="compact" />
+                </div>
 
                 <Link
                   to="/auth"
-                  className="hidden md:block px-4 py-2 text-gray-700 hover:text-orange-500"
+                  className="hidden md:block px-4 py-2 min-h-[44px] flex items-center text-gray-700 hover:text-orange-500 transition-colors"
                 >
                   {t('nav.login')}
                 </Link>
                 <Link
                   to="/auth"
-                  className="hidden md:block px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+                  className="hidden md:block px-4 py-2 min-h-[44px] flex items-center bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
                 >
                   {t('nav.signUp')}
                 </Link>
@@ -338,12 +352,20 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
             )}
 
             {/* Mobile Menu Button */}
-            <button className="md:hidden text-gray-700 hover:text-orange-500">
+            <button
+              data-testid="mobile-menu-button"
+              onClick={toggleDrawer}
+              className="md:hidden text-gray-700 hover:text-orange-500 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Open mobile menu"
+            >
               <Menu className="w-6 h-6" />
             </button>
           </div>
         </nav>
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      <MobileDrawer isLoggedIn={isLoggedIn} onLogout={onLogout} />
     </header>
   );
 };

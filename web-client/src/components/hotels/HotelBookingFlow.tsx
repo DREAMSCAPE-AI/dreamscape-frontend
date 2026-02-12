@@ -168,8 +168,8 @@ const HotelBookingFlow: React.FC = () => {
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="container mx-auto px-4 py-8">
         {/* Progress Steps */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex items-center justify-between">
+        <div className="max-w-4xl mx-auto mb-6 md:mb-8">
+          <div className="flex items-center justify-between overflow-x-auto pb-2 md:pb-0 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full">
             {[
               { step: 'search', label: 'Search' },
               { step: 'results', label: 'Select Hotel' },
@@ -179,20 +179,26 @@ const HotelBookingFlow: React.FC = () => {
             ].map(({ step, label }, index) => (
               <div
                 key={step}
-                className="flex items-center"
+                className="flex items-center flex-shrink-0"
               >
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                  currentStep === step
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-200 text-gray-600'
-                }`}>
-                  {index + 1}
-                </div>
-                <div className="ml-2 text-sm font-medium text-gray-600">
-                  {label}
+                <div className="flex flex-col items-center">
+                  <div className={`flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full text-sm md:text-base flex-shrink-0 ${
+                    currentStep === step
+                      ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div className={`mt-1 text-xs md:text-sm font-medium whitespace-nowrap ${
+                    currentStep === step
+                      ? 'text-orange-600'
+                      : 'text-gray-600'
+                  }`}>
+                    {label}
+                  </div>
                 </div>
                 {index < 4 && (
-                  <div className="w-24 h-0.5 mx-2 bg-gray-200" />
+                  <div className="w-8 md:w-24 h-0.5 mx-1 md:mx-2 bg-gray-200 flex-shrink-0" />
                 )}
               </div>
             ))}

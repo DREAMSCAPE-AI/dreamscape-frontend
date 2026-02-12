@@ -15,7 +15,7 @@ export const CartButton = () => {
   return (
     <button
       onClick={toggleDrawer}
-      className="relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+      className="relative p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
       aria-label={t('cart.label', 'Shopping cart')}
     >
       <ShoppingCart className="w-6 h-6" />

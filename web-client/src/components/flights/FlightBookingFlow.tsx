@@ -386,36 +386,39 @@ const FlightBookingFlow: React.FC = () => {
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="container mx-auto px-4 py-8">
         {/* Progress Steps */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex items-center justify-between">
-            {[
-              { step: 'search', label: t('bookingFlow.steps.search') },
-              { step: 'results', label: t('bookingFlow.steps.selectFlight') },
-              { step: 'seats', label: t('bookingFlow.steps.chooseSeats') },
-              { step: 'meals', label: t('bookingFlow.steps.selectMeals') },
-              { step: 'baggage', label: t('bookingFlow.steps.addBaggage') },
-              { step: 'passengers', label: t('bookingFlow.steps.passengerInfo') },
-              { step: 'payment', label: t('bookingFlow.steps.payment') }
-            ].map(({ step, label }, index) => (
-              <div
-                key={step}
-                className="flex items-center"
-              >
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                  currentStep === step
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-200 text-gray-600'
-                }`}>
-                  {index + 1}
+        <div className="max-w-4xl mx-auto mb-4 md:mb-8">
+          {/* Mobile: Horizontal scroll */}
+          <div className="overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0 pb-2">
+            <div className="flex items-center gap-3 md:gap-4 md:justify-between min-w-max md:min-w-0">
+              {[
+                { step: 'search', label: t('bookingFlow.steps.search') },
+                { step: 'results', label: t('bookingFlow.steps.selectFlight') },
+                { step: 'seats', label: t('bookingFlow.steps.chooseSeats') },
+                { step: 'meals', label: t('bookingFlow.steps.selectMeals') },
+                { step: 'baggage', label: t('bookingFlow.steps.addBaggage') },
+                { step: 'passengers', label: t('bookingFlow.steps.passengerInfo') },
+                { step: 'payment', label: t('bookingFlow.steps.payment') }
+              ].map(({ step, label }, index) => (
+                <div
+                  key={step}
+                  className="flex items-center flex-shrink-0"
+                >
+                  <div className={`flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-full text-xs md:text-sm font-semibold ${
+                    currentStep === step
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div className="ml-2 text-xs md:text-sm font-medium text-gray-600 whitespace-nowrap">
+                    {label}
+                  </div>
+                  {index < 6 && (
+                    <div className="w-12 md:w-16 h-0.5 mx-2 bg-gray-200" />
+                  )}
                 </div>
-                <div className="ml-2 text-sm font-medium text-gray-600">
-                  {label}
-                </div>
-                {index < 6 && (
-                  <div className="w-16 h-0.5 mx-2 bg-gray-200" />
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

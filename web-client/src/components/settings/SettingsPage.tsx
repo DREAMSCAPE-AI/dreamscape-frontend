@@ -184,26 +184,26 @@ const SettingsPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('header.loading')}</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-orange-500 mx-auto mb-3 md:mb-4"></div>
+          <p className="text-sm md:text-base text-gray-600">{t('header.loading')}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-6">
-            <h1 className="text-2xl font-bold">{t('header.title')}</h1>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-4 md:py-6">
+            <h1 className="text-xl md:text-2xl font-bold">{t('header.title')}</h1>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -215,21 +215,21 @@ const SettingsPage = () => {
           </div>
 
           {/* Navigation */}
-          <div className="flex overflow-x-auto no-scrollbar">
+          <div className="flex overflow-x-auto no-scrollbar -mx-4 px-4">
             {sections.map((section) => {
               const Icon = section.icon;
               return (
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex items-center gap-2 px-6 py-4 border-b-2 transition-colors whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 md:gap-2 px-4 md:px-6 py-3 md:py-4 min-h-[44px] border-b-2 transition-colors whitespace-nowrap text-sm md:text-base ${
                     activeSection === section.id
                       ? 'border-orange-500 text-orange-500'
                       : 'border-transparent text-gray-600 hover:text-orange-500'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  {section.label}
+                  <Icon className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                  <span>{section.label}</span>
                 </button>
               );
             })}
@@ -238,21 +238,21 @@ const SettingsPage = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="max-w-3xl mx-auto">
           {/* Profile Settings */}
           {activeSection === 'profile' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Profile Photo */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">{t('profile.photo.title')}</h2>
-                <div className="flex items-center gap-6">
+              <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('profile.photo.title')}</h2>
+                <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6">
                   <img
                     src={settings.profile.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80'}
                     alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover"
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
                   />
-                  <div>
+                  <div className="w-full sm:w-auto">
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -263,7 +263,7 @@ const SettingsPage = () => {
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={avatarUploading}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
                     >
                       {avatarUploading ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
@@ -277,11 +277,11 @@ const SettingsPage = () => {
               </div>
 
               {/* Personal Information */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">{t('profile.personal.title')}</h2>
-                <div className="space-y-4">
+              <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('profile.personal.title')}</h2>
+                <div className="space-y-3 md:space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                       {t('profile.personal.fullName')}
                     </label>
                     <input
@@ -291,11 +291,11 @@ const SettingsPage = () => {
                         ...settings,
                         profile: { ...settings.profile, name: e.target.value }
                       })}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-2 text-sm md:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                       {t('profile.personal.email')}
                     </label>
                     <input
@@ -305,23 +305,23 @@ const SettingsPage = () => {
                         ...settings,
                         profile: { ...settings.profile, email: e.target.value }
                       })}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-2 text-sm md:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Payment Methods */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">{t('profile.payment.title')}</h2>
-                  <button className="text-orange-500 hover:text-orange-600 transition-colors">
+              <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-0 mb-3 md:mb-4">
+                  <h2 className="text-base md:text-lg font-semibold">{t('profile.payment.title')}</h2>
+                  <button className="text-sm md:text-base text-orange-500 hover:text-orange-600 transition-colors text-left sm:text-right min-h-[44px] sm:min-h-0 flex items-center">
                     {t('profile.payment.addNew')}
                   </button>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                    <div className="flex items-center gap-4">
+                <div className="space-y-3 md:space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 md:p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center gap-3 md:gap-4 min-w-0">
                       <CreditCard className="w-6 h-6 text-gray-400" />
                       <div>
                         <div className="font-medium">•••• 4242</div>
@@ -339,17 +339,17 @@ const SettingsPage = () => {
 
           {/* Account Settings */}
           {activeSection === 'account' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Language & Region */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">{t('account.language.title')}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('account.language.title')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                       {t('account.language.language')}
                     </label>
                     <div className="relative">
-                      <Languages className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Languages className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400 pointer-events-none" />
                       <select
                         value={settings.preferences.language}
                         onChange={(e) => {
@@ -364,7 +364,7 @@ const SettingsPage = () => {
                             i18n.changeLanguage(code);
                           }
                         }}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                       >
                         <option value="English">{t('account.language.options.english')}</option>
                         <option value="French">{t('account.language.options.french')}</option>
@@ -373,18 +373,18 @@ const SettingsPage = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                       {t('account.language.currency')}
                     </label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400 pointer-events-none" />
                       <select
                         value={settings.preferences.currency}
                         onChange={(e) => setSettings({
                           ...settings,
                           preferences: { ...settings.preferences, currency: e.target.value }
                         })}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                       >
                         <option value="USD">{t('account.language.currencies.usd')}</option>
                         <option value="EUR">{t('account.language.currencies.eur')}</option>
@@ -396,19 +396,19 @@ const SettingsPage = () => {
               </div>
 
               {/* Security */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">{t('account.security.title')}</h2>
-                <div className="space-y-4">
+              <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('account.security.title')}</h2>
+                <div className="space-y-3 md:space-y-4">
                   <button
                     onClick={() => setShowPasswordModal(true)}
-                    className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="w-full flex items-center justify-between p-3 md:p-4 min-h-[44px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    <span className="font-medium">{t('account.security.changePassword')}</span>
-                    <Shield className="w-5 h-5 text-gray-400" />
+                    <span className="font-medium text-sm md:text-base">{t('account.security.changePassword')}</span>
+                    <Shield className="w-5 h-5 text-gray-400 flex-shrink-0" />
                   </button>
-                  <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <span className="font-medium">{t('account.security.twoFactor')}</span>
-                    <Lock className="w-5 h-5 text-gray-400" />
+                  <button className="w-full flex items-center justify-between p-3 md:p-4 min-h-[44px] bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <span className="font-medium text-sm md:text-base">{t('account.security.twoFactor')}</span>
+                    <Lock className="w-5 h-5 text-gray-400 flex-shrink-0" />
                   </button>
                 </div>
               </div>
@@ -417,16 +417,16 @@ const SettingsPage = () => {
 
           {/* Notification Settings */}
           {activeSection === 'notifications' && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold mb-6">{t('notifications.title')}</h2>
-              <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+              <h2 className="text-base md:text-lg font-semibold mb-4 md:mb-6">{t('notifications.title')}</h2>
+              <div className="space-y-4 md:space-y-6">
                 {Object.entries(settings.notifications).map(([key, value]) => (
-                  <label key={key} className="flex items-center justify-between cursor-pointer">
-                    <div>
-                      <div className="font-medium">
+                  <label key={key} className="flex items-center justify-between gap-4 cursor-pointer py-2.5 md:py-0 min-h-[44px] md:min-h-0">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm md:text-base">
                         {t(`notifications.${key}.label`)}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-xs md:text-sm text-gray-500 mt-0.5">
                         {t(`notifications.${key}.description`)}
                       </div>
                     </div>
@@ -440,7 +440,7 @@ const SettingsPage = () => {
                           [key]: e.target.checked
                         }
                       })}
-                      className="w-6 h-6 text-orange-500 rounded focus:ring-orange-500"
+                      className="w-5 h-5 md:w-6 md:h-6 text-orange-500 rounded focus:ring-orange-500 flex-shrink-0"
                     />
                   </label>
                 ))}
@@ -450,17 +450,17 @@ const SettingsPage = () => {
 
           {/* Privacy Settings */}
           {activeSection === 'privacy' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Profile Visibility */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">{t('privacy.visibility.title')}</h2>
-                <div className="space-y-4">
-                  <label className="flex items-center justify-between cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <Eye className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <div className="font-medium">{t('privacy.visibility.publicProfile')}</div>
-                        <div className="text-sm text-gray-500">
+              <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('privacy.visibility.title')}</h2>
+                <div className="space-y-3 md:space-y-4">
+                  <label className="flex items-center justify-between gap-4 cursor-pointer py-2.5 md:py-0 min-h-[44px] md:min-h-0">
+                    <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                      <Eye className="w-4 h-4 md:w-5 md:h-5 text-gray-400 flex-shrink-0" />
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm md:text-base">{t('privacy.visibility.publicProfile')}</div>
+                        <div className="text-xs md:text-sm text-gray-500 mt-0.5">
                           {t('privacy.visibility.publicDescription')}
                         </div>
                       </div>
@@ -475,16 +475,16 @@ const SettingsPage = () => {
                           profileVisibility: e.target.checked ? 'public' : 'private'
                         }
                       })}
-                      className="w-6 h-6 text-orange-500 rounded focus:ring-orange-500"
+                      className="w-5 h-5 md:w-6 md:h-6 text-orange-500 rounded focus:ring-orange-500 flex-shrink-0"
                     />
                   </label>
                 </div>
               </div>
 
               {/* Data & Privacy */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">{t('privacy.data.title')}</h2>
-                <div className="space-y-4">
+              <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('privacy.data.title')}</h2>
+                <div className="space-y-3 md:space-y-4">
                   {[
                     {
                       key: 'dataSharing',
@@ -497,10 +497,10 @@ const SettingsPage = () => {
                       description: t('privacy.data.marketingDescription')
                     }
                   ].map((item) => (
-                    <label key={item.key} className="flex items-center justify-between cursor-pointer">
-                      <div>
-                        <div className="font-medium">{item.label}</div>
-                        <div className="text-sm text-gray-500">{item.description}</div>
+                    <label key={item.key} className="flex items-center justify-between gap-4 cursor-pointer py-2.5 md:py-0 min-h-[44px] md:min-h-0">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm md:text-base">{item.label}</div>
+                        <div className="text-xs md:text-sm text-gray-500 mt-0.5">{item.description}</div>
                       </div>
                       <input
                         type="checkbox"
@@ -512,7 +512,7 @@ const SettingsPage = () => {
                             [item.key]: e.target.checked
                           }
                         })}
-                        className="w-6 h-6 text-orange-500 rounded focus:ring-orange-500"
+                        className="w-5 h-5 md:w-6 md:h-6 text-orange-500 rounded focus:ring-orange-500 flex-shrink-0"
                       />
                     </label>
                   ))}
@@ -538,64 +538,64 @@ const SettingsPage = () => {
 
       {/* Modal pour changer le mot de passe */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96 max-w-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">{t('account.security.changePassword')}</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 md:p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <h3 className="text-base md:text-lg font-semibold">{t('account.security.changePassword')}</h3>
               <button
                 onClick={() => {
                   setShowPasswordModal(false);
                   setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 text-gray-400 hover:text-gray-600 flex items-center justify-center"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   {t('account.security.currentPassword')}
                 </label>
                 <input
                   type="password"
                   value={passwordData.currentPassword}
                   onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                  className="w-full px-3 md:px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   {t('account.security.newPassword')}
                 </label>
                 <input
                   type="password"
                   value={passwordData.newPassword}
                   onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                  className="w-full px-3 md:px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   {t('account.security.confirmPassword')}
                 </label>
                 <input
                   type="password"
                   value={passwordData.confirmPassword}
                   onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                  className="w-full px-3 md:px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                 />
               </div>
               {passwordData.newPassword && passwordData.confirmPassword && passwordData.newPassword !== passwordData.confirmPassword && (
-                <p className="text-red-500 text-sm">{t('account.security.passwordMismatch')}</p>
+                <p className="text-red-500 text-xs md:text-sm">{t('account.security.passwordMismatch')}</p>
               )}
-              <div className="flex justify-end gap-3">
+              <div className="flex flex-col sm:flex-row justify-end gap-2 md:gap-3 pt-2">
                 <button
                   onClick={() => {
                     setShowPasswordModal(false);
                     setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
                   }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  className="w-full sm:w-auto px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   {t('account.security.cancel')}
                 </button>
@@ -606,7 +606,7 @@ const SettingsPage = () => {
                     setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
                   }}
                   disabled={!passwordData.currentPassword || !passwordData.newPassword || passwordData.newPassword !== passwordData.confirmPassword}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-4 py-2.5 md:py-2 min-h-[44px] text-sm md:text-base bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {t('account.security.changePassword')}
                 </button>
