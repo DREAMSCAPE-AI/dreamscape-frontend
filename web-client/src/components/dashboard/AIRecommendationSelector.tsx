@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plane, Home, Compass, Globe, Sparkles } from 'lucide-react';
 import { RecommendationCategory as APIRecommendationCategory } from '../../services/aiRecommendationsService';
 
@@ -7,7 +8,7 @@ type UIRecommendationCategory = APIRecommendationCategory | 'global';
 
 interface CategoryButton {
   id: UIRecommendationCategory;
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
   color: string;
   bgColor: string;
@@ -23,12 +24,13 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
   onGenerate,
   isLoading = false
 }) => {
+  const { t } = useTranslation('dashboard');
   const [selectedCategories, setSelectedCategories] = React.useState<Set<UIRecommendationCategory>>(new Set());
 
   const categories: CategoryButton[] = [
     {
       id: 'flights',
-      label: 'Vols',
+      labelKey: 'recommendations.aiSelector.categories.flights',
       icon: <Plane className="w-5 h-5" />,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
@@ -36,7 +38,7 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
     },
     {
       id: 'accommodations',
-      label: 'Hébergement',
+      labelKey: 'recommendations.aiSelector.categories.accommodations',
       icon: <Home className="w-5 h-5" />,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
@@ -44,7 +46,7 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
     },
     {
       id: 'activities',
-      label: 'Activités',
+      labelKey: 'recommendations.aiSelector.categories.activities',
       icon: <Compass className="w-5 h-5" />,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
@@ -52,7 +54,7 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
     },
     {
       id: 'global',
-      label: 'Global',
+      labelKey: 'recommendations.aiSelector.categories.global',
       icon: <Globe className="w-5 h-5" />,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
@@ -113,10 +115,10 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
       <div className="text-center mb-6">
         <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-orange-500 mx-auto mb-4" />
         <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">
-          Générez vos recommandations IA
+          {t('recommendations.aiSelector.title')}
         </h3>
         <p className="text-sm md:text-base text-gray-600 max-w-md mx-auto">
-          Sélectionnez les types de recommandations que vous souhaitez recevoir
+          {t('recommendations.aiSelector.description')}
         </p>
       </div>
 
@@ -140,7 +142,7 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
                 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 cursor-pointer'}
               `}
               aria-pressed={isSelected}
-              aria-label={`${isSelected ? 'Désélectionner' : 'Sélectionner'} ${category.label}`}
+              aria-label={`${isSelected ? t('recommendations.aiSelector.deselectCategory') : t('recommendations.aiSelector.selectCategory')} ${t(category.labelKey)}`}
             >
               {/* Checkmark indicator */}
               {isSelected && (
@@ -166,7 +168,7 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
               </div>
 
               <span className="text-sm md:text-base font-medium">
-                {category.label}
+                {t(category.labelKey)}
               </span>
             </button>
           );
@@ -185,7 +187,7 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }
         `}
-        aria-label={isLoading ? 'Génération en cours...' : 'Générer mes recommandations'}
+        aria-label={isLoading ? t('recommendations.aiSelector.generating') : t('recommendations.aiSelector.generateButton')}
       >
         {isLoading ? (
           <div className="flex items-center justify-center gap-2">
@@ -209,12 +211,12 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <span>Génération en cours...</span>
+            <span>{t('recommendations.aiSelector.generating')}</span>
           </div>
         ) : (
           <>
             <Sparkles className="inline-block w-5 h-5 mr-2" />
-            Générer mes recommandations
+            {t('recommendations.aiSelector.generateButton')}
           </>
         )}
       </button>
@@ -222,7 +224,7 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
       {/* Selection hint */}
       {!hasSelection && (
         <p className="text-xs md:text-sm text-gray-400 mt-3">
-          Sélectionnez au moins une catégorie pour continuer
+          {t('recommendations.aiSelector.selectHint')}
         </p>
       )}
     </div>
