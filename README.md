@@ -253,3 +253,4 @@ npm run deploy:prod        # Deploy production
 
 Propriétaire et confidentiel © DreamScape 2025
 
+
