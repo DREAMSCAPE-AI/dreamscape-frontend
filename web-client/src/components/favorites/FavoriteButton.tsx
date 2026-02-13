@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
-import FavoritesService, { FavoriteType } from '@/services/api/FavoritesService';
+import FavoritesService, { FavoriteType } from '@/services/user/FavoritesService';
 import { useAuth } from '@/services/auth/AuthService';
 import { useFavoritesBatch } from '@/contexts/FavoritesBatchContext';
 

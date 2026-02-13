@@ -4,11 +4,16 @@ import { useItineraryStore } from '@/store/itineraryStore';
 import FlightSearchWrapper from './search-wrappers/FlightSearchWrapper';
 import HotelSearchWrapper from './search-wrappers/HotelSearchWrapper';
 import ActivitySearchWrapper from './search-wrappers/ActivitySearchWrapper';
+import SeatSelection, { SelectedSeat } from '@/components/flights/SeatSelection';
+import MealSelection, { SelectedMeal } from '@/components/flights/MealSelection';
+import BaggageSelection, { SelectedBaggage } from '@/components/flights/BaggageSelection';
+import PassengerInfo, { PassengerDetails } from '@/components/flights/PassengerInfo';
 import {
   flightToItineraryItem,
   hotelToItineraryItem,
   activityToItineraryItem
 } from '@/utils/itineraryTransformers';
+import { enrichFlightWithItineraries } from '@/utils/flightUtils';
 
 interface AddItemModalV2Props {
   isOpen: boolean;
@@ -18,6 +23,7 @@ interface AddItemModalV2Props {
 }
 
 type TabType = 'FLIGHT' | 'HOTEL' | 'ACTIVITY';
+type CustomizationStep = 'search' | 'customize-seats' | 'customize-meals' | 'customize-baggage' | 'passenger-info' | 'confirm';
 
 const AddItemModalV2: React.FC<AddItemModalV2Props> = ({
   isOpen,
@@ -28,6 +34,11 @@ const AddItemModalV2: React.FC<AddItemModalV2Props> = ({
   const { addItem, isSaving } = useItineraryStore();
   const [selectedTab, setSelectedTab] = useState<TabType>('FLIGHT');
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [currentStep, setCurrentStep] = useState<CustomizationStep>('search');
+  const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
+  const [selectedMeals, setSelectedMeals] = useState<SelectedMeal[]>([]);
+  const [selectedBaggage, setSelectedBaggage] = useState<SelectedBaggage[]>([]);
+  const [passengerDetails, setPassengerDetails] = useState<PassengerDetails[]>([]);
 
   const tabs = [
     {
@@ -64,7 +75,12 @@ const AddItemModalV2: React.FC<AddItemModalV2Props> = ({
 
       switch (selectedTab) {
         case 'FLIGHT':
-          itemDto = flightToItineraryItem(selectedItem);
+          itemDto = flightToItineraryItem(selectedItem, {
+            seats: selectedSeats,
+            meals: selectedMeals,
+            baggage: selectedBaggage,
+            passengers: passengerDetails
+          });
           break;
         case 'HOTEL':
           itemDto = hotelToItineraryItem(selectedItem);
@@ -88,11 +104,29 @@ const AddItemModalV2: React.FC<AddItemModalV2Props> = ({
   const handleClose = () => {
     setSelectedItem(null);
     setSelectedTab('FLIGHT');
+    setCurrentStep('search');
+    setSelectedSeats([]);
+    setSelectedMeals([]);
+    setSelectedBaggage([]);
+    setPassengerDetails([]);
     onClose();
   };
 
   const handleSelectItem = (item: any) => {
-    setSelectedItem(item);
+    console.log('[AddItemModalV2] Selected item:', item);
+    console.log('[AddItemModalV2] Item has itineraries?', !!item?.itineraries);
+
+    // For flights, enrich with itineraries structure if missing
+    if (selectedTab === 'FLIGHT') {
+      const enrichedFlight = enrichFlightWithItineraries(item);
+      console.log('[AddItemModalV2] Enriched flight:', enrichedFlight);
+      setSelectedItem(enrichedFlight);
+      // Always proceed to customization for flights
+      setCurrentStep('customize-seats');
+    } else {
+      // For hotels and activities, keep on search step
+      setSelectedItem(item);
+    }
   };
 
   if (!isOpen) return null;
@@ -130,6 +164,11 @@ const AddItemModalV2: React.FC<AddItemModalV2Props> = ({
                 onClick={() => {
                   setSelectedTab(tab.id);
                   setSelectedItem(null);
+                  setCurrentStep('search');
+                  setSelectedSeats([]);
+                  setSelectedMeals([]);
+                  setSelectedBaggage([]);
+                  setPassengerDetails([]);
                 }}
                 className={`flex items-center gap-2 px-6 py-4 border-b-2 transition-colors ${
                   isActive
@@ -146,40 +185,118 @@ const AddItemModalV2: React.FC<AddItemModalV2Props> = ({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
-          {selectedTab === 'FLIGHT' && (
-            <FlightSearchWrapper
-              onSelectFlight={handleSelectItem}
-              selectedFlightId={selectedItem?.id}
+          {/* Search Step */}
+          {currentStep === 'search' && (
+            <>
+              {selectedTab === 'FLIGHT' && (
+                <FlightSearchWrapper
+                  onSelectFlight={handleSelectItem}
+                  selectedFlightId={selectedItem?.id}
+                />
+              )}
+
+              {selectedTab === 'HOTEL' && (
+                <HotelSearchWrapper
+                  onSelectHotel={handleSelectItem}
+                  selectedHotelId={selectedItem?.id}
+                />
+              )}
+
+              {selectedTab === 'ACTIVITY' && (
+                <ActivitySearchWrapper
+                  onSelectActivity={handleSelectItem}
+                  selectedActivityId={selectedItem?.id}
+                />
+              )}
+            </>
+          )}
+
+          {/* Seat Selection Step (only for flights) */}
+          {currentStep === 'customize-seats' && selectedItem && selectedTab === 'FLIGHT' && (
+            <SeatSelection
+              flight={selectedItem}
+              returnFlight={null}
+              passengers={selectedItem.passengers?.adults || 1}
+              onBack={() => {
+                setCurrentStep('search');
+                setSelectedSeats([]);
+              }}
+              onContinue={(seats) => {
+                setSelectedSeats(seats);
+                setCurrentStep('customize-meals');
+              }}
             />
           )}
 
-          {selectedTab === 'HOTEL' && (
-            <HotelSearchWrapper
-              onSelectHotel={handleSelectItem}
-              selectedHotelId={selectedItem?.id}
+          {/* Meal Selection Step (only for flights) */}
+          {currentStep === 'customize-meals' && selectedItem && selectedTab === 'FLIGHT' && (
+            <MealSelection
+              flight={selectedItem}
+              returnFlight={null}
+              passengers={selectedItem.passengers?.adults || 1}
+              onBack={() => {
+                setCurrentStep('customize-seats');
+                setSelectedMeals([]);
+              }}
+              onContinue={(meals) => {
+                setSelectedMeals(meals);
+                setCurrentStep('customize-baggage');
+              }}
             />
           )}
 
-          {selectedTab === 'ACTIVITY' && (
-            <ActivitySearchWrapper
-              onSelectActivity={handleSelectItem}
-              selectedActivityId={selectedItem?.id}
+          {/* Baggage Selection Step (only for flights) */}
+          {currentStep === 'customize-baggage' && selectedItem && selectedTab === 'FLIGHT' && (
+            <BaggageSelection
+              passengers={selectedItem.passengers?.adults || 1}
+              hasReturnFlight={false}
+              onBack={() => {
+                setCurrentStep('customize-meals');
+                setSelectedBaggage([]);
+              }}
+              onContinue={(baggage) => {
+                setSelectedBaggage(baggage);
+                setCurrentStep('passenger-info');
+              }}
+            />
+          )}
+
+          {/* Passenger Information Step (only for flights) */}
+          {currentStep === 'passenger-info' && selectedItem && selectedTab === 'FLIGHT' && (
+            <PassengerInfo
+              flight={selectedItem}
+              onBack={() => {
+                setCurrentStep('customize-baggage');
+                setPassengerDetails([]);
+              }}
+              onContinue={(passengers) => {
+                setPassengerDetails(passengers);
+                setCurrentStep('confirm');
+              }}
             />
           )}
         </div>
 
         {/* Footer */}
         {selectedItem && (
+          (selectedTab === 'FLIGHT' && currentStep === 'confirm') ||
+          (selectedTab !== 'FLIGHT' && currentStep === 'search')
+        ) && (
           <div className="border-t border-gray-200 p-6 bg-gray-50">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Selected</p>
                 <p className="font-semibold text-gray-900">
-                  {selectedItem.name || selectedItem.airline || selectedItem.title || 'Item'}
+                  {selectedItem.name ||
+                   (typeof selectedItem.airline === 'object' ? selectedItem.airline?.name : selectedItem.airline) ||
+                   selectedItem.title || 'Item'}
                 </p>
                 <p className="text-lg font-bold text-orange-600 mt-1">
                   {selectedItem.price?.currency || selectedItem.price?.currencyCode || 'USD'}{' '}
-                  {selectedItem.price?.total || selectedItem.price?.amount || selectedItem.price || 0}
+                  {typeof selectedItem.price === 'object'
+                    ? (selectedItem.price?.total || selectedItem.price?.amount || selectedItem.price?.base || '0')
+                    : (selectedItem.price || '0')
+                  }
                 </p>
               </div>
 

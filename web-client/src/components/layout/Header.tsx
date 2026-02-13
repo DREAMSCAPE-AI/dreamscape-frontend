@@ -28,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 import Logo from './Logo';
 import { CartButton } from '@/components/cart';
 import LanguageSelector from '@/components/common/LanguageSelector';
-import FavoritesService from '@/services/api/FavoritesService';
+import FavoritesService from '@/services/user/FavoritesService';
 
 interface HeaderProps {
   isLoggedIn?: boolean;

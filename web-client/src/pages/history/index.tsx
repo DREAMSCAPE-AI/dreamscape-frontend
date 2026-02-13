@@ -22,7 +22,7 @@ import {
   Activity
 } from 'lucide-react';
 import { useAuth } from '@/services/auth/AuthService';
-import { historyService } from '@/services/historyService';
+import { historyService } from '@/services/user/HistoryService';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ErrorMessage from '@/components/common/ErrorMessage';
 import type {

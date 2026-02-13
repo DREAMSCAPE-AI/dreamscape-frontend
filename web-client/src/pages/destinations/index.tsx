@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DestinationCard from '@/components/DestinationCard';
-import voyageService from '@/services/api/VoyageService';
-import imageService from '@/services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 
 interface Destination {
   id: string;

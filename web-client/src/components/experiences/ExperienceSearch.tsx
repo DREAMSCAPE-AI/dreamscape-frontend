@@ -3,7 +3,7 @@ import { Compass, Calendar, DollarSign, Search } from 'lucide-react';
 import { useExperienceSearch } from '../../hooks/useAPI';
 import Calendar from '../shared/Calendar';
 import Dropdown from '../shared/Dropdown';
-import type { ExperienceSearchParams } from '../../services/api/types';
+import type { ExperienceSearchParams } from '@/services/voyage/types';
 
 const ExperienceSearch = () => {
   const { searchExperiences, loading, error } = useExperienceSearch();

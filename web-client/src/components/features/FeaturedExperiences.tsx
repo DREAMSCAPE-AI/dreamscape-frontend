@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ExperienceCard from './ExperienceCard';
 import SectionTitle from '../shared/SectionTitle';
-import voyageService from '@/services/api/VoyageService';
-import imageService from '@/services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 
 interface FeaturedExperience {
   id: string;

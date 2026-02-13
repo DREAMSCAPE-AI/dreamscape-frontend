@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { History, Sparkles, RefreshCw } from 'lucide-react';
 import ExperienceCard from '../features/ExperienceCard';
-import { TravelRecommendation } from '../../services/dashboardService';
+import { TravelRecommendation } from '@/services/dashboard';
 
 interface RecommendationsSectionProps {
   recentSearches: string[];

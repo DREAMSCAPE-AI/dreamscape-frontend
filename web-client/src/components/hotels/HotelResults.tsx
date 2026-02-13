@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Eye, Car, Utensils, Waves, Dumbbell } from 'lucide-react';
-import type { HotelOffer } from '../../services/api/types';
+import type { HotelOffer } from '@/services/voyage/types';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 import { FavoriteButton } from '@/components/favorites';
-import { FavoriteType } from '@/services/api/FavoritesService';
+import { FavoriteType } from '@/services/user/FavoritesService';
 
 interface HotelResultsProps {
   hotels: HotelOffer[];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../../services/auth/AuthService';
+import { useAuth } from '@/services/auth/AuthService';
 import UnifiedDashboard from './UnifiedDashboard';
 
 const UserDashboard = () => {

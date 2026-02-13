@@ -1,4 +1,4 @@
-import type { FlightOffer } from '@/services/api/types';
+import type { FlightOffer } from '@/services/voyage/types';
 
 /**
  * Parse ISO 8601 duration string to total minutes
@@ -138,3 +138,107 @@ export const matchesStopsFilter = (
     return stops === filterValue;
   });
 };
+
+/**
+ * Format ISO datetime string to time string (24-hour format)
+ * Example: "2024-02-13T10:30:00" → "10:30"
+ * @param isoDateTime ISO 8601 datetime string
+ * @returns Formatted time string
+ */
+export function formatTime(isoDateTime: string): string {
+  if (!isoDateTime) return '--:--';
+  return new Date(isoDateTime).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+}
+
+/**
+ * Format ISO 8601 duration string to readable format
+ * Example: "PT8H30M" → "8h 30m", "PT2H" → "2h"
+ * @param isoDuration ISO 8601 duration string
+ * @returns Formatted duration string
+ */
+export function formatDuration(isoDuration: string): string {
+  if (!isoDuration) return '--';
+  const hours = isoDuration.match(/(\d+)H/)?.[1] || '0';
+  const minutes = isoDuration.match(/(\d+)M/)?.[1];
+  return minutes ? `${hours}h ${minutes}m` : `${hours}h`;
+}
+
+/**
+ * Format ISO datetime string to date string
+ * Example: "2024-02-13T10:30:00" → "Feb 13"
+ * @param isoDateTime ISO 8601 datetime string
+ * @returns Formatted date string
+ */
+export function formatDate(isoDateTime: string): string {
+  if (!isoDateTime) return '';
+  return new Date(isoDateTime).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+/**
+ * Convert backend simplified flight structure to Amadeus format with itineraries
+ * This allows customization components (SeatSelection, MealSelection, BaggageSelection) to work
+ * @param flight Backend simplified flight object
+ * @returns Flight with itineraries structure
+ */
+export function enrichFlightWithItineraries(flight: any): any {
+  console.log('[enrichFlightWithItineraries] Input flight:', flight);
+
+  // If already has itineraries, return as-is
+  if (flight.itineraries && flight.itineraries.length > 0) {
+    console.log('[enrichFlightWithItineraries] Flight already has itineraries, returning as-is');
+    return flight;
+  }
+
+  console.log('[enrichFlightWithItineraries] Creating itineraries from simplified format');
+
+  // Create itineraries structure from simplified backend format
+  const segment = {
+    departure: {
+      iataCode: typeof flight.departure === 'object'
+        ? (flight.departure.airport || flight.departure.code || flight.origin)
+        : flight.origin,
+      at: typeof flight.departure === 'object'
+        ? (flight.departure.time || flight.departure.at)
+        : flight.departureTime,
+      terminal: typeof flight.departure === 'object' ? flight.departure.terminal : undefined
+    },
+    arrival: {
+      iataCode: typeof flight.arrival === 'object'
+        ? (flight.arrival.airport || flight.arrival.code || flight.destination)
+        : flight.destination,
+      at: typeof flight.arrival === 'object'
+        ? (flight.arrival.time || flight.arrival.at)
+        : flight.arrivalTime,
+      terminal: typeof flight.arrival === 'object' ? flight.arrival.terminal : undefined
+    },
+    carrierCode: flight.airline?.code || flight.carrierCode || 'XX',
+    number: flight.flightNumber || '000',
+    aircraft: {
+      code: flight.aircraft?.code || 'A320' // Default aircraft type
+    },
+    duration: flight.duration || 'PT0M',
+    numberOfStops: flight.stops || 0
+  };
+
+  const enrichedFlight = {
+    ...flight,
+    itineraries: [{
+      duration: flight.duration || 'PT0M',
+      segments: [segment]
+    }],
+    validatingAirlineCodes: [flight.airline?.code || flight.carrierCode || 'XX']
+  };
+
+  console.log('[enrichFlightWithItineraries] Enriched flight:', enrichedFlight);
+  console.log('[enrichFlightWithItineraries] Has itineraries?', !!enrichedFlight.itineraries);
+  console.log('[enrichFlightWithItineraries] Segments:', enrichedFlight.itineraries?.[0]?.segments);
+
+  return enrichedFlight;
+}

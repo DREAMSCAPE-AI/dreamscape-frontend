@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Clock, MapPin, Trash2, Edit, GripVertical, Plane, Hotel as HotelIcon, Activity, DollarSign } from 'lucide-react';
 import { useItineraryStore } from '@/store/itineraryStore';
-import type { ItineraryItem, ItineraryItemType } from '@/services/api/ItineraryService';
+import type { ItineraryItem, ItineraryItemType } from '@/services/voyage/ItineraryService';
 
 interface ItineraryItemCardProps {
   item: ItineraryItem;

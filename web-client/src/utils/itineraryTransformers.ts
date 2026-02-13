@@ -9,23 +9,37 @@ import type { FlightItemData, HotelItemData, ActivityItemData } from '@/types/ca
  * Transform flight search result to ItineraryItem
  * Handles both mock data structure and Amadeus API structure
  */
-export function flightToItineraryItem(flight: any): CreateItineraryItemDto {
+export function flightToItineraryItem(
+  flight: any,
+  customizations?: {
+    seats?: any[];
+    meals?: any[];
+    baggage?: any[];
+    passengers?: any[];
+  }
+): CreateItineraryItemDto {
   console.log('[flightToItineraryItem] Input flight:', flight);
+  console.log('[flightToItineraryItem] Customizations:', customizations);
 
-  // Extract origin/destination with multiple fallbacks (Amadeus API structure vs mock structure)
-  const origin = flight.origin || flight.departure?.iataCode ||
+  // Extract origin/destination with multiple fallbacks (Amadeus API structure vs backend simplified format)
+  // Backend format: departure: {airport: 'NCE', time: '...', terminal: '2'}
+  const origin = flight.origin ||
+    flight.departure?.airport || flight.departure?.code || flight.departure?.iataCode ||
     flight.itineraries?.[0]?.segments?.[0]?.departure?.iataCode || '';
-  const destination = flight.destination || flight.arrival?.iataCode ||
+  const destination = flight.destination ||
+    flight.arrival?.airport || flight.arrival?.code || flight.arrival?.iataCode ||
     flight.itineraries?.[0]?.segments?.[flight.itineraries?.[0]?.segments?.length - 1]?.arrival?.iataCode || '';
 
-  // Extract times with multiple fallbacks
-  const departureDateTime = flight.departureTime || flight.departure?.at ||
+  // Extract times with multiple fallbacks (backend format has departure.time/arrival.time)
+  const departureDateTime = flight.departureTime ||
+    flight.departure?.time || flight.departure?.at ||
     flight.itineraries?.[0]?.segments?.[0]?.departure?.at || new Date().toISOString();
-  const arrivalDateTime = flight.arrivalTime || flight.arrival?.at ||
+  const arrivalDateTime = flight.arrivalTime ||
+    flight.arrival?.time || flight.arrival?.at ||
     flight.itineraries?.[0]?.segments?.[flight.itineraries?.[0]?.segments?.length - 1]?.arrival?.at || new Date().toISOString();
 
-  // Extract carrier info
-  const carrierCode = flight.carrierCode || flight.validatingAirlineCodes?.[0] ||
+  // Extract carrier info - backend format: airline: {code: 'AF', name: 'Air France'}
+  const carrierCode = flight.airline?.code || flight.carrierCode || flight.validatingAirlineCodes?.[0] ||
     flight.itineraries?.[0]?.segments?.[0]?.carrierCode || '';
   const flightNum = flight.flightNumber || flight.number ||
     flight.itineraries?.[0]?.segments?.[0]?.number || '';
@@ -37,7 +51,7 @@ export function flightToItineraryItem(flight: any): CreateItineraryItemDto {
   const itemData: FlightItemData & Record<string, any> = {
     type: 'flight',
     flightNumber: flightNum || 'N/A',
-    airline: flight.airline || carrierCode || 'Unknown Airline',
+    airline: flight.airline?.name || flight.airline || carrierCode || 'Unknown Airline',
     origin,
     destination,
     departureTime: departureDateTime,
@@ -52,11 +66,30 @@ export function flightToItineraryItem(flight: any): CreateItineraryItemDto {
       adults: 1,
       children: 0,
       infants: 0
-    }
+    },
+    // Include customizations if provided
+    ...(customizations && {
+      bookingDetails: {
+        seats: customizations.seats || [],
+        meals: customizations.meals || [],
+        baggage: customizations.baggage || [],
+        passengers: customizations.passengers || []
+      }
+    })
   };
 
-  const price = flight.price?.total || flight.price?.grandTotal || flight.price || 0;
-  const currency = flight.price?.currency || flight.currency || 'USD';
+  // Extract price - handle both Amadeus format and backend simplified format
+  const priceObj = flight.price;
+  let price = 0;
+  if (typeof priceObj === 'object' && priceObj !== null) {
+    price = priceObj?.total || priceObj?.grandTotal || priceObj?.amount || priceObj?.base || 0;
+  } else if (typeof priceObj === 'number') {
+    price = priceObj;
+  } else if (typeof priceObj === 'string') {
+    price = parseFloat(priceObj) || 0;
+  }
+
+  const currency = priceObj?.currency || flight.currency || 'USD';
 
   const result = {
     type: 'FLIGHT' as const,
@@ -81,32 +114,62 @@ export function flightToItineraryItem(flight: any): CreateItineraryItemDto {
  * Transform hotel search result to ItineraryItem
  */
 export function hotelToItineraryItem(hotel: any): CreateItineraryItemDto {
+  console.log('[hotelToItineraryItem] Input hotel:', hotel);
+
+  // Use search params if hotel data is empty
+  const checkInDate = hotel.searchCheckInDate || hotel.checkInDate || hotel.offers?.[0]?.checkInDate || hotel.checkIn;
+  const checkOutDate = hotel.searchCheckOutDate || hotel.checkOutDate || hotel.offers?.[0]?.checkOutDate || hotel.checkOut;
+  const cityCode = hotel.searchCityCode || hotel.cityCode;
+
   const itemData: HotelItemData = {
     type: 'hotel',
-    name: hotel.name || hotel.hotelName || 'Unknown Hotel',
-    location: hotel.location || hotel.address?.cityName || hotel.city || '',
-    checkInDate: hotel.checkInDate || hotel.checkIn || new Date().toISOString(),
-    checkOutDate: hotel.checkOutDate || hotel.checkOut || new Date().toISOString(),
-    roomType: hotel.roomType || hotel.room?.typeEstimated?.category || 'Standard Room',
-    guests: hotel.guests || hotel.adults || 1,
+    name: hotel.name || hotel.hotel?.name || hotel.hotelName || 'Unknown Hotel',
+    location: hotel.location?.name || hotel.address?.city || cityCode ||
+              hotel.hotel?.address?.cityName || hotel.hotel?.cityCode || hotel.city || 'Unknown Location',
+    checkInDate: checkInDate || new Date().toISOString(),
+    checkOutDate: checkOutDate || new Date(Date.now() + 86400000).toISOString(), // +1 day
+    roomType: hotel.roomType || hotel.room?.type || hotel.room?.description ||
+              hotel.offers?.[0]?.room?.description?.text ||
+              hotel.offers?.[0]?.room?.typeEstimated?.category || 'Standard Room',
+    guests: hotel.searchAdults || hotel.guests || hotel.room?.guests || hotel.adults || 1,
     nights: hotel.nights || 1,
     rating: hotel.rating || hotel.hotelRating,
     imageUrl: hotel.imageUrl || hotel.media?.[0]?.uri
   };
 
-  const price = hotel.price?.total || hotel.offers?.[0]?.price?.total || hotel.price || 0;
-  const currency = hotel.price?.currency || hotel.offers?.[0]?.price?.currency || hotel.currency || 'USD';
-
-  // Calculate nights if not provided
-  if (!itemData.nights && itemData.checkInDate && itemData.checkOutDate) {
-    const checkIn = new Date(itemData.checkInDate);
-    const checkOut = new Date(itemData.checkOutDate);
-    itemData.nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+  // Extract price - handle both Amadeus format and backend simplified format
+  const priceObj = hotel.price || hotel.offers?.[0]?.price;
+  let price = 0;
+  if (typeof priceObj === 'object' && priceObj !== null) {
+    // Backend format: {amount, currency, perNight, base, taxes} or Amadeus format: {total, currency}
+    price = priceObj?.total || priceObj?.amount || priceObj?.base || 0;
+  } else if (typeof priceObj === 'number') {
+    price = priceObj;
+  } else if (typeof priceObj === 'string') {
+    price = parseFloat(priceObj) || 0;
   }
 
-  return {
-    type: 'HOTEL',
-    itemId: hotel.id || hotel.hotelId || hotel.offerId,
+  // If price is still 0, use a minimum price based on nights
+  if (price === 0 && itemData.nights) {
+    price = itemData.nights * 50; // Default: 50 EUR per night
+    console.warn('[hotelToItineraryItem] Price was 0, using default:', price);
+  }
+
+  const currency = priceObj?.currency || hotel.currency || 'EUR';
+
+  // Calculate nights if not provided
+  if (itemData.checkInDate && itemData.checkOutDate) {
+    const checkIn = new Date(itemData.checkInDate);
+    const checkOut = new Date(itemData.checkOutDate);
+    const calculatedNights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+    if (calculatedNights > 0) {
+      itemData.nights = calculatedNights;
+    }
+  }
+
+  const result = {
+    type: 'HOTEL' as const,
+    itemId: hotel.hotelId || hotel.hotel?.hotelId || hotel.id || hotel.offerId,
     itemData: itemData as any,
     price: parseFloat(price.toString()),
     currency,
@@ -118,6 +181,9 @@ export function hotelToItineraryItem(hotel: any): CreateItineraryItemDto {
     location: itemData.location,
     order: 0
   };
+
+  console.log('[hotelToItineraryItem] Output DTO:', result);
+  return result;
 }
 
 /**
@@ -126,9 +192,15 @@ export function hotelToItineraryItem(hotel: any): CreateItineraryItemDto {
 export function activityToItineraryItem(activity: any): CreateItineraryItemDto {
   console.log('[activityToItineraryItem] Input activity:', activity);
 
-  // Determine location safely
-  let locationStr = activity.location || activity.city || 'Unknown Location';
-  if (locationStr === 'Unknown Location' && activity.geoCode?.latitude && activity.geoCode?.longitude) {
+  // Determine location safely - handle both string and object formats
+  let locationStr = 'Unknown Location';
+  if (typeof activity.location === 'string') {
+    locationStr = activity.location;
+  } else if (activity.location?.name) {
+    locationStr = activity.location.name;
+  } else if (activity.city) {
+    locationStr = activity.city;
+  } else if (activity.geoCode?.latitude && activity.geoCode?.longitude) {
     locationStr = `${activity.geoCode.latitude}, ${activity.geoCode.longitude}`;
   }
 
@@ -143,8 +215,18 @@ export function activityToItineraryItem(activity: any): CreateItineraryItemDto {
     imageUrl: activity.imageUrl || activity.pictures?.[0]
   };
 
-  const price = activity.price?.amount || activity.price?.total || activity.price || 0;
-  const currency = activity.price?.currencyCode || activity.price?.currency || activity.currency || 'USD';
+  // Extract price - handle both Amadeus format and backend simplified format
+  const priceObj = activity.price;
+  let price = 0;
+  if (typeof priceObj === 'object' && priceObj !== null) {
+    price = priceObj?.amount || priceObj?.total || priceObj?.base || 0;
+  } else if (typeof priceObj === 'number') {
+    price = priceObj;
+  } else if (typeof priceObj === 'string') {
+    price = parseFloat(priceObj) || 0;
+  }
+
+  const currency = priceObj?.currencyCode || priceObj?.currency || activity.currency || 'USD';
 
   // Calculate end date if not provided
   const startDate = new Date(itemData.date);

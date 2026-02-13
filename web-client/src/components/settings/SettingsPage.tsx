@@ -21,7 +21,7 @@ import {
   Upload
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { profileService, UserProfileData } from '@/services/profile';
+import { profileService, UserProfileData } from '@/services/user';
 import { languageNameToCode, languageCodeToName } from '@/i18n/languageMapping';
 import TravelPreferencesSection from './TravelPreferencesSection';
 import ConsentManager from '@/components/gdpr/ConsentManager';

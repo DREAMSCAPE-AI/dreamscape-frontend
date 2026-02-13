@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Car, MapPin, Clock, Users, Search, Loader2, CheckCircle, CreditCard } from 'lucide-react';
-import voyageService from '../../services/api/VoyageService';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface TransferOffer {
   type: string;

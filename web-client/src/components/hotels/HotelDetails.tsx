@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Building2, Star, MapPin, Calendar, Wifi, School as Pool, Coffee, ParkingMeter as Parking, Shield, ChevronDown, ChevronUp, ArrowRight, X } from 'lucide-react';
-import type { HotelOffer } from '../../services/api/types';
+import type { HotelOffer } from '@/services/voyage/types';
 
 interface HotelDetailsProps {
   hotel: HotelOffer;

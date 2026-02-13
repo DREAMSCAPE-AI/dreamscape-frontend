@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Star, Clock, Users, Calendar, MapPin } from 'lucide-react';
-import imageService from '@/services/imageService';
+import imageService from '@/services/utility/imageService';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 import { FavoriteButton } from '@/components/favorites';
-import { FavoriteType } from '@/services/api/FavoritesService';
+import { FavoriteType } from '@/services/user/FavoritesService';
 
 export interface Activity {
   id: string;

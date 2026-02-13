@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Settings, Edit2, Save, X, DollarSign, Globe, Plane, Bell } from 'lucide-react';
-import { UserProfile } from '../../services/dashboardService';
+import { UserProfile } from '@/services/dashboard';
 
 interface TravelPreferencesProps {
   profile: UserProfile | null;
