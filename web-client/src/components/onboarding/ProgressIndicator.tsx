@@ -66,16 +66,21 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
               <div key={step.id} className="flex items-center">
                 <button
                   onClick={() => isStepClickable(index) && onStepClick?.(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
+                  className={`p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-full transition-colors ${
+                    onStepClick && isStepClickable(index) ? 'cursor-pointer hover:bg-gray-100' : 'cursor-not-allowed'
+                  }`}
+                  disabled={!onStepClick || !isStepClickable(index)}
+                  aria-label={`Go to step ${index + 1}`}
+                >
+                  <div className={`w-3 h-3 rounded-full transition-colors ${
                     index === currentStepIndex
                       ? 'bg-orange-500'
                       : completedSteps.includes(step.id)
                       ? 'bg-pink-500'
                       : 'bg-gray-300'
-                  } ${onStepClick && isStepClickable(index) ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
-                  disabled={!onStepClick || !isStepClickable(index)}
-                />
-                {index < 4 && <div className="w-2 h-px bg-gray-300 mx-1" />}
+                  } ${!onStepClick || !isStepClickable(index) ? 'opacity-60' : ''}`} />
+                </button>
+                {index < 4 && <div className="w-2 h-px bg-gray-300" />}
               </div>
             ))}
             {totalSteps > 5 && (

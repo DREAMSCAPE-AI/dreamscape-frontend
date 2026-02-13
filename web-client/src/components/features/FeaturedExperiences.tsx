@@ -175,19 +175,19 @@ const FeaturedExperiences = () => {
 
   if (loading) {
     return (
-      <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
+      <section className="py-12 md:py-20 bg-gradient-to-b from-sky-50 to-white">
         <div className="container mx-auto px-4">
           <SectionTitle
             title={t('home.featuredExperiences')}
             subtitle={t('home.featuredExperiencesSubtitle')}
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-12">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
                 <div className="aspect-[4/3] bg-gray-300"></div>
-                <div className="p-6">
-                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                <div className="p-4 md:p-6">
+                  <div className="h-3 md:h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-5 md:h-6 bg-gray-300 rounded mb-2"></div>
                   <div className="h-3 bg-gray-300 rounded w-3/4"></div>
                 </div>
               </div>
@@ -200,17 +200,17 @@ const FeaturedExperiences = () => {
 
   if (error) {
     return (
-      <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
+      <section className="py-12 md:py-20 bg-gradient-to-b from-sky-50 to-white">
         <div className="container mx-auto px-4">
           <SectionTitle
             title={t('home.featuredExperiences')}
             subtitle={t('home.featuredExperiencesSubtitle')}
           />
-          <div className="text-center py-8">
-            <p className="text-red-600 mb-4">{error}</p>
+          <div className="text-center py-6 md:py-8">
+            <p className="text-sm md:text-base text-red-600 mb-3 md:mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="bg-blue-600 text-white px-4 md:px-6 py-2.5 md:py-3 min-h-[44px] text-sm md:text-base rounded hover:bg-blue-700 transition-colors"
             >
               {t('buttons.retry')}
             </button>
@@ -221,13 +221,13 @@ const FeaturedExperiences = () => {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
+    <section className="py-12 md:py-20 bg-gradient-to-b from-sky-50 to-white">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={t('home.featuredExperiences')}
           subtitle={t('home.featuredExperiencesSubtitle')}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-12">
           {experiences.map((exp, index) => (
             <ExperienceCard key={index} {...exp} />
           ))}

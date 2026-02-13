@@ -58,12 +58,12 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 md:p-4">
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">{t('details.title')}</h2>
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+            <h2 className="text-lg md:text-2xl font-semibold">{t('details.title')}</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -73,10 +73,10 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
           </div>
 
           {/* Flight Summary */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
+            <div className="flex items-center gap-3 md:gap-6">
               {/* Airline Logo */}
-              <div className="w-16 h-16 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                 {(() => {
                   const airlineLogo = airlineService.getAirlineLogo(flight.itineraries[0].segments[0].carrierCode);
                   const airlineName = airlineService.getAirlineName(flight.itineraries[0].segments[0].carrierCode);
@@ -85,7 +85,7 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                     <img
                       src={airlineLogo}
                       alt={airlineName}
-                      className="w-12 h-12 object-contain"
+                      className="w-8 h-8 md:w-12 md:h-12 object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
@@ -94,40 +94,40 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                     />
                   ) : null;
                 })()}
-                <Plane className={`w-8 h-8 text-gray-400 ${airlineService.getAirlineLogo(flight.itineraries[0].segments[0].carrierCode) ? 'hidden' : ''}`} />
+                <Plane className={`w-6 h-6 md:w-8 md:h-8 text-gray-400 ${airlineService.getAirlineLogo(flight.itineraries[0].segments[0].carrierCode) ? 'hidden' : ''}`} />
               </div>
               <div>
-                <div className="text-lg font-semibold text-gray-900 mb-1">
+                <div className="text-base md:text-lg font-semibold text-gray-900 mb-0.5 md:mb-1">
                   {airlineService.getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
                 </div>
-                <div className="text-sm text-gray-500 mb-1">
+                <div className="text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1">
                   {flight.itineraries[0].segments[0].carrierCode} {flight.itineraries[0].segments[0].number}
                 </div>
-                <div className="font-medium text-gray-700">
+                <div className="text-sm md:font-medium text-gray-700">
                   {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
                 </div>
-                <div className="text-sm text-gray-500 mt-1">
+                <div className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1 hidden md:block">
                   {airlineService.getAircraftType(flight.itineraries[0].segments[0].aircraft.code)}
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-gray-900 mb-1">
+            <div className="flex items-baseline justify-between md:block md:text-right border-t md:border-t-0 pt-3 md:pt-0">
+              <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">
                 {flight.price.currency} {flight.price.total}
               </div>
-              <div className="text-sm text-gray-500">{t('results.perPerson')}</div>
+              <div className="text-xs md:text-sm text-gray-500">{t('results.perPerson')}</div>
               {flight.price.fees && flight.price.fees.length > 0 && (
-                <div className="text-xs text-gray-400 mt-1">{t('results.taxesAndFees')}</div>
+                <div className="text-xs text-gray-400 mt-0.5 md:mt-1 hidden md:block">{t('results.taxesAndFees')}</div>
               )}
             </div>
           </div>
         </div>
 
         {/* Flight Details */}
-        <div className="p-6 space-y-8">
+        <div className="p-4 md:p-6 space-y-6 md:space-y-8">
           {/* Itinerary */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">{t('details.flightItinerary')}</h3>
+            <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('details.flightItinerary')}</h3>
             {flight.itineraries[0].segments.map((segment) => {
               const departure = formatDateTime(segment.departure.at);
               const arrival = formatDateTime(segment.arrival.at);
@@ -154,15 +154,15 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
               const amenities = getSegmentAmenities(segment.carrierCode);
               
               return (
-                <div key={segment.id} className="bg-gray-50 rounded-xl p-6 mb-4">
-                  <div className="flex items-start gap-6">
+                <div key={segment.id} className="bg-gray-50 rounded-xl p-4 md:p-6 mb-3 md:mb-4">
+                  <div className="flex items-start gap-3 md:gap-6">
                     {/* Airline Logo */}
-                    <div className="w-12 h-12 bg-white rounded-lg shadow-sm border border-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-lg shadow-sm border border-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                       {airlineLogo ? (
                         <img
                           src={airlineLogo}
                           alt={airlineName}
-                          className="w-8 h-8 object-contain"
+                          className="w-6 h-6 md:w-8 md:h-8 object-contain"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
@@ -170,50 +170,50 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                           }}
                         />
                       ) : null}
-                      <Plane className={`w-6 h-6 text-gray-400 ${airlineLogo ? 'hidden' : ''}`} />
+                      <Plane className={`w-5 h-5 md:w-6 md:h-6 text-gray-400 ${airlineLogo ? 'hidden' : ''}`} />
                     </div>
 
                     <div className="flex-1">
                       {/* Flight Header */}
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0 mb-3 md:mb-4">
                         <div>
-                          <div className="font-semibold text-gray-900">{airlineName}</div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm md:text-base font-semibold text-gray-900">{airlineName}</div>
+                          <div className="text-xs md:text-sm text-gray-500">
                             {segment.carrierCode} {segment.number} • {aircraftType}
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-gray-500">{t('details.duration')}</div>
-                          <div className="font-medium">{formatDuration(segment.duration)}</div>
+                        <div className="text-left md:text-right">
+                          <div className="text-xs md:text-sm text-gray-500">{t('details.duration')}</div>
+                          <div className="text-sm md:text-base font-medium">{formatDuration(segment.duration)}</div>
                         </div>
                       </div>
 
                       {/* Route */}
-                      <div className="flex items-center gap-4 mb-4">
+                      <div className="flex items-center gap-2 md:gap-4 mb-3 md:mb-4">
                         <div className="text-center flex-1">
-                          <div className="text-2xl font-bold text-gray-900">{departure.time}</div>
-                          <div className="text-sm text-gray-500">{departure.date}</div>
-                          <div className="text-lg font-semibold text-gray-700 mt-1">{segment.departure.iataCode}</div>
+                          <div className="text-lg md:text-2xl font-bold text-gray-900">{departure.time}</div>
+                          <div className="text-xs md:text-sm text-gray-500">{departure.date}</div>
+                          <div className="text-sm md:text-lg font-semibold text-gray-700 mt-0.5 md:mt-1">{segment.departure.iataCode}</div>
                           {segment.departure.terminal && (
                             <div className="text-xs text-gray-500">Terminal {segment.departure.terminal}</div>
                           )}
                         </div>
 
-                        <div className="flex flex-col items-center px-4">
+                        <div className="flex flex-col items-center px-2 md:px-4">
                           <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent relative">
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-50 p-1">
-                              <Plane className="w-4 h-4 text-orange-500 transform rotate-90" />
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-50 p-0.5 md:p-1">
+                              <Plane className="w-3 h-3 md:w-4 md:h-4 text-orange-500 transform rotate-90" />
                             </div>
                           </div>
-                          <div className="text-xs text-gray-500 mt-2">
+                          <div className="text-xs text-gray-500 mt-1 md:mt-2 whitespace-nowrap">
                             {segment.numberOfStops === 0 ? t('results.direct') : segment.numberOfStops === 1 ? t('results.stops.one') : t('results.stops.multiple', { count: segment.numberOfStops })}
                           </div>
                         </div>
 
                         <div className="text-center flex-1">
-                          <div className="text-2xl font-bold text-gray-900">{arrival.time}</div>
-                          <div className="text-sm text-gray-500">{arrival.date}</div>
-                          <div className="text-lg font-semibold text-gray-700 mt-1">{segment.arrival.iataCode}</div>
+                          <div className="text-lg md:text-2xl font-bold text-gray-900">{arrival.time}</div>
+                          <div className="text-xs md:text-sm text-gray-500">{arrival.date}</div>
+                          <div className="text-sm md:text-lg font-semibold text-gray-700 mt-0.5 md:mt-1">{segment.arrival.iataCode}</div>
                           {segment.arrival.terminal && (
                             <div className="text-xs text-gray-500">Terminal {segment.arrival.terminal}</div>
                           )}
@@ -221,12 +221,12 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
                       </div>
 
                       {/* Amenities */}
-                      <div className="flex items-center gap-4 pt-3 border-t border-gray-200">
-                        <div className="text-sm text-gray-500">{t('details.amenitiesLabel')}</div>
-                        <div className="flex items-center gap-3">
+                      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pt-3 border-t border-gray-200">
+                        <div className="text-xs md:text-sm text-gray-500">{t('details.amenitiesLabel')}</div>
+                        <div className="flex flex-wrap items-center gap-2 md:gap-3">
                           {amenities.map((amenity, idx) => (
-                            <div key={idx} className={`flex items-center gap-1 text-sm ${amenity.color}`}>
-                              <amenity.icon className="w-4 h-4" />
+                            <div key={idx} className={`flex items-center gap-1 text-xs md:text-sm ${amenity.color}`}>
+                              <amenity.icon className="w-3 h-3 md:w-4 md:h-4" />
                               <span>{amenity.label}</span>
                             </div>
                           ))}
@@ -318,8 +318,8 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
           </div>
 
           {/* Price Breakdown */}
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold mb-4">{t('details.priceBreakdown')}</h3>
+          <div className="border-t border-gray-200 pt-4 md:pt-6">
+            <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">{t('details.priceBreakdown')}</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">{t('details.baseFare')}</span>
@@ -340,20 +340,20 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({
         </div>
 
         {/* Actions */}
-        <div className="p-6 bg-gray-50 border-t border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className="p-4 md:p-6 bg-gray-50 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
             <button
               onClick={onBack}
-              className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="px-4 md:px-6 py-2 text-sm md:text-base text-gray-600 hover:text-gray-800 transition-colors order-2 md:order-1"
             >
               {t('details.backToResults')}
             </button>
             <button
               onClick={() => onAccept(flight)}
-              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-2 text-sm md:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity order-1 md:order-2"
             >
               <span>{t('details.continueToBooking')}</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </div>
         </div>

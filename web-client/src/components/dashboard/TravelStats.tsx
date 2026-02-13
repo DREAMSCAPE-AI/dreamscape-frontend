@@ -11,9 +11,9 @@ const TravelStats: React.FC<TravelStatsProps> = ({ stats }) => {
   const { t } = useTranslation('dashboard');
   if (!stats) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('stats.title')}</h3>
-        <div className="animate-pulse space-y-4">
+      <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
+        <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-3 md:mb-4">{t('stats.title')}</h3>
+        <div className="animate-pulse space-y-3 md:space-y-4">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="h-12 bg-gray-200 rounded"></div>
           ))}
@@ -68,33 +68,33 @@ const TravelStats: React.FC<TravelStatsProps> = ({ stats }) => {
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <div className="flex items-center gap-2 mb-6">
-        <TrendingUp className="w-5 h-5 text-orange-500" />
-        <h3 className="text-lg font-semibold text-gray-800">{t('stats.title')}</h3>
+    <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
+      <div className="flex items-center gap-2 mb-4 md:mb-6">
+        <TrendingUp className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 text-orange-500" />
+        <h3 className="text-base md:text-lg font-semibold text-gray-800">{t('stats.title')}</h3>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {statItems.map((item, index) => (
-          <div key={index} className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${item.bgColor}`}>
-              <item.icon className={`w-4 h-4 ${item.color}`} />
+          <div key={index} className="flex items-center gap-2 md:gap-3">
+            <div className={`p-2 rounded-lg ${item.bgColor} flex-shrink-0`}>
+              <item.icon className={`w-4 h-4 flex-shrink-0 ${item.color}`} />
             </div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-600">{item.label}</p>
-              <p className="font-semibold text-gray-800">{item.value}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs md:text-sm text-gray-600 truncate">{item.label}</p>
+              <p className="text-sm md:text-base font-semibold text-gray-800">{item.value}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Progress towards next milestone */}
-      <div className="mt-6 pt-6 border-t border-gray-100">
+      <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-100">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">{t('stats.milestone.title')}</span>
-          <span className="text-sm text-gray-500">{stats.totalBookings}/10 {t('stats.milestone.trips')}</span>
+          <span className="text-xs md:text-sm font-medium text-gray-700">{t('stats.milestone.title')}</span>
+          <span className="text-xs md:text-sm text-gray-500">{stats.totalBookings}/10 {t('stats.milestone.trips')}</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2" role="progressbar" aria-valuenow={stats.totalBookings} aria-valuemin={0} aria-valuemax={10}>
           <div
             className="bg-orange-500 h-2 rounded-full transition-all duration-300"
             style={{ width: `${Math.min((stats.totalBookings / 10) * 100, 100)}%` }}

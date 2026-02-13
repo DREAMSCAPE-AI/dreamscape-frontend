@@ -78,10 +78,10 @@ const CheckoutPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading payment form...</p>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-orange-500 mx-auto"></div>
+          <p className="mt-3 md:mt-4 text-sm md:text-base text-gray-600">Loading payment form...</p>
         </div>
       </div>
     );
@@ -89,11 +89,11 @@ const CheckoutPage = () => {
 
   if (error || !checkoutData || !stripePromise) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="bg-white p-6 md:p-8 rounded-lg shadow-md max-w-md w-full">
           <div className="text-center">
             <svg
-              className="mx-auto h-12 w-12 text-red-500"
+              className="mx-auto h-10 w-10 md:h-12 md:w-12 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -105,11 +105,11 @@ const CheckoutPage = () => {
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <h2 className="mt-4 text-xl font-semibold text-gray-900">Checkout Error</h2>
-            <p className="mt-2 text-gray-600">{error || 'Unable to load payment form'}</p>
+            <h2 className="mt-3 md:mt-4 text-lg md:text-xl font-semibold text-gray-900">Checkout Error</h2>
+            <p className="mt-2 text-sm md:text-base text-gray-600">{error || 'Unable to load payment form'}</p>
             <button
               onClick={() => navigate(-1)}
-              className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+              className="mt-4 md:mt-6 w-full bg-blue-600 text-white py-2.5 md:py-3 px-4 min-h-[44px] text-sm md:text-base rounded-md hover:bg-blue-700 transition-colors"
             >
               Return to Cart
             </button>
@@ -136,39 +136,39 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-12">
+    <div className="min-h-screen bg-gray-50 pt-20 md:pt-24 pb-8 md:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-x-8 xl:gap-x-12 lg:items-start">
           {/* Booking Summary - Left Side */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 mb-6 lg:mb-0">
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-4">
-                <h2 className="text-2xl font-bold">Booking Summary</h2>
-                <p className="text-orange-50 text-sm mt-1">
+              <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-4 md:px-6 py-3 md:py-4">
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold">Booking Summary</h2>
+                <p className="text-orange-50 text-xs md:text-sm mt-1">
                   Reference: {checkoutData.bookingReference}
                 </p>
               </div>
 
-              <div className="p-6 space-y-4">
+              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
                 {checkoutData.items.map((item, index) => (
                   <div
                     key={`${item.itemId}-${index}`}
-                    className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+                    className="border-b border-gray-200 pb-3 md:pb-4 last:border-b-0 last:pb-0"
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-pink-100 text-orange-800">
+                    <div className="flex justify-between items-start gap-2 md:gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+                          <span className="inline-flex items-center px-2 md:px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-pink-100 text-orange-800">
                             {item.type}
                           </span>
                           {item.quantity > 1 && (
-                            <span className="text-sm text-gray-500">
+                            <span className="text-xs md:text-sm text-gray-500">
                               x{item.quantity}
                             </span>
                           )}
                         </div>
 
-                        <div className="mt-2 text-sm text-gray-600">
+                        <div className="mt-2 text-xs md:text-sm text-gray-600">
                           {item.type === 'FLIGHT' && (() => {
                             // Extract flight data with fallbacks
                             const data = item.itemData;
@@ -294,8 +294,8 @@ const CheckoutPage = () => {
                         </div>
                       </div>
 
-                      <div className="ml-4 text-right">
-                        <p className="text-lg font-semibold text-gray-900">
+                      <div className="ml-2 md:ml-4 text-right flex-shrink-0">
+                        <p className="text-base md:text-lg font-semibold text-gray-900">
                           {item.currency} {(Number(item.price) * item.quantity).toFixed(2)}
                         </p>
                         {item.quantity > 1 && (
@@ -308,10 +308,10 @@ const CheckoutPage = () => {
                   </div>
                 ))}
 
-                <div className="border-t-2 border-gray-300 pt-4 mt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold text-gray-900">Total Amount</span>
-                    <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+                <div className="border-t-2 border-gray-300 pt-3 md:pt-4 mt-3 md:mt-4">
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-base md:text-lg font-bold text-gray-900">Total Amount</span>
+                    <span className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
                       {checkoutData.currency} {Number(checkoutData.totalAmount).toFixed(2)}
                     </span>
                   </div>
@@ -320,10 +320,10 @@ const CheckoutPage = () => {
             </div>
 
             {/* Security Notice */}
-            <div className="mt-6 bg-gradient-to-r from-orange-50 to-pink-50 border border-orange-200 rounded-lg p-4">
-              <div className="flex items-start">
+            <div className="mt-4 md:mt-6 bg-gradient-to-r from-orange-50 to-pink-50 border border-orange-200 rounded-lg p-3 md:p-4">
+              <div className="flex items-start gap-2 md:gap-3">
                 <svg
-                  className="h-5 w-5 text-orange-600 mt-0.5"
+                  className="h-4 w-4 md:h-5 md:w-5 text-orange-600 mt-0.5 flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -333,9 +333,9 @@ const CheckoutPage = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-orange-900">Secure Payment</h3>
-                  <p className="mt-1 text-sm text-orange-700">
+                <div>
+                  <h3 className="text-xs md:text-sm font-medium text-orange-900">Secure Payment</h3>
+                  <p className="mt-1 text-xs md:text-sm text-orange-700">
                     Your payment information is encrypted and processed securely by Stripe.
                     We never store your card details.
                   </p>
@@ -345,13 +345,13 @@ const CheckoutPage = () => {
           </div>
 
           {/* Payment Form - Right Side */}
-          <div className="mt-10 lg:mt-0 lg:col-span-5">
-            <div className="bg-white shadow-md rounded-lg overflow-hidden sticky top-24">
-              <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-4">
-                <h2 className="text-xl font-bold">Payment Details</h2>
+          <div className="mt-6 lg:mt-0 lg:col-span-5">
+            <div className="bg-white shadow-md rounded-lg overflow-hidden lg:sticky lg:top-24">
+              <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-4 md:px-6 py-3 md:py-4">
+                <h2 className="text-lg md:text-xl font-bold">Payment Details</h2>
               </div>
 
-              <div className="p-6">
+              <div className="p-4 md:p-6">
                 <Elements stripe={stripePromise} options={options}>
                   <StripeCheckoutForm
                     bookingReference={checkoutData.bookingReference}

@@ -45,61 +45,61 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 md:p-4">
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Activity Details</h2>
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+            <h2 className="text-xl md:text-2xl font-semibold">Activity Details</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 min-h-[44px] min-w-[44px] hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 md:w-6 md:h-6" />
             </button>
           </div>
 
           {/* Activity Summary */}
-          <div className="flex items-start justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-6">
             <div className="flex-1">
               {/* Category Tag */}
-              <div className="mb-3">
-                <span className="text-xs font-medium text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+              <div className="mb-2 md:mb-3">
+                <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 md:px-3 py-1 rounded-full">
                   {activity.category}
                 </span>
               </div>
 
               {/* Activity Name */}
-              <div className="text-xl font-bold text-gray-900 mb-2">
+              <div className="text-lg md:text-xl font-bold text-gray-900 mb-2">
                 {activity.name}
               </div>
 
               {/* Location */}
-              <div className="flex items-center text-gray-600 mb-3">
-                <MapPin className="w-4 h-4 mr-1" />
+              <div className="flex items-center text-sm md:text-base text-gray-600 mb-2 md:mb-3">
+                <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 flex-shrink-0" />
                 <span>{activity.location.name}</span>
               </div>
 
               {/* Rating */}
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                 <div className="flex items-center">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 mr-1" />
-                  <span className="font-semibold text-gray-900 mr-1">
+                  <Star className="w-4 h-4 md:w-5 md:h-5 text-yellow-400 fill-yellow-400 mr-1" />
+                  <span className="text-sm md:text-base font-semibold text-gray-900 mr-1">
                     {activity.rating.toFixed(1)}
                   </span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-xs md:text-sm text-gray-600">
                     ({activity.reviewCount} reviews)
                   </span>
                 </div>
 
                 {/* Key Info */}
-                <div className="flex items-center gap-3 text-sm text-gray-600">
+                <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-600">
                   <div className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
+                    <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 flex-shrink-0" />
                     <span>{activity.duration}</span>
                   </div>
                   <div className="flex items-center">
-                    <Users className="w-4 h-4 mr-1" />
+                    <Users className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 flex-shrink-0" />
                     <span>{activity.groupSize}</span>
                   </div>
                 </div>
@@ -107,22 +107,22 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
             </div>
 
             {/* Price */}
-            <div className="text-right">
-              <div className="text-sm text-gray-500 mb-1">From</div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">
+            <div className="text-left md:text-right border-t md:border-t-0 pt-3 md:pt-0">
+              <div className="text-xs md:text-sm text-gray-500 mb-1">From</div>
+              <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
                 {activity.price.formatted}
               </div>
-              <div className="text-sm text-gray-500">per person</div>
+              <div className="text-xs md:text-sm text-gray-500">per person</div>
             </div>
           </div>
         </div>
 
         {/* Activity Images */}
         {activity.images.length > 0 && (
-          <div className="p-6 border-b border-gray-200">
-            <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 md:p-6 border-b border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-4">
               {activity.images.slice(0, 3).map((image, index) => (
-                <div key={index} className="h-48 bg-gray-200 rounded-lg overflow-hidden">
+                <div key={index} className="h-40 md:h-48 bg-gray-200 rounded-lg overflow-hidden">
                   <img
                     src={image}
                     alt={`${activity.name} - Image ${index + 1}`}
@@ -139,11 +139,11 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
         )}
 
         {/* Activity Details */}
-        <div className="p-6 space-y-8">
+        <div className="p-4 md:p-6 space-y-6 md:space-y-8">
           {/* Description */}
           <div>
-            <h3 className="text-lg font-semibold mb-3">Description</h3>
-            <p className="text-gray-700 leading-relaxed">
+            <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Description</h3>
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
               {activity.description}
             </p>
           </div>
@@ -382,21 +382,21 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
         </div>
 
         {/* Actions */}
-        <div className="p-6 bg-gray-50 border-t border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className="p-4 md:p-6 bg-gray-50 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
             <button
               onClick={onBack}
-              className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="order-2 md:order-1 w-full md:w-auto min-h-[44px] px-4 md:px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors text-sm md:text-base font-medium border border-gray-300 md:border-0 rounded-lg md:rounded-none"
             >
               Back to Results
             </button>
             <button
               onClick={onAccept}
               disabled={!activity.availability.available}
-              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="order-1 md:order-2 w-full md:w-auto min-h-[44px] flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base font-medium"
             >
               <span>Continue to Booking</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </div>
         </div>

@@ -74,16 +74,16 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-20">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-16 md:pt-20">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         <div className="max-w-md mx-auto">
           {/* Authentication Info */}
-          <div className="mb-8 p-6 bg-orange-50 rounded-xl">
-            <div className="flex items-center gap-2 text-orange-600 mb-4">
-              <AlertCircle className="w-5 h-5" />
-              <h3 className="font-semibold">{t('authInfo.title')}</h3>
+          <div className="mb-4 md:mb-8 p-4 md:p-6 bg-orange-50 rounded-xl">
+            <div className="flex items-center gap-2 text-orange-600 mb-3 md:mb-4">
+              <AlertCircle className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+              <h3 className="text-sm md:text-base font-semibold">{t('authInfo.title')}</h3>
             </div>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-2 md:space-y-3 text-xs md:text-sm">
               <div className="text-gray-700">
                 <p><strong>✅ Connected to Real API</strong></p>
                 <p>• Registration: POST /api/v1/auth/register</p>
@@ -92,7 +92,7 @@ export default function AuthPage() {
                 <p>• User categories: LEISURE & BUSINESS</p>
               </div>
             </div>
-            <div className="mt-4 p-3 bg-white rounded-lg">
+            <div className="mt-3 md:mt-4 p-2 md:p-3 bg-white rounded-lg">
               <p className="text-xs text-gray-600">
                 💡 <strong>Ready:</strong> Create a new account or login with your existing credentials!
               </p>
@@ -100,11 +100,11 @@ export default function AuthPage() {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 rounded-lg flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="mb-3 md:mb-4 p-3 md:p-4 bg-red-50 rounded-lg flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-red-600 font-medium">{t('error.authError')}</p>
-                <p className="text-red-500 text-sm">{error}</p>
+                <p className="text-sm md:text-base text-red-600 font-medium">{t('error.authError')}</p>
+                <p className="text-xs md:text-sm text-red-500">{error}</p>
               </div>
             </div>
           )}
