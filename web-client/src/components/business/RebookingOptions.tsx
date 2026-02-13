@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertCircle, Clock, Plane, DollarSign } from 'lucide-react';
-import type { FlightOffer } from '../../services/api/types';
+import type { FlightOffer } from '@/services/voyage/types';
 
 interface RebookingOptionsProps {
   originalFlight: FlightOffer;

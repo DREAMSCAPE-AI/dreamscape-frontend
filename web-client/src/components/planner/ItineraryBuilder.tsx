@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Calendar, Clock, MapPin, DollarSign, Sparkles, Edit2, Save, Plus, X } from 'lucide-react';
-import type { Experience } from '../../services/api/types';
+import type { Experience } from '@/services/voyage/types';
 
 interface ItineraryBuilderProps {
   itinerary: DayPlan[];

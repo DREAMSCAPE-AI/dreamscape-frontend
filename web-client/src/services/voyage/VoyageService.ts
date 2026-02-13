@@ -1,68 +1,23 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+const VOYAGE_API_BASE_URL = import.meta.env.VITE_VOYAGE_SERVICE_URL || import.meta.env.VITE_API_BASE_URL;
 
-// Type definitions
-export interface FlightSearchParams {
-  originLocationCode: string;
-  destinationLocationCode: string;
-  departureDate: string;
-  returnDate?: string;
-  adults: number;
-  children?: number;
-  infants?: number;
-  travelClass?: string;
-  nonStop?: boolean;
-  maxPrice?: number;
-  max?: number;
-}
+// Import types
+import type {
+  FlightSearchParams,
+  FlightDestinationParams,
+  HotelSearchParams,
+  ActivitySearchParams,
+  LocationSearchParams,
+  AirportSearchParams,
+} from './types';
 
-export interface FlightDestinationParams {
-  origin: string;
-  maxPrice?: number;
-  departureDate?: string;
-}
-
-export interface HotelSearchParams {
-  cityCode: string;
-  checkInDate: string;
-  checkOutDate: string;
-  roomQuantity: number;
-  adults: number;
-  childAges?: number[];
-  priceRange?: string;
-  currency?: string;
-  ratings?: string[];
-  amenities?: string[];
-  hotelIds?: string[];
-}
-
-export interface ActivitySearchParams {
-  latitude: number;
-  longitude: number;
-  radius?: number;
-  north?: number;
-  west?: number;
-  south?: number;
-  east?: number;
-}
-
-export interface LocationSearchParams {
-  keyword: string;
-  subType?: string;
-  countryCode?: string;
-}
-
-export interface AirportSearchParams {
-  keyword: string;
-}
-
-class ApiService {
+class VoyageService {
   private api: AxiosInstance;
 
   constructor() {
     this.api = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: `${VOYAGE_API_BASE_URL}/v1`,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +28,7 @@ class ApiService {
     // Request interceptor for logging
     this.api.interceptors.request.use(
       (config) => {
-        console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+        console.log(`Voyage API Request: ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
       (error) => Promise.reject(error)
@@ -83,7 +38,7 @@ class ApiService {
     this.api.interceptors.response.use(
       (response: AxiosResponse) => response,
       (error) => {
-        console.error('API Error:', error.response?.data || error.message);
+        console.error('Voyage API Error:', error.response?.data || error.message);
         return Promise.reject(error);
       }
     );
@@ -100,7 +55,6 @@ class ApiService {
     return response.data;
   }
 
-  // New Flight APIs
   async getFlightPriceAnalysis(params: {
     originIataCode: string;
     destinationIataCode: string;
@@ -261,7 +215,6 @@ class ApiService {
     return response.data;
   }
 
-  // New Hotel APIs
   async getHotelRatings(params: {
     hotelIds: string;
   }): Promise<any> {
@@ -424,46 +377,35 @@ class ApiService {
     return response.data;
   }
 
-  // Auth Services
-  async register(userData: {
-    email: string;
-    password: string;
-    firstName?: string;
-    lastName?: string;
-    username?: string;
+  // Booking Management Services
+  async getUserBookings(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    type?: string;
+    sortBy?: 'createdAt' | 'updatedAt' | 'totalAmount' | 'status';
+    sortOrder?: 'asc' | 'desc';
+    search?: string;
+    userId?: string;
   }): Promise<any> {
-    const response = await this.api.post('/v1/auth/register', userData);
+    const response = await this.api.get('/bookings', { params });
     return response.data;
   }
 
-  async login(credentials: {
-    email: string;
-    password: string;
-  }): Promise<any> {
-    const response = await this.api.post('/v1/auth/login', credentials);
+  async getBookingStats(userId?: string): Promise<any> {
+    const response = await this.api.get('/bookings/stats', { params: { userId } });
     return response.data;
   }
 
-  async getUserProfile(token: string): Promise<any> {
-    const response = await this.api.get('/v1/auth/profile', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+  async getBookingDetails(reference: string, userId?: string): Promise<any> {
+    const response = await this.api.get(`/bookings/${reference}`, { params: { userId } });
     return response.data;
   }
 
-  async updateProfile(token: string, profileData: any): Promise<any> {
-    const response = await this.api.put('/v1/auth/profile', profileData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
-  }
-
-  async verifyToken(token: string): Promise<any> {
-    const response = await this.api.post('/v1/auth/verify-token', {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+  async cancelBooking(reference: string, reason?: string, userId?: string): Promise<any> {
+    const response = await this.api.post(`/bookings/${reference}/cancel`, { reason, userId });
     return response.data;
   }
 }
 
-export default new ApiService();
+export default new VoyageService();

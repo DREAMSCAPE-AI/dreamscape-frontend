@@ -7,7 +7,7 @@
  */
 
 import React, { createContext, useContext, useCallback, useRef, useEffect } from 'react';
-import FavoritesService, { FavoriteType } from '@/services/api/FavoritesService';
+import FavoritesService, { FavoriteType } from '@/services/user/FavoritesService';
 
 interface BatchItem {
   entityType: FavoriteType;

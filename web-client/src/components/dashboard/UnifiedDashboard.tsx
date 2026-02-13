@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../services/auth/AuthService';
+import { useAuth } from '@/services/auth/AuthService';
 import { useDashboard } from '../../hooks/useDashboard';
 import { 
   Briefcase, 

@@ -1,4 +1,4 @@
-import { useAuth } from '../../services/auth/AuthService';
+import { useAuth } from '@/services/auth/AuthService';
 import { useDashboard } from '../../hooks/useDashboard';
 import WelcomeSection from './WelcomeSection';
 import RecommendationsSection from './RecommendationsSection';

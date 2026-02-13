@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-const USER_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL;
+const USER_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_URL;
 
 export interface PrivacyPolicy {
   id: string;
@@ -58,7 +58,7 @@ class GdprService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${USER_API_BASE_URL}/users/gdpr`,
+      baseURL: `${USER_API_BASE_URL}/v1/users/gdpr`,
       headers: {
         'Content-Type': 'application/json',
       },

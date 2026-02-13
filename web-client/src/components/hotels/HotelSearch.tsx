@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, Users, Search, Minus, Plus, ChevronDown } from 'lucide-react';
 import DateRangePicker from '../shared/DateRangePicker';
-import voyageService from '../../services/api/VoyageService';
-import type { HotelSearchParams } from '../../services/api/types';
+import voyageService from '@/services/voyage/VoyageService';
+import type { HotelSearchParams } from '@/services/voyage/types';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 
 interface HotelSearchProps {

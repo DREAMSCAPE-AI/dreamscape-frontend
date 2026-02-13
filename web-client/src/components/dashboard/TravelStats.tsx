@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TrendingUp, MapPin, DollarSign, Calendar, Plane, Award } from 'lucide-react';
-import { UserStats } from '../../services/dashboardService';
+import { UserStats } from '@/services/dashboard';
 
 interface TravelStatsProps {
   stats: UserStats | null;

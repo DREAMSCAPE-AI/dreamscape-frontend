@@ -20,7 +20,7 @@ A reusable button component that allows users to add/remove items from their fav
 
 ```tsx
 import { FavoriteButton } from '@/components/favorites';
-import { FavoriteType } from '@/services/api/FavoritesService';
+import { FavoriteType } from '@/services/user/FavoritesService';
 
 // In a Flight Card component
 <FavoriteButton
@@ -89,7 +89,7 @@ Find your card components (e.g., `FlightCard.tsx`, `HotelCard.tsx`, `ActivityCar
 
 ```tsx
 import { FavoriteButton } from '@/components/favorites';
-import { FavoriteType } from '@/services/api/FavoritesService';
+import { FavoriteType } from '@/services/user/FavoritesService';
 ```
 
 Add the button to your card layout:

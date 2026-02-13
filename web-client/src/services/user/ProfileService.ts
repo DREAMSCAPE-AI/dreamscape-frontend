@@ -6,7 +6,7 @@ const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   return fallbackPath;
 };
 
-const PROFILE_API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_API_URL);
+const PROFILE_API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_URL);
 
 export interface UserProfileData {
   profile: {
@@ -77,13 +77,13 @@ class ProfileService {
       (response) => response,
       (error) => {
         console.error('Profile API Error:', error.response?.data || error.message);
-        
+
         // Handle unauthorized errors
         if (error.response?.status === 401) {
           localStorage.removeItem('auth-storage');
           window.location.href = '/login';
         }
-        
+
         return Promise.reject(error);
       }
     );

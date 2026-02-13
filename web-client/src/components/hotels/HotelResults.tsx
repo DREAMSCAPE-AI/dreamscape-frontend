@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Star, MapPin, Wifi, Building2, Shield, Filter, SortAsc, Eye, Car, Utensils, Waves, Dumbbell } from 'lucide-react';
-import type { HotelOffer } from '../../services/api/types';
+import type { HotelOffer } from '@/services/voyage/types';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 import { FavoriteButton } from '@/components/favorites';
-import { FavoriteType } from '@/services/api/FavoritesService';
+import { FavoriteType } from '@/services/user/FavoritesService';
 
 interface HotelResultsProps {
   hotels: HotelOffer[];
@@ -147,22 +147,22 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-6">
       {/* Results Header with Sort and Filter */}
-      <div className="bg-white rounded-xl shadow-sm p-3 md:p-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
-          <div className="text-base md:text-lg font-semibold text-gray-900">
+      <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="text-lg font-semibold text-gray-900">
             {sortedAndFilteredHotels.length} hotel{sortedAndFilteredHotels.length !== 1 ? 's' : ''} found
           </div>
-
-          <div className="flex items-center gap-2 md:gap-4">
+          
+          <div className="flex items-center gap-4">
             {/* Sort Dropdown */}
-            <div className="flex items-center gap-1.5 md:gap-2 flex-1 sm:flex-initial">
-              <SortAsc className="w-4 h-4 md:w-5 md:h-5 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-2">
+              <SortAsc className="w-5 h-5 text-gray-400" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="flex-1 sm:flex-initial border border-gray-300 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               >
                 <option value="recommended">Recommended</option>
                 <option value="price_low">Price: Low to High</option>
@@ -171,18 +171,18 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                 <option value="distance">Distance</option>
               </select>
             </div>
-
+            
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-lg border transition-colors ${
-                showFilters
-                  ? 'bg-orange-50 border-orange-200 text-orange-700'
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
+                showFilters 
+                  ? 'bg-orange-50 border-orange-200 text-orange-700' 
                   : 'border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <Filter className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              <span className="text-xs md:text-sm font-medium">Filters</span>
+              <Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filters</span>
             </button>
           </div>
         </div>
@@ -302,51 +302,51 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
               </div>
 
               {/* Content */}
-              <div className="flex-1 p-4 md:p-6">
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-3 md:mb-4">
+              <div className="flex-1 p-6">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 mb-2">
-                      <h3 className="text-lg md:text-xl font-semibold text-gray-900">{hotel.name}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl font-semibold text-gray-900">{hotel.name}</h3>
                       {/* Star Rating */}
                       <div className="flex items-center">
                         {[...Array(parseInt(hotel.rating))].map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 md:w-4 md:h-4 fill-orange-400 text-orange-400" />
+                          <Star key={i} className="w-4 h-4 fill-orange-400 text-orange-400" />
                         ))}
                       </div>
                     </div>
-
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs md:text-sm text-gray-600 mb-2 md:mb-3">
+                    
+                    <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                       <div className="flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
+                        <MapPin className="w-4 h-4" />
                         <span>{hotel.chainCode || 'Independent Hotel'}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
+                        <Building2 className="w-4 h-4" />
                         <span>City Location</span>
                       </div>
                     </div>
 
                     {/* Description */}
                     {hotel.description && (
-                      <p className="text-gray-600 text-xs md:text-sm mb-3 md:mb-4 line-clamp-2">
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                         {hotel.description.text}
                       </p>
                     )}
 
                     {/* Amenities */}
                     {hotel.amenities && hotel.amenities.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
+                      <div className="flex flex-wrap gap-2 mb-4">
                         {hotel.amenities.slice(0, 6).map((amenity, index) => (
                           <span
                             key={index}
-                            className="flex items-center gap-1 px-2 md:px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-xs md:text-sm"
+                            className="flex items-center gap-1 px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-sm"
                           >
                             {getAmenityIcon(amenity)}
-                            <span className="hidden sm:inline">{formatAmenityName(amenity)}</span>
+                            <span>{formatAmenityName(amenity)}</span>
                           </span>
                         ))}
                         {hotel.amenities.length > 6 && (
-                          <span className="px-2 md:px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-xs md:text-sm">
+                          <span className="px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-sm">
                             +{hotel.amenities.length - 6} more
                           </span>
                         )}
@@ -355,21 +355,21 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                   </div>
 
                   {/* Price and Booking */}
-                  <div className="text-left lg:text-right lg:ml-6 border-t lg:border-t-0 pt-3 lg:pt-0">
-                    <div className="mb-3 md:mb-4">
-                      <div className="text-xs md:text-sm text-gray-500 mb-1">From</div>
-                      <div className="flex items-baseline gap-1 lg:justify-end">
-                        <span className="text-2xl md:text-3xl font-bold text-orange-500">
+                  <div className="text-right ml-6">
+                    <div className="mb-4">
+                      <div className="text-sm text-gray-500 mb-1">From</div>
+                      <div className="flex items-baseline gap-1 justify-end">
+                        <span className="text-3xl font-bold text-orange-500">
                           {hotel.price?.currency} {hotel.price?.total}
                         </span>
                       </div>
-                      <div className="text-xs md:text-sm text-gray-500">per night</div>
+                      <div className="text-sm text-gray-500">per night</div>
                     </div>
 
                     <div className="space-y-2">
                       <button
                         onClick={() => handleHotelSelect(hotel)}
-                        className="w-full min-h-[44px] px-4 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-sm md:text-base"
+                        className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
                       >
                         View Details
                       </button>

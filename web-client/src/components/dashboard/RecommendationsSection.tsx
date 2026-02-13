@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { History, Sparkles, RefreshCw } from 'lucide-react';
 import ExperienceCard from '../features/ExperienceCard';
 import AIRecommendationSelector from './AIRecommendationSelector';
-import { TravelRecommendation } from '../../services/dashboardService';
+import { TravelRecommendation } from '@/services/dashboard';
 import { getAllRecommendations, RecommendationCategory } from '../../services/aiRecommendationsService';
 import { useAuth } from '../../services/auth/AuthService';
 import axios from 'axios';

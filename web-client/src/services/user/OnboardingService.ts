@@ -7,7 +7,7 @@ import type {
   OnboardingServiceResponse
 } from '@/types/onboarding';
 
-const API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_USER_SERVICE_URL;
 
 class OnboardingService {
   private api: AxiosInstance;

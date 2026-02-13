@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cookie, Settings, X, Shield, Check } from 'lucide-react';
-import GdprService from '@/services/api/GdprService';
+import GdprService from '@/services/user/GdprService';
 
 interface CookiePreferences {
   analytics: boolean;

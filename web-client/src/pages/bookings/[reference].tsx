@@ -17,7 +17,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '@/services/auth/AuthService';
-import VoyageService from '@/services/api/VoyageService';
+import VoyageService from '@/services/voyage/VoyageService';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ErrorMessage from '@/components/common/ErrorMessage';
 

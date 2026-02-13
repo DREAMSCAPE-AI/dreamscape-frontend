@@ -4,7 +4,7 @@
 
 import axios, { AxiosInstance } from 'axios';
 
-const USER_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL;
+const USER_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_URL;
 
 export enum FavoriteType {
   FLIGHT = 'FLIGHT',

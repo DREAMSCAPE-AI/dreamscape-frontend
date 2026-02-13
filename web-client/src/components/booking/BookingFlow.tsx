@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Users, CreditCard, Shield, AlertCircle, Check } from 'lucide-react';
-import type { FlightOffer, HotelOffer, Experience } from '../../services/api/types';
+import type { FlightOffer, HotelOffer, Experience } from '@/services/voyage/types';
 
 interface BookingFlowProps {
   items: (FlightOffer | HotelOffer | Experience)[];

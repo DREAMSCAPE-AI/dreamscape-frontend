@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../services/auth/AuthService';
-import dashboardService, {
+import { useAuth } from '@/services/auth/AuthService';
+import { dashboardService } from '@/services/dashboard';
+import {
   UserProfile,
   Booking,
   SearchHistory,
   TravelRecommendation,
   FlightInsight,
   UserStats
-} from '../services/dashboardService';
+} from '@/services/dashboard';
 
 interface DashboardData {
   profile: UserProfile | null;

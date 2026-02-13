@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users, Baby, Heart, Clock, MapPin, Accessibility, Sun, Umbrella, AlertCircle } from 'lucide-react';
-import type { Experience } from '../../services/api/types';
+import type { Experience } from '@/services/voyage/types';
 
 interface FamilyItineraryProps {
   activities: FamilyActivity[];

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Clock, Users } from 'lucide-react';
-import voyageService from '@/services/api/VoyageService';
-import imageService from '@/services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 
 interface Experience {
   id: string;

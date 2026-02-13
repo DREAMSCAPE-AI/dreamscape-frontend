@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Plane, Hotel, Activity, Plus } from 'lucide-react';
 import { useItineraryStore } from '@/store/itineraryStore';
-import { ItineraryItemType, type CreateItineraryItemDto } from '@/services/api/ItineraryService';
+import { ItineraryItemType, type CreateItineraryItemDto } from '@/services/voyage/ItineraryService';
 
 interface AddItemModalProps {
   isOpen: boolean;

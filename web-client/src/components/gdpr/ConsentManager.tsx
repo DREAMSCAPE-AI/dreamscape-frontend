@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shield, Check, AlertCircle, Clock } from 'lucide-react';
-import GdprService, { UserConsent, ConsentHistory } from '@/services/api/GdprService';
+import GdprService, { UserConsent, ConsentHistory } from '@/services/user/GdprService';
 
 const ConsentManager: React.FC = () => {
   const { t } = useTranslation('gdpr');

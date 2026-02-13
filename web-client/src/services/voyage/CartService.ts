@@ -20,7 +20,7 @@ class CartService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: VOYAGE_API_BASE_URL,
+      baseURL: `${VOYAGE_API_BASE_URL}/v1`,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',

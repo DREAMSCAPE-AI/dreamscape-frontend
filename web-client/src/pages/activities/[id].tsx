@@ -15,8 +15,8 @@ import {
   Info,
   ShoppingCart
 } from 'lucide-react';
-import voyageService from '@/services/api/VoyageService';
-import imageService from '@/services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 import { useCartStore } from '@/store/cartStore';
 import { useAuth } from '@/services/auth/AuthService';
 

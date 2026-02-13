@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import HotelSearch from './HotelSearch';
 import HotelResults from './HotelResults';
 import HotelDetails from './HotelDetails';
-import ApiService from '../../services/api';
-import type { HotelOffer, HotelSearchParams } from '../../services/api/types';
+import ApiService from '@/services/voyage/VoyageService';
+import type { HotelOffer, HotelSearchParams } from '@/services/voyage/types';
 import { useCartStore } from '@/store/cartStore';
 import { useAuth } from '@/services/auth/AuthService';
 

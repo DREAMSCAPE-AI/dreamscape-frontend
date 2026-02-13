@@ -3,7 +3,7 @@ import { Calendar, Users, Bell, Shield, AlertCircle } from 'lucide-react';
 import BookingFlow from './BookingFlow';
 import BookingStatus from './BookingStatus';
 import RealTimeUpdates from './RealTimeUpdates';
-import type { FlightOffer, HotelOffer, Experience } from '../../services/api/types';
+import type { FlightOffer, HotelOffer, Experience } from '@/services/voyage/types';
 
 interface BookingManagerProps {
   items: (FlightOffer | HotelOffer | Experience)[];

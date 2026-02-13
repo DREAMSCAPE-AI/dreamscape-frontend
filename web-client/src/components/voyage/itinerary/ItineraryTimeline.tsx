@@ -18,7 +18,7 @@ import { Plus, Loader2 } from 'lucide-react';
 import { useItineraryStore } from '@/store/itineraryStore';
 import ItineraryItemCard from './ItineraryItemCard';
 import AddItemModalV2 from './AddItemModalV2';
-import type { ItineraryItem } from '@/services/api/ItineraryService';
+import type { ItineraryItem } from '@/services/voyage/ItineraryService';
 
 interface ItineraryTimelineProps {
   itineraryId: string;

@@ -9,10 +9,7 @@ import type {
   HistoryEntityType,
 } from '@/types/history';
 
-const HISTORY_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_API_URL;
-
-// Debug: log the configured URL
-console.log('[HistoryService] API Base URL:', HISTORY_API_BASE_URL);
+const HISTORY_API_BASE_URL = import.meta.env.VITE_USER_SERVICE_URL;
 
 /**
  * Service for managing user history

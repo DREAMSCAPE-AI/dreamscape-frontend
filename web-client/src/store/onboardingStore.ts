@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { onboardingService } from '@/services/onboarding/onboardingService';
+import { onboardingService } from '@/services/user/OnboardingService';
 import type {
   TravelOnboardingProfile,
   OnboardingProgressResponse,
