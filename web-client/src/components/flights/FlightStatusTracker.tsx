@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plane, Clock, AlertTriangle, CheckCircle, Search, Loader2 } from 'lucide-react';
-import voyageService from '../../services/api/VoyageService';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface FlightStatus {
   flightDate: string;

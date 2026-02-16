@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DestinationCard from '@/components/DestinationCard';
-import voyageService from '@/services/api/VoyageService';
-import imageService from '@/services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 
 interface Destination {
   id: string;
@@ -241,19 +241,19 @@ export default function DestinationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-6 md:py-12">
+      <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-6 md:mb-12">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 md:mb-4">{t('list.title')}</h1>
-            <p className="text-base md:text-lg lg:text-xl text-gray-600">{t('list.subtitle')}</p>
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('list.title')}</h1>
+            <p className="text-xl text-gray-600">{t('list.subtitle')}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                <div className="h-40 md:h-48 bg-gray-300"></div>
-                <div className="p-4 md:p-6">
-                  <div className="h-5 md:h-6 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-3 md:h-4 bg-gray-300 rounded w-3/4"></div>
+                <div className="h-48 bg-gray-300"></div>
+                <div className="p-6">
+                  <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
                 </div>
               </div>
             ))}
@@ -264,18 +264,18 @@ export default function DestinationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 md:py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-6 md:mb-12">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 md:mb-4">{t('list.title')}</h1>
-          <p className="text-base md:text-lg lg:text-xl text-gray-600">{t('list.subtitle')}</p>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('list.title')}</h1>
+          <p className="text-xl text-gray-600">{t('list.subtitle')}</p>
           {error && (
-            <div className="mt-3 md:mt-4 p-3 md:p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-              <p className="text-sm md:text-base text-yellow-800">{error}</p>
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-yellow-800">{error}</p>
             </div>
           )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {destinations.map((destination) => (
             <DestinationCard
               key={destination.id}

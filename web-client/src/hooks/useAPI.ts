@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import voyageService from '../services/api/VoyageService';
-import type { APIError } from '../services/api/types';
+import voyageService from '@/services/voyage/VoyageService';
+import type { APIError } from '@/services/voyage/types';
 
 interface APIState<T> {
   data: T | null;

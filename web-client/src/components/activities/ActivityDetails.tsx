@@ -17,7 +17,7 @@ import {
   Plus
 } from 'lucide-react';
 import type { Activity } from './ActivityResults';
-import imageService from '@/services/imageService';
+import imageService from '@/services/utility/imageService';
 import { useActivityBookingStore } from '@/store/activityBookingStore';
 
 interface ActivityDetailsProps {

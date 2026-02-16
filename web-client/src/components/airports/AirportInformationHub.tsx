@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, Plane, TrendingUp, Search, Loader2, Navigation } from 'lucide-react';
-import voyageService from '../../services/api/VoyageService';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface AirportPerformance {
   onTime: number;

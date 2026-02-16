@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import type { FlightOffer } from '../../services/api/types';
-import { mealService, type MealOption } from '../../services/mealService';
+import type { FlightOffer } from '@/services/voyage/types';
+import { mealService, type MealOption } from '@/services/utility/mealService';
 
 interface MealSelectionProps {
   flight: FlightOffer;

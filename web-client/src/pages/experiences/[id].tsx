@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Clock, Users, Calendar, Heart, Share2 } from 'lucide-react';
-import voyageService from '../../services/api/VoyageService';
-import imageService from '../../services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 
 interface Experience {
   id: string;

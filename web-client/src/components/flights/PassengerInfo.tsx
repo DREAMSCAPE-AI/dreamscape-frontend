@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Calendar, Globe, Import as Passport, AlertCircle, ArrowRight } from 'lucide-react';
-import type { FlightOffer } from '../../services/api/types';
+import type { FlightOffer } from '@/services/voyage/types';
 
 interface PassengerInfoProps {
   flight: FlightOffer;
@@ -8,7 +8,7 @@ interface PassengerInfoProps {
   onContinue: (passengerDetails: PassengerDetails[]) => void;
 }
 
-interface PassengerDetails {
+export interface PassengerDetails {
   type: 'adult' | 'child' | 'infant';
   title: string;
   firstName: string;

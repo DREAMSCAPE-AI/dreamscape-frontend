@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Calendar, MapPin, Plus, Loader2 } from 'lucide-react';
 import { useItineraryStore } from '@/store/itineraryStore';
-import type { CreateItineraryDto } from '@/services/api/ItineraryService';
+import type { CreateItineraryDto } from '@/services/voyage/ItineraryService';
 
 interface CreateItineraryModalProps {
   isOpen: boolean;

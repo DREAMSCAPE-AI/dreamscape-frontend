@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plane, Search, MapPin, Info, Loader2, Globe } from 'lucide-react';
-import voyageService from '../../services/api/VoyageService';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface AirlineInfo {
   type: string;

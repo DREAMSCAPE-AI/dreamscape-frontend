@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Calendar, MapPin, RefreshCw } from 'lucide-react';
-import { Booking } from '../../services/dashboardService';
+import { Booking } from '@/services/dashboard';
 
 interface User {
   id: string;

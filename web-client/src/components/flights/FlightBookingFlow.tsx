@@ -9,8 +9,8 @@ import SeatSelection, { SelectedSeat } from './SeatSelection';
 import MealSelection, { SelectedMeal } from './MealSelection';
 import BaggageSelection, { SelectedBaggage } from './BaggageSelection';
 import PassengerInfo from './PassengerInfo';
-import voyageService from '@/services/api/VoyageService';
-import type { FlightOffer, UIFlightSearchParams } from '@/services/api/types';
+import voyageService from '@/services/voyage/VoyageService';
+import type { FlightOffer, UIFlightSearchParams } from '@/services/voyage/types';
 import type { SortOption, FilterState, PaginationState } from '@/types/flights';
 import {
   getFlightPrice,

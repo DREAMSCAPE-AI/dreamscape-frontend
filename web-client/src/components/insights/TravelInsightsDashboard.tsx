@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, TrendingUp, MapPin, Loader2, Lightbulb, Target } from 'lucide-react';
-import voyageService from '../../services/api/VoyageService';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface TripPurpose {
   subType: string;
