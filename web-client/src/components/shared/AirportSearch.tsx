@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plane, Search, MapPin } from 'lucide-react';
-import APIService from '@/services/api/APIService';
+import APIService from '@/services/voyage/VoyageService';
 
 interface Airport {
   iataCode: string;
@@ -68,8 +68,9 @@ const AirportSearch: React.FC<AirportSearchProps> = ({
     setIsLoading(true);
     try {
       const response = await APIService.searchAirports({ keyword: query });
-      const airportData = response || [];
-      
+      // L'API retourne { data: [...], meta: {...} }
+      const airportData = response?.data || [];
+
       // Filter and format airport data
       const formattedAirports: Airport[] = airportData
         .filter((item: any) => item.subType === 'AIRPORT' && item.iataCode)

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock, Glasses } from 'lucide-react';
-import voyageService from '../../services/api/VoyageService';
-import imageService from '../../services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 import QRCodeDisplay from '../../components/vr/QRCodeDisplay';
 
 interface Destination {

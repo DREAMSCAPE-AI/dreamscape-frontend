@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Camera, Leaf, DollarSign, Compass, Heart, Share2, MapPin, Clock, Users } from 'lucide-react';
-import type { Experience } from '../../services/api/types';
+import type { Experience } from '@/services/voyage/types';
 
 interface ExperienceDiscoveryProps {
   experiences: Experience[];

@@ -4,8 +4,8 @@ import ActivityResults, { Activity } from './ActivityResults';
 import ActivityDetails from './ActivityDetails';
 import ActivityParticipantInfo from './booking/ActivityParticipantInfo';
 import ActivityPayment from './booking/ActivityPayment';
-import voyageService from '@/services/api/VoyageService';
-import imageService from '@/services/imageService';
+import voyageService from '@/services/voyage/VoyageService';
+import imageService from '@/services/utility/imageService';
 import { useActivityBookingStore, ActivityBookingStep } from '@/store/activityBookingStore';
 
 type BookingStep = 'search' | 'results' | 'details' | 'participant-info' | 'payment';

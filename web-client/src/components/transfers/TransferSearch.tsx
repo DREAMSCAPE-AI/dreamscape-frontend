@@ -3,7 +3,7 @@ import { MapPin, Calendar, Users, Car, Search } from 'lucide-react';
 import { useTransferSearch } from '../../hooks/useAPI';
 import Calendar from '../shared/Calendar';
 import Dropdown from '../shared/Dropdown';
-import type { TransferSearchParams } from '../../services/api/types';
+import type { TransferSearchParams } from '@/services/voyage/types';
 
 const TransferSearch = () => {
   const { searchTransfers, loading, error } = useTransferSearch();

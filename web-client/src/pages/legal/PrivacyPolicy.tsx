@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Shield, Check, AlertCircle } from 'lucide-react';
-import GdprService, { PrivacyPolicy as PrivacyPolicyType } from '@/services/api/GdprService';
+import GdprService, { PrivacyPolicy as PrivacyPolicyType } from '@/services/user/GdprService';
 
 const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();

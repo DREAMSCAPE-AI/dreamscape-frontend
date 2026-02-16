@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TrendingUp, DollarSign, Calendar, Plane, AlertCircle, Sparkles, ArrowRight, ArrowDown, ArrowUp } from 'lucide-react';
 import DateRangePicker from '../shared/DateRangePicker';
 import Dropdown from '../shared/Dropdown';
-import voyageService from '../../services/api/VoyageService';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface PriceAnalysis {
   currentPrice: number;

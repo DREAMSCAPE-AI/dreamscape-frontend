@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Headset as VrHeadset, Star, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import voyageService from '@/services/api/VoyageService';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface SearchResult {
   id: string;

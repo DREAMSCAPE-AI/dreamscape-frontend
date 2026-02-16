@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Download, Trash2, FileText, AlertTriangle, X, Check, Clock } from 'lucide-react';
-import GdprService, { GdprRequest } from '@/services/api/GdprService';
+import GdprService, { GdprRequest } from '@/services/user/GdprService';
 
 const DataRightsSection: React.FC = () => {
   const { t } = useTranslation('gdpr');

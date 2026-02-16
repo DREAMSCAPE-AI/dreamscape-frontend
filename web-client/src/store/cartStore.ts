@@ -4,7 +4,7 @@
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { cartService } from '@/services/api/CartService';
+import { cartService } from '@/services/voyage/CartService';
 import type {
   Cart,
   CartItem,

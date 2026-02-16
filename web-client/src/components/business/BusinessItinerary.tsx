@@ -1,6 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, MapPin, Building2, DollarSign, AlertCircle } from 'lucide-react';
-import type { FlightOffer, HotelOffer, Experience } from '../../services/api/types';
+import type { FlightOffer, HotelOffer, Experience } from '@/services/voyage/types';
 
 interface BusinessItineraryProps {
   meetings: Meeting[];

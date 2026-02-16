@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import DateRangePicker from '../shared/DateRangePicker';
 import Dropdown from '../shared/Dropdown';
 import AirportSearch from '../shared/AirportSearch';
-import type { UIFlightSearchParams } from '../../services/api/types';
+import type { UIFlightSearchParams } from '@/services/voyage/types';
 import { useHistoryTracking } from '@/hooks/useHistoryTracking';
 
 interface ValidationErrors {

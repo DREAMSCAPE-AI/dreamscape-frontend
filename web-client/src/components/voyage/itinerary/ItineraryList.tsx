@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Plus, Calendar, MapPin, Trash2, Edit, Loader2 } from 'lucide-react';
 import { useItineraryStore } from '@/store/itineraryStore';
 import CreateItineraryModal from './CreateItineraryModal';
-import type { Itinerary } from '@/services/api/ItineraryService';
+import type { Itinerary } from '@/services/voyage/ItineraryService';
 
 const ItineraryList: React.FC = () => {
   const { t } = useTranslation('planner');

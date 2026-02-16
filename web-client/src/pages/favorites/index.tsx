@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart, Plane, Building2, Compass, Calendar, Trash2, Filter } from 'lucide-react';
-import FavoritesService, { Favorite, FavoriteType } from '@/services/api/FavoritesService';
+import FavoritesService, { Favorite, FavoriteType } from '@/services/user/FavoritesService';
 import { useAuth } from '@/services/auth/AuthService';
 
 const FavoritesPage = () => {
