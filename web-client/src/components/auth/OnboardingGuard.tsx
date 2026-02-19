@@ -57,8 +57,9 @@ const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
     );
   }
 
+  // Check if user is authenticated
   if (!isAuthenticated) {
-    return null;
+    return <Navigate to="/auth" replace state={{ from: location.pathname }} />;
   }
 
   if (!requireOnboarding) {

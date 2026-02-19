@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { useAuth } from '@/services/auth/AuthService';
 import { FavoritesBatchProvider } from '@/contexts/FavoritesBatchContext';
@@ -92,6 +92,7 @@ function App() {
           <Route element={<RootLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthPage />} />
+          <Route path="/login" element={<Navigate to="/auth" replace />} />
             <Route path="/profile/setup" element={<ProfileSetup />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/hotels" element={<HotelsPage />} />

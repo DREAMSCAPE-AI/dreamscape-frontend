@@ -33,7 +33,7 @@ const FavoritesPage = () => {
   useEffect(() => {
     const loadFavorites = async () => {
       if (!user) {
-        navigate('/login');
+        navigate('/auth');
         return;
       }
 
