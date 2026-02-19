@@ -29,6 +29,8 @@ import Logo from './Logo';
 import { CartButton } from '@/components/cart';
 import LanguageSelector from '@/components/common/LanguageSelector';
 import FavoritesService from '@/services/user/FavoritesService';
+import { MobileDrawer } from '@/components/mobile';
+import { useMobileNavigation } from '@/hooks/useMobileNavigation';
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -43,6 +45,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const { toggleDrawer } = useMobileNavigation();
 
   // Fetch favorites count when user is logged in
   useEffect(() => {
@@ -338,12 +341,20 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
             )}
 
             {/* Mobile Menu Button */}
-            <button className="md:hidden text-gray-700 hover:text-orange-500">
+            <button
+              data-testid="mobile-menu-button"
+              onClick={toggleDrawer}
+              className="md:hidden text-gray-700 hover:text-orange-500 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Open mobile menu"
+            >
               <Menu className="w-6 h-6" />
             </button>
           </div>
         </nav>
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      <MobileDrawer isLoggedIn={isLoggedIn} onLogout={onLogout} />
     </header>
   );
 };
