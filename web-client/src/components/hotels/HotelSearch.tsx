@@ -242,11 +242,12 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
       <div className="space-y-6">
         {/* Location Search */}
         <div className="relative">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="hotel-location" className="block text-sm font-medium text-gray-700 mb-2">
             Destination
           </label>
           <div className="relative">
             <input
+              id="hotel-location"
               type="text"
               placeholder="Where are you going?"
               value={locationQuery}
@@ -329,6 +330,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                     <button
                       onClick={() => updateGuestCount('adults', 'decrement')}
                       disabled={guestConfig.adults <= 1}
+                      aria-label="Diminuer le nombre d'adultes"
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Minus className="w-4 h-4" />
@@ -337,6 +339,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                     <button
                       onClick={() => updateGuestCount('adults', 'increment')}
                       disabled={guestConfig.adults >= 8}
+                      aria-label="Augmenter le nombre d'adultes"
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4" />
@@ -354,6 +357,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                     <button
                       onClick={() => updateGuestCount('children', 'decrement')}
                       disabled={guestConfig.children <= 0}
+                      aria-label="Diminuer le nombre d'enfants"
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Minus className="w-4 h-4" />
@@ -362,6 +366,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                     <button
                       onClick={() => updateGuestCount('children', 'increment')}
                       disabled={guestConfig.children >= 6}
+                      aria-label="Augmenter le nombre d'enfants"
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4" />
@@ -379,6 +384,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                           key={index}
                           value={age}
                           onChange={(e) => updateChildAge(index, parseInt(e.target.value))}
+                          aria-label={`Âge de l'enfant ${index + 1}`}
                           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                         >
                           {Array.from({ length: 18 }, (_, i) => (
@@ -399,6 +405,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                     <button
                       onClick={() => updateGuestCount('rooms', 'decrement')}
                       disabled={guestConfig.rooms <= 1}
+                      aria-label="Diminuer le nombre de chambres"
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Minus className="w-4 h-4" />
@@ -407,6 +414,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                     <button
                       onClick={() => updateGuestCount('rooms', 'increment')}
                       disabled={guestConfig.rooms >= 8}
+                      aria-label="Augmenter le nombre de chambres"
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4" />
@@ -504,7 +512,11 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
 
         {/* Error Message */}
         {error && (
-          <div className="text-red-500 text-sm mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="text-red-500 text-sm mb-4 p-3 bg-red-50 rounded-lg border border-red-200"
+          >
             {error}
           </div>
         )}

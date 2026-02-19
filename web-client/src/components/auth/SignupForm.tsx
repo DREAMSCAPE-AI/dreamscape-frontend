@@ -79,14 +79,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
           {/* First Name Input */}
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="signup-firstname" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.firstName')}
             </label>
             <div className="relative">
               <input
+                id="signup-firstname"
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                aria-invalid={!!errors.firstName}
+                aria-describedby="signup-firstname-error"
+                required
                 className={`w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.firstName ? 'border-red-500' : 'border-gray-200'
                 }`}
@@ -95,20 +99,24 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
               <User className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.firstName && (
-              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.firstName}</p>
+              <p id="signup-firstname-error" role="alert" aria-live="assertive" className="mt-1 text-xs md:text-sm text-red-500">{errors.firstName}</p>
             )}
           </div>
 
           {/* Last Name Input */}
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="signup-lastname" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.lastName')}
             </label>
             <div className="relative">
               <input
+                id="signup-lastname"
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                aria-invalid={!!errors.lastName}
+                aria-describedby="signup-lastname-error"
+                required
                 className={`w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.lastName ? 'border-red-500' : 'border-gray-200'
                 }`}
@@ -117,20 +125,24 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
               <User className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.lastName && (
-              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.lastName}</p>
+              <p id="signup-lastname-error" role="alert" aria-live="assertive" className="mt-1 text-xs md:text-sm text-red-500">{errors.lastName}</p>
             )}
           </div>
 
           {/* Email Input */}
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="signup-email" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.email')}
             </label>
             <div className="relative">
               <input
+                id="signup-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={!!errors.email}
+                aria-describedby="signup-email-error"
+                required
                 className={`w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.email ? 'border-red-500' : 'border-gray-200'
                 }`}
@@ -139,20 +151,24 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
               <Mail className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.email && (
-              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.email}</p>
+              <p id="signup-email-error" role="alert" aria-live="assertive" className="mt-1 text-xs md:text-sm text-red-500">{errors.email}</p>
             )}
           </div>
 
           {/* Password Input */}
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="signup-password" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.password')}
             </label>
             <div className="relative">
               <input
+                id="signup-password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={!!errors.password}
+                aria-describedby="signup-password-error"
+                required
                 className={`w-full pl-9 md:pl-10 pr-10 md:pr-12 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.password ? 'border-red-500' : 'border-gray-200'
                 }`}
@@ -161,6 +177,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
               <Lock className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
               <button
                 type="button"
+                aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                aria-pressed={showPassword}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-2.5 md:right-3 top-1/2 -translate-y-1/2 p-1.5 md:p-1 text-gray-400 hover:text-gray-600 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center"
               >
@@ -172,20 +190,24 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.password}</p>
+              <p id="signup-password-error" role="alert" aria-live="assertive" className="mt-1 text-xs md:text-sm text-red-500">{errors.password}</p>
             )}
           </div>
 
           {/* Confirm Password Input */}
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="signup-confirm-password" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('signup.confirmPassword')}
             </label>
             <div className="relative">
               <input
+                id="signup-confirm-password"
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                aria-invalid={!!errors.confirmPassword}
+                aria-describedby="signup-confirm-password-error"
+                required
                 className={`w-full pl-9 md:pl-10 pr-10 md:pr-12 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
                 }`}
@@ -194,7 +216,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, onSwitchToLogin, isLo
               <Lock className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.confirmPassword && (
-              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.confirmPassword}</p>
+              <p id="signup-confirm-password-error" role="alert" aria-live="assertive" className="mt-1 text-xs md:text-sm text-red-500">{errors.confirmPassword}</p>
             )}
           </div>
 

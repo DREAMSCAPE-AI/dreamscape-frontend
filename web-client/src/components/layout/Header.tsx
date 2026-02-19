@@ -45,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const { toggleDrawer } = useMobileNavigation();
+  const { toggleDrawer, isDrawerOpen } = useMobileNavigation();
 
   // Fetch favorites count when user is logged in
   useEffect(() => {
@@ -345,7 +345,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
               data-testid="mobile-menu-button"
               onClick={toggleDrawer}
               className="md:hidden text-gray-700 hover:text-orange-500 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="Open mobile menu"
+              aria-expanded={isDrawerOpen}
+              aria-label={isDrawerOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             >
               <Menu className="w-6 h-6" />
             </button>

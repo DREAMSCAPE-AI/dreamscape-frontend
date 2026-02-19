@@ -89,6 +89,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
       {options.map((option) => (
         <motion.label
           key={option.value}
+          htmlFor={`${name}-${option.value}`}
           className={`flex items-start gap-4 p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
             value === option.value
               ? 'border-orange-500 bg-orange-50'
@@ -99,6 +100,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         >
           <input
             type="radio"
+            id={`${name}-${option.value}`}
             name={name}
             value={option.value}
             checked={value === option.value}
@@ -229,10 +231,11 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
       {/* Number Inputs */}
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="range-min" className="block text-sm font-medium text-gray-700 mb-2">
             Minimum
           </label>
           <input
+            id="range-min"
             type="number"
             min={min}
             max={maxVal - step}
@@ -248,10 +251,11 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="range-max" className="block text-sm font-medium text-gray-700 mb-2">
             Maximum
           </label>
           <input
+            id="range-max"
             type="number"
             min={minVal + step}
             max={max}
@@ -407,6 +411,7 @@ export const TagInput: React.FC<TagInputProps> = ({
         onFocus={() => setShowSuggestions(true)}
         onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         placeholder={placeholder}
+        aria-label={placeholder}
         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
       />
 
