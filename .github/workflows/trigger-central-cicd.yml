@@ -3,11 +3,7 @@
 name: Trigger Central CI/CD Pipeline
 
 on:
-  push:
-    branches: [main, develop, feature/**, bugfix/**, hotfix/**]
-  pull_request:
-    branches: [main, develop]
-    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -57,7 +53,10 @@ jobs:
         run: |
           CHANGED_COMPONENTS=""
           
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # Manual run: compare last commit (fallback to repository files)
+            CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD 2>/dev/null || git ls-files)
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             # Get changed files in PR
             CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
           else
