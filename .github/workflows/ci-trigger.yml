@@ -1,4 +1,4 @@
-name: CI/CD Trigger for Frontend
+name: Frontend CI + Infra CD Trigger
 
 on:
   push:
@@ -19,9 +19,6 @@ env:
   INFRA_REPO: DREAMSCAPE-AI/dreamscape-infra
 
 jobs:
-  # ============================================================
-  # Local CI: Fast validation before triggering central pipeline
-  # ============================================================
   local-ci:
     name: Local CI & Validation
     runs-on: ubuntu-latest
@@ -29,6 +26,7 @@ jobs:
     outputs:
       changed_components: ${{ steps.changes.outputs.changed_components }}
       should_trigger: ${{ steps.check.outputs.should_trigger }}
+      skip_reason: ${{ steps.check.outputs.skip_reason }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,7 +56,6 @@ jobs:
           echo "Changed files:"
           echo "$CHANGED_FILES"
 
-          # Detect which frontend components were changed
           for component in web-client gateway panorama admin-panel mobile-app; do
             if echo "$CHANGED_FILES" | grep -qE "^${component}/"; then
               if [[ -z "$CHANGED_COMPONENTS" ]]; then
@@ -69,31 +66,36 @@ jobs:
             fi
           done
 
-          # Check for shared changes affecting all components
           if echo "$CHANGED_FILES" | grep -qE "^(shared/|common/|packages/)"; then
             CHANGED_COMPONENTS="all"
           fi
 
-          # If no specific component changed but files changed, mark as all
           if [[ -z "$CHANGED_COMPONENTS" ]] && [[ -n "$CHANGED_FILES" ]]; then
             CHANGED_COMPONENTS="all"
           fi
 
           echo "changed_components=${CHANGED_COMPONENTS}" >> $GITHUB_OUTPUT
-          echo "✅ Detected changes: ${CHANGED_COMPONENTS}"
+          echo "Detected changes: ${CHANGED_COMPONENTS}"
 
       - name: Check if central pipeline should be triggered
         id: check
         run: |
           if [[ -z "${{ steps.changes.outputs.changed_components }}" ]]; then
             echo "should_trigger=false" >> $GITHUB_OUTPUT
-            echo "⏭️ No changes detected, skipping central pipeline"
-          elif [[ "${{ github.event_name }}" == "pull_request" ]] && [[ -z "${{ secrets.DISPATCH_TOKEN }}" ]]; then
+            echo "skip_reason=no_changes" >> $GITHUB_OUTPUT
+            echo "No changes detected, skipping dispatch"
+          elif [[ "${{ github.event_name }}" != "push" ]] || [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
             echo "should_trigger=false" >> $GITHUB_OUTPUT
-            echo "⚠️ PR from fork or missing token, skipping dispatch (normal behavior)"
+            echo "skip_reason=not_main_push" >> $GITHUB_OUTPUT
+            echo "Dispatch is enabled only for push on main"
+          elif [[ -z "${{ secrets.DISPATCH_TOKEN }}" ]]; then
+            echo "should_trigger=false" >> $GITHUB_OUTPUT
+            echo "skip_reason=missing_token" >> $GITHUB_OUTPUT
+            echo "DISPATCH_TOKEN not configured"
           else
             echo "should_trigger=true" >> $GITHUB_OUTPUT
-            echo "✅ Will trigger central pipeline"
+            echo "skip_reason=none" >> $GITHUB_OUTPUT
+            echo "Will trigger infra CD pipeline (staging)"
           fi
 
       - name: Lint and typecheck changed components
@@ -108,45 +110,22 @@ jobs:
           IFS=',' read -ra COMPONENT_ARRAY <<< "$COMPONENTS"
           for component in "${COMPONENT_ARRAY[@]}"; do
             if [[ -d "${component}" ]] && [[ -f "${component}/package.json" ]]; then
-              echo "🔍 Validating ${component}..."
+              echo "Validating ${component}..."
               (
                 cd "${component}"
                 npm ci
-                npm run lint --if-present || echo "⚠️ Lint issues in ${component}"
-                npm run typecheck --if-present || echo "⚠️ Type errors in ${component}"
+                npm run lint --if-present || echo "Lint issues in ${component}"
+                npm run typecheck --if-present || echo "Typecheck issues in ${component}"
               )
             fi
           done
 
-  # ============================================================
-  # Trigger Central Pipeline
-  # ============================================================
   trigger-central-pipeline:
-    name: Trigger Central CI/CD
+    name: Trigger Infra CD (staging)
     runs-on: ubuntu-latest
     needs: local-ci
     if: needs.local-ci.outputs.should_trigger == 'true'
     steps:
-      - name: Determine environment
-        id: env
-        run: |
-          case "${{ github.ref }}" in
-            refs/heads/main)
-              echo "environment=staging" >> $GITHUB_OUTPUT
-              ;;
-            refs/heads/develop)
-              echo "environment=staging" >> $GITHUB_OUTPUT
-              ;;
-            *)
-              echo "environment=dev" >> $GITHUB_OUTPUT
-              ;;
-          esac
-
-          # PRs always target dev
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "environment=dev" >> $GITHUB_OUTPUT
-          fi
-
       - name: Trigger unified CI/CD pipeline
         uses: actions/github-script@v7
         with:
@@ -157,13 +136,13 @@ jobs:
               ref: context.ref,
               sha: context.sha,
               component: '${{ needs.local-ci.outputs.changed_components }}',
-              environment: '${{ steps.env.outputs.environment }}',
+              environment: 'staging',
               trigger_type: '${{ github.event_name }}',
               actor: context.actor,
               workflow_run_id: context.runId
             };
 
-            console.log('📤 Triggering central pipeline:', payload);
+            console.log('Triggering infra pipeline:', payload);
 
             try {
               await github.rest.repos.createDispatchEvent({
@@ -173,37 +152,28 @@ jobs:
                 client_payload: payload
               });
 
-              console.log('✅ Central pipeline triggered successfully');
-
-              // Set pending status
               await github.rest.repos.createCommitStatus({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 sha: context.sha,
                 state: 'pending',
                 target_url: 'https://github.com/DREAMSCAPE-AI/dreamscape-infra/actions',
-                description: 'Central CI/CD pipeline triggered',
+                description: 'Infra CD pipeline triggered for staging',
                 context: 'ci/unified-pipeline'
               });
-
             } catch (error) {
-              console.error('❌ Failed to trigger central pipeline:', error);
-
               await github.rest.repos.createCommitStatus({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 sha: context.sha,
                 state: 'error',
-                description: 'Failed to trigger central CI/CD',
+                description: 'Failed to trigger infra CD pipeline',
                 context: 'ci/unified-pipeline'
               });
 
               throw error;
             }
 
-  # ============================================================
-  # Summary
-  # ============================================================
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
@@ -212,21 +182,21 @@ jobs:
     steps:
       - name: Summary
         run: |
-          echo "# 📊 Frontend CI Summary" >> $GITHUB_STEP_SUMMARY
+          echo "# Frontend CI Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Repository**: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Event**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Ref**: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **SHA**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Changed Components**: ${{ needs.local-ci.outputs.changed_components }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Repository: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Ref: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- SHA: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Changed components: ${{ needs.local-ci.outputs.changed_components }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Dispatch decision: ${{ needs.local-ci.outputs.skip_reason }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [[ "${{ needs.trigger-central-pipeline.result }}" == "success" ]]; then
-            echo "✅ Central CI/CD pipeline triggered successfully" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "🔗 [View Pipeline Progress](https://github.com/DREAMSCAPE-AI/dreamscape-infra/actions)" >> $GITHUB_STEP_SUMMARY
+            echo "- Infra CD trigger: success" >> $GITHUB_STEP_SUMMARY
+            echo "- Pipeline URL: https://github.com/DREAMSCAPE-AI/dreamscape-infra/actions" >> $GITHUB_STEP_SUMMARY
           elif [[ "${{ needs.trigger-central-pipeline.result }}" == "skipped" ]]; then
-            echo "ℹ️ Central pipeline trigger skipped (no changes or PR from fork)" >> $GITHUB_STEP_SUMMARY
+            echo "- Infra CD trigger: skipped" >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ Failed to trigger central CI/CD pipeline" >> $GITHUB_STEP_SUMMARY
+            echo "- Infra CD trigger: failed" >> $GITHUB_STEP_SUMMARY
           fi
