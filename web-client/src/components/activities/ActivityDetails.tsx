@@ -53,9 +53,10 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
             <h2 className="text-xl md:text-2xl font-semibold">Activity Details</h2>
             <button
               onClick={onClose}
+              aria-label="Fermer les détails de l'activité"
               className="p-2 min-h-[44px] min-w-[44px] hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
             >
-              <X className="w-5 h-5 md:w-6 md:h-6" />
+              <X className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />
             </button>
           </div>
 

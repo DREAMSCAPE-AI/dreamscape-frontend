@@ -212,7 +212,7 @@ const FlightAnalyticsDashboard: React.FC = () => {
                         <button
                           key={airport.iataCode}
                           type="button"
-                          className="w-full text-left p-3 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none border-b border-gray-100 last:border-b-0"
+                          className="w-full text-left p-3 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 border-b border-gray-100 last:border-b-0"
                           onClick={() => handleAirportSelect(airport)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
