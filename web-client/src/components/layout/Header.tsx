@@ -29,6 +29,8 @@ import Logo from './Logo';
 import { CartButton } from '@/components/cart';
 import LanguageSelector from '@/components/common/LanguageSelector';
 import FavoritesService from '@/services/user/FavoritesService';
+import notificationService from '@/services/user/NotificationService';
+import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { MobileDrawer } from '@/components/mobile';
 import { useMobileNavigation } from '@/hooks/useMobileNavigation';
 
@@ -43,7 +45,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDiscoverMenu, setShowDiscoverMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { toggleDrawer, isDrawerOpen } = useMobileNavigation();
 
@@ -64,6 +68,29 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
     };
 
     fetchFavoritesCount();
+  }, [isLoggedIn]);
+
+  // Load unread notifications count + connect Socket.io when logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      notificationService.getUnreadCount()
+        .then(setUnreadNotificationsCount)
+        .catch(() => setUnreadNotificationsCount(0));
+
+      notificationService.connect();
+      notificationService.onNewNotification(() => {
+        notificationService.getUnreadCount()
+          .then(setUnreadNotificationsCount)
+          .catch(() => {});
+      });
+    } else {
+      setUnreadNotificationsCount(0);
+      notificationService.disconnect();
+    }
+
+    return () => {
+      notificationService.disconnect();
+    };
   }, [isLoggedIn]);
 
   useEffect(() => {
@@ -244,12 +271,29 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 </Link>
 
                 {/* Notifications */}
-                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50" aria-label="Notifications">
-                  <Bell className="w-6 h-6" />
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center" aria-hidden="true">
-                    2
-                  </span>
-                </button>
+                <div className="hidden md:block relative">
+                  <button
+                    onClick={() => setShowNotifications(!showNotifications)}
+                    className="relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+                    aria-label="Notifications"
+                  >
+                    <Bell className="w-6 h-6" />
+                    {unreadNotificationsCount > 0 && (
+                      <span
+                        className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                        aria-hidden="true"
+                      >
+                        {unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount}
+                      </span>
+                    )}
+                  </button>
+                  {showNotifications && (
+                    <NotificationCenter
+                      onClose={() => setShowNotifications(false)}
+                      onUnreadCountChange={setUnreadNotificationsCount}
+                    />
+                  )}
+                </div>
 
                 <div className="relative" ref={userMenuRef}>
                   <button
