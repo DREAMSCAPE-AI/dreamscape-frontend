@@ -45,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const { toggleDrawer } = useMobileNavigation();
+  const { toggleDrawer, isDrawerOpen } = useMobileNavigation();
 
   // Fetch favorites count when user is logged in
   useEffect(() => {
@@ -134,6 +134,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   onMouseEnter={() => setShowDiscoverMenu(true)}
                   onMouseLeave={() => setShowDiscoverMenu(false)}
                   className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
+                  aria-haspopup="menu"
+                  aria-expanded={showDiscoverMenu}
+                  onKeyDown={(e) => { if (e.key === 'Escape') setShowDiscoverMenu(false); if (e.key === 'ArrowDown' || e.key === 'Enter') { e.preventDefault(); setShowDiscoverMenu(true); } }}
                 >
                   <span>{t('nav.discover')}</span>
                   <ChevronDown className="w-4 h-4" />
@@ -144,6 +147,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                     onMouseEnter={() => setShowDiscoverMenu(true)}
                     onMouseLeave={() => setShowDiscoverMenu(false)}
                     className="absolute top-full left-0 w-64 bg-white rounded-lg shadow-lg py-2 mt-2"
+                    role="menu"
                   >
                     {[
                       { name: t('nav.discoverMenu.culture'), path: '/destination/culture', icon: Compass },
@@ -154,6 +158,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         key={category.name}
                         to={category.path}
                         className="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition-colors"
+                        role="menuitem"
                       >
                         <category.icon className="w-5 h-5" />
                         <span>{category.name}</span>
@@ -169,6 +174,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   onMouseEnter={() => setShowToolsMenu(true)}
                   onMouseLeave={() => setShowToolsMenu(false)}
                   className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
+                  aria-haspopup="menu"
+                  aria-expanded={showToolsMenu}
+                  onKeyDown={(e) => { if (e.key === 'Escape') setShowToolsMenu(false); if (e.key === 'ArrowDown' || e.key === 'Enter') { e.preventDefault(); setShowToolsMenu(true); } }}
                 >
                   <Wrench className="w-4 h-4" />
                   <span>{t('nav.tools')}</span>
@@ -180,12 +188,14 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                     onMouseEnter={() => setShowToolsMenu(true)}
                     onMouseLeave={() => setShowToolsMenu(false)}
                     className="absolute top-full left-0 w-80 bg-white rounded-lg shadow-lg py-2 mt-2"
+                    role="menu"
                   >
                     {toolsMenuItems.map((tool) => (
                       <Link
                         key={tool.name}
                         to={tool.path}
                         className="flex items-center gap-3 px-4 py-3 hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition-colors"
+                        role="menuitem"
                       >
                         <tool.icon className="w-5 h-5" />
                         <div>
@@ -223,19 +233,20 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   to="/favorites"
                   className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
                   title={t('nav.viewFavorites')}
+                  aria-label={favoritesCount > 0 ? `Favoris (${favoritesCount})` : 'Favoris'}
                 >
                   <Heart className="w-6 h-6" />
                   {favoritesCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center" aria-hidden="true">
                       {favoritesCount > 99 ? '99+' : favoritesCount}
                     </span>
                   )}
                 </Link>
 
                 {/* Notifications */}
-                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50">
+                <button className="hidden md:block relative p-2 text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50" aria-label="Notifications">
                   <Bell className="w-6 h-6" />
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center" aria-hidden="true">
                     2
                   </span>
                 </button>
@@ -244,6 +255,10 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center gap-2 text-gray-700"
+                    aria-haspopup="menu"
+                    aria-expanded={showUserMenu}
+                    aria-label="Menu utilisateur"
+                    onKeyDown={(e) => { if (e.key === 'Escape') setShowUserMenu(false); }}
                   >
                     <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
                       <User className="w-5 h-5 text-orange-500" />
@@ -252,11 +267,12 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                   </button>
 
                   {showUserMenu && (
-                    <div className="absolute top-full right-0 w-48 bg-white rounded-lg shadow-lg py-2 mt-2">
+                    <div className="absolute top-full right-0 w-48 bg-white rounded-lg shadow-lg py-2 mt-2" role="menu">
                       <Link
                         to="/dashboard"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <User className="w-4 h-4" />
                         <span>{t('nav.userMenu.profile')}</span>
@@ -265,6 +281,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         to="/planner"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <Route className="w-4 h-4" />
                         <span>{t('nav.userMenu.myTrips')}</span>
@@ -273,6 +290,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         to="/favorites"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <Heart className="w-4 h-4" />
                         <span>{t('nav.userMenu.favorites')}</span>
@@ -281,6 +299,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         to="/bookings"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <Calendar className="w-4 h-4" />
                         <span>{t('nav.userMenu.myBookings')}</span>
@@ -289,6 +308,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         to="/history"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <History className="w-4 h-4" />
                         <span>{t('nav.userMenu.history')}</span>
@@ -297,6 +317,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         to="/settings"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <Settings className="w-4 h-4" />
                         <span>{t('nav.userMenu.settings')}</span>
@@ -305,6 +326,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                         to="/support"
                         className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <HelpCircle className="w-4 h-4" />
                         <span>{t('nav.userMenu.help')}</span>
@@ -312,6 +334,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                       <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 w-full"
+                        role="menuitem"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>{t('nav.userMenu.logout')}</span>
@@ -345,7 +368,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
               data-testid="mobile-menu-button"
               onClick={toggleDrawer}
               className="md:hidden text-gray-700 hover:text-orange-500 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="Open mobile menu"
+              aria-expanded={isDrawerOpen}
+              aria-label={isDrawerOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             >
               <Menu className="w-6 h-6" />
             </button>

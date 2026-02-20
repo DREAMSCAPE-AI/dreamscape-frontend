@@ -23,3 +23,9 @@ body {
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
+
+/* WCAG 2.4.7 - Focus Visible: global focus ring for all interactive elements */
+:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+}

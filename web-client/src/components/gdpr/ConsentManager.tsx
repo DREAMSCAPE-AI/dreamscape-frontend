@@ -131,6 +131,8 @@ const ConsentManager: React.FC = () => {
         {/* Message Toast */}
         {message && (
           <div
+            role="status"
+            aria-live="polite"
             className={`mb-4 p-3 rounded-lg flex items-center gap-2 ${
               message.type === 'success'
                 ? 'bg-green-50 border border-green-200 text-green-800'
@@ -161,11 +163,18 @@ const ConsentManager: React.FC = () => {
               </p>
             </div>
             <div className="ml-4 flex items-center">
-              <div className="w-11 h-6 bg-green-500 rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-75">
+              <button
+                type="button"
+                aria-label="Cookies fonctionnels (toujours actifs)"
+                aria-pressed={true}
+                aria-disabled="true"
+                disabled
+                className="w-11 h-6 bg-green-500 rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-75"
+              >
                 <div className="w-4 h-4 bg-white rounded-full shadow flex items-center justify-center">
                   <Check className="w-3 h-3 text-green-500" />
                 </div>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -186,7 +195,8 @@ const ConsentManager: React.FC = () => {
                 } flex items-center ${
                   consent.analytics ? 'justify-end' : 'justify-start'
                 } px-1 disabled:opacity-50 disabled:cursor-not-allowed`}
-                aria-label={`Toggle analytics cookies ${consent.analytics ? 'off' : 'on'}`}
+                aria-label="Activer les cookies analytiques"
+                aria-pressed={consent.analytics}
               >
                 <div className="w-4 h-4 bg-white rounded-full shadow"></div>
               </button>
@@ -210,7 +220,8 @@ const ConsentManager: React.FC = () => {
                 } flex items-center ${
                   consent.marketing ? 'justify-end' : 'justify-start'
                 } px-1 disabled:opacity-50 disabled:cursor-not-allowed`}
-                aria-label={`Toggle marketing cookies ${consent.marketing ? 'off' : 'on'}`}
+                aria-label="Activer les cookies marketing"
+                aria-pressed={consent.marketing}
               >
                 <div className="w-4 h-4 bg-white rounded-full shadow"></div>
               </button>
@@ -234,7 +245,8 @@ const ConsentManager: React.FC = () => {
                 } flex items-center ${
                   consent.preferences ? 'justify-end' : 'justify-start'
                 } px-1 disabled:opacity-50 disabled:cursor-not-allowed`}
-                aria-label={`Toggle preference cookies ${consent.preferences ? 'off' : 'on'}`}
+                aria-label="Activer les cookies de préférences"
+                aria-pressed={consent.preferences}
               >
                 <div className="w-4 h-4 bg-white rounded-full shadow"></div>
               </button>

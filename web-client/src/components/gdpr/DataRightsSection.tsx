@@ -136,6 +136,8 @@ const DataRightsSection: React.FC = () => {
       {/* Message Toast */}
       {message && (
         <div
+          role="status"
+          aria-live="polite"
           className={`p-4 rounded-lg flex items-center gap-3 ${
             message.type === 'success'
               ? 'bg-green-50 border border-green-200 text-green-800'
@@ -311,10 +313,11 @@ const DataRightsSection: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="gdpr-delete-reason" className="block text-sm font-medium text-gray-700 mb-2">
                   {t('dataRights.delete.modal.reasonLabel')}
                 </label>
                 <textarea
+                  id="gdpr-delete-reason"
                   value={deleteReason}
                   onChange={(e) => setDeleteReason(e.target.value)}
                   placeholder={t('dataRights.delete.modal.reasonPlaceholder')}
@@ -324,10 +327,11 @@ const DataRightsSection: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="gdpr-delete-confirm" className="block text-sm font-medium text-gray-700 mb-2">
                   {t('dataRights.delete.modal.confirmLabel')}
                 </label>
                 <input
+                  id="gdpr-delete-confirm"
                   type="text"
                   value={deleteConfirmText}
                   onChange={(e) => setDeleteConfirmText(e.target.value)}

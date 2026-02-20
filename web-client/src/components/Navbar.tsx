@@ -204,7 +204,7 @@ const Navbar = () => {
             >
               Get Started
             </Link>
-            <button className="md:hidden p-2">
+            <button type="button" aria-label="Ouvrir le menu de navigation" className="md:hidden p-2">
               <Menu className="h-6 w-6" />
             </button>
           </div>

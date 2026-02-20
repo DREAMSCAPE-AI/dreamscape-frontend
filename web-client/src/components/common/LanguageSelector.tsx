@@ -42,19 +42,24 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'compact'
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          onKeyDown={(e) => { if (e.key === 'Escape') setIsOpen(false); }}
           className="flex items-center gap-1.5 px-2 py-1.5 text-gray-700 hover:text-orange-500 transition-colors rounded-lg hover:bg-orange-50"
-          title="Change language"
+          aria-label={`Langue: ${currentLanguage.name}`}
         >
           <Globe className="w-4 h-4" />
           <span className="text-sm font-medium">{currentLanguage.code.toUpperCase()}</span>
         </button>
 
         {isOpen && (
-          <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+          <div role="listbox" aria-label="Sélectionner la langue" className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
             {supportedLanguages.map((language) => (
               <button
                 key={language.code}
                 onClick={() => handleLanguageChange(language.code)}
+                role="option"
+                aria-selected={currentLanguage.code === language.code}
                 className={`w-full flex items-center gap-3 px-4 py-2 text-left transition-colors ${
                   currentLanguage.code === language.code
                     ? 'bg-orange-50 text-orange-500'
@@ -92,6 +97,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'compact'
               <button
                 key={language.code}
                 onClick={() => handleLanguageChange(language.code)}
+                role="option"
+                aria-selected={currentLanguage.code === language.code}
                 className={`w-full flex items-center gap-3 px-4 py-2 text-left transition-colors ${
                   currentLanguage.code === language.code
                     ? 'bg-orange-50 text-orange-500'
