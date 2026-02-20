@@ -7,6 +7,7 @@ import ApiService from '@/services/voyage/VoyageService';
 import type { HotelOffer, HotelSearchParams } from '@/services/voyage/types';
 import { useCartStore } from '@/store/cartStore';
 import { useAuth } from '@/services/auth/AuthService';
+import { getHotelImages } from '@/utils/hotelImages';
 
 type BookingStep = 'search' | 'results' | 'details' | 'passengers' | 'payment';
 
@@ -34,16 +35,10 @@ const HotelBookingFlow: React.FC = () => {
       const result = await ApiService.searchHotels(params);
 
       // DR-573: backend returns SimplifiedHotelOfferDTO, map fields accordingly
-      const fallbackImages = [
-        { uri: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80', category: 'EXTERIOR' },
-        { uri: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80', category: 'ROOM' },
-        { uri: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80', category: 'LOBBY' }
-      ];
-
-      const hotels: HotelOffer[] = (result.data || []).map((offer: any) => {
+      const hotels: HotelOffer[] = (result.data || []).map((offer: any, index: number) => {
           const images = offer.images?.length > 0
             ? offer.images.map((uri: string) => ({ uri, category: 'EXTERIOR' }))
-            : fallbackImages;
+            : getHotelImages(offer.cityCode, index);
 
           const cancellationText = offer.cancellation?.freeCancellation
             ? `Free cancellation${offer.cancellation.deadline ? ` until ${offer.cancellation.deadline}` : ' available'}`
