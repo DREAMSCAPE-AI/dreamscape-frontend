@@ -19,6 +19,8 @@ import {
 } from './services';
 import ImageResizer from './services/ImageResizer';
 import ParisEnvironment from './components/ParisEnvironment';
+import VRDestinationEnvironment from './components/VRDestinationEnvironment';
+import { getVREnvironment } from './data/environments';
 
 // === COMPOSANTS DE DIAGNOSTIC ===
 
@@ -464,9 +466,12 @@ function VREnvironment() {
   }, [texture, prepResults]);
 
   // APRÈS tous les hooks, on peut faire des returns conditionnels
-  // Si destination=paris, charger l'environnement Paris avec hotspots
-  if (destination === 'paris') {
-    return <ParisEnvironment />;
+  // Charger n'importe quel environnement VR enregistré (Paris, Barcelona, etc.)
+  if (destination) {
+    const env = getVREnvironment(destination);
+    if (env) {
+      return <VRDestinationEnvironment environment={env} />;
+    }
   }
 
   return (
