@@ -8,6 +8,21 @@ const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
 
 const PROFILE_API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_URL);
 
+export interface ChannelPreference {
+  inApp: boolean;
+  email: boolean;
+}
+
+export interface NotificationPreferences {
+  booking_confirmed: ChannelPreference;
+  booking_cancelled: ChannelPreference;
+  payment_succeeded: ChannelPreference;
+  payment_failed: ChannelPreference;
+  refund_processed: ChannelPreference;
+  promo_offer: ChannelPreference;
+  platform_update: ChannelPreference;
+}
+
 export interface UserProfileData {
   profile: {
     name: string;
@@ -129,6 +144,18 @@ class ProfileService {
       }
     });
     return authResponse.data;
+  }
+
+  // Get notification preferences (DR-447)
+  async getNotificationPreferences(): Promise<NotificationPreferences> {
+    const response = await this.api.get('/v1/users/notification-preferences');
+    return response.data.data;
+  }
+
+  // Update notification preferences (DR-447)
+  async updateNotificationPreferences(prefs: NotificationPreferences): Promise<NotificationPreferences> {
+    const response = await this.api.put('/v1/users/notification-preferences', prefs);
+    return response.data.data;
   }
 
   // Helper pour récupérer le token d'auth
