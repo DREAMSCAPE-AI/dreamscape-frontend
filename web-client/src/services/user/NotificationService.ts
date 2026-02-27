@@ -108,7 +108,9 @@ class NotificationService {
 
     if (!token) return;
 
-    this.socket = io(USER_API_BASE_URL, {
+    // Connect to the base host (without /api path) since Socket.io uses the default namespace
+    const socketUrl = USER_API_BASE_URL?.replace(/\/api\/?$/, '') || 'http://localhost:3002';
+    this.socket = io(socketUrl, {
       auth: { token },
       transports: ['websocket'],
       reconnectionAttempts: 5,

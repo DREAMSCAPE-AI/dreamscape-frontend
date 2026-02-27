@@ -78,19 +78,21 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
         .catch(() => setUnreadNotificationsCount(0));
 
       notificationService.connect();
-      notificationService.onNewNotification(() => {
+      const handleNewNotification = () => {
         notificationService.getUnreadCount()
           .then(setUnreadNotificationsCount)
           .catch(() => {});
-      });
-    } else {
-      setUnreadNotificationsCount(0);
-      notificationService.disconnect();
+      };
+      notificationService.onNewNotification(handleNewNotification);
+
+      return () => {
+        notificationService.offNewNotification(handleNewNotification);
+        notificationService.disconnect();
+      };
     }
 
-    return () => {
-      notificationService.disconnect();
-    };
+    setUnreadNotificationsCount(0);
+    notificationService.disconnect();
   }, [isLoggedIn]);
 
   useEffect(() => {
