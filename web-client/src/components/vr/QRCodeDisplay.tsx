@@ -1,13 +1,16 @@
 /**
  * QRCodeDisplay Component
  * DR-498 / DR-500: Frontend - Interface d'affichage QR code
+ * DR-574: PIN code display for VR headsets without QR scanner
  *
- * Displays a QR code for quick VR access from mobile or VR headsets
+ * Displays a QR code + PIN code for quick VR access from mobile or VR headsets
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import QRCode from 'qrcode';
-import { QrCode, Smartphone, X } from 'lucide-react';
+import { QrCode, Smartphone, X, Hash } from 'lucide-react';
+
+const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:4000';
 
 interface QRCodeDisplayProps {
   /** Destination ID for VR experience */
@@ -39,6 +42,41 @@ export default function QRCodeDisplay({
 
   // Calculate expiration time
   const [expirationTime] = useState(() => Date.now() + (expirationMinutes * 60 * 1000));
+
+  // DR-574: PIN code state
+  const [pinCode, setPinCode] = useState<string | null>(null);
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinError, setPinError] = useState<string | null>(null);
+
+  // DR-574: Generate PIN code via gateway API
+  const generatePin = useCallback(async () => {
+    setPinLoading(true);
+    setPinError(null);
+    try {
+      const response = await fetch(`${GATEWAY_URL}/api/v1/vr/sessions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destination: destinationId })
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setPinCode(data.data.pin);
+      } else {
+        setPinError('Failed to generate PIN');
+      }
+    } catch {
+      setPinError('Server unavailable');
+    } finally {
+      setPinLoading(false);
+    }
+  }, [destinationId]);
+
+  // Generate PIN when modal opens
+  useEffect(() => {
+    if (showModal && !pinCode && !pinLoading) {
+      generatePin();
+    }
+  }, [showModal, pinCode, pinLoading, generatePin]);
 
   // Build VR deep link URL
   const buildVRUrl = () => {
@@ -175,6 +213,40 @@ export default function QRCodeDisplay({
                 </div>
               )}
             </div>
+
+            {/* DR-574: PIN Code for VR Headsets */}
+            {!isExpired && (
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <Hash className="w-4 h-4 text-indigo-600" />
+                  <span className="text-sm font-semibold text-indigo-700">VR Headset? Use PIN Code</span>
+                </div>
+                {pinLoading ? (
+                  <div className="text-center text-indigo-500 text-sm py-2">Generating PIN...</div>
+                ) : pinError ? (
+                  <div className="text-center">
+                    <p className="text-red-500 text-sm mb-2">{pinError}</p>
+                    <button
+                      onClick={generatePin}
+                      className="text-sm text-indigo-600 underline hover:text-indigo-800"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : pinCode ? (
+                  <>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-3xl font-mono font-bold tracking-[0.3em] text-indigo-900">
+                        {pinCode.slice(0, 3)} {pinCode.slice(3)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-indigo-500 mt-2 text-center">
+                      Open your VR headset browser, go to the panorama URL, and enter this code
+                    </p>
+                  </>
+                ) : null}
+              </div>
+            )}
 
             {/* Timer */}
             <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 mb-6">
