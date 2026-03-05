@@ -31,16 +31,17 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onComplete, o
   return (
     <>
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/50 z-50" />
+      <div className="fixed inset-0 bg-black/50 z-50" aria-hidden="true" />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label="Configuration du profil">
         <div className="min-h-screen">
           {/* Cancel Button - Fixed in top right */}
           <button
             onClick={handleCancel}
+            onKeyDown={(e) => { if (e.key === 'Escape') handleCancel?.(); }}
             className="fixed top-4 right-4 z-[60] p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110"
-            title="Annuler l'onboarding"
+            aria-label="Annuler l'onboarding"
           >
             <X className="w-6 h-6 text-gray-600" />
           </button>
@@ -77,8 +78,8 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onComplete, o
       {/* Cancel Confirmation Dialog */}
       {showCancelConfirm && (
         <>
-          <div className="fixed inset-0 bg-black/70 z-[70]" onClick={cancelCancellation} />
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[80] bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
+          <div className="fixed inset-0 bg-black/70 z-[70]" onClick={cancelCancellation} aria-hidden="true" />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[80] bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4" role="dialog" aria-modal="true" aria-label="Confirmer l'annulation">
             <h3 className="text-xl font-bold mb-3">Annuler l'onboarding ?</h3>
             <p className="text-gray-600 mb-6">
               Vos préférences ne seront pas sauvegardées. Vous devrez refaire l'onboarding lors de votre prochaine visite du tableau de bord.

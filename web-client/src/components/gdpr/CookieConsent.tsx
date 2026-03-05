@@ -183,11 +183,18 @@ const CookieConsent: React.FC = () => {
                     </p>
                   </div>
                   <div className="ml-4 flex items-center">
-                    <div className="w-11 h-6 bg-green-500 rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-75">
+                    <button
+                      type="button"
+                      aria-label="Cookies fonctionnels (toujours actifs)"
+                      aria-pressed={true}
+                      aria-disabled="true"
+                      disabled
+                      className="w-11 h-6 bg-green-500 rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-75"
+                    >
                       <div className="w-4 h-4 bg-white rounded-full shadow flex items-center justify-center">
                         <Check className="w-3 h-3 text-green-500" />
                       </div>
-                    </div>
+                    </button>
                   </div>
                 </div>
 
@@ -201,7 +208,10 @@ const CookieConsent: React.FC = () => {
                   </div>
                   <div className="ml-4 flex items-center">
                     <button
+                      type="button"
                       onClick={() => setAnalytics(!analytics)}
+                      aria-label="Activer les cookies analytiques"
+                      aria-pressed={analytics}
                       className={`w-11 h-6 rounded-full transition-colors ${
                         analytics ? 'bg-orange-500' : 'bg-gray-300'
                       } flex items-center ${analytics ? 'justify-end' : 'justify-start'} px-1`}
@@ -221,7 +231,10 @@ const CookieConsent: React.FC = () => {
                   </div>
                   <div className="ml-4 flex items-center">
                     <button
+                      type="button"
                       onClick={() => setMarketing(!marketing)}
+                      aria-label="Activer les cookies marketing"
+                      aria-pressed={marketing}
                       className={`w-11 h-6 rounded-full transition-colors ${
                         marketing ? 'bg-orange-500' : 'bg-gray-300'
                       } flex items-center ${marketing ? 'justify-end' : 'justify-start'} px-1`}
@@ -241,7 +254,10 @@ const CookieConsent: React.FC = () => {
                   </div>
                   <div className="ml-4 flex items-center">
                     <button
+                      type="button"
                       onClick={() => setPreferences(!preferences)}
+                      aria-label="Activer les cookies de préférences"
+                      aria-pressed={preferences}
                       className={`w-11 h-6 rounded-full transition-colors ${
                         preferences ? 'bg-orange-500' : 'bg-gray-300'
                       } flex items-center ${preferences ? 'justify-end' : 'justify-start'} px-1`}

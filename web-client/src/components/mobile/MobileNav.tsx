@@ -167,6 +167,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
             min-h-[44px]
           "
           aria-expanded={activeSection === 'discover'}
+          aria-controls="discover-submenu"
         >
           <div className="flex items-center gap-3">
             <Compass className="w-5 h-5" />
@@ -181,7 +182,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
 
         {/* Discover Submenu */}
         {activeSection === 'discover' && (
-          <div className="bg-gray-50 py-1">
+          <div id="discover-submenu" className="bg-gray-50 py-1">
             {discoverItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -216,6 +217,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
             min-h-[44px]
           "
           aria-expanded={activeSection === 'tools'}
+          aria-controls="tools-submenu"
         >
           <div className="flex items-center gap-3">
             <Wrench className="w-5 h-5" />
@@ -230,7 +232,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
 
         {/* Tools Submenu */}
         {activeSection === 'tools' && (
-          <div className="bg-gray-50 py-1">
+          <div id="tools-submenu" className="bg-gray-50 py-1">
             {toolsMenuItems.map((tool) => {
               const Icon = tool.icon;
               return (

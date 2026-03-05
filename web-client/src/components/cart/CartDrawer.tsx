@@ -103,12 +103,17 @@ export const CartDrawer = () => {
     <>
       {/* Backdrop */}
       <div
+        aria-hidden="true"
         className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
         onClick={closeDrawer}
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-md md:max-w-lg bg-white shadow-2xl z-50 transform transition-transform duration-300 flex flex-col">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Panier d'achats"
+        className="fixed right-0 top-0 h-full w-full max-w-md md:max-w-lg bg-white shadow-2xl z-50 transform transition-transform duration-300 flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-3 md:p-4 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-pink-50">
           <div className="flex items-center gap-2">

@@ -62,6 +62,44 @@
   },
   "notifications": {
     "title": "Préférences de Notification",
+    "channels": {
+      "inApp": "In-App",
+      "email": "Email"
+    },
+    "types": {
+      "booking_confirmed": {
+        "label": "Réservation confirmée",
+        "description": "Lorsqu'une réservation est confirmée avec succès"
+      },
+      "booking_cancelled": {
+        "label": "Réservation annulée",
+        "description": "Lorsqu'une réservation est annulée"
+      },
+      "payment_succeeded": {
+        "label": "Paiement réussi",
+        "description": "Lorsqu'un paiement est traité avec succès"
+      },
+      "payment_failed": {
+        "label": "Paiement échoué",
+        "description": "Lorsqu'une tentative de paiement échoue"
+      },
+      "refund_processed": {
+        "label": "Remboursement traité",
+        "description": "Lorsqu'un remboursement a été émis"
+      },
+      "promo_offer": {
+        "label": "Offres promotionnelles",
+        "description": "Offres spéciales et promotions"
+      },
+      "platform_update": {
+        "label": "Mises à jour de la plateforme",
+        "description": "Nouvelles fonctionnalités et annonces"
+      },
+      "account_security": {
+        "label": "Sécurité du compte",
+        "description": "Alertes de connexion et notifications de sécurité (toujours activé)"
+      }
+    },
     "dealAlerts": {
       "label": "Alertes Promotions",
       "description": "Recevez des notifications sur les offres spéciales et promotions"

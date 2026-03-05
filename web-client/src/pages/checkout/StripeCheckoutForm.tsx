@@ -75,8 +75,8 @@ const StripeCheckoutForm = ({
 
         // Confirm the booking directly (bypass Kafka dependency)
         try {
-          const VOYAGE_API_URL = import.meta.env.VITE_VOYAGE_API_URL;
-          const confirmResponse = await fetch(`${VOYAGE_API_URL}/api/bookings/${bookingReference}/confirm`, {
+          const VOYAGE_API_URL = import.meta.env.VITE_VOYAGE_SERVICE_URL || 'http://localhost:3003/api';
+          const confirmResponse = await fetch(`${VOYAGE_API_URL}/v1/bookings/${bookingReference}/confirm`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

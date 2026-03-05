@@ -45,7 +45,7 @@ const Footer = () => {
                 { key: 'hiddenGems', label: t('footer.hiddenGems') }
               ].map((item) => (
                 <li key={item.key}>
-                  <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors">
+                  <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">
                     {item.label}
                   </a>
                 </li>
@@ -64,7 +64,7 @@ const Footer = () => {
                 { key: 'blog', label: t('footer.blog') }
               ].map((item) => (
                 <li key={item.key}>
-                  <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors">
+                  <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">
                     {item.label}
                   </a>
                 </li>
@@ -97,9 +97,9 @@ const Footer = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-wrap gap-6 text-sm text-gray-600">
-              <a href="#" className="hover:text-orange-500 transition-colors">{t('footer.privacyPolicy')}</a>
-              <a href="#" className="hover:text-orange-500 transition-colors">{t('footer.termsOfService')}</a>
-              <a href="#" className="hover:text-orange-500 transition-colors">{t('footer.cookieSettings')}</a>
+              <a href="#" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.privacyPolicy')}</a>
+              <a href="#" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.termsOfService')}</a>
+              <a href="#" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.cookieSettings')}</a>
               <span>{t('footer.copyright')}</span>
             </div>
             <LanguageSelector variant="full" />

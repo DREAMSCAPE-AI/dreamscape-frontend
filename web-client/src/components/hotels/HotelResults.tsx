@@ -281,7 +281,7 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                   entityId={hotel.id}
                   entityData={{
                     name: hotel.name,
-                    location: hotel.chainCode || 'City Location',
+                    location: hotel.address?.city || hotel.cityCode || hotel.chainCode || 'Unknown',
                     rating: parseInt(hotel.rating),
                     pricePerNight: parseFloat(hotel.price?.total || '0'),
                     currency: hotel.price?.currency || 'USD',
@@ -322,7 +322,7 @@ const HotelResults: React.FC<HotelResultsProps> = React.memo(({ hotels = [], onS
                       </div>
                       <div className="flex items-center gap-1">
                         <Building2 className="w-4 h-4" />
-                        <span>City Location</span>
+                        <span>{hotel.address?.city || hotel.cityCode || 'Unknown location'}</span>
                       </div>
                     </div>
 

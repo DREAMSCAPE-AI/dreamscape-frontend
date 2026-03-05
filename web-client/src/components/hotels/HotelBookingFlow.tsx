@@ -7,6 +7,7 @@ import ApiService from '@/services/voyage/VoyageService';
 import type { HotelOffer, HotelSearchParams } from '@/services/voyage/types';
 import { useCartStore } from '@/store/cartStore';
 import { useAuth } from '@/services/auth/AuthService';
+import { getHotelImages } from '@/utils/hotelImages';
 
 type BookingStep = 'search' | 'results' | 'details' | 'passengers' | 'payment';
 
@@ -33,46 +34,46 @@ const HotelBookingFlow: React.FC = () => {
     try {
       const result = await ApiService.searchHotels(params);
 
-      // Transform Amadeus response to our HotelOffer format
-      const hotels: HotelOffer[] = (result.data || []).map((offer: any) => {
-          const hotelId = offer.hotel?.hotelId || offer.id || Math.random().toString();
+      // DR-573: backend returns SimplifiedHotelOfferDTO, map fields accordingly
+      const hotels: HotelOffer[] = (result.data || []).map((offer: any, index: number) => {
+          const images = offer.images?.length > 0
+            ? offer.images.map((uri: string) => ({ uri, category: 'EXTERIOR' }))
+            : getHotelImages(offer.cityCode, index);
 
-          // Use media from the search response directly
-          const originalMedia = offer.hotel?.media || offer.media || [];
+          const cancellationText = offer.cancellation?.freeCancellation
+            ? `Free cancellation${offer.cancellation.deadline ? ` until ${offer.cancellation.deadline}` : ' available'}`
+            : offer.cancellation?.penalty
+              ? `Cancellation fee: ${offer.cancellation.penalty} ${offer.price?.currency || ''}`
+              : 'Non-refundable';
 
-          // Fallback images if no media available
-          const fallbackImages = [
-            { uri: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80', category: 'EXTERIOR' },
-            { uri: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80', category: 'ROOM' },
-            { uri: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80', category: 'LOBBY' }
-          ];
+          const totalStr = offer.price?.amount?.toString() || '0';
+          const baseStr = offer.price?.base?.toString() || totalStr;
+          const taxesStr = offer.price?.taxes?.toString() || '0';
 
           return {
-            id: hotelId,
-            hotelId: hotelId,
-            chainCode: offer.hotel?.chainCode || 'Independent',
-            name: offer.hotel?.name || 'Hotel',
-            rating: offer.hotel?.rating || '3',
-            description: offer.hotel?.description || { text: 'A comfortable hotel stay with modern amenities and excellent service.', lang: 'en' },
-            amenities: offer.hotel?.amenities || ['WIFI', 'RESTAURANT'],
-            media: originalMedia.length > 0 ? originalMedia : fallbackImages,
+            id: offer.id,
+            hotelId: offer.hotelId,
+            chainCode: offer.chainCode || 'Independent',
+            name: offer.name || 'Hotel',
+            cityCode: offer.cityCode || null,
+            location: offer.location || { latitude: null, longitude: null },
+            address: offer.address || { street: null, city: null, postalCode: null, country: null },
+            rating: offer.rating?.toString() || '3',
+            description: { text: offer.room?.description || 'A comfortable hotel stay with modern amenities and excellent service.', lang: 'en' },
+            amenities: offer.amenities || ['WIFI', 'RESTAURANT'],
+            media: images,
             price: {
-              currency: offer.offers?.[0]?.price?.currency || 'USD',
-              total: offer.offers?.[0]?.price?.total || '150',
-              base: offer.offers?.[0]?.price?.base || '130',
-              fees: offer.offers?.[0]?.price?.fees || [],
-              grandTotal: offer.offers?.[0]?.price?.grandTotal || offer.offers?.[0]?.price?.total || '150'
+              currency: offer.price?.currency || 'USD',
+              total: totalStr,
+              base: baseStr,
+              fees: parseFloat(taxesStr) > 0 ? [{ amount: taxesStr, type: 'TAXES' }] : [],
+              grandTotal: totalStr
             },
-            policies: offer.offers?.[0]?.policies || [
-              {
-                type: 'CANCELLATION',
-                description: { text: 'Free cancellation until 24 hours before check-in', lang: 'en' }
-              }
-            ],
-            room: offer.offers?.[0]?.room || {
-              type: 'STANDARD',
-              typeEstimated: { category: 'STANDARD_ROOM', beds: 1, bedType: 'DOUBLE' },
-              description: { text: 'Comfortable room with modern amenities', lang: 'en' }
+            policies: [{ type: 'CANCELLATION', description: { text: cancellationText, lang: 'en' } }],
+            room: {
+              type: offer.room?.type || 'STANDARD',
+              typeEstimated: { category: offer.room?.type || 'STANDARD_ROOM', beds: offer.room?.beds || 1, bedType: offer.room?.bedType || 'DOUBLE' },
+              description: { text: offer.room?.description || 'Comfortable room with modern amenities', lang: 'en' }
             }
           };
         });
@@ -82,78 +83,6 @@ const HotelBookingFlow: React.FC = () => {
     } catch (error) {
       console.error('Hotel search error:', error);
       setError(error instanceof Error ? error.message : 'Failed to search hotels. Please try again.');
-      
-      // Provide enhanced fallback hotels for testing
-      const fallbackHotels: HotelOffer[] = [
-        {
-          id: 'fallback-1',
-          hotelId: 'HOTEL001',
-          chainCode: 'Marriott',
-          name: 'Grand City Hotel',
-          rating: '4',
-          description: { text: 'Luxury hotel in the heart of the city with modern amenities and excellent service.', lang: 'en' },
-          amenities: ['WIFI', 'POOL', 'FITNESS_CENTER', 'RESTAURANT', 'PARKING'],
-          media: [
-            { uri: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80', category: 'EXTERIOR' },
-            { uri: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80', category: 'ROOM' },
-            { uri: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80', category: 'LOBBY' },
-            { uri: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80', category: 'RESTAURANT' }
-          ],
-          price: {
-            currency: 'USD',
-            total: '299',
-            base: '250',
-            fees: [{ amount: '49', type: 'TAXES' }],
-            grandTotal: '299'
-          },
-          policies: [
-            {
-              type: 'CANCELLATION',
-              description: { text: 'Free cancellation until 24 hours before check-in', lang: 'en' }
-            }
-          ],
-          room: {
-            type: 'DELUXE',
-            typeEstimated: { category: 'DELUXE_ROOM', beds: 1, bedType: 'KING' },
-            description: { text: 'Spacious deluxe room with city view', lang: 'en' }
-          }
-        },
-        {
-          id: 'fallback-2',
-          hotelId: 'HOTEL002',
-          chainCode: 'Hilton',
-          name: 'Business Center Hotel',
-          rating: '4',
-          description: { text: 'Perfect for business travelers with meeting facilities and high-speed internet.', lang: 'en' },
-          amenities: ['WIFI', 'BUSINESS_CENTER', 'FITNESS_CENTER', 'RESTAURANT'],
-          media: [
-            { uri: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80', category: 'EXTERIOR' },
-            { uri: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80', category: 'ROOM' },
-            { uri: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80', category: 'BUSINESS_CENTER' }
-          ],
-          price: {
-            currency: 'USD',
-            total: '189',
-            base: '159',
-            fees: [{ amount: '30', type: 'TAXES' }],
-            grandTotal: '189'
-          },
-          policies: [
-            {
-              type: 'CANCELLATION',
-              description: { text: 'Free cancellation until 48 hours before check-in', lang: 'en' }
-            }
-          ],
-          room: {
-            type: 'STANDARD',
-            typeEstimated: { category: 'STANDARD_ROOM', beds: 2, bedType: 'DOUBLE' },
-            description: { text: 'Comfortable business room with work desk', lang: 'en' }
-          }
-        }
-      ];
-      
-      setSearchResults(fallbackHotels);
-      setCurrentStep('results');
     } finally {
       setLoading(false);
     }

@@ -9,9 +9,10 @@ const DocsButton: React.FC<DocsButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
+      aria-label="Ouvrir la documentation"
       className="fixed bottom-6 right-6 p-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-600 hover:opacity-90 transition-opacity shadow-lg"
     >
-      <HelpCircle className="w-6 h-6" />
+      <HelpCircle className="w-6 h-6" aria-hidden="true" />
     </button>
   );
 };

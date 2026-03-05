@@ -7,7 +7,10 @@ import { VRButton, ARButton, XR, Controllers, Hands } from '@react-three/xr';
 import { OrbitControls, Text, Box } from '@react-three/drei';
 import * as THREE from 'three';
 import { useVRDeepLink } from './hooks/useVRDeepLink';
+import useWebXRDetection from './hooks/useWebXRDetection';
 import DeepLinkHandler from './components/DeepLinkHandler';
+import VRUnavailableScreen from './components/VRUnavailableScreen';
+import PanoramaGallery from './components/PanoramaGallery';
 import './App.css';
 
 // Services refactorisés (DR-250, DR-251, DR-252, DR-253, DR-410, DR-411)
@@ -19,6 +22,9 @@ import {
 } from './services';
 import ImageResizer from './services/ImageResizer';
 import ParisEnvironment from './components/ParisEnvironment';
+import VRDestinationEnvironment from './components/VRDestinationEnvironment';
+import VRPinEntry from './components/VRPinEntry';
+import { getVREnvironment } from './data/environments';
 
 // === COMPOSANTS DE DIAGNOSTIC ===
 
@@ -464,9 +470,12 @@ function VREnvironment() {
   }, [texture, prepResults]);
 
   // APRÈS tous les hooks, on peut faire des returns conditionnels
-  // Si destination=paris, charger l'environnement Paris avec hotspots
-  if (destination === 'paris') {
-    return <ParisEnvironment />;
+  // Charger n'importe quel environnement VR enregistré (Paris, Barcelona, etc.)
+  if (destination) {
+    const env = getVREnvironment(destination);
+    if (env) {
+      return <VRDestinationEnvironment environment={env} />;
+    }
   }
 
   return (
@@ -572,9 +581,29 @@ function App() {
   const showControls = isDebugMode || !destination; // Masquer les contrôles en mode destination (sauf debug)
 
   const [diagnosticVisible, setDiagnosticVisible] = useState(isDebugMode);
+  const initialMode = searchParams.get('mode') || 'auto'; // ?mode=gallery|3d|auto
+  const [viewMode, setViewMode] = useState(initialMode);
 
   // DR-498 / DR-501 / DR-502: Deep Linking for QR Code Access
   const deepLinkState = useVRDeepLink();
+
+  // DR-575: WebXR detection for fallback
+  const { isXRSupported, isChecking, xrReason } = useWebXRDetection();
+
+  // DR-574: PIN entry state - show PIN screen when no destination and no deep link
+  const showPinEntry = !destination && !deepLinkState.isDeepLink;
+
+  // DR-574: Handle successful PIN validation
+  const handlePinSuccess = useCallback(({ destination: dest, autoVR }) => {
+    const params = new URLSearchParams({ destination: dest });
+    if (autoVR) params.set('autoVR', 'true');
+    window.location.search = params.toString();
+  }, []);
+
+  // DR-575: View mode navigation callbacks
+  const handleSwitchToGallery = useCallback(() => setViewMode('gallery'), []);
+  const handleSwitchTo3D = useCallback(() => setViewMode('3d'), []);
+  const handleSwitchToVR = useCallback(() => setViewMode('auto'), []);
 
   const toggleDiagnostic = useCallback(() => {
     setDiagnosticVisible(prev => !prev);
@@ -592,6 +621,21 @@ function App() {
 
     return () => clearInterval(pruneInterval);
   }, []);
+
+  // DR-574: Show PIN entry screen for VR headsets (no destination in URL)
+  if (showPinEntry) {
+    return <VRPinEntry onSuccess={handlePinSuccess} />;
+  }
+
+  // DR-575: Gallery mode
+  if (viewMode === 'gallery') {
+    return <PanoramaGallery onSwitchToVR={handleSwitchToVR} onSwitchTo3D={handleSwitchTo3D} destination={destination} />;
+  }
+
+  // DR-575: VR unavailable screen (only in auto mode, after detection completes)
+  if (viewMode === 'auto' && !isXRSupported && !isChecking) {
+    return <VRUnavailableScreen xrReason={xrReason} onSwitchToGallery={handleSwitchToGallery} onSwitchTo3D={handleSwitchTo3D} />;
+  }
 
   return (
     <div className="App">
@@ -636,23 +680,42 @@ function App() {
           ⚠️ Placez votre image panoramique 360° nommée 'panorama-test.jpg' dans /public
         </p>
 
-        <VRButton
-          style={{
-            background: 'linear-gradient(45deg, #F97316, #DB2777)',
-            color: 'white',
-            border: 'none',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            fontSize: '16px',
-            cursor: 'pointer',
-            margin: '10px',
-            boxShadow: '0 4px 15px rgba(249, 115, 22, 0.3)'
-          }}
-        />
+        {isXRSupported && (
+          <VRButton
+            style={{
+              background: 'linear-gradient(45deg, #F97316, #DB2777)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              margin: '10px',
+              boxShadow: '0 4px 15px rgba(249, 115, 22, 0.3)'
+            }}
+          />
+        )}
 
-        <ARButton
+        {isXRSupported && (
+          <ARButton
+            style={{
+              background: 'linear-gradient(45deg, #3B82F6, #22C55E)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              margin: '10px',
+              boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+            }}
+          />
+        )}
+
+        <button
+          onClick={handleSwitchToGallery}
           style={{
-            background: 'linear-gradient(45deg, #3B82F6, #22C55E)',
+            background: 'linear-gradient(45deg, #8B5CF6, #6366F1)',
             color: 'white',
             border: 'none',
             padding: '12px 24px',
@@ -660,9 +723,11 @@ function App() {
             fontSize: '16px',
             cursor: 'pointer',
             margin: '10px',
-            boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+            boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)'
           }}
-        />
+        >
+          🖼️ Mode Galerie 2D
+        </button>
       </div>
       )}
 

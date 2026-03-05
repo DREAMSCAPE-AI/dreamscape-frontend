@@ -196,7 +196,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
   const renderError = (field: keyof ValidationErrors) => {
     if (showErrors && validationErrors[field]) {
       return (
-        <div className="mt-1 text-sm text-red-500 flex items-center gap-1">
+        <div role="alert" aria-live="assertive" className="mt-1 text-sm text-red-500 flex items-center gap-1">
           <AlertCircle className="w-4 h-4" />
           <span>{validationErrors[field]}</span>
         </div>
@@ -540,7 +540,7 @@ const FlightSearch: React.FC<FlightSearchProps> = ({
           )}
         </button>
         {error && (
-          <div className="mt-4 text-sm text-red-500 flex items-center gap-1">
+          <div role="alert" aria-live="assertive" className="mt-4 text-sm text-red-500 flex items-center gap-1">
             <AlertCircle className="w-4 h-4" />
             <span>{error}</span>
           </div>
