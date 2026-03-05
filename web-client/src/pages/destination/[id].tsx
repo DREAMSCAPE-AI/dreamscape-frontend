@@ -1,9 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock, Glasses } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock, Glasses, Image } from 'lucide-react';
 import voyageService from '@/services/voyage/VoyageService';
 import imageService from '@/services/utility/imageService';
 import QRCodeDisplay from '../../components/vr/QRCodeDisplay';
+
+const PANORAMA_PORT = import.meta.env.VITE_PANORAMA_PORT || '3006';
+
+// Mapping destination IDs / airport codes → panorama environment IDs
+const GALLERY_ENVIRONMENT_MAP: Record<string, string> = {
+  'paris': 'paris',
+  'PAR': 'paris',
+  'CDG': 'paris',
+  'barcelona': 'barcelona',
+  'BCN': 'barcelona',
+};
 
 interface Destination {
   id: string;
@@ -317,6 +328,17 @@ export default function DestinationPage() {
               expirationMinutes={10}
             />
           </div>
+          {GALLERY_ENVIRONMENT_MAP[id?.toUpperCase() || ''] || GALLERY_ENVIRONMENT_MAP[id || ''] ? (
+            <a
+              href={`${window.location.protocol}//${window.location.hostname}:${PANORAMA_PORT}?destination=${GALLERY_ENVIRONMENT_MAP[id?.toUpperCase() || ''] || GALLERY_ENVIRONMENT_MAP[id || '']}&mode=gallery`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm hover:bg-opacity-30 transition-all flex items-center gap-2 text-white text-sm"
+            >
+              <Image className="w-5 h-5" />
+              <span>Explorer en 2D</span>
+            </a>
+          ) : null}
         </div>
       </div>
 
