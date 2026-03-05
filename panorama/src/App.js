@@ -19,6 +19,9 @@ import {
 } from './services';
 import ImageResizer from './services/ImageResizer';
 import ParisEnvironment from './components/ParisEnvironment';
+import VRDestinationEnvironment from './components/VRDestinationEnvironment';
+import VRPinEntry from './components/VRPinEntry';
+import { getVREnvironment } from './data/environments';
 
 // === COMPOSANTS DE DIAGNOSTIC ===
 
@@ -464,9 +467,12 @@ function VREnvironment() {
   }, [texture, prepResults]);
 
   // APRÈS tous les hooks, on peut faire des returns conditionnels
-  // Si destination=paris, charger l'environnement Paris avec hotspots
-  if (destination === 'paris') {
-    return <ParisEnvironment />;
+  // Charger n'importe quel environnement VR enregistré (Paris, Barcelona, etc.)
+  if (destination) {
+    const env = getVREnvironment(destination);
+    if (env) {
+      return <VRDestinationEnvironment environment={env} />;
+    }
   }
 
   return (
@@ -576,6 +582,16 @@ function App() {
   // DR-498 / DR-501 / DR-502: Deep Linking for QR Code Access
   const deepLinkState = useVRDeepLink();
 
+  // DR-574: PIN entry state - show PIN screen when no destination and no deep link
+  const showPinEntry = !destination && !deepLinkState.isDeepLink;
+
+  // DR-574: Handle successful PIN validation
+  const handlePinSuccess = useCallback(({ destination: dest, autoVR }) => {
+    const params = new URLSearchParams({ destination: dest });
+    if (autoVR) params.set('autoVR', 'true');
+    window.location.search = params.toString();
+  }, []);
+
   const toggleDiagnostic = useCallback(() => {
     setDiagnosticVisible(prev => !prev);
   }, []);
@@ -592,6 +608,11 @@ function App() {
 
     return () => clearInterval(pruneInterval);
   }, []);
+
+  // DR-574: Show PIN entry screen for VR headsets (no destination in URL)
+  if (showPinEntry) {
+    return <VRPinEntry onSuccess={handlePinSuccess} />;
+  }
 
   return (
     <div className="App">
