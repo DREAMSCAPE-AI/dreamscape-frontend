@@ -1,33 +1,28 @@
 /**
- * VRAccessButton Component
+ * VRPinAccess Component
  * DR-574: Accès VR par Code PIN
+ * DR-579: Production URL routing via VITE_PANORAMA_URL
  *
  * Generates a 6-digit PIN code for VR headset access.
- * Replaces the previous QR code approach (DR-498) since VR headsets
- * cannot scan QR codes natively.
  */
 
 import { useEffect, useState, useCallback } from 'react';
 import { Monitor, X, Hash, RefreshCw } from 'lucide-react';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:4000';
-const PANORAMA_PORT = import.meta.env.VITE_PANORAMA_PORT || '3006';
+const PANORAMA_BASE_URL = import.meta.env.VITE_PANORAMA_URL || '/panorama';
 
-interface QRCodeDisplayProps {
+interface VRPinAccessProps {
   /** Destination ID for VR experience */
   destinationId: string;
-  /** Optional custom VR URL */
-  vrUrl?: string;
-  /** Session token for authentication (unused, kept for backward compat) */
-  sessionToken?: string;
   /** Expiration time in minutes (default: 10) */
   expirationMinutes?: number;
 }
 
-export default function QRCodeDisplay({
+export default function VRPinAccess({
   destinationId,
   expirationMinutes = 10
-}: QRCodeDisplayProps) {
+}: VRPinAccessProps) {
   const [showModal, setShowModal] = useState(false);
   const [pinCode, setPinCode] = useState<string | null>(null);
   const [pinLoading, setPinLoading] = useState(false);
@@ -37,7 +32,11 @@ export default function QRCodeDisplay({
   const [expirationTime, setExpirationTime] = useState<number | null>(null);
 
   // Build the panorama URL to display to the user
-  const panoramaUrl = `${window.location.hostname}:${PANORAMA_PORT}`;
+  // In dev: PANORAMA_BASE_URL is absolute (http://localhost:3008) → strip protocol
+  // In prod: PANORAMA_BASE_URL is relative (/panorama) → prepend host
+  const panoramaUrl = PANORAMA_BASE_URL.startsWith('http')
+    ? PANORAMA_BASE_URL.replace(/^https?:\/\//, '')
+    : `${window.location.host}${PANORAMA_BASE_URL}`;
 
   // Generate PIN code via gateway API
   const generatePin = useCallback(async () => {
