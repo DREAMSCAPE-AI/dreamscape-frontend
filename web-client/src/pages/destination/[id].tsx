@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Calendar, Heart, Share2, Clock, Glasses, Image } from 'lucide-react';
 import voyageService from '@/services/voyage/VoyageService';
 import imageService from '@/services/utility/imageService';
-import QRCodeDisplay from '../../components/vr/QRCodeDisplay';
+import VRPinAccess from '../../components/vr/VRPinAccess';
 
-const PANORAMA_PORT = import.meta.env.VITE_PANORAMA_PORT || '3006';
+const PANORAMA_BASE_URL = import.meta.env.VITE_PANORAMA_URL || '/panorama';
 
 // Mapping destination IDs / airport codes → panorama environment IDs
 const GALLERY_ENVIRONMENT_MAP: Record<string, string> = {
@@ -323,14 +323,14 @@ export default function DestinationPage() {
             <Share2 className="w-5 h-5 text-white" />
           </button>
           <div className="ml-2">
-            <QRCodeDisplay
+            <VRPinAccess
               destinationId={id || 'unknown'}
               expirationMinutes={10}
             />
           </div>
           {GALLERY_ENVIRONMENT_MAP[id?.toUpperCase() || ''] || GALLERY_ENVIRONMENT_MAP[id || ''] ? (
             <a
-              href={`${window.location.protocol}//${window.location.hostname}:${PANORAMA_PORT}?destination=${GALLERY_ENVIRONMENT_MAP[id?.toUpperCase() || ''] || GALLERY_ENVIRONMENT_MAP[id || '']}&mode=gallery`}
+              href={`${PANORAMA_BASE_URL}?destination=${GALLERY_ENVIRONMENT_MAP[id?.toUpperCase() || ''] || GALLERY_ENVIRONMENT_MAP[id || '']}&mode=gallery`}
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm hover:bg-opacity-30 transition-all flex items-center gap-2 text-white text-sm"
