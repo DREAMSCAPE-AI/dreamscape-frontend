@@ -21,7 +21,8 @@ import {
   Upload
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { profileService, UserProfileData } from '@/services/user';
+import { profileService } from '@/services/user';
+import type { UserProfileData, NotificationPreferences } from '@/services/user/ProfileService';
 import { languageNameToCode, languageCodeToName } from '@/i18n/languageMapping';
 import TravelPreferencesSection from './TravelPreferencesSection';
 import ConsentManager from '@/components/gdpr/ConsentManager';
@@ -41,6 +42,15 @@ const SettingsPage = () => {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [notifPrefs, setNotifPrefs] = useState<NotificationPreferences>({
+    booking_confirmed: { inApp: true, email: true },
+    booking_cancelled: { inApp: true, email: true },
+    payment_succeeded: { inApp: true, email: true },
+    payment_failed: { inApp: true, email: true },
+    refund_processed: { inApp: true, email: true },
+    promo_offer: { inApp: true, email: false },
+    platform_update: { inApp: true, email: false },
+  });
   const [settings, setSettings] = useState<UserProfileData>({
     profile: {
       name: '',
@@ -69,8 +79,12 @@ const SettingsPage = () => {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const profileData = await profileService.getProfile();
+        const [profileData, prefs] = await Promise.all([
+          profileService.getProfile(),
+          profileService.getNotificationPreferences().catch(() => null),
+        ]);
         setSettings(profileData);
+        if (prefs) setNotifPrefs(prefs);
       } catch (error) {
         console.error('Failed to load profile:', error);
       } finally {
@@ -159,7 +173,12 @@ const SettingsPage = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const updatedData = await profileService.updateProfile(settings);
+      const [updatedData] = await Promise.all([
+        profileService.updateProfile(settings),
+        profileService.updateNotificationPreferences(notifPrefs).catch((err) => {
+          console.error('Failed to save notification preferences:', err);
+        }),
+      ]);
       // Update the local state with the response from the server
       if (updatedData.profile || updatedData.preferences || updatedData.notifications || updatedData.privacy) {
         setSettings({
@@ -169,14 +188,13 @@ const SettingsPage = () => {
           privacy: updatedData.privacy || settings.privacy
         });
       }
-      
+
       // Afficher le toast de succès
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
-      
+
     } catch (error) {
       console.error('Failed to save settings:', error);
-      // You could add an error toast/notification here
     } finally {
       setSaving(false);
     }
@@ -415,35 +433,64 @@ const SettingsPage = () => {
             </div>
           )}
 
-          {/* Notification Settings */}
+          {/* Notification Settings (DR-447) */}
           {activeSection === 'notifications' && (
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h2 className="text-lg font-semibold mb-6">{t('notifications.title')}</h2>
-              <div className="space-y-6">
-                {Object.entries(settings.notifications).map(([key, value]) => (
-                  <label key={key} className="flex items-center justify-between cursor-pointer">
+
+              {/* Channel headers */}
+              <div className="grid grid-cols-[1fr_64px_64px] gap-2 mb-4 items-center">
+                <div />
+                <div className="text-center text-xs font-semibold text-gray-500 uppercase">{t('notifications.channels.inApp')}</div>
+                <div className="text-center text-xs font-semibold text-gray-500 uppercase">{t('notifications.channels.email')}</div>
+              </div>
+
+              <div className="space-y-4">
+                {/* Configurable notification types */}
+                {(Object.keys(notifPrefs) as Array<keyof NotificationPreferences>).map((key) => (
+                  <div key={key} className="grid grid-cols-[1fr_64px_64px] gap-2 items-center py-2 border-b border-gray-100 last:border-0">
                     <div>
-                      <div className="font-medium">
-                        {t(`notifications.${key}.label`)}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {t(`notifications.${key}.description`)}
-                      </div>
+                      <div className="font-medium text-sm">{t(`notifications.types.${key}.label`)}</div>
+                      <div className="text-xs text-gray-500">{t(`notifications.types.${key}.description`)}</div>
                     </div>
-                    <input
-                      type="checkbox"
-                      checked={value}
-                      onChange={(e) => setSettings({
-                        ...settings,
-                        notifications: {
-                          ...settings.notifications,
-                          [key]: e.target.checked
-                        }
-                      })}
-                      className="w-6 h-6 text-orange-500 rounded focus:ring-orange-500"
-                    />
-                  </label>
+                    <div className="flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={notifPrefs[key].inApp}
+                        onChange={(e) => setNotifPrefs({
+                          ...notifPrefs,
+                          [key]: { ...notifPrefs[key], inApp: e.target.checked },
+                        })}
+                        className="w-5 h-5 text-orange-500 rounded focus:ring-orange-500"
+                      />
+                    </div>
+                    <div className="flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={notifPrefs[key].email}
+                        onChange={(e) => setNotifPrefs({
+                          ...notifPrefs,
+                          [key]: { ...notifPrefs[key], email: e.target.checked },
+                        })}
+                        className="w-5 h-5 text-orange-500 rounded focus:ring-orange-500"
+                      />
+                    </div>
+                  </div>
                 ))}
+
+                {/* Always-on: Account Security */}
+                <div className="grid grid-cols-[1fr_64px_64px] gap-2 items-center py-2 border-t border-gray-200 mt-2">
+                  <div>
+                    <div className="font-medium text-sm">{t('notifications.types.account_security.label')}</div>
+                    <div className="text-xs text-gray-500">{t('notifications.types.account_security.description')}</div>
+                  </div>
+                  <div className="flex justify-center">
+                    <input type="checkbox" checked disabled className="w-5 h-5 text-gray-400 rounded opacity-60 cursor-not-allowed" />
+                  </div>
+                  <div className="flex justify-center">
+                    <input type="checkbox" checked disabled className="w-5 h-5 text-gray-400 rounded opacity-60 cursor-not-allowed" />
+                  </div>
+                </div>
               </div>
             </div>
           )}

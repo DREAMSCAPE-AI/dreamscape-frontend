@@ -46,3 +46,6 @@ coverage/
 
 # Docker
 .dockerignore
+
+# Responsive tests
+responsive-tests/

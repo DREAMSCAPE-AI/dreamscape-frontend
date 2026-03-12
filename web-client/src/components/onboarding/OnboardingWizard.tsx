@@ -174,6 +174,8 @@ const OnboardingWizard: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
+              role="alert"
+              aria-live="assertive"
               className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4"
             >
               <div className="flex items-center gap-3">
@@ -326,7 +328,7 @@ const OnboardingWizard: React.FC = () => {
               {progress?.completedSteps?.length || 0} étapes complétées
             </p>
             {!canProceed && currentStep.required && (
-              <p className="text-sm text-red-600 mt-1">
+              <p role="alert" aria-live="assertive" className="text-sm text-red-600 mt-1">
                 Veuillez compléter les champs requis pour continuer
               </p>
             )}
