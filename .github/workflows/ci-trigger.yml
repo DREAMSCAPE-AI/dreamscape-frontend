@@ -126,7 +126,7 @@ jobs:
     needs: local-ci
     if: needs.local-ci.outputs.should_trigger == 'true'
     steps:
-      - name: Trigger Big Pods CD workflow
+      - name: Trigger Big Pods CD workflow and test suite
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.DISPATCH_TOKEN }}
@@ -147,13 +147,28 @@ jobs:
                 }
               });
 
+              // Trigger test suite in dreamscape-tests
+              await github.rest.repos.createDispatchEvent({
+                owner: 'DREAMSCAPE-AI',
+                repo: 'dreamscape-tests',
+                event_type: 'test-request',
+                client_payload: {
+                  repository: context.repo.repo,
+                  branch: context.ref.replace('refs/heads/', ''),
+                  sha: context.sha,
+                  component: '${{ needs.local-ci.outputs.changed_components }}'
+                }
+              });
+
+              console.log('✅ Test suite triggered in dreamscape-tests');
+
               await github.rest.repos.createCommitStatus({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 sha: context.sha,
                 state: 'success',
-                target_url: 'https://github.com/DREAMSCAPE-AI/dreamscape-infra/actions',
-                description: `Big Pods CD workflow dispatched (staging, version ${version})`,
+                target_url: 'https://github.com/DREAMSCAPE-AI/dreamscape-tests/actions',
+                description: `CD dispatched + tests triggered (version ${version})`,
                 context: 'ci/unified-pipeline'
               });
             } catch (error) {
