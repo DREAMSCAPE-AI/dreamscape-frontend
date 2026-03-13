@@ -258,11 +258,10 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
         {/* Left Column - Main Content */}
         <div className="lg:col-span-2 space-y-8">
           <QuickActions onSearch={quickSearch} userCategory={userCategory} />
-          <RecommendationsSection 
+          <RecommendationsSection
             recommendations={recommendations}
             recentSearches={recentSearches}
             onRefresh={refreshRecommendations}
-            userCategory={userCategory}
           />
           {userCategory === 'LEISURE' && (
             <div className="bg-white rounded-xl shadow-sm p-6">

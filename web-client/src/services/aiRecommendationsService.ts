@@ -11,7 +11,7 @@ const AI_SERVICE_URL = resolveBaseUrl(import.meta.env.VITE_AI_SERVICE_URL);
 // Create axios instance
 const aiApi = axios.create({
   baseURL: AI_SERVICE_URL,
-  timeout: 30000, // AI operations may take longer
+  timeout: 60000, // AI operations may take longer (cold start can take ~30-50s)
 });
 
 // Add auth token to requests
@@ -41,7 +41,22 @@ export interface RecommendationResponse {
   };
 }
 
-export interface FlightRecommendationParams {
+// Shared user-profile enrichment sent to every AI endpoint
+interface UserProfileContext {
+  budgetMin?: number;
+  budgetMax?: number;
+  currency?: string;
+  travelTypes?: string[];
+  accommodationTypes?: string[];
+  activityTypes?: string[];
+  preferredDestinations?: string[];
+  comfortLevel?: string;
+  travelStyle?: string;
+  travelGroupType?: string;
+  activityLevel?: string;
+}
+
+export interface FlightRecommendationParams extends UserProfileContext {
   userId: string;
   origin?: string;
   destination?: string;
@@ -53,7 +68,7 @@ export interface FlightRecommendationParams {
   limit?: number;
 }
 
-export interface ActivityRecommendationParams {
+export interface ActivityRecommendationParams extends UserProfileContext {
   userId: string;
   destination?: string;
   startDate?: string;
@@ -62,7 +77,7 @@ export interface ActivityRecommendationParams {
   limit?: number;
 }
 
-export interface AccommodationRecommendationParams {
+export interface AccommodationRecommendationParams extends UserProfileContext {
   userId: string;
   destination?: string;
   checkInDate?: string;
@@ -139,6 +154,7 @@ export async function getAllRecommendations(
   userId: string,
   categories: RecommendationCategory[],
   searchParams: {
+    // Search context
     origin?: string;
     destination?: string;
     departureDate?: string;
@@ -151,6 +167,18 @@ export async function getAllRecommendations(
     infants?: number;
     rooms?: number;
     travelClass?: string;
+    // User profile enrichment
+    budgetMin?: number;
+    budgetMax?: number;
+    currency?: string;
+    travelTypes?: string[];
+    accommodationTypes?: string[];
+    activityTypes?: string[];
+    preferredDestinations?: string[];
+    comfortLevel?: string;
+    travelStyle?: string;
+    travelGroupType?: string;
+    activityLevel?: string;
   }
 ): Promise<{
   flights?: RecommendationResponse;
@@ -159,6 +187,21 @@ export async function getAllRecommendations(
 }> {
   const promises: Promise<any>[] = [];
   const results: any = {};
+
+  // Shared user profile context forwarded to every AI endpoint
+  const profileCtx = {
+    budgetMin:            searchParams.budgetMin,
+    budgetMax:            searchParams.budgetMax,
+    currency:             searchParams.currency,
+    travelTypes:          searchParams.travelTypes,
+    accommodationTypes:   searchParams.accommodationTypes,
+    activityTypes:        searchParams.activityTypes,
+    preferredDestinations: searchParams.preferredDestinations,
+    comfortLevel:         searchParams.comfortLevel,
+    travelStyle:          searchParams.travelStyle,
+    travelGroupType:      searchParams.travelGroupType,
+    activityLevel:        searchParams.activityLevel,
+  };
 
   // Build promises for each category
   if (categories.includes('flights')) {
@@ -172,7 +215,8 @@ export async function getAllRecommendations(
         children: searchParams.children,
         infants: searchParams.infants,
         travelClass: searchParams.travelClass,
-        limit: 10
+        limit: 10,
+        ...profileCtx,
       }).then(data => ({ category: 'flights', data }))
     );
   }
@@ -185,7 +229,8 @@ export async function getAllRecommendations(
         startDate: searchParams.startDate || searchParams.departureDate,
         endDate: searchParams.endDate || searchParams.departureDate,
         adults: searchParams.adults,
-        limit: 10
+        limit: 10,
+        ...profileCtx,
       }).then(data => ({ category: 'activities', data }))
     );
   }
@@ -200,7 +245,8 @@ export async function getAllRecommendations(
         adults: searchParams.adults,
         children: searchParams.children,
         rooms: searchParams.rooms || 1,
-        limit: 10
+        limit: 10,
+        ...profileCtx,
       }).then(data => ({ category: 'accommodations', data }))
     );
   }

@@ -91,13 +91,13 @@
         "flights": "Vols",
         "accommodations": "Hébergement",
         "activities": "Activités",
-        "global": "Global"
+        "global": "Itinéraire complet"
       },
       "selectCategory": "Sélectionner",
       "deselectCategory": "Désélectionner",
       "generateButton": "Générer mes recommandations",
       "generating": "Génération en cours...",
-      "selectHint": "Sélectionnez au moins une catégorie pour continuer"
+      "selectHint": "Sélectionnez un type de recommandation pour continuer"
     }
   },
   "savedItineraries": {
