@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { History, Calendar, Plane, Hotel, Car, MapPin, Star, TrendingUp, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Booking } from '@/services/dashboard';
@@ -11,6 +11,14 @@ interface TripHistoryProps {
 
 const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
   const { t, i18n } = useTranslation('dashboard');
+  const [ratings, setRatings] = useState<Record<string, number>>({});
+
+  const handleRate = (bookingId: string) => {
+    setRatings(prev => ({
+      ...prev,
+      [bookingId]: (prev[bookingId] || 0) < 5 ? (prev[bookingId] || 0) + 1 : 0
+    }));
+  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -116,11 +124,14 @@ const TripHistory: React.FC<TripHistoryProps> = ({ bookings, onRefresh }) => {
                     <div className="flex items-center gap-3 flex-shrink-0">
                       <span className="text-sm font-bold text-surface-900">${booking.totalAmount}</span>
                       <button
-                        className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
+                        onClick={() => handleRate(booking.id)}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-lg transition-colors ${
+                          ratings[booking.id] ? 'text-amber-500 bg-amber-50' : 'text-orange-500 hover:bg-orange-50'
+                        }`}
                         aria-label={t('tripHistory.rate')}
                       >
-                        <Star className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">{t('tripHistory.rate')}</span>
+                        <Star className={`w-3.5 h-3.5 ${ratings[booking.id] ? 'fill-amber-500' : ''}`} />
+                        <span className="hidden sm:inline">{ratings[booking.id] ? `${ratings[booking.id]}/5` : t('tripHistory.rate')}</span>
                       </button>
                     </div>
                   </div>

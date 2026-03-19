@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Plane, Hotel, MapPin, Map } from 'lucide-react';
 import { useAuth } from '@/services/auth/AuthService';
 import { useDashboard } from '../../hooks/useDashboard';
 import WelcomeSection from './WelcomeSection';
@@ -10,6 +11,13 @@ import TravelStats from './TravelStats';
 import PriceAlerts from './PriceAlerts';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorMessage from '../common/ErrorMessage';
+
+const quickActions = [
+  { icon: Plane, label: 'Flights', href: '/flights' },
+  { icon: Hotel, label: 'Hotels', href: '/hotels' },
+  { icon: MapPin, label: 'Activities', href: '/activities' },
+  { icon: Map, label: 'Destinations', href: '/destinations' },
+];
 
 const UserDashboard = () => {
   const { user, isAuthenticated } = useAuth();
@@ -68,9 +76,24 @@ const UserDashboard = () => {
           user={user}
           upcomingTrips={upcomingTrips}
           onRefresh={refreshBookings}
+          stats={stats}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-8">
+        {/* Quick Actions */}
+        <div className="flex flex-wrap gap-2 mt-5">
+          {quickActions.map((action) => (
+            <a
+              key={action.label}
+              href={action.href}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl border border-surface-200/50 shadow-sm text-sm font-medium text-surface-900 hover:border-orange-300 hover:shadow-md hover:text-orange-500 transition-all"
+            >
+              <action.icon className="w-4 h-4" />
+              {action.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
             <RecommendationsSection
@@ -90,8 +113,8 @@ const UserDashboard = () => {
             />
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
+          {/* Sidebar — sticky */}
+          <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-24 lg:self-start">
             <TravelStats stats={stats} />
 
             <TravelPreferences
