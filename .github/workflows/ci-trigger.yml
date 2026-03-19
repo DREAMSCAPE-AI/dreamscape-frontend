@@ -84,10 +84,10 @@ jobs:
             echo "should_trigger=false" >> $GITHUB_OUTPUT
             echo "skip_reason=no_changes" >> $GITHUB_OUTPUT
             echo "No changes detected, skipping dispatch"
-          elif [[ "${{ github.event_name }}" != "push" ]] || [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
+          elif [[ "${{ github.event_name }}" != "push" ]]; then
             echo "should_trigger=false" >> $GITHUB_OUTPUT
-            echo "skip_reason=not_main_push" >> $GITHUB_OUTPUT
-            echo "Dispatch is enabled only for push on main"
+            echo "skip_reason=not_push" >> $GITHUB_OUTPUT
+            echo "Dispatch enabled for push events only"
           elif [[ -z "${{ secrets.DISPATCH_TOKEN }}" ]]; then
             echo "should_trigger=false" >> $GITHUB_OUTPUT
             echo "skip_reason=missing_token" >> $GITHUB_OUTPUT
@@ -95,7 +95,7 @@ jobs:
           else
             echo "should_trigger=true" >> $GITHUB_OUTPUT
             echo "skip_reason=none" >> $GITHUB_OUTPUT
-            echo "Will trigger infra CD pipeline (staging)"
+            echo "Will trigger test suite — CD will follow if tests pass on main"
           fi
 
       - name: Lint and typecheck changed components
@@ -126,28 +126,12 @@ jobs:
     needs: local-ci
     if: needs.local-ci.outputs.should_trigger == 'true'
     steps:
-      - name: Trigger Big Pods CD workflow and test suite
+      - name: Trigger test suite in dreamscape-tests
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.DISPATCH_TOKEN }}
           script: |
-            const version = context.sha.substring(0, 12);
-
             try {
-              await github.rest.actions.createWorkflowDispatch({
-                owner: 'DREAMSCAPE-AI',
-                repo: 'dreamscape-infra',
-                workflow_id: 'bigpods-cd.yml',
-                ref: 'main',
-                inputs: {
-                  environment: 'staging',
-                  version: version,
-                  deployment_strategy: 'rolling',
-                  force_deployment: 'false'
-                }
-              });
-
-              // Trigger test suite in dreamscape-tests
               await github.rest.repos.createDispatchEvent({
                 owner: 'DREAMSCAPE-AI',
                 repo: 'dreamscape-tests',
@@ -166,9 +150,9 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 sha: context.sha,
-                state: 'success',
+                state: 'pending',
                 target_url: 'https://github.com/DREAMSCAPE-AI/dreamscape-tests/actions',
-                description: `CD dispatched + tests triggered (version ${version})`,
+                description: 'Test suite triggered — CD will follow if tests pass on main',
                 context: 'ci/unified-pipeline'
               });
             } catch (error) {
@@ -177,7 +161,7 @@ jobs:
                 repo: context.repo.repo,
                 sha: context.sha,
                 state: 'error',
-                description: 'Failed to trigger Big Pods CD workflow',
+                description: 'Failed to trigger test suite',
                 context: 'ci/unified-pipeline'
               });
 
