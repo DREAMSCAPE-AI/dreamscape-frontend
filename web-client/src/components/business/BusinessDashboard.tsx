@@ -1,60 +1,82 @@
-import React, { useState } from 'react';
-import { Calendar, DollarSign, FileText, Clock, Shield, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Calendar, DollarSign, Clock, Briefcase, Plane, Loader2 } from 'lucide-react';
+import { useDashboard } from '../../hooks/useDashboard';
 import BusinessItinerary from './BusinessItinerary';
 import ExpenseTracker from './ExpenseTracker';
 import RebookingOptions from './RebookingOptions';
 
-const meetings = [
-  {
-    id: '1',
-    title: 'Client Meeting',
-    location: 'Paris Office',
-    startTime: '2024-03-20T10:00:00',
-    endTime: '2024-03-20T11:30:00',
-    participants: ['John Doe', 'Sarah Smith']
-  },
-  {
-    id: '2',
-    title: 'Team Workshop',
-    location: 'Innovation Hub',
-    startTime: '2024-03-20T14:00:00',
-    endTime: '2024-03-20T16:00:00',
-    participants: ['Team Alpha', 'Team Beta']
-  }
-];
-
-const travelPolicies = [
-  {
-    category: 'Flights',
-    rules: [
-      'Business class allowed for flights over 6 hours',
-      'Booking required 14 days in advance',
-      'Preferred airlines: Star Alliance members'
-    ]
-  },
-  {
-    category: 'Hotels',
-    rules: [
-      'Maximum rate: $300/night',
-      '4-star hotels or below',
-      'Room service limit: $50/day'
-    ]
-  }
-];
-
 const BusinessDashboard = () => {
+  const {
+    recentBookings,
+    upcomingTrips,
+    stats,
+    loading,
+    error
+  } = useDashboard();
+
   const [showRebooking, setShowRebooking] = useState(false);
-  const [activeTab, setActiveTab] = useState<'itinerary' | 'expenses' | 'documents'>('itinerary');
+  const [selectedFlight, setSelectedFlight] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'itinerary' | 'expenses'>('itinerary');
+
+  // Derive stats from real data
+  const totalBookings = stats?.totalBookings ?? 0;
+  const totalSpent = stats?.totalSpent ?? 0;
+  const upcoming = stats?.upcomingTrips ?? upcomingTrips.length;
+
+  // Split bookings by type
+  const flightBookings = recentBookings.filter(b => b.type === 'flight');
+  const hotelBookings = recentBookings.filter(b => b.type === 'hotel');
+
+  // Transform bookings to BusinessItinerary format
+  const flights = flightBookings.map(b => ({
+    id: b.id,
+    itineraries: [{
+      segments: [{
+        departure: { iataCode: b.details?.departure?.iataCode || b.details?.origin || '???', at: b.departureDate },
+        arrival: { iataCode: b.details?.arrival?.iataCode || b.details?.destination || b.destination || '???', at: b.returnDate || b.departureDate },
+        carrierCode: b.details?.carrierCode || b.details?.airline || '',
+        number: b.details?.flightNumber || b.details?.number || ''
+      }]
+    }]
+  }));
+
+  const hotels = hotelBookings.map(b => ({
+    id: b.id,
+    name: b.details?.hotelName || b.details?.name || b.destination || 'Hotel',
+    chainCode: b.details?.chainCode || '',
+    rating: b.details?.rating || '0'
+  }));
+
+  const handleRebookFlight = (flight?: any) => {
+    setSelectedFlight(flight || (flights.length > 0 ? flights[0] : null));
+    setShowRebooking(true);
+  };
+
+  if (loading && !stats) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Quick Actions */}
+      {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { title: 'Next Meeting', value: '10:00 AM', icon: Clock, color: 'bg-blue-50 text-blue-600' },
-          { title: 'Monthly Expenses', value: '$2,450', icon: DollarSign, color: 'bg-green-50 text-green-600' },
-          { title: 'Policy Compliance', value: '98%', icon: Shield, color: 'bg-orange-50 text-orange-600' },
-          { title: 'Pending Reports', value: '2', icon: FileText, color: 'bg-purple-50 text-purple-600' }
+          { title: 'Total Bookings', value: String(totalBookings), icon: Briefcase, color: 'bg-blue-50 text-blue-600' },
+          { title: 'Total Spent', value: `$${totalSpent.toLocaleString()}`, icon: DollarSign, color: 'bg-green-50 text-green-600' },
+          { title: 'Upcoming Trips', value: String(upcoming), icon: Clock, color: 'bg-orange-50 text-orange-600' },
+          { title: 'Flights Booked', value: String(flightBookings.length), icon: Plane, color: 'bg-purple-50 text-purple-600' }
         ].map((stat, index) => (
           <div key={index} className="bg-white rounded-xl shadow-sm p-6">
             <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center mb-4`}>
@@ -72,8 +94,7 @@ const BusinessDashboard = () => {
           <div className="flex">
             {[
               { id: 'itinerary', label: 'Business Itinerary', icon: Calendar },
-              { id: 'expenses', label: 'Expense Management', icon: DollarSign },
-              { id: 'documents', label: 'Travel Documents', icon: FileText }
+              { id: 'expenses', label: 'Expense Management', icon: DollarSign }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -93,118 +114,34 @@ const BusinessDashboard = () => {
 
         <div className="p-6">
           {activeTab === 'itinerary' && (
-            <BusinessItinerary
-              meetings={meetings}
-              flights={[
-                {
-                  id: 'flight1',
-                  itineraries: [{
-                    segments: [{
-                      departure: { iataCode: 'CDG', at: '2024-03-20T08:00:00' },
-                      arrival: { iataCode: 'LHR', at: '2024-03-20T09:00:00' },
-                      carrierCode: 'AF',
-                      number: '1234'
-                    }]
-                  }]
-                }
-              ]}
-              hotels={[
-                {
-                  id: 'hotel1',
-                  name: 'Business Hotel Paris',
-                  chainCode: 'HIL',
-                  rating: '4'
-                }
-              ]}
-              experiences={[]}
-              onRebookFlight={() => setShowRebooking(true)}
-            />
+            flights.length > 0 || hotels.length > 0 ? (
+              <BusinessItinerary
+                meetings={[]}
+                flights={flights as any}
+                hotels={hotels as any}
+                experiences={[]}
+                onRebookFlight={() => handleRebookFlight()}
+              />
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <h3 className="text-lg font-medium text-gray-700 mb-2">No Business Trips</h3>
+                <p>Your upcoming business itinerary will appear here once you book flights or hotels.</p>
+              </div>
+            )
           )}
 
-          {activeTab === 'expenses' && <ExpenseTracker />}
-
-          {activeTab === 'documents' && (
-            <div className="space-y-6">
-              <div className="bg-orange-50 border border-orange-100 rounded-lg p-4">
-                <div className="flex items-center gap-2 text-orange-600 mb-2">
-                  <AlertCircle className="w-5 h-5" />
-                  <h3 className="font-medium">Travel Policy Highlights</h3>
-                </div>
-                <div className="space-y-4">
-                  {travelPolicies.map((policy, index) => (
-                    <div key={index}>
-                      <h4 className="font-medium text-gray-900 mb-2">{policy.category}</h4>
-                      <ul className="list-disc list-inside space-y-1 text-gray-600">
-                        {policy.rules.map((rule, ruleIndex) => (
-                          <li key={ruleIndex}>{rule}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { title: 'Travel Insurance', type: 'PDF', date: '2024-02-15' },
-                  { title: 'Visa Documents', type: 'PDF', date: '2024-02-10' },
-                  { title: 'Company Policy', type: 'PDF', date: '2024-01-20' },
-                  { title: 'Emergency Contacts', type: 'PDF', date: '2024-01-15' }
-                ].map((doc, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <div className="font-medium">{doc.title}</div>
-                        <div className="text-sm text-gray-500">
-                          {doc.type} • Updated {doc.date}
-                        </div>
-                      </div>
-                    </div>
-                    <button className="text-orange-500 hover:text-orange-600">
-                      Download
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {activeTab === 'expenses' && <ExpenseTracker onSave={() => {}} onCancel={() => {}} />}
         </div>
       </div>
 
       {/* Rebooking Modal */}
-      {showRebooking && (
+      {showRebooking && selectedFlight && (
         <RebookingOptions
-          originalFlight={{
-            id: 'flight1',
-            itineraries: [{
-              segments: [{
-                departure: { iataCode: 'CDG', at: '2024-03-20T08:00:00' },
-                arrival: { iataCode: 'LHR', at: '2024-03-20T09:00:00' },
-                carrierCode: 'AF',
-                number: '1234'
-              }]
-            }]
-          }}
-          alternativeFlights={[
-            {
-              id: 'flight2',
-              itineraries: [{
-                segments: [{
-                  departure: { iataCode: 'CDG', at: '2024-03-20T10:00:00' },
-                  arrival: { iataCode: 'LHR', at: '2024-03-20T11:00:00' },
-                  carrierCode: 'BA',
-                  number: '5678'
-                }]
-              }]
-            }
-          ]}
+          originalFlight={selectedFlight}
+          alternativeFlights={[]}
           onClose={() => setShowRebooking(false)}
           onSelect={() => {
-            // Handle flight selection
             setShowRebooking(false);
           }}
         />

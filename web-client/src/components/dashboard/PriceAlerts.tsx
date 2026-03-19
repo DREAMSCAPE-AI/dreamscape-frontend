@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, Plus, X, TrendingDown, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 interface PriceAlert {
@@ -20,19 +21,12 @@ interface PriceAlertsProps {
 
 const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
   const { t } = useTranslation('dashboard');
-
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newAlert, setNewAlert] = useState({
-    origin: '',
-    destination: '',
-    targetPrice: '',
-    departureDate: ''
-  });
+  const [newAlert, setNewAlert] = useState({ origin: '', destination: '', targetPrice: '', departureDate: '' });
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateAlert = async () => {
     if (!newAlert.origin || !newAlert.destination || !newAlert.targetPrice) return;
-
     setIsCreating(true);
     try {
       await onCreateAlert({
@@ -41,7 +35,6 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
         departureDate: newAlert.departureDate,
         currency: 'USD'
       });
-      
       setNewAlert({ origin: '', destination: '', targetPrice: '', departureDate: '' });
       setShowCreateForm(false);
     } catch (error) {
@@ -52,128 +45,125 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-4 md:mb-6">
+    <div className="bg-white rounded-2xl shadow-glass border border-surface-200/50 p-5">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 text-orange-500" />
-          <h3 className="text-base md:text-lg font-semibold text-gray-800">{t('priceAlerts.title')}</h3>
+          <Bell className="w-5 h-5 text-orange-500" />
+          <h3 className="text-lg font-bold tracking-tight text-surface-900">{t('priceAlerts.title')}</h3>
         </div>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
+          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-orange-500 hover:bg-orange-50 rounded-xl transition-colors"
           aria-label={showCreateForm ? t('priceAlerts.closeForm') : t('priceAlerts.createNew')}
         >
-          {showCreateForm ? <X className="w-4 h-4 flex-shrink-0" /> : <Plus className="w-4 h-4 flex-shrink-0" />}
+          {showCreateForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
         </button>
       </div>
 
-      {/* Create Alert Form */}
-      {showCreateForm && (
-        <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg">
-          <h4 className="text-sm md:text-base font-medium text-gray-800 mb-3">{t('priceAlerts.createNewAlert')}</h4>
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input
-                type="text"
-                placeholder={t('priceAlerts.fromPlaceholder')}
-                value={newAlert.origin}
-                onChange={(e) => setNewAlert(prev => ({ ...prev, origin: e.target.value }))}
-                className="px-3 py-2.5 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-xs md:text-sm"
-                aria-label={t('priceAlerts.fromLabel')}
-              />
-              <input
-                type="text"
-                placeholder={t('priceAlerts.toPlaceholder')}
-                value={newAlert.destination}
-                onChange={(e) => setNewAlert(prev => ({ ...prev, destination: e.target.value }))}
-                className="px-3 py-2.5 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-xs md:text-sm"
-                aria-label={t('priceAlerts.toLabel')}
-              />
+      {/* Create form */}
+      <AnimatePresence>
+        {showCreateForm && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="mb-5 p-4 bg-surface-50 rounded-xl border border-surface-200/50 space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text" placeholder={t('priceAlerts.fromPlaceholder')} value={newAlert.origin}
+                  onChange={(e) => setNewAlert(prev => ({ ...prev, origin: e.target.value }))}
+                  className="px-3 py-2.5 min-h-[44px] text-sm bg-white border border-surface-200/50 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-transparent"
+                  aria-label={t('priceAlerts.fromLabel')}
+                />
+                <input
+                  type="text" placeholder={t('priceAlerts.toPlaceholder')} value={newAlert.destination}
+                  onChange={(e) => setNewAlert(prev => ({ ...prev, destination: e.target.value }))}
+                  className="px-3 py-2.5 min-h-[44px] text-sm bg-white border border-surface-200/50 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-transparent"
+                  aria-label={t('priceAlerts.toLabel')}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="number" placeholder={t('priceAlerts.targetPricePlaceholder')} value={newAlert.targetPrice}
+                  onChange={(e) => setNewAlert(prev => ({ ...prev, targetPrice: e.target.value }))}
+                  className="px-3 py-2.5 min-h-[44px] text-sm bg-white border border-surface-200/50 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-transparent"
+                  aria-label={t('priceAlerts.targetPriceLabel')}
+                />
+                <input
+                  type="date" value={newAlert.departureDate}
+                  onChange={(e) => setNewAlert(prev => ({ ...prev, departureDate: e.target.value }))}
+                  className="px-3 py-2.5 min-h-[44px] text-sm bg-white border border-surface-200/50 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-transparent"
+                  aria-label={t('priceAlerts.dateLabel')}
+                />
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                onClick={handleCreateAlert}
+                disabled={isCreating || !newAlert.origin || !newAlert.destination || !newAlert.targetPrice}
+                className="w-full py-2.5 text-sm font-medium bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:shadow-none transition-shadow"
+                aria-label={isCreating ? t('priceAlerts.creating') : t('priceAlerts.createAlert')}
+              >
+                {isCreating ? t('priceAlerts.creating') : t('priceAlerts.createAlert')}
+              </motion.button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input
-                type="number"
-                placeholder={t('priceAlerts.targetPricePlaceholder')}
-                value={newAlert.targetPrice}
-                onChange={(e) => setNewAlert(prev => ({ ...prev, targetPrice: e.target.value }))}
-                className="px-3 py-2.5 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-xs md:text-sm"
-                aria-label={t('priceAlerts.targetPriceLabel')}
-              />
-              <input
-                type="date"
-                value={newAlert.departureDate}
-                onChange={(e) => setNewAlert(prev => ({ ...prev, departureDate: e.target.value }))}
-                className="px-3 py-2.5 min-h-[44px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-xs md:text-sm"
-                aria-label={t('priceAlerts.dateLabel')}
-              />
-            </div>
-            <button
-              onClick={handleCreateAlert}
-              disabled={isCreating || !newAlert.origin || !newAlert.destination || !newAlert.targetPrice}
-              className="w-full px-4 py-2.5 min-h-[48px] text-xs md:text-sm font-medium bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-              aria-label={isCreating ? t('priceAlerts.creating') : t('priceAlerts.createAlert')}
-            >
-              {isCreating ? t('priceAlerts.creating') : t('priceAlerts.createAlert')}
-            </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Alerts List */}
-      <div className="space-y-2 md:space-y-3">
-        {alerts.length === 0 ? (
-          <div className="text-center py-6 md:py-8">
-            <Bell className="w-10 h-10 md:w-12 md:h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm md:text-base text-gray-500">{t('priceAlerts.noAlerts')}</p>
-            <p className="text-xs md:text-sm text-gray-400 mt-1">{t('priceAlerts.noAlertsHint')}</p>
+      {/* Alerts list */}
+      {alerts.length === 0 ? (
+        <div className="text-center py-6">
+          <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-50 to-pink-50 border border-orange-100/50 flex items-center justify-center">
+            <Bell className="w-5 h-5 text-orange-400" />
           </div>
-        ) : (
-          alerts.map((alert) => (
-            <div key={alert.id} className="p-3 border border-gray-200 rounded-lg">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs md:text-sm font-medium text-gray-800 truncate">{alert.route}</p>
-                  <div className="flex flex-wrap items-center gap-2 mt-1">
-                    <span className="text-xs text-gray-500 whitespace-nowrap">{t('priceAlerts.target')}: ${alert.targetPrice}</span>
-                    <span className="text-xs text-gray-500">•</span>
-                    <span className="text-xs text-gray-500 whitespace-nowrap">{t('priceAlerts.current')}: ${alert.currentPrice}</span>
+          <p className="text-sm font-medium text-gray-500">{t('priceAlerts.noAlerts')}</p>
+          <p className="text-xs text-gray-400 mt-1">{t('priceAlerts.noAlertsHint')}</p>
+          {!showCreateForm && (
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Create your first alert
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {alerts.map((alert) => (
+            <div key={alert.id} className="p-3 bg-surface-50/50 hover:bg-surface-100/80 rounded-xl transition-colors group">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${alert.isActive ? 'bg-emerald-500' : 'bg-gray-300'}`} />
+                    <p className="text-sm font-bold tracking-tight text-surface-900 truncate">{alert.route}</p>
                   </div>
-                  {alert.priceChange && (
-                    <div className="flex items-center gap-1 mt-1">
-                      {alert.priceChange > 0 ? (
-                        <TrendingUp className="w-3 h-3 flex-shrink-0 text-red-500" />
-                      ) : (
-                        <TrendingDown className="w-3 h-3 flex-shrink-0 text-green-500" />
-                      )}
-                      <span className={`text-xs ${alert.priceChange > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                  <div className="flex items-center gap-2 mt-1 ml-3.5">
+                    <span className="text-xs text-gray-400">
+                      ${alert.currentPrice} <span className="text-gray-300">/</span> ${alert.targetPrice} target
+                    </span>
+                    {alert.priceChange && (
+                      <span className={`inline-flex items-center gap-0.5 text-xs font-medium ${alert.priceChange > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
+                        {alert.priceChange > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                         {alert.priceChange > 0 ? '+' : ''}${Math.abs(alert.priceChange)}
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <div
-                    className={`w-2 h-2 rounded-full ${alert.isActive ? 'bg-green-500' : 'bg-gray-300'}`}
-                    aria-label={alert.isActive ? t('priceAlerts.active') : t('priceAlerts.inactive')}
-                  ></div>
-                  <button
-                    className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors"
-                    aria-label={t('priceAlerts.deleteAlert')}
-                  >
-                    <X className="w-4 h-4 flex-shrink-0" />
-                  </button>
-                </div>
+                <button
+                  className="p-2 text-gray-300 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                  aria-label={t('priceAlerts.deleteAlert')}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
-          ))
-        )}
-      </div>
-
-      {alerts.length > 0 && (
-        <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
-          <p className="text-xs text-gray-500 text-center">
-            {t('priceAlerts.notificationHint')}
-          </p>
+          ))}
         </div>
       )}
     </div>

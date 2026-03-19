@@ -114,24 +114,7 @@ export const useDashboard = () => {
       updateData({ upcomingTrips, recentBookings: recentBookings.slice(0, 5) });
     } catch (error) {
       console.error('Failed to load bookings:', error);
-      // Use mock data
-      updateData({
-        upcomingTrips: [
-          {
-            id: '1',
-            type: 'flight',
-            status: 'confirmed',
-            destination: 'Paris, France',
-            departureDate: '2024-03-15',
-            returnDate: '2024-03-22',
-            totalAmount: 1200,
-            currency: 'USD',
-            createdAt: '2024-02-15',
-            details: { airline: 'Air France', flightNumber: 'AF123' }
-          }
-        ],
-        recentBookings: []
-      });
+      updateData({ upcomingTrips: [], recentBookings: [] });
     }
   }, [isAuthenticated]);
 
@@ -147,15 +130,7 @@ export const useDashboard = () => {
       updateData({ searchHistory, recentSearches });
     } catch (error) {
       console.error('Failed to load search history:', error);
-      // Use mock data
-      updateData({
-        searchHistory: [],
-        recentSearches: [
-          "Beach resorts in Bali",
-          "Cultural tours in Kyoto", 
-          "Mountain retreats in Switzerland"
-        ]
-      });
+      updateData({ searchHistory: [], recentSearches: [] });
     }
   }, [isAuthenticated]);
 
@@ -172,41 +147,7 @@ export const useDashboard = () => {
       updateData({ recommendations, trendingDestinations, deals });
     } catch (error) {
       console.error('Failed to load recommendations:', error);
-      // Use mock data
-      updateData({
-        recommendations: [
-          {
-            id: '1',
-            type: 'activity',
-            title: 'Tokyo Night Tour',
-            description: 'Explore Tokyo\'s vibrant nightlife',
-            location: 'Tokyo, Japan',
-            price: 100,
-            currency: 'USD',
-            rating: 4.8,
-            image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80',
-            tags: ['cultural', 'nightlife'],
-            validUntil: '2024-12-31',
-            confidence: 0.9
-          },
-          {
-            id: '2',
-            type: 'activity',
-            title: 'Desert Safari',
-            description: 'Adventure in the Dubai desert',
-            location: 'Dubai, UAE',
-            price: 175,
-            currency: 'USD',
-            rating: 4.9,
-            image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80',
-            tags: ['adventure', 'desert'],
-            validUntil: '2024-12-31',
-            confidence: 0.85
-          }
-        ],
-        trendingDestinations: [],
-        deals: []
-      });
+      updateData({ recommendations: [], trendingDestinations: [], deals: [] });
     }
   }, [isAuthenticated]);
 
@@ -247,12 +188,12 @@ export const useDashboard = () => {
       console.error('Failed to load stats:', error);
       updateData({
         stats: {
-          totalBookings: 5,
-          totalSpent: 12500,
-          countriesVisited: 8,
-          favoriteDestination: 'Paris',
-          averageTripDuration: 7,
-          upcomingTrips: 1
+          totalBookings: 0,
+          totalSpent: 0,
+          countriesVisited: 0,
+          favoriteDestination: '',
+          averageTripDuration: 0,
+          upcomingTrips: 0
         }
       });
     }
