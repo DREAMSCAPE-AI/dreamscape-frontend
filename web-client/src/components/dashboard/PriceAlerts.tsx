@@ -23,6 +23,8 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
   const { t } = useTranslation('dashboard');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newAlert, setNewAlert] = useState({ origin: '', destination: '', targetPrice: '', departureDate: '' });
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
+  const visibleAlerts = alerts.filter(a => !dismissedAlerts.has(a.id));
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateAlert = async () => {
@@ -116,7 +118,7 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
       </AnimatePresence>
 
       {/* Alerts list */}
-      {alerts.length === 0 ? (
+      {visibleAlerts.length === 0 ? (
         <div className="text-center py-6">
           <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-50 to-pink-50 border border-orange-100/50 flex items-center justify-center">
             <Bell className="w-5 h-5 text-orange-400" />
@@ -129,13 +131,13 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
               className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
-              Create your first alert
+              {t('priceAlerts.createFirstAlert')}
             </button>
           )}
         </div>
       ) : (
         <div className="space-y-2">
-          {alerts.map((alert) => (
+          {visibleAlerts.map((alert) => (
             <div key={alert.id} className="p-3 bg-surface-50/50 hover:bg-surface-100/80 rounded-xl transition-colors group">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
@@ -156,6 +158,7 @@ const PriceAlerts: React.FC<PriceAlertsProps> = ({ alerts, onCreateAlert }) => {
                   </div>
                 </div>
                 <button
+                  onClick={() => setDismissedAlerts(prev => new Set([...prev, alert.id]))}
                   className="p-2 text-gray-300 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
                   aria-label={t('priceAlerts.deleteAlert')}
                 >

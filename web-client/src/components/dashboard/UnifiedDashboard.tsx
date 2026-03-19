@@ -163,6 +163,7 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
         user={user}
         upcomingTrips={upcomingTrips}
         userCategory={userCategory}
+        stats={stats}
       />
 
       {/* Quick Stats */}

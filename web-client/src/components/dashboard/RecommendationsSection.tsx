@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, RefreshCw, ArrowRight, Clock } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import ExperienceCard from '../features/ExperienceCard';
@@ -35,9 +36,11 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [aiRecommendations, setAiRecommendations] = useState<TravelRecommendation[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const [userSearchData, setUserSearchData] = useState<UserSearchData | null>(null);
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -174,6 +177,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
             {recentSearches.map((search, index) => (
               <button
                 key={index}
+                onClick={() => navigate(`/flights?destination=${encodeURIComponent(search)}`)}
                 className="px-3 py-1.5 text-sm bg-surface-100 text-surface-900 rounded-full border border-surface-200/50 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 transition-all"
                 aria-label={`${t('recommendations.searchAgain')} ${search}`}
               >
@@ -197,7 +201,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
             {/* Mobile: Horizontal scroll */}
             <div className="md:hidden overflow-x-auto -mx-5 px-5 pb-2">
               <div className="flex gap-3" style={{ width: 'max-content' }}>
-                {displayRecommendations.slice(0, 4).map((rec) => (
+                {displayRecommendations.slice(0, showAll ? undefined : 4).map((rec) => (
                   <div key={rec.id} className="w-[280px] flex-shrink-0">
                     <ExperienceCard
                       image={rec.image} title={rec.title} location={rec.location}
@@ -215,7 +219,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
               transition={{ duration: 0.5, ease: 'easeOut' }}
               className="hidden md:grid grid-cols-2 gap-4"
             >
-              {displayRecommendations.slice(0, 4).map((rec) => (
+              {displayRecommendations.slice(0, showAll ? undefined : 4).map((rec) => (
                 <ExperienceCard
                   key={rec.id} image={rec.image} title={rec.title} location={rec.location}
                   type={rec.type} duration={rec.description}
@@ -233,11 +237,12 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
       </div>
 
       {/* View All */}
-      {displayRecommendations.length > 4 && (
+      {displayRecommendations.length > 4 && !showAll && (
         <div className="mt-6 text-center">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => setShowAll(true)}
             className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-shadow"
             aria-label={t('recommendations.viewAllCount', { count: displayRecommendations.length })}
           >
