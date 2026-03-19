@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import UserDashboard from '@/components/dashboard/UserDashboard';
@@ -18,14 +17,8 @@ export default function DashboardPage() {
   // Show business dashboard for business users
   if (user?.type === 'business') {
     return (
-      <main className="min-h-screen bg-gray-50 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
-            <div className="text-sm text-gray-600">{t('welcome.accountType.business')}</div>
-          </div>
-          <BusinessDashboard />
-        </div>
+      <main>
+        <BusinessDashboard />
       </main>
     );
   }
@@ -33,14 +26,8 @@ export default function DashboardPage() {
   // Show leisure dashboard for leisure users
   if (user?.type === 'leisure') {
     return (
-      <main className="min-h-screen bg-gray-50 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
-            <div className="text-sm text-gray-600">{t('welcome.accountType.leisure')}</div>
-          </div>
-          <LeisureDashboard />
-        </div>
+      <main>
+        <LeisureDashboard />
       </main>
     );
   }
@@ -48,29 +35,15 @@ export default function DashboardPage() {
   // Show bleisure dashboard for bleisure users
   if (user?.type === 'bleisure') {
     return (
-      <main className="min-h-screen bg-gray-50 pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
-            <div className="text-sm text-gray-600">{t('welcome.accountType.bleisure')}</div>
-          </div>
-          <BleisureDashboard />
-        </div>
+      <main>
+        <BleisureDashboard />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-20">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('welcome.greeting', { name: user?.name || t('welcome.fallbackName') })}</h1>
-          <div className="text-sm text-gray-600">
-            {user?.type && t(`welcome.accountType.${user.type}`)}
-          </div>
-        </div>
-        <UserDashboard />
-      </div>
+    <main>
+      <UserDashboard />
     </main>
   );
 }
