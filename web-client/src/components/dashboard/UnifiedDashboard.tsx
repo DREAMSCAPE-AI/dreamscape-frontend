@@ -163,6 +163,7 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
         user={user}
         upcomingTrips={upcomingTrips}
         userCategory={userCategory}
+        stats={stats}
       />
 
       {/* Quick Stats */}
@@ -188,10 +189,6 @@ const UnifiedDashboard: React.FC<UnifiedDashboardProps> = ({ userCategory: propU
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Main Content */}
         <div className="lg:col-span-2 space-y-8">
-<<<<<<< HEAD
-          <QuickActions onSearch={quickSearch} userCategory={userCategory} />
-=======
->>>>>>> e7c6461 (feat: redesign Homepage UI with improved components and styling)
           <RecommendationsSection
             recommendations={recommendations}
             recentSearches={recentSearches}

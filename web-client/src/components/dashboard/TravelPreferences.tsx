@@ -45,18 +45,20 @@ const TravelPreferences: React.FC<TravelPreferencesProps> = ({ profile, onUpdate
 
   const preferences = profile?.preferences || editedPreferences;
 
+  const langMap: Record<string, string> = { en: 'English', fr: 'Français', es: 'Español', de: 'Deutsch', ja: '日本語' };
+
   const prefItems = [
-    { icon: DollarSign, label: t('travelPreferences.currency'), value: preferences.preferredCurrency, editKey: 'preferredCurrency',
+    { icon: DollarSign, label: t('travelPreferences.currency'), value: preferences.preferredCurrency || 'USD', editKey: 'preferredCurrency',
       options: [{ v: 'USD', l: 'USD' }, { v: 'EUR', l: 'EUR' }, { v: 'GBP', l: 'GBP' }, { v: 'JPY', l: 'JPY' }, { v: 'CAD', l: 'CAD' }] },
     { icon: Globe, label: t('travelPreferences.language'),
-      value: preferences.preferredLanguage === 'en' ? 'English' : preferences.preferredLanguage === 'fr' ? 'Français' : preferences.preferredLanguage === 'es' ? 'Español' : preferences.preferredLanguage === 'de' ? 'Deutsch' : preferences.preferredLanguage?.toUpperCase() || 'English',
+      value: langMap[preferences.preferredLanguage] || 'English',
       editKey: 'preferredLanguage',
       options: [{ v: 'en', l: 'English' }, { v: 'fr', l: 'Français' }, { v: 'es', l: 'Español' }, { v: 'de', l: 'Deutsch' }, { v: 'ja', l: '日本語' }] },
-    { icon: Plane, label: t('travelPreferences.travelClass'), value: preferences.travelClass, editKey: 'travelClass',
+    { icon: Plane, label: t('travelPreferences.travelClass'), value: preferences.travelClass || 'Economy', editKey: 'travelClass',
       options: [{ v: 'economy', l: 'Economy' }, { v: 'business', l: 'Business' }, { v: 'first', l: 'First' }] },
-    { icon: Armchair, label: t('travelPreferences.seat'), value: preferences.seatPreference, editKey: 'seatPreference',
+    { icon: Armchair, label: t('travelPreferences.seat'), value: preferences.seatPreference || 'Window', editKey: 'seatPreference',
       options: [{ v: 'window', l: 'Window' }, { v: 'aisle', l: 'Aisle' }, { v: 'middle', l: 'Middle' }] },
-    { icon: Wallet, label: t('travelPreferences.travelStyle'), value: preferences.travelStyle, editKey: 'travelStyle',
+    { icon: Wallet, label: t('travelPreferences.travelStyle'), value: preferences.travelStyle || 'Mid-range', editKey: 'travelStyle',
       options: [{ v: 'budget', l: 'Budget' }, { v: 'mid-range', l: 'Mid-range' }, { v: 'luxury', l: 'Luxury' }] },
   ];
 

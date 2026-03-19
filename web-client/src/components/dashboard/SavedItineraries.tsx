@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Bookmark, Calendar, RefreshCw, Plane, Hotel, Car, MapPin, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Booking } from '@/services/dashboard';
@@ -11,6 +12,9 @@ interface SavedItinerariesProps {
 
 const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh }) => {
   const { t, i18n } = useTranslation('dashboard');
+  const navigate = useNavigate();
+  const [showAll, setShowAll] = useState(false);
+  const displayedBookings = showAll ? bookings : bookings.slice(0, 3);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -70,7 +74,7 @@ const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh
 
       {bookings.length > 0 ? (
         <div className="space-y-3">
-          {bookings.slice(0, 3).map((booking, index) => {
+          {displayedBookings.map((booking, index) => {
             const TypeIcon = getTypeIcon(booking.type);
             const typeColor = getTypeColor(booking.type);
             return (
@@ -80,6 +84,7 @@ const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.08 }}
                 whileHover={{ y: -2 }}
+                onClick={() => navigate(`/bookings/${booking.id}`)}
                 className={`relative border-l-[3px] ${typeColor.split(' ')[0]} rounded-xl bg-surface-50/50 hover:bg-surface-100/80 p-4 cursor-pointer transition-colors group`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -132,11 +137,12 @@ const SavedItineraries: React.FC<SavedItinerariesProps> = ({ bookings, onRefresh
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={() => setShowAll(!showAll)}
           className="mt-4 w-full py-2.5 text-sm font-medium text-orange-500 bg-orange-50 hover:bg-orange-100 rounded-xl transition-colors flex items-center justify-center gap-2"
           aria-label={t('savedItineraries.viewAllCount', { count: bookings.length })}
         >
-          {t('savedItineraries.viewAllCount', { count: bookings.length })}
-          <ArrowRight className="w-4 h-4" />
+          {showAll ? t('savedItineraries.showLess') : t('savedItineraries.viewAllCount', { count: bookings.length })}
+          <ArrowRight className={`w-4 h-4 transition-transform ${showAll ? 'rotate-90' : ''}`} />
         </motion.button>
       )}
     </div>
