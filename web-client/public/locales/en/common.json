@@ -60,9 +60,9 @@
     "viewFavorites": "View favorites"
   },
   "hero": {
-    "title": "Your Journey,",
-    "titleLine2": "Perfectly Personalized",
-    "subtitle": "Discover AI-curated travel experiences tailored just for you. From flights to hotels to activities — plan your perfect trip in minutes.",
+    "title": "Escape",
+    "titleLine2": "the Ordinary",
+    "subtitle": "AI-crafted journeys, tailored to the way you travel.",
     "searchFlights": "Flights",
     "searchHotels": "Hotels",
     "searchExperiences": "Experiences",
@@ -97,19 +97,29 @@
     "findHotels": "Find Hotels"
   },
   "home": {
-    "featuredExperiences": "Featured Experiences",
-    "featuredExperiencesSubtitle": "Discover curated adventures tailored just for you",
-    "travelTailored": "Travel, Tailored to You",
-    "travelTailoredSubtitle": "Our AI learns your preferences to create perfectly personalized recommendations",
-    "aiRecommendations": "AI Recommendations",
-    "aiRecommendationsDesc": "Our intelligent system analyzes your preferences to suggest perfect destinations, activities, and experiences.",
-    "realTimePersonalization": "Real-Time Personalization",
-    "realTimePersonalizationDesc": "Every interaction refines your profile, delivering increasingly tailored suggestions for your journey.",
-    "seamlessBooking": "Seamless Booking",
-    "seamlessBookingDesc": "From inspiration to reservation in minutes. Plan, customize, and book your entire trip effortlessly.",
-    "howItWorks": "How It Works",
-    "exploreByCategory": "Explore By Category",
-    "exploreByCategorySubtitle": "Find your perfect travel experience by exploring our curated categories",
+    "featuredExperiences": "Curated For You",
+    "featuredExperiencesSubtitle": "Hand-picked experiences from the world's most inspiring destinations",
+    "viewAllExperiences": "View All Experiences",
+    "trendingTitle": "Trending Now",
+    "trendingSubtitle": "Where travelers are heading this season",
+    "travelTailored": "Travel Smarter",
+    "travelTailoredSubtitle": "Our AI learns how you travel to find experiences you'll actually love",
+    "aiRecommendations": "Neural Matching",
+    "aiRecommendationsDesc": "Deep learning algorithms map your travel DNA to destinations, restaurants, and hidden gems you'll love.",
+    "realTimePersonalization": "Adaptive Intelligence",
+    "realTimePersonalizationDesc": "Your profile evolves with every search, click, and booking — each trip is smarter than the last.",
+    "seamlessBooking": "One-Tap Booking",
+    "seamlessBookingDesc": "From discovery to confirmation in seconds. Flights, hotels, and experiences unified in one seamless flow.",
+    "howItWorks": "See How It Works",
+    "step": "Step",
+    "stepTellUs": "Tell Us Your Dream",
+    "stepTellUsDesc": "Share your travel style, budget, and interests. Our AI builds your unique traveler profile.",
+    "stepGetMatched": "Get Matched",
+    "stepGetMatchedDesc": "Our engine scans thousands of options in real-time to find your perfect matches.",
+    "stepBookAndGo": "Book & Go",
+    "stepBookAndGoDesc": "Confirm your curated itinerary with one tap. We handle the rest.",
+    "exploreByCategory": "Find Your Style",
+    "exploreByCategorySubtitle": "Every traveler is different. Find what speaks to you.",
     "categories": {
       "adventure": "Adventure",
       "cultural": "Cultural Immersion",
@@ -118,25 +128,30 @@
       "urban": "Urban Explorer",
       "eco": "Eco-Tourism"
     },
-    "whatTravelersSay": "What Our Travelers Say",
-    "whatTravelersSaySubtitle": "Real experiences from travelers who discovered their dream trips with DreamScape",
+    "whatTravelersSay": "Trusted by Explorers",
+    "whatTravelersSaySubtitle": "Join thousands who transformed their travel with AI-powered personalization",
     "experiences": "experiences",
     "stats": {
-      "travelersServed": "Travelers Served",
+      "travelersServed": "Happy Travelers",
       "destinations": "Destinations",
-      "averageRating": "Average Rating"
+      "averageRating": "Average Rating",
+      "satisfactionRate": "Satisfaction"
     },
     "testimonials": {
       "sarah": {
-        "text": "The AI recommendations were spot-on! Found hidden gems I would've never discovered otherwise."
+        "text": "The AI recommendations were spot-on! Found hidden gems in Tokyo I would've never discovered otherwise. It felt like having a local friend everywhere I went."
       },
       "marco": {
-        "text": "Seamless booking experience and incredible personalization. Every trip feels unique!"
+        "text": "Seamless booking experience and incredible personalization. Every trip feels crafted just for me — from the boutique hotels to the off-the-beaten-path restaurants."
       },
       "emma": {
-        "text": "The cultural experiences were perfectly matched to my interests. Truly exceptional service."
+        "text": "The cultural experiences were perfectly matched to my interests. Three trips in, and DreamScape still surprises me with discoveries I didn't know I needed."
       }
-    }
+    },
+    "ctaTitle": "Your Next Adventure Awaits",
+    "ctaSubtitle": "Let our AI craft your perfect journey. No two trips are the same.",
+    "ctaButton": "Start Planning Free",
+    "poweredByAI": "Powered by AI"
   },
   "footer": {
     "description": "Crafting personalized travel experiences through the power of AI, making every journey uniquely yours.",

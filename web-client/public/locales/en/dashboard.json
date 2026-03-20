@@ -91,13 +91,13 @@
         "flights": "Flights",
         "accommodations": "Accommodations",
         "activities": "Activities",
-        "global": "All"
+        "global": "Full Itinerary"
       },
       "selectCategory": "Select",
       "deselectCategory": "Deselect",
       "generateButton": "Generate My Recommendations",
       "generating": "Generating...",
-      "selectHint": "Select at least one category to continue"
+      "selectHint": "Select a recommendation type to continue"
     }
   },
   "savedItineraries": {
