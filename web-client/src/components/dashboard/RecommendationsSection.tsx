@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { History, Sparkles, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Sparkles, RefreshCw, CheckCircle, XCircle, ArrowRight, Clock } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
 import ExperienceCard from '../features/ExperienceCard';
 import AIRecommendationSelector from './AIRecommendationSelector';
 import AIRecommendationModal, {
@@ -48,6 +50,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { addItem, createItinerary, itineraries, fetchItineraries } = useItineraryStore();
 
   // Modal state
@@ -57,6 +60,8 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
   // AI results displayed after user picks a proposal
   const [aiRecommendations, setAiRecommendations] = useState<TravelRecommendation[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   // Search params from user's history — fed to AI without any form
   const [searchParams, setSearchParams] = useState<AISearchParams>({
@@ -74,12 +79,15 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
     setTimeout(() => setToast(s => ({ ...s, visible: false })), 3500);
   };
 
+  // Animation ref
+  const gridRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(gridRef, { once: true, margin: '-50px' });
+
   // Fetch user's recent search + full profile to build enriched AI context
   useEffect(() => {
     if (!user?.id) return;
 
     const fetchContext = async () => {
-      // Run all fetches in parallel — failures are non-blocking
       const [searchRes, onboardingRes, profileRes] = await Promise.allSettled([
         (async () => {
           const token = localStorage.getItem('auth-token');
@@ -93,21 +101,17 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
         profileService.getProfile(),
       ]);
 
-      // Extract recent search context
       const recentSearch = searchRes.status === 'fulfilled' ? searchRes.value : null;
 
-      // Extract onboarding step data
       const stepData = onboardingRes.status === 'fulfilled' && onboardingRes.value.success
         ? (onboardingRes.value.data?.stepData ?? {})
         : {};
       const budgetStep = stepData.budget ?? {};
       const travelTypesStep = stepData.travel_types ?? {};
 
-      // Extract profile/settings data
       const profileData = profileRes.status === 'fulfilled' ? profileRes.value : null;
 
       setSearchParams({
-        // Search history (highest priority)
         origin:      recentSearch?.origin       ?? 'PAR',
         destination: recentSearch?.destination  ?? 'NYC',
         departureDate: recentSearch?.departureDate
@@ -118,7 +122,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
         infants:     recentSearch?.passengers?.infants  ?? 0,
         travelClass: recentSearch?.cabinClass ?? 'ECONOMY',
 
-        // User profile enrichment
         preferredCabinClass:   recentSearch?.cabinClass ?? 'ECONOMY',
         budgetMin:             budgetStep.range?.[0],
         budgetMax:             budgetStep.range?.[1],
@@ -146,7 +149,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
   const handleProposalSelected = async (proposals: Proposal[]) => {
     setModalOpen(false);
 
-    // Show selected proposals in the dashboard section
     const displayItems: TravelRecommendation[] = proposals.map(p => ({
       id: p.id,
       type: p.type,
@@ -163,7 +165,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
     }));
     setAiRecommendations(displayItems);
 
-    // Get or create itinerary to add to
     let itineraryId: string;
     try {
       if (itineraries.length > 0) {
@@ -182,7 +183,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
       return;
     }
 
-    // Add each proposal to the itinerary
     let addedCount = 0;
     for (const proposal of proposals) {
       const dto = buildItineraryItem(proposal);
@@ -208,6 +208,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
   const handleRefresh = async () => {
     setIsRefreshing(true);
     setAiRecommendations([]);
+    setError(null);
     await onRefresh();
     setIsRefreshing(false);
   };
@@ -216,38 +217,40 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
-        <div className="flex items-center justify-between mb-4 md:mb-6">
-          <h2 className="text-lg md:text-2xl font-semibold text-gray-800">{t('recommendations.forYou')}</h2>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title={t('recommendations.refreshRecommendations')}
-              aria-label={t('recommendations.refreshRecommendations')}
-            >
-              <RefreshCw className={`w-4 h-4 flex-shrink-0 ${isRefreshing ? 'animate-spin' : ''}`} />
-            </button>
-            <button
-              className="hidden sm:block min-h-[44px] px-3 text-sm md:text-base text-orange-500 hover:text-orange-600 transition-colors"
-              aria-label={t('recommendations.viewAll')}
-            >
-              {t('recommendations.viewAll')}
-            </button>
+      <div className="bg-white rounded-2xl shadow-glass border border-surface-200/50 p-5 md:p-6">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-5 h-5 text-orange-500" />
+              <h2 className="text-xl md:text-2xl font-bold tracking-tight text-surface-900">{t('recommendations.forYou')}</h2>
+            </div>
+            <p className="text-sm text-gray-400 ml-7">Personalized suggestions powered by AI</p>
           </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-colors disabled:opacity-50"
+            title={t('recommendations.refreshRecommendations')}
+            aria-label={t('recommendations.refreshRecommendations')}
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
         </div>
 
+        {/* Recent Searches */}
         {recentSearches.length > 0 && (
-          <div className="mb-6 md:mb-8">
-            <div className="flex items-center gap-2 mb-3 md:mb-4">
-              <History className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 text-gray-500" />
-              <h3 className="text-base md:text-lg font-medium text-gray-700">{t('recommendations.recentSearches')}</h3>
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock className="w-4 h-4 text-gray-400" />
+              <span className="text-xs font-semibold tracking-[0.08em] uppercase text-gray-400">{t('recommendations.recentSearches')}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {recentSearches.map((search, index) => (
-                <button key={index}
-                  className="px-3 md:px-4 py-2 min-h-[44px] text-sm md:text-base bg-gray-50 text-gray-700 rounded-full hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                <button
+                  key={index}
+                  onClick={() => navigate(`/flights?destination=${encodeURIComponent(search)}`)}
+                  className="px-3 py-1.5 text-sm bg-surface-100 text-surface-900 rounded-full border border-surface-200/50 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 transition-all"
                   aria-label={`${t('recommendations.searchAgain')} ${search}`}
                 >
                   {search}
@@ -257,18 +260,20 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
           </div>
         )}
 
-        <div>
-          <div className="flex items-center gap-2 mb-3 md:mb-4">
-            <Sparkles className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 text-orange-500" />
-            <h3 className="text-base md:text-lg font-medium text-gray-700">{t('recommendations.aiRecommendations')}</h3>
-          </div>
+        {/* Content */}
+        <div ref={gridRef}>
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-100 rounded-xl">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
 
           {displayRecommendations.length > 0 ? (
             <>
-              {/* Mobile: Horizontal scroll — always exactly 3 */}
-              <div className="md:hidden overflow-x-auto -mx-3 px-3 pb-2">
+              {/* Mobile: Horizontal scroll */}
+              <div className="md:hidden overflow-x-auto -mx-5 px-5 pb-2">
                 <div className="flex gap-3" style={{ width: 'max-content' }}>
-                  {displayRecommendations.slice(0, 3).map((rec) => (
+                  {displayRecommendations.slice(0, showAll ? undefined : 4).map((rec) => (
                     <div key={rec.id} className="w-[280px] flex-shrink-0">
                       <ExperienceCard
                         image={rec.image} title={rec.title} location={rec.location}
@@ -279,16 +284,21 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
                   ))}
                 </div>
               </div>
-              {/* Desktop: 3-column grid */}
-              <div className="hidden md:grid grid-cols-3 gap-4">
-                {displayRecommendations.slice(0, 3).map((rec) => (
-                  <ExperienceCard key={rec.id}
-                    image={rec.image} title={rec.title} location={rec.location}
+              {/* Desktop: Grid with stagger */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="hidden md:grid grid-cols-2 gap-4"
+              >
+                {displayRecommendations.slice(0, showAll ? undefined : 4).map((rec) => (
+                  <ExperienceCard
+                    key={rec.id} image={rec.image} title={rec.title} location={rec.location}
                     type={rec.type} duration={rec.description}
                     priceRange={`${rec.price} ${rec.currency ?? ''}`} rating={rec.rating}
                   />
                 ))}
-              </div>
+              </motion.div>
               <div className="mt-4 text-center">
                 <button onClick={() => setAiRecommendations([])}
                   className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
@@ -300,6 +310,22 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
             <AIRecommendationSelector onGenerate={handleOpenModal} isLoading={false} />
           )}
         </div>
+
+        {/* View All */}
+        {displayRecommendations.length > 4 && !showAll && (
+          <div className="mt-6 text-center">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowAll(true)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-shadow"
+              aria-label={t('recommendations.viewAllCount', { count: displayRecommendations.length })}
+            >
+              {t('recommendations.viewAllCount', { count: displayRecommendations.length })}
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+          </div>
+        )}
       </div>
 
       {/* Modal — opens directly in loading, AI generates from user data */}

@@ -1,70 +1,60 @@
-import React, { useState } from 'react';
-import { Briefcase, Compass, Calendar, DollarSign, Clock, Users, ToggleLeft, Filter, MapPin } from 'lucide-react';
-import BusinessItinerary from '../business/BusinessItinerary';
+import { useState } from 'react';
+import { Briefcase, Compass, Calendar, DollarSign, Clock, Users, MapPin, Filter, Loader2 } from 'lucide-react';
+import { useDashboard } from '../../hooks/useDashboard';
 import ExpenseTracker from '../business/ExpenseTracker';
 import PersonalizedActivities from '../destination/PersonalizedActivities';
 
-interface Activity {
-  id: string;
-  title: string;
-  type: 'business' | 'leisure';
-  startTime: string;
-  endTime: string;
-  location: string;
-  category?: string;
-  cost?: {
-    amount: number;
-    currency: string;
-    type: 'business' | 'personal';
-  };
-}
-
 const BleisureDashboard = () => {
+  const {
+    upcomingTrips,
+    recentBookings,
+    stats,
+    loading,
+    error
+  } = useDashboard();
+
   const [mode, setMode] = useState<'business' | 'leisure'>('business');
   const [showExpenses, setShowExpenses] = useState(false);
 
-  const schedule: Activity[] = [
-    {
-      id: '1',
-      type: 'business',
-      title: 'Client Meeting',
-      startTime: '2024-03-20T09:00:00',
-      endTime: '2024-03-20T10:30:00',
-      location: 'Paris Office',
-      cost: {
-        amount: 0,
-        currency: 'EUR',
-        type: 'business'
-      }
-    },
-    {
-      id: '2',
-      type: 'leisure',
-      title: 'Louvre Museum Visit',
-      startTime: '2024-03-20T14:00:00',
-      endTime: '2024-03-20T17:00:00',
-      location: 'Louvre Museum',
-      category: 'Cultural',
-      cost: {
-        amount: 45,
-        currency: 'EUR',
-        type: 'personal'
-      }
-    },
-    {
-      id: '3',
-      type: 'business',
-      title: 'Team Workshop',
-      startTime: '2024-03-21T10:00:00',
-      endTime: '2024-03-21T12:00:00',
-      location: 'Innovation Hub',
-      cost: {
-        amount: 0,
-        currency: 'EUR',
-        type: 'business'
-      }
+  // Transform bookings into schedule activities
+  const schedule = upcomingTrips.map(trip => ({
+    id: trip.id,
+    type: (trip.type === 'flight' || trip.type === 'hotel') ? 'business' as const : 'leisure' as const,
+    title: trip.details?.title || trip.details?.hotelName || `${trip.type.charAt(0).toUpperCase() + trip.type.slice(1)} - ${trip.destination}`,
+    startTime: trip.departureDate,
+    endTime: trip.returnDate || trip.departureDate,
+    location: trip.destination,
+    category: trip.type === 'activity' ? 'Cultural' : undefined,
+    cost: {
+      amount: trip.totalAmount,
+      currency: trip.currency || 'EUR',
+      type: (trip.type === 'flight' || trip.type === 'hotel') ? 'business' as const : 'personal' as const
     }
-  ];
+  }));
+
+  // Calculate stats from real data
+  const businessExpenses = recentBookings
+    .filter(b => b.type === 'flight' || b.type === 'hotel')
+    .reduce((sum, b) => sum + b.totalAmount, 0);
+  const personalExpenses = recentBookings
+    .filter(b => b.type === 'activity' || b.type === 'transfer')
+    .reduce((sum, b) => sum + b.totalAmount, 0);
+
+  if (loading && !stats) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -109,29 +99,29 @@ const BleisureDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
           {
-            title: 'Work Hours',
-            value: '16h',
+            title: 'Total Bookings',
+            value: String(stats?.totalBookings ?? 0),
             icon: Clock,
             color: 'bg-blue-50 text-blue-600',
             type: 'business'
           },
           {
-            title: 'Free Time',
-            value: '24h',
+            title: 'Upcoming Trips',
+            value: String(stats?.upcomingTrips ?? upcomingTrips.length),
             icon: Compass,
             color: 'bg-orange-50 text-orange-600',
             type: 'leisure'
           },
           {
             title: 'Business Expenses',
-            value: '€450',
+            value: `$${businessExpenses.toLocaleString()}`,
             icon: DollarSign,
             color: 'bg-green-50 text-green-600',
             type: 'business'
           },
           {
             title: 'Personal Expenses',
-            value: '€280',
+            value: `$${personalExpenses.toLocaleString()}`,
             icon: DollarSign,
             color: 'bg-purple-50 text-purple-600',
             type: 'leisure'
@@ -153,7 +143,7 @@ const BleisureDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Schedule and Activities */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Mixed Schedule */}
+          {/* Schedule */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold">Your Schedule</h2>
@@ -167,50 +157,57 @@ const BleisureDashboard = () => {
               </div>
             </div>
 
-            <div className="space-y-4">
-              {schedule
-                .filter(activity => mode === 'business' ? true : activity.type === 'leisure')
-                .map((activity) => (
-                  <div
-                    key={activity.id}
-                    className={`p-4 rounded-lg border-l-4 ${
-                      activity.type === 'business'
-                        ? 'border-l-blue-500 bg-blue-50'
-                        : 'border-l-orange-500 bg-orange-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-medium">{activity.title}</h3>
-                      <span className="text-sm text-gray-600">
-                        {new Date(activity.startTime).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        <span>{activity.location}</span>
+            {schedule.length > 0 ? (
+              <div className="space-y-4">
+                {schedule
+                  .filter(activity => mode === 'business' ? true : activity.type === 'leisure')
+                  .map((activity) => (
+                    <div
+                      key={activity.id}
+                      className={`p-4 rounded-lg border-l-4 ${
+                        activity.type === 'business'
+                          ? 'border-l-blue-500 bg-blue-50'
+                          : 'border-l-orange-500 bg-orange-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium">{activity.title}</h3>
+                        <span className="text-sm text-gray-600">
+                          {new Date(activity.startTime).toLocaleDateString([], {
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </span>
                       </div>
-                      {activity.category && (
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-1">
-                          <Compass className="w-4 h-4" />
-                          <span>{activity.category}</span>
+                          <MapPin className="w-4 h-4" />
+                          <span>{activity.location}</span>
                         </div>
-                      )}
-                      {activity.cost && activity.cost.amount > 0 && (
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="w-4 h-4" />
-                          <span>
-                            {activity.cost.currency} {activity.cost.amount}
-                          </span>
-                        </div>
-                      )}
+                        {activity.category && (
+                          <div className="flex items-center gap-1">
+                            <Compass className="w-4 h-4" />
+                            <span>{activity.category}</span>
+                          </div>
+                        )}
+                        {activity.cost && activity.cost.amount > 0 && (
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-4 h-4" />
+                            <span>
+                              {activity.cost.currency} {activity.cost.amount.toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-            </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <p>No upcoming activities. Book a trip to see your schedule here.</p>
+              </div>
+            )}
           </div>
 
           {/* Activity Suggestions */}
@@ -256,18 +253,24 @@ const BleisureDashboard = () => {
                 <h3 className="text-lg font-semibold mb-4">Trip Summary</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Work Hours</span>
-                    <span className="font-medium">16h / 40h</span>
+                    <span className="text-gray-600">Total Bookings</span>
+                    <span className="font-medium">{stats?.totalBookings ?? 0}</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full w-2/5 bg-blue-500 rounded-full" />
+                    <div
+                      className="h-full bg-blue-500 rounded-full transition-all"
+                      style={{ width: `${Math.min(100, (stats?.totalBookings ?? 0) * 10)}%` }}
+                    />
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Free Time</span>
-                    <span className="font-medium">24h</span>
+                    <span className="text-gray-600">Upcoming</span>
+                    <span className="font-medium">{stats?.upcomingTrips ?? 0}</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full">
-                    <div className="h-full w-3/5 bg-orange-500 rounded-full" />
+                    <div
+                      className="h-full bg-orange-500 rounded-full transition-all"
+                      style={{ width: `${Math.min(100, (stats?.upcomingTrips ?? 0) * 20)}%` }}
+                    />
                   </div>
                 </div>
               </div>

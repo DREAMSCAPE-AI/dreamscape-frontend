@@ -1,6 +1,7 @@
 import React from 'react';
-import { Star, Clock, DollarSign } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Star, MapPin, ArrowUpRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface ExperienceCardProps {
   id?: string;
@@ -21,50 +22,72 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   type,
   duration,
   priceRange,
-  rating
+  rating,
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (id) {
-      navigate(`/experiences/${id}`);
-    }
+    if (id) navigate(`/experiences/${id}`);
   };
 
   return (
-    <div 
+    <motion.article
       onClick={handleClick}
-      className="group relative overflow-hidden rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+      className="group relative flex flex-col overflow-hidden rounded-2xl bg-white cursor-pointer h-full"
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="aspect-[4/3] overflow-hidden">
-        <img 
-          src={image} 
+      {/* Image container */}
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <motion.img
+          src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-full object-cover"
+          whileHover={{ scale: 1.08 }}
+          transition={{ duration: 0.6 }}
         />
-      </div>
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-orange-500">{type}</span>
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 fill-orange-500 text-orange-500" />
-            <span className="text-sm text-gray-700">{rating}</span>
-          </div>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+
+        {/* Type badge — top-left */}
+        <span className="absolute top-3 left-3 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white glass rounded-full">
+          {type}
+        </span>
+
+        {/* Rating — top-right */}
+        <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 bg-black/40 backdrop-blur-md rounded-full">
+          <Star className="w-3 h-3 fill-orange-400 text-orange-400" />
+          <span className="text-xs font-semibold text-white">{rating.toFixed(1)}</span>
         </div>
-        <h3 className="text-xl font-semibold mb-1 text-gray-800">{title}</h3>
-        <p className="text-sm text-gray-600 mb-3">{location}</p>
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
-            <span>{duration}</span>
+
+        {/* Bottom info overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <div className="flex items-center gap-1.5 text-white/80 text-xs mb-1">
+            <MapPin className="w-3 h-3" />
+            <span>{location}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <DollarSign className="w-4 h-4" />
-            <span>{priceRange}</span>
-          </div>
+          <h3 className="text-lg font-semibold text-white leading-snug line-clamp-2">
+            {title}
+          </h3>
         </div>
       </div>
-    </div>
+
+      {/* Details */}
+      <div className="flex items-center justify-between p-4 mt-auto">
+        <div>
+          <p className="text-xs text-gray-400 uppercase tracking-wider">{duration}</p>
+          <p className="text-lg font-bold text-gray-900">
+            ${priceRange}
+          </p>
+        </div>
+        <motion.div
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-pink-500 transition-all duration-300"
+          whileHover={{ scale: 1.1 }}
+        >
+          <ArrowUpRight className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
+        </motion.div>
+      </div>
+    </motion.article>
   );
 };
 
