@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import ExperienceCard from './ExperienceCard';
+import { motion } from 'framer-motion';
+import { Star, MapPin, ArrowUpRight, ArrowRight, Clock } from 'lucide-react';
 import SectionTitle from '../shared/SectionTitle';
-import voyageService from '@/services/voyage/VoyageService';
 import imageService from '@/services/utility/imageService';
 
 interface FeaturedExperience {
@@ -16,222 +16,195 @@ interface FeaturedExperience {
   rating: number;
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+};
+
 const FeaturedExperiences = () => {
   const { t } = useTranslation('common');
   const [experiences, setExperiences] = useState<FeaturedExperience[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchFeaturedExperiences = async () => {
+    const load = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        // TEMPORARY FIX: Disable automatic API calls to save Amadeus quota
-        // Use default experiences instead
-        console.log('[FeaturedExperiences] Using default data to avoid rate limiting');
         setExperiences(await getDefaultExperiences());
-
-        /* ORIGINAL CODE - Disabled to save API quota
-        // Check if we have cached experiences
-        const cachedExperiences = localStorage.getItem('cachedExperiences');
-        const cacheTimestamp = localStorage.getItem('experiencesCacheTime');
-        const cacheExpiry = 15 * 60 * 1000; // 15 minutes
-
-        if (cachedExperiences && cacheTimestamp) {
-          const isExpired = Date.now() - parseInt(cacheTimestamp) > cacheExpiry;
-          if (!isExpired) {
-            setExperiences(JSON.parse(cachedExperiences));
-            setLoading(false);
-            return;
-          }
-        }
-
-        // Fetch activities from popular destinations
-        const popularLocations = [
-          { lat: 48.8566, lng: 2.3522, name: 'Paris, France' }, // Paris
-          { lat: 25.2048, lng: 55.2708, name: 'Dubai, UAE' }, // Dubai
-          { lat: 45.4408, lng: 12.3155, name: 'Venice, Italy' }, // Venice
-          { lat: 46.8182, lng: 8.2275, name: 'Swiss Alps' } // Swiss Alps
-        ];
-
-        const experiences: FeaturedExperience[] = [];
-
-        // Sequential API calls with delay to avoid rate limiting
-        for (let i = 0; i < popularLocations.length; i++) {
-          const location = popularLocations[i];
-          try {
-            // Add delay between requests (except for the first one)
-            if (i > 0) {
-              await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 second delay
-            }
-
-            const response = await voyageService.searchActivities({
-              latitude: location.lat,
-              longitude: location.lng,
-              radius: 50
-            });
-
-            if (response.data && response.data.length > 0) {
-              const activity = response.data[0]; // Take the first activity
-              const activityName = activity.name || `Experience in ${location.name.split(',')[0]}`;
-
-              experiences.push({
-                id: activity.id || `${location.name}-${Date.now()}`,
-                image: await imageService.getActivityImage(activityName, activity.type, location.name),
-                title: activityName,
-                location: location.name,
-                type: activity.type || 'Cultural Tour',
-                duration: activity.duration || '3 hours',
-                priceRange: activity.price?.amount ? `${activity.price.amount}-${Math.round(activity.price.amount * 1.3)}` : '120-150',
-                rating: activity.rating || (Math.random() * 1.5 + 3.5)
-              });
-            }
-          } catch (err: any) {
-            console.warn(`Failed to fetch activities for ${location.name}:`, err);
-
-            // If we hit rate limit, stop making more requests and use fallback
-            if (err.response?.status === 429) {
-              console.warn('Rate limit hit for activities, using fallback data');
-              break;
-            }
-          }
-        }
-
-        // Use fetched experiences or fallback to default
-        if (experiences.length === 0) {
-          setExperiences(await getDefaultExperiences());
-        } else {
-          // Cache the successful results
-          localStorage.setItem('cachedExperiences', JSON.stringify(experiences));
-          localStorage.setItem('experiencesCacheTime', Date.now().toString());
-          setExperiences(experiences);
-        }
-        */
-      } catch (err) {
-        console.error('Error fetching featured experiences:', err);
-        setError('Failed to load featured experiences');
+      } catch {
         setExperiences(await getDefaultExperiences());
       } finally {
         setLoading(false);
       }
     };
-
-    fetchFeaturedExperiences();
+    load();
   }, []);
 
   const getDefaultExperiences = async (): Promise<FeaturedExperience[]> => {
-    const defaultActivities = [
-      {
-        title: "Eiffel Tower Experience",
-        location: "Paris, France",
-        type: "Cultural Tour",
-        duration: "3 hours",
-        priceRange: "89-120",
-        rating: 4.8
-      },
-      {
-        title: "Desert Safari Adventure",
-        location: "Dubai, UAE",
-        type: "Adventure Tour",
-        duration: "6 hours",
-        priceRange: "95-130",
-        rating: 4.7
-      },
-      {
-        title: "Gondola Ride",
-        location: "Venice, Italy",
-        type: "Romantic Experience",
-        duration: "45 minutes",
-        priceRange: "80-100",
-        rating: 4.6
-      },
-      {
-        title: "Alpine Adventure",
-        location: "Swiss Alps",
-        type: "Nature Experience",
-        duration: "Full day",
-        priceRange: "150-200",
-        rating: 4.9
-      }
+    const data = [
+      { title: "Eiffel Tower Experience", location: "Paris, France", type: "Cultural", duration: "3h", priceRange: "89-120", rating: 4.8 },
+      { title: "Desert Safari Adventure", location: "Dubai, UAE", type: "Adventure", duration: "6h", priceRange: "95-130", rating: 4.7 },
+      { title: "Gondola Ride", location: "Venice, Italy", type: "Romantic", duration: "45min", priceRange: "80-100", rating: 4.6 },
+      { title: "Alpine Adventure", location: "Swiss Alps", type: "Nature", duration: "Full day", priceRange: "150-200", rating: 4.9 },
     ];
-
-    const experiences = await Promise.all(
-      defaultActivities.map(async (activity, index) => ({
-        id: `featured-${index + 1}`,
-        image: await imageService.getActivityImage(activity.title, activity.type, activity.location),
-        title: activity.title,
-        location: activity.location,
-        type: activity.type,
-        duration: activity.duration,
-        priceRange: activity.priceRange,
-        rating: activity.rating
+    return Promise.all(
+      data.map(async (a, i) => ({
+        id: `featured-${i + 1}`,
+        image: await imageService.getActivityImage(a.title, a.type, a.location),
+        ...a,
       }))
     );
-
-    return experiences;
   };
+
+  const hero = experiences[0];
+  const rest = experiences.slice(1);
 
   if (loading) {
     return (
-      <section className="py-12 md:py-20 bg-gradient-to-b from-sky-50 to-white">
-        <div className="container mx-auto px-4">
-          <SectionTitle
-            title={t('home.featuredExperiences')}
-            subtitle={t('home.featuredExperiencesSubtitle')}
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-12">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
-                <div className="aspect-[4/3] bg-gray-300"></div>
-                <div className="p-4 md:p-6">
-                  <div className="h-3 md:h-4 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-5 md:h-6 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-300 rounded w-3/4"></div>
-                </div>
-              </div>
-            ))}
+      <section className="py-20 md:py-28 bg-surface-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionTitle title={t('home.featuredExperiences')} subtitle={t('home.featuredExperiencesSubtitle')} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-14">
+            <div className="rounded-2xl shimmer-skeleton h-[400px] lg:h-full" />
+            <div className="space-y-5">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="rounded-2xl shimmer-skeleton h-[120px]" />
+              ))}
+            </div>
           </div>
         </div>
       </section>
     );
   }
 
-  if (error) {
-    return (
-      <section className="py-12 md:py-20 bg-gradient-to-b from-sky-50 to-white">
-        <div className="container mx-auto px-4">
-          <SectionTitle
-            title={t('home.featuredExperiences')}
-            subtitle={t('home.featuredExperiencesSubtitle')}
-          />
-          <div className="text-center py-6 md:py-8">
-            <p className="text-sm md:text-base text-red-600 mb-3 md:mb-4">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-blue-600 text-white px-4 md:px-6 py-2.5 md:py-3 min-h-[44px] text-sm md:text-base rounded hover:bg-blue-700 transition-colors"
-            >
-              {t('buttons.retry')}
-            </button>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  if (!hero) return null;
 
   return (
-    <section className="py-12 md:py-20 bg-gradient-to-b from-sky-50 to-white">
-      <div className="container mx-auto px-4">
-        <SectionTitle
-          title={t('home.featuredExperiences')}
-          subtitle={t('home.featuredExperiencesSubtitle')}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-12">
-          {experiences.map((exp, index) => (
-            <ExperienceCard key={index} {...exp} />
-          ))}
-        </div>
+    <section className="py-20 md:py-28 bg-surface-50 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-orange-100/30 blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/4" />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <SectionTitle title={t('home.featuredExperiences')} subtitle={t('home.featuredExperiencesSubtitle')} />
+
+        {/* Editorial layout: 1 hero card + 3 side cards */}
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-14"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ visible: { transition: { staggerChildren: 0.12 } } }}
+        >
+          {/* ─── Hero card (large) ─── */}
+          <motion.div
+            className="group relative rounded-2xl overflow-hidden cursor-pointer min-h-[400px] lg:min-h-0"
+            variants={fadeUp}
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.35 }}
+          >
+            <motion.img
+              src={hero.image}
+              alt={hero.title}
+              className="absolute inset-0 w-full h-full object-cover"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.6 }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/5 group-hover:from-black/90 transition-all duration-500" />
+
+            {/* Badges */}
+            <span className="absolute top-4 left-4 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white glass rounded-full">
+              {hero.type}
+            </span>
+            <div className="absolute top-4 right-4 flex items-center gap-1 px-2.5 py-1 bg-black/30 backdrop-blur-md rounded-full">
+              <Star className="w-3 h-3 fill-orange-400 text-orange-400" />
+              <span className="text-xs font-semibold text-white">{hero.rating}</span>
+            </div>
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+              <div className="flex items-center gap-1.5 text-white/60 text-xs mb-2">
+                <MapPin className="w-3 h-3" />
+                <span>{hero.location}</span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{hero.title}</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 text-sm text-white/60">
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{hero.duration}</span>
+                  <span className="text-white font-semibold">${hero.priceRange}</span>
+                </div>
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-pink-500 backdrop-blur-md transition-all duration-300">
+                  <ArrowUpRight className="w-4 h-4 text-white" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* ─── Side cards (3 horizontal) ─── */}
+          <div className="flex flex-col gap-5">
+            {rest.map((exp) => (
+              <motion.div
+                key={exp.id}
+                className="group flex gap-4 p-3 rounded-2xl bg-white shadow-glass cursor-pointer"
+                variants={fadeUp}
+                whileHover={{ y: -3, boxShadow: '0 16px 40px rgba(0,0,0,0.08)' }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Thumbnail */}
+                <div className="relative w-28 md:w-36 flex-shrink-0 rounded-xl overflow-hidden">
+                  <motion.img
+                    src={exp.image}
+                    alt={exp.title}
+                    className="w-full h-full object-cover min-h-[100px]"
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                  <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white bg-black/30 backdrop-blur-md rounded-full">
+                    {exp.type}
+                  </span>
+                </div>
+
+                {/* Info */}
+                <div className="flex flex-col justify-between py-1 flex-1 min-w-0">
+                  <div>
+                    <div className="flex items-center gap-1 text-xs text-gray-400 mb-1">
+                      <MapPin className="w-3 h-3" />
+                      <span className="truncate">{exp.location}</span>
+                    </div>
+                    <h3 className="text-base font-semibold text-gray-900 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                      {exp.title}
+                    </h3>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                      <span className="flex items-center gap-1">
+                        <Star className="w-3 h-3 fill-orange-400 text-orange-400" />
+                        {exp.rating}
+                      </span>
+                      <span>{exp.duration}</span>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">${exp.priceRange}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          className="text-center mt-14"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
+          <motion.button
+            className="inline-flex items-center gap-2 px-7 py-3.5 min-h-[44px] text-sm font-semibold rounded-xl border-2 border-gray-200 text-gray-700 hover:border-orange-400 hover:text-orange-500 transition-colors"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            {t('home.viewAllExperiences')}
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   );

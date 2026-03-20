@@ -60,9 +60,9 @@
     "viewFavorites": "Voir les favoris"
   },
   "hero": {
-    "title": "Votre Voyage,",
-    "titleLine2": "Parfaitement Personnalisé",
-    "subtitle": "Découvrez des expériences de voyage organisées par l'IA, conçues spécialement pour vous. Des vols aux hôtels en passant par les activités — planifiez votre voyage idéal en quelques minutes.",
+    "title": "Évadez-vous",
+    "titleLine2": "de l'Ordinaire",
+    "subtitle": "Des voyages façonnés par l'IA, adaptés à votre façon de voyager.",
     "searchFlights": "Vols",
     "searchHotels": "Hôtels",
     "searchExperiences": "Expériences",
@@ -97,19 +97,27 @@
     "findHotels": "Trouver des hôtels"
   },
   "home": {
-    "featuredExperiences": "Expériences en vedette",
-    "featuredExperiencesSubtitle": "Découvrez des aventures organisées spécialement pour vous",
-    "travelTailored": "Voyage, Sur Mesure Pour Vous",
-    "travelTailoredSubtitle": "Notre IA apprend vos préférences pour créer des recommandations parfaitement personnalisées",
-    "aiRecommendations": "Recommandations IA",
-    "aiRecommendationsDesc": "Notre système intelligent analyse vos préférences pour suggérer des destinations, activités et expériences parfaites.",
-    "realTimePersonalization": "Personnalisation en temps réel",
-    "realTimePersonalizationDesc": "Chaque interaction affine votre profil, offrant des suggestions de plus en plus adaptées à votre voyage.",
-    "seamlessBooking": "Réservation fluide",
-    "seamlessBookingDesc": "De l'inspiration à la réservation en quelques minutes. Planifiez, personnalisez et réservez tout votre voyage sans effort.",
-    "howItWorks": "Comment ça marche",
-    "exploreByCategory": "Explorer par catégorie",
-    "exploreByCategorySubtitle": "Trouvez votre expérience de voyage idéale en explorant nos catégories sélectionnées",
+    "featuredExperiences": "Sélection Pour Vous",
+    "featuredExperiencesSubtitle": "Des expériences triées sur le volet dans les destinations les plus inspirantes du monde",
+    "viewAllExperiences": "Voir toutes les expériences",
+    "travelTailored": "L'Intelligence au Service de l'Évasion",
+    "travelTailoredSubtitle": "Notre moteur IA apprend de chaque interaction pour créer des voyages qui vous ressemblent",
+    "aiRecommendations": "Matching Neural",
+    "aiRecommendationsDesc": "Des algorithmes de deep learning cartographient votre ADN voyageur pour trouver les destinations et trésors cachés que vous allez adorer.",
+    "realTimePersonalization": "Intelligence Adaptative",
+    "realTimePersonalizationDesc": "Votre profil évolue avec chaque recherche, clic et réservation — chaque voyage est plus intelligent que le précédent.",
+    "seamlessBooking": "Réservation Instantanée",
+    "seamlessBookingDesc": "De la découverte à la confirmation en quelques secondes. Vols, hôtels et expériences unifiés dans un flux fluide.",
+    "howItWorks": "Découvrir comment ça marche",
+    "step": "Étape",
+    "stepTellUs": "Partagez votre rêve",
+    "stepTellUsDesc": "Partagez votre style de voyage, budget et centres d'intérêt. Notre IA construit votre profil voyageur unique.",
+    "stepGetMatched": "Trouvez votre match",
+    "stepGetMatchedDesc": "Notre moteur analyse des milliers d'options en temps réel pour trouver vos correspondances parfaites.",
+    "stepBookAndGo": "Réservez & Partez",
+    "stepBookAndGoDesc": "Confirmez votre itinéraire personnalisé en un tap. Nous nous occupons du reste.",
+    "exploreByCategory": "Explorez à Votre Façon",
+    "exploreByCategorySubtitle": "Chaque voyageur est unique. Trouvez l'expérience qui parle à votre âme.",
     "categories": {
       "adventure": "Aventure",
       "cultural": "Immersion culturelle",
@@ -118,25 +126,30 @@
       "urban": "Explorateur urbain",
       "eco": "Éco-tourisme"
     },
-    "whatTravelersSay": "Ce que disent nos voyageurs",
-    "whatTravelersSaySubtitle": "Expériences réelles de voyageurs qui ont découvert leurs voyages de rêve avec DreamScape",
+    "whatTravelersSay": "La Confiance des Explorateurs",
+    "whatTravelersSaySubtitle": "Rejoignez des milliers de voyageurs qui ont transformé leur façon de voyager grâce à l'IA",
     "experiences": "expériences",
     "stats": {
-      "travelersServed": "Voyageurs servis",
+      "travelersServed": "Voyageurs Heureux",
       "destinations": "Destinations",
-      "averageRating": "Note moyenne"
+      "averageRating": "Note Moyenne",
+      "satisfactionRate": "Satisfaction"
     },
     "testimonials": {
       "sarah": {
-        "text": "Les recommandations de l'IA étaient parfaites ! J'ai découvert des trésors cachés que je n'aurais jamais trouvés autrement."
+        "text": "Les recommandations de l'IA étaient parfaites ! J'ai découvert des trésors cachés à Tokyo que je n'aurais jamais trouvés autrement. C'est comme avoir un ami local partout."
       },
       "marco": {
-        "text": "Une expérience de réservation fluide et une personnalisation incroyable. Chaque voyage est unique !"
+        "text": "Une expérience de réservation fluide et une personnalisation incroyable. Chaque voyage semble conçu juste pour moi — des hôtels boutique aux restaurants hors des sentiers battus."
       },
       "emma": {
-        "text": "Les expériences culturelles correspondaient parfaitement à mes centres d'intérêt. Un service vraiment exceptionnel."
+        "text": "Les expériences culturelles correspondaient parfaitement à mes centres d'intérêt. Trois voyages plus tard, DreamScape me surprend encore avec des découvertes inattendues."
       }
-    }
+    },
+    "ctaTitle": "Votre Prochaine Aventure Vous Attend",
+    "ctaSubtitle": "Laissez notre IA créer votre voyage parfait. Aucun voyage ne se ressemble.",
+    "ctaButton": "Commencer Gratuitement",
+    "poweredByAI": "Propulsé par l'IA"
   },
   "footer": {
     "description": "Créer des expériences de voyage personnalisées grâce à la puissance de l'IA, rendant chaque voyage unique.",

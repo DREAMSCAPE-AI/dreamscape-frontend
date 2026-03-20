@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   const trimmed = (envValue || '').trim();
@@ -6,22 +6,47 @@ const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   return fallbackPath;
 };
 
+const USER_SERVICE_URL = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_API_URL || import.meta.env.VITE_USER_SERVICE_URL);
+const VOYAGE_SERVICE_URL = resolveBaseUrl(import.meta.env.VITE_VOYAGE_SERVICE_URL);
+const AI_SERVICE_URL = resolveBaseUrl(import.meta.env.VITE_AI_SERVICE_URL);
 const API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_API_BASE_URL);
 
-// Create axios instance with auth interceptor
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
-});
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth-token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Read from Zustand auth store persisted in localStorage
+const getAuthState = (): { token: string | null; userId: string | null } => {
+  try {
+    const raw = localStorage.getItem('auth-storage');
+    if (!raw) return { token: null, userId: null };
+    const parsed = JSON.parse(raw);
+    const state = parsed?.state;
+    return {
+      token: state?.token || null,
+      userId: state?.user?.id || null
+    };
+  } catch {
+    return { token: null, userId: null };
   }
-  return config;
-});
+};
+
+const getAuthToken = (): string | null => getAuthState().token;
+const getAuthUserId = (): string | null => getAuthState().userId;
+
+// Create axios instances per service with auth interceptor
+const createApi = (baseURL: string): AxiosInstance => {
+  const instance = axios.create({ baseURL, timeout: 10000 });
+  instance.interceptors.request.use((config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+  return instance;
+};
+
+const userApi = createApi(USER_SERVICE_URL);
+const voyageApi = createApi(VOYAGE_SERVICE_URL);
+const aiApi = createApi(AI_SERVICE_URL);
+const api = createApi(API_BASE_URL);
 
 export interface UserProfile {
   id: string;
@@ -111,12 +136,55 @@ export interface FlightInsight {
   tips: string[];
 }
 
+// Transform voyage-service booking format to frontend Booking interface
+const mapBooking = (raw: any): Booking => {
+  const item = raw.items?.[0]?.itemData || {};
+  const type = (raw.type || '').toLowerCase() as Booking['type'];
+  const statusMap: Record<string, Booking['status']> = {
+    CONFIRMED: 'confirmed',
+    PENDING: 'pending',
+    PENDING_PAYMENT: 'pending',
+    CANCELLED: 'cancelled',
+    DRAFT: 'pending',
+    COMPLETED: 'confirmed',
+    FAILED: 'cancelled'
+  };
+
+  // Extract destination/location from item data
+  const destination = item.location || item.cityCode || item.name || '';
+
+  // Extract dates based on booking type
+  let departureDate = raw.createdAt;
+  let returnDate: string | undefined;
+  if (type === 'hotel') {
+    departureDate = item.checkInDate || raw.createdAt;
+    returnDate = item.checkOutDate;
+  } else if (type === 'flight') {
+    const seg = item.itineraries?.[0]?.segments?.[0];
+    departureDate = seg?.departure?.at || raw.createdAt;
+    returnDate = seg?.arrival?.at;
+  }
+
+  return {
+    id: raw.id,
+    type: type || 'activity',
+    status: statusMap[raw.status] || 'pending',
+    destination,
+    departureDate,
+    returnDate,
+    totalAmount: raw.totalAmount || 0,
+    currency: raw.currency || 'EUR',
+    createdAt: raw.createdAt,
+    details: item
+  };
+};
+
 class DashboardService {
-  // User Profile Management
+  // User Profile Management → user-service
   async getUserProfile(): Promise<UserProfile> {
     try {
-      const response = await api.get('/auth/profile');
-      return response.data;
+      const response = await userApi.get('/v1/users/profile');
+      return response.data?.data || response.data;
     } catch (error) {
       console.error('Error fetching user profile:', error);
       throw error;
@@ -125,19 +193,24 @@ class DashboardService {
 
   async updateUserProfile(updates: Partial<UserProfile>): Promise<UserProfile> {
     try {
-      const response = await api.put('/auth/profile', updates);
-      return response.data;
+      const response = await userApi.put('/v1/users/profile', updates);
+      return response.data?.data || response.data;
     } catch (error) {
       console.error('Error updating user profile:', error);
       throw error;
     }
   }
 
-  // Booking Management
+  // Booking Management → voyage-service
   async getUserBookings(): Promise<Booking[]> {
     try {
-      const response = await api.get('/bookings');
-      return response.data;
+      const userId = getAuthUserId();
+      const response = await voyageApi.get('/v1/bookings', {
+        params: { userId, limit: 10, sortBy: 'createdAt', sortOrder: 'desc' }
+      });
+      const data = response.data?.data || response.data;
+      const rawBookings = Array.isArray(data) ? data : data?.bookings || [];
+      return rawBookings.map(mapBooking);
     } catch (error) {
       console.error('Error fetching bookings:', error);
       return [];
@@ -146,8 +219,19 @@ class DashboardService {
 
   async getUpcomingTrips(): Promise<Booking[]> {
     try {
-      const response = await api.get('/bookings/upcoming');
-      return response.data;
+      const userId = getAuthUserId();
+      const response = await voyageApi.get('/v1/bookings', {
+        params: { userId, status: 'CONFIRMED', sortBy: 'createdAt', sortOrder: 'asc' }
+      });
+      const data = response.data?.data || response.data;
+      const rawBookings = Array.isArray(data) ? data : data?.bookings || [];
+      const bookings: Booking[] = rawBookings.map(mapBooking);
+      // Filter for future trips
+      const now = new Date();
+      return bookings.filter((b: Booking) => {
+        const dep = b.departureDate || b.createdAt;
+        return dep && new Date(dep) >= now;
+      });
     } catch (error) {
       console.error('Error fetching upcoming trips:', error);
       return [];
@@ -156,18 +240,52 @@ class DashboardService {
 
   async cancelBooking(bookingId: string): Promise<void> {
     try {
-      await api.delete(`/bookings/${bookingId}`);
+      await voyageApi.post(`/v1/bookings/${bookingId}/cancel`);
     } catch (error) {
       console.error('Error cancelling booking:', error);
       throw error;
     }
   }
 
-  // Search History
+  // Booking Stats → voyage-service
+  async getTravelStats(): Promise<UserStats> {
+    try {
+      const userId = getAuthUserId();
+      const response = await voyageApi.get('/v1/bookings/stats', {
+        params: { userId }
+      });
+      const data = response.data?.data || response.data;
+      const byStatus = data.byStatus || {};
+      return {
+        totalBookings: data.total || data.totalBookings || 0,
+        totalSpent: data.totalSpent || data.totalAmount || 0,
+        countriesVisited: data.countriesVisited || 0,
+        favoriteDestination: data.favoriteDestination || '',
+        averageTripDuration: data.averageTripDuration || 0,
+        upcomingTrips: data.upcomingTrips || byStatus.CONFIRMED || 0
+      };
+    } catch (error) {
+      console.error('Error fetching travel stats:', error);
+      throw error;
+    }
+  }
+
+  // Search History → user-service
   async getSearchHistory(): Promise<SearchHistory[]> {
     try {
-      const response = await api.get('/search-history');
-      return response.data;
+      const response = await userApi.get('/v1/users/history', {
+        params: { actionType: 'SEARCH', limit: 20 }
+      });
+      const data = response.data?.data || response.data;
+      const items = Array.isArray(data) ? data : data?.history || [];
+      return items.map((item: any) => ({
+        id: item.id,
+        query: item.details?.query || item.entityId || '',
+        type: item.entityType?.toLowerCase() || 'destination',
+        searchDate: item.createdAt || item.timestamp,
+        results: item.details?.resultsCount || 0,
+        clicked: item.details?.clicked || false
+      }));
     } catch (error) {
       console.error('Error fetching search history:', error);
       return [];
@@ -176,19 +294,26 @@ class DashboardService {
 
   async getRecentSearches(limit: number = 5): Promise<string[]> {
     try {
-      const response = await api.get(`/search-history/recent?limit=${limit}`);
-      return response.data.map((item: SearchHistory) => item.query);
+      const response = await userApi.get('/v1/users/history', {
+        params: { actionType: 'SEARCH', limit }
+      });
+      const data = response.data?.data || response.data;
+      const items = Array.isArray(data) ? data : data?.history || [];
+      return items
+        .map((item: any) => item.details?.query || item.entityId || '')
+        .filter(Boolean);
     } catch (error) {
       console.error('Error fetching recent searches:', error);
       return [];
     }
   }
 
-  // Recommendations
+  // Recommendations → ai-service
   async getPersonalizedRecommendations(): Promise<TravelRecommendation[]> {
     try {
-      const response = await api.get('/recommendations/personalized');
-      return response.data;
+      const response = await aiApi.get('/v1/recommendations/personalized');
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : data?.recommendations || [];
     } catch (error) {
       console.error('Error fetching recommendations:', error);
       return [];
@@ -197,8 +322,9 @@ class DashboardService {
 
   async getTrendingDestinations(): Promise<TravelRecommendation[]> {
     try {
-      const response = await api.get('/recommendations/trending');
-      return response.data;
+      const response = await aiApi.get('/v1/recommendations/trending');
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : data?.destinations || [];
     } catch (error) {
       console.error('Error fetching trending destinations:', error);
       return [];
@@ -207,20 +333,22 @@ class DashboardService {
 
   async getDealsAndOffers(): Promise<TravelRecommendation[]> {
     try {
-      const response = await api.get('/recommendations/deals');
-      return response.data;
+      const response = await aiApi.get('/v1/recommendations/deals');
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : data?.deals || [];
     } catch (error) {
       console.error('Error fetching deals:', error);
       return [];
     }
   }
 
-  // Flight Insights
+  // Flight Insights → ai-service
   async getFlightInsights(origin?: string): Promise<FlightInsight[]> {
     try {
       const params = origin ? { origin } : {};
-      const response = await api.get('/flights/insights', { params });
-      return response.data;
+      const response = await aiApi.get('/v1/recommendations/flights', { params });
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error('Error fetching flight insights:', error);
       return [];
@@ -230,7 +358,7 @@ class DashboardService {
   async getPriceAlerts(): Promise<any[]> {
     try {
       const response = await api.get('/price-alerts');
-      return response.data;
+      return response.data?.data || response.data || [];
     } catch (error) {
       console.error('Error fetching price alerts:', error);
       return [];
@@ -240,50 +368,64 @@ class DashboardService {
   async createPriceAlert(alertData: any): Promise<any> {
     try {
       const response = await api.post('/price-alerts', alertData);
-      return response.data;
+      return response.data?.data || response.data;
     } catch (error) {
       console.error('Error creating price alert:', error);
       throw error;
     }
   }
 
-  // Analytics and Insights
-  async getTravelStats(): Promise<UserStats> {
-    try {
-      const response = await api.get('/analytics/user-stats');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching travel stats:', error);
-      throw error;
-    }
-  }
-
   async getDestinationInsights(destination: string): Promise<any> {
     try {
-      const response = await api.get(`/analytics/destination/${destination}`);
-      return response.data;
+      const response = await aiApi.get(`/v1/recommendations/similar/${destination}`);
+      return response.data?.data || response.data;
     } catch (error) {
       console.error('Error fetching destination insights:', error);
       throw error;
     }
   }
 
-  // Preferences
+  // User Favorites → user-service
+  async getUserFavorites(): Promise<any[]> {
+    try {
+      const response = await userApi.get('/v1/users/favorites');
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : data?.favorites || [];
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+      return [];
+    }
+  }
+
+  // User Itineraries → voyage-service
+  async getUserItineraries(): Promise<any[]> {
+    try {
+      const response = await voyageApi.get('/v1/itineraries');
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : data?.itineraries || [];
+    } catch (error) {
+      console.error('Error fetching itineraries:', error);
+      return [];
+    }
+  }
+
+  // Preferences → user-service
   async updatePreferences(preferences: Partial<UserPreferences>): Promise<UserPreferences> {
     try {
-      const response = await api.put('/preferences', preferences);
-      return response.data;
+      const response = await userApi.put('/v1/users/profile', { preferences });
+      return response.data?.data || response.data;
     } catch (error) {
       console.error('Error updating preferences:', error);
       throw error;
     }
   }
 
-  // Quick Actions
+  // Quick Actions → voyage-service
   async quickFlightSearch(params: any): Promise<any[]> {
     try {
-      const response = await api.get('/flights/search', { params });
-      return response.data;
+      const response = await voyageApi.get('/v1/flights/search', { params });
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error('Error in quick flight search:', error);
       return [];
@@ -292,8 +434,9 @@ class DashboardService {
 
   async quickHotelSearch(params: any): Promise<any[]> {
     try {
-      const response = await api.get('/hotels/search', { params });
-      return response.data;
+      const response = await voyageApi.get('/v1/hotels/search', { params });
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error('Error in quick hotel search:', error);
       return [];
@@ -302,8 +445,9 @@ class DashboardService {
 
   async quickActivitySearch(params: any): Promise<any[]> {
     try {
-      const response = await api.get('/activities/search', { params });
-      return response.data;
+      const response = await voyageApi.get('/v1/activities/search', { params });
+      const data = response.data?.data || response.data;
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error('Error in quick activity search:', error);
       return [];
