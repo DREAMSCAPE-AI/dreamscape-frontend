@@ -19,8 +19,8 @@ const BookingsByDestinationChart = ({ data, isLoading }: BookingsByDestinationCh
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
       <h3 className="text-sm font-medium text-gray-500 mb-4">Top destinations</h3>
-      <div className="h-56">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-56" style={{ minWidth: 0 }}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
             <XAxis type="number" tick={{ fontSize: 12 }} stroke="#9ca3af" />
             <YAxis

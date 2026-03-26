@@ -38,8 +38,8 @@ const BookingStatusPieChart = ({ byStatus, isLoading }: BookingStatusPieChartPro
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
       <h3 className="text-sm font-medium text-gray-500 mb-4">Statuts des reservations</h3>
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-64" style={{ minWidth: 0 }}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <PieChart>
             <Pie
               data={data}

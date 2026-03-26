@@ -9,6 +9,7 @@ export const useAdminStats = (period: PeriodType, startDate?: string, endDate?: 
     queryKey: ['admin', 'stats', period, startDate, endDate],
     queryFn: () => adminDashboardService.getStats(period, startDate, endDate),
     refetchInterval: REFETCH_INTERVAL,
+    enabled: period !== 'custom' || (!!startDate && !!endDate),
   });
 
 export const useRevenueChart = (period: PeriodType, startDate?: string, endDate?: string) =>
@@ -16,6 +17,7 @@ export const useRevenueChart = (period: PeriodType, startDate?: string, endDate?
     queryKey: ['admin', 'revenue-chart', period, startDate, endDate],
     queryFn: () => adminDashboardService.getRevenueChart(period, startDate, endDate),
     refetchInterval: REFETCH_INTERVAL,
+    enabled: period !== 'custom' || (!!startDate && !!endDate),
   });
 
 export const useBookingsByDestination = (limit: number = 5) =>
