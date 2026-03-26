@@ -62,6 +62,7 @@ import CookieConsent from '@/components/gdpr/CookieConsent';
 import AdminGuard from '@/components/admin/AdminGuard';
 import AdminLayout from '@/layouts/AdminLayout';
 import AdminDashboardPage from '@/pages/admin';
+import AdminUsersPage from '@/pages/admin/users';
 
 // Auth checker component that runs on app mount
 // Memoized to prevent unnecessary re-renders
@@ -182,6 +183,7 @@ function App() {
           {/* Admin Routes (outside RootLayout — custom sidebar layout) */}
           <Route element={<AdminGuard><AdminLayout /></AdminGuard>}>
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
           </Route>
           </Routes>
         </ErrorBoundary>

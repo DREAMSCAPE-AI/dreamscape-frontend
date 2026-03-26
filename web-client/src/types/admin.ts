@@ -29,3 +29,55 @@ export interface RecentTransaction {
 }
 
 export type PeriodType = '24h' | '7d' | '30d' | 'custom';
+
+// Users CRUD
+export interface AdminUser {
+  id: string;
+  email: string;
+  username: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  role: 'USER' | 'ADMIN' | 'MODERATOR';
+  isVerified: boolean;
+  userCategory: 'LEISURE' | 'BUSINESS';
+  onboardingCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  _count: {
+    searches: number;
+    favorites: number;
+    notifications: number;
+  };
+}
+
+export interface AdminUserDetail extends AdminUser {
+  phoneNumber: string | null;
+  dateOfBirth: string | null;
+  nationality: string | null;
+  onboardingCompletedAt: string | null;
+  _count: {
+    searches: number;
+    favorites: number;
+    history: number;
+    notifications: number;
+  };
+}
+
+export interface UsersListResponse {
+  users: AdminUser[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface UpdateUserData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: string;
+  isVerified?: boolean;
+  userCategory?: string;
+}

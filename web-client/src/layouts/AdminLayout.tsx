@@ -3,6 +3,7 @@ import { useAuth } from '@/services/auth/AuthService';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
+  { label: 'Utilisateurs', path: '/admin/users', icon: '👥' },
 ];
 
 const AdminLayout = () => {
