@@ -83,7 +83,19 @@
     "viewAllCount": "View All {{count}} Recommendations",
     "refreshRecommendations": "Refresh recommendations",
     "recentSearches": "Recent Searches",
-    "aiRecommendations": "AI Recommendations"
+    "aiRecommendations": "AI Recommendations",
+    "searchAgain": "Search again:",
+    "aiSelector": {
+      "title": "Generate your AI recommendations",
+      "description": "Select a type of personalized recommendation based on your preferences",
+      "generateButton": "Generate my recommendations",
+      "selectHint": "Select a category to continue",
+      "categories": {
+        "flights": "Flights",
+        "accommodations": "Accommodation",
+        "activities": "Activities"
+      }
+    }
   },
   "savedItineraries": {
     "title": "Saved Itineraries",

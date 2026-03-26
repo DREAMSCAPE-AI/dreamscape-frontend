@@ -83,7 +83,19 @@
     "viewAllCount": "Voir les {{count}} Recommandations",
     "refreshRecommendations": "Actualiser les recommandations",
     "recentSearches": "Recherches Récentes",
-    "aiRecommendations": "Recommandations IA"
+    "aiRecommendations": "Recommandations IA",
+    "searchAgain": "Rechercher à nouveau :",
+    "aiSelector": {
+      "title": "Générez vos recommandations IA",
+      "description": "Sélectionnez un type de recommandation personnalisée basée sur vos préférences",
+      "generateButton": "Générer mes recommandations",
+      "selectHint": "Sélectionnez une catégorie pour continuer",
+      "categories": {
+        "flights": "Vols",
+        "accommodations": "Hébergement",
+        "activities": "Activités"
+      }
+    }
   },
   "savedItineraries": {
     "title": "Itinéraires Sauvegardés",

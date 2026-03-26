@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { History, Sparkles, RefreshCw } from 'lucide-react';
+import { History, Sparkles, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import ExperienceCard from '../features/ExperienceCard';
-import { TravelRecommendation } from '../../services/dashboardService';
 import AIRecommendationSelector from './AIRecommendationSelector';
-<<<<<<< Updated upstream
-import { getAllRecommendations, RecommendationCategory } from '../../services/aiRecommendationsService';
-import { useAuth } from '../../services/auth/AuthService';
-=======
 import AIRecommendationModal, {
   type ModalRecommendationType,
   type Proposal,
@@ -18,8 +13,9 @@ import RecommendationActionModal, { type ActionResult } from './RecommendationAc
 import { TravelRecommendation } from '@/services/dashboard';
 import { useAuth } from '../../services/auth/AuthService';
 import { useItineraryStore } from '@/store/itineraryStore';
->>>>>>> Stashed changes
 import axios from 'axios';
+import { onboardingService } from '@/services/onboarding/onboardingService';
+import { profileService } from '@/services/profile';
 
 // ─── localStorage recommendation history ──────────────────────────────────────
 
@@ -28,7 +24,7 @@ const HISTORY_KEY = 'dreamscape-recommendation-history';
 interface RecommendationHistoryEntry {
   timestamp: string;
   proposals: Proposal[];
-  type: ProposalType | 'itinerary';
+  type: ProposalType;
 }
 
 function proposalToTravelRecommendation(p: Proposal): TravelRecommendation {
@@ -54,18 +50,24 @@ interface RecommendationsSectionProps {
   onRefresh: () => Promise<void>;
 }
 
-interface UserSearchData {
-  origin?: string;
-  destination?: string;
-  departureDate?: string;
-  returnDate?: string;
-  passengers?: {
-    adults: number;
-    children: number;
-    infants: number;
-  };
-  cabinClass?: string;
-}
+// ─── Simple inline toast ──────────────────────────────────────────────────────
+
+interface ToastState { visible: boolean; success: boolean; message: string }
+
+const Toast: React.FC<ToastState> = ({ visible, success, message }) => (
+  <div className={`
+    fixed bottom-6 left-1/2 -translate-x-1/2 z-[60]
+    flex items-center gap-2 px-5 py-3 rounded-xl shadow-lg
+    text-sm font-medium text-white transition-all duration-300
+    ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}
+    ${success ? 'bg-green-600' : 'bg-red-500'}
+  `} role="alert" aria-live="polite">
+    {success ? <CheckCircle className="w-4 h-4 flex-shrink-0" /> : <XCircle className="w-4 h-4 flex-shrink-0" />}
+    {message}
+  </div>
+);
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
   recentSearches,
@@ -74,8 +76,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
 }) => {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
-<<<<<<< Updated upstream
-=======
   const { fetchItineraries } = useItineraryStore();
 
   // Modal state
@@ -97,50 +97,44 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
   });
 
   // AI results displayed after user picks a proposal
->>>>>>> Stashed changes
   const [aiRecommendations, setAiRecommendations] = useState<TravelRecommendation[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [userSearchData, setUserSearchData] = useState<UserSearchData | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Fetch user's latest search from database
+  // Search params from user's history — fed to AI without any form
+  const [searchParams, setSearchParams] = useState<AISearchParams>({
+    origin: 'PAR',
+    destination: 'NYC',
+    departureDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    adults: 1,
+    travelClass: 'ECONOMY',
+  });
+
+  // Toast
+  const [toast, setToast] = useState<ToastState>({ visible: false, success: true, message: '' });
+  const showToast = (success: boolean, message: string) => {
+    setToast({ visible: true, success, message });
+    setTimeout(() => setToast(s => ({ ...s, visible: false })), 3500);
+  };
+
+  // Fetch user's recent search + full profile to build enriched AI context
   useEffect(() => {
-    const fetchUserSearchData = async () => {
-      if (!user?.id) return;
+    if (!user?.id) return;
 
-      try {
-        const token = localStorage.getItem('auth-token');
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL || '/api'}/search-history/recent?limit=1`,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
+    const fetchContext = async () => {
+      // Run all fetches in parallel — failures are non-blocking
+      const [searchRes, onboardingRes, profileRes] = await Promise.allSettled([
+        (async () => {
+          const token = localStorage.getItem('auth-token');
+          const r = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL || '/api'}/search-history/recent?limit=1`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          return r.data?.[0] ?? null;
+        })(),
+        onboardingService.getProfile(),
+        profileService.getProfile(),
+      ]);
 
-<<<<<<< Updated upstream
-        if (response.data && response.data.length > 0) {
-          const latestSearch = response.data[0];
-          setUserSearchData({
-            origin: latestSearch.origin,
-            destination: latestSearch.destination,
-            departureDate: latestSearch.departureDate,
-            returnDate: latestSearch.returnDate,
-            passengers: latestSearch.passengers || { adults: 1, children: 0, infants: 0 },
-            cabinClass: latestSearch.cabinClass || 'ECONOMY'
-          });
-        }
-      } catch (err) {
-        console.error('Failed to fetch user search data:', err);
-        // Fallback to default values if no search history
-        setUserSearchData({
-          origin: 'PAR',
-          destination: 'NYC',
-          departureDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          passengers: { adults: 2, children: 0, infants: 0 },
-          cabinClass: 'ECONOMY'
-        });
-      }
-=======
       // Extract recent search context
       const recentSearch = searchRes.status === 'fulfilled' ? searchRes.value : null;
 
@@ -152,8 +146,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
       // Extract profile/settings data
       const profileData = profileRes.status === 'fulfilled' ? profileRes.value : null;
 
-      // Map onboarding data to user profile enrichment
-      // Data comes directly from TravelOnboardingProfile fields (not nested in stepData)
       const travelStyle = onboardingProfile?.travelStyle;
       const comfortLevel = onboardingProfile?.comfortLevel;
       const activityLevel = onboardingProfile?.activityLevel;
@@ -162,20 +154,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
       const travelTypes = onboardingProfile?.travelTypes ?? [];
       const accommodationTypes = onboardingProfile?.accommodationTypes ?? [];
       const preferredDestinations = onboardingProfile?.preferredDestinations?.destinations ?? [];
-
-      console.log('[RecommendationsSection] Mapped user profile enrichment:', {
-        travelStyle,
-        comfortLevel,
-        activityLevel,
-        activityTypes,
-        travelGroupType,
-        travelTypes,
-        accommodationTypes,
-        budgetMin: onboardingProfile?.globalBudgetRange?.min,
-        budgetMax: onboardingProfile?.globalBudgetRange?.max,
-        currency: onboardingProfile?.globalBudgetRange?.currency ?? profileData?.preferences?.currency,
-        preferredDestinations,
-      });
 
       setSearchParams({
         // Search history (highest priority)
@@ -194,27 +172,21 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
         budgetMin:             onboardingProfile?.globalBudgetRange?.min,
         budgetMax:             onboardingProfile?.globalBudgetRange?.max,
         currency:              onboardingProfile?.globalBudgetRange?.currency ?? profileData?.preferences?.currency,
-        travelTypes,           // ✅ From onboardingProfile.travelTypes
-        accommodationTypes,    // ✅ From onboardingProfile.accommodationTypes
-        activityTypes,         // ✅ From onboardingProfile.activityTypes
-        preferredDestinations, // ✅ From onboardingProfile.preferredDestinations.destinations
-        comfortLevel,          // ✅ From onboardingProfile.comfortLevel
-        travelStyle,           // ✅ From onboardingProfile.travelStyle
-        travelGroupType,       // ✅ From onboardingProfile.travelGroupTypes[0]
-        activityLevel,         // ✅ From onboardingProfile.activityLevel
+        travelTypes,
+        accommodationTypes,
+        activityTypes,
+        preferredDestinations,
+        comfortLevel,
+        travelStyle,
+        travelGroupType,
+        activityLevel,
       });
->>>>>>> Stashed changes
     };
 
-    fetchUserSearchData();
-  }, [user?.id]);
+    fetchContext();
+    fetchItineraries();
+  }, [user?.id, fetchItineraries]);
 
-<<<<<<< Updated upstream
-  const handleGenerateRecommendations = async (categories: RecommendationCategory[]) => {
-    if (!user?.id) {
-      setError('User not authenticated');
-      return;
-=======
   // ── Open modal when selector fires ─────────────────────────────────────────
 
   const handleOpenModal = (type: ModalRecommendationType) => {
@@ -240,103 +212,19 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
     const entry: RecommendationHistoryEntry = {
       timestamp: new Date().toISOString(),
       proposals,
-      type: proposals.length > 1 ? 'itinerary' : (proposals[0]?.type ?? 'activity'),
+      type: proposals[0]?.type ?? 'activity',
     };
     try {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(entry));
       setSavedRecommendations(entry);
     } catch {
       // private browsing or quota exceeded — fail silently
->>>>>>> Stashed changes
     }
     // Open action modal so user picks cart vs itinerary
     setPendingProposals(proposals);
     setActionModalOpen(true);
   };
 
-<<<<<<< Updated upstream
-    if (!userSearchData) {
-      setError('No search data available. Please perform a search first.');
-      return;
-    }
-
-    setIsGenerating(true);
-    setError(null);
-
-    try {
-      const searchParams = {
-        origin: userSearchData.origin,
-        destination: userSearchData.destination,
-        departureDate: userSearchData.departureDate,
-        adults: userSearchData.passengers?.adults || 1,
-        children: userSearchData.passengers?.children || 0,
-        infants: userSearchData.passengers?.infants || 0,
-        travelClass: userSearchData.cabinClass,
-        startDate: userSearchData.departureDate,
-        endDate: userSearchData.returnDate || userSearchData.departureDate,
-        checkInDate: userSearchData.departureDate,
-        checkOutDate: userSearchData.returnDate,
-        rooms: 1
-      };
-
-      const results = await getAllRecommendations(user.id, categories, searchParams);
-
-      // Transform AI recommendations to TravelRecommendation format
-      const transformedRecommendations: TravelRecommendation[] = [];
-
-      // Process flights
-      if (results.flights?.success) {
-        results.flights.data.recommendations.forEach((flight: any) => {
-          transformedRecommendations.push({
-            id: flight.flightOfferId,
-            type: 'flight',
-            title: `${flight.origin} → ${flight.destination}`,
-            description: `${flight.airline} - ${flight.duration} - ${flight.segments.length} segment(s)`,
-            location: flight.destination,
-            price: flight.price,
-            currency: flight.currency,
-            rating: Math.min(5, (flight.score * 5) || 4.5),
-            image: `https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80`,
-            tags: [flight.cabinClass, flight.bookingClass],
-            validUntil: flight.validUntil,
-            confidence: flight.score || 0.85
-          });
-        });
-      }
-
-      // Process activities
-      if (results.activities?.success) {
-        results.activities.data.recommendations.forEach((activity: any) => {
-          transformedRecommendations.push({
-            id: activity.id,
-            type: 'activity',
-            title: activity.name,
-            description: activity.shortDescription,
-            location: activity.location?.address || activity.geoCode?.label || '',
-            price: activity.price?.amount || 0,
-            currency: activity.price?.currencyCode || 'USD',
-            rating: activity.rating || 4.5,
-            image: activity.pictures?.[0] || `https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80`,
-            tags: [activity.bookingLink ? 'bookable' : 'info-only'],
-            validUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-            confidence: activity.score || 0.8
-          });
-        });
-      }
-
-      // TODO: Process accommodations when implemented
-      if (results.accommodations?.success) {
-        // Accommodation processing will go here
-      }
-
-      setAiRecommendations(transformedRecommendations);
-    } catch (err: any) {
-      console.error('Failed to generate recommendations:', err);
-      setError(err.message || 'Failed to generate recommendations. Please try again.');
-    } finally {
-      setIsGenerating(false);
-    }
-=======
   const handleActionSuccess = (result: ActionResult) => {
     setActionModalOpen(false);
     setPendingProposals([]);
@@ -346,40 +234,15 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
         ? '✓ Ajouté au panier !'
         : `✓ Ajouté à l'itinéraire "${result.itineraryTitle}" !`
     );
->>>>>>> Stashed changes
   };
 
   const handleRefresh = async () => {
-    // Clear AI recommendations and trigger refresh
+    setIsRefreshing(true);
     setAiRecommendations([]);
     await onRefresh();
+    setIsRefreshing(false);
   };
 
-<<<<<<< Updated upstream
-  // Use AI recommendations if available, otherwise use default recommendations
-  const displayRecommendations = aiRecommendations.length > 0 ? aiRecommendations : recommendations;
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-4 md:mb-6">
-        <h2 className="text-lg md:text-2xl font-semibold text-gray-800">{t('recommendations.forYou')}</h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleRefresh}
-            disabled={isGenerating}
-            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title={t('recommendations.refreshRecommendations')}
-            aria-label={t('recommendations.refreshRecommendations')}
-          >
-            <RefreshCw className={`w-4 h-4 flex-shrink-0 ${isGenerating ? 'animate-spin' : ''}`} />
-          </button>
-          <button
-            className="hidden sm:block min-h-[44px] px-3 text-sm md:text-base text-orange-500 hover:text-orange-600 transition-colors"
-            aria-label={t('recommendations.viewAll')}
-          >
-            {t('recommendations.viewAll')}
-          </button>
-=======
   // Only use AI recommendations from aiRecommendationsService (US-IA-010)
   // Old 'recommendations' prop from DashboardService is deprecated
   const displayRecommendations = aiRecommendations;
@@ -461,9 +324,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
               </div>
               <div className="mt-4 text-center">
                 <button
-                  onClick={() => {
-                    setAiRecommendations([]);
-                  }}
+                  onClick={() => setAiRecommendations([])}
                   className="text-sm text-gray-400 hover:text-orange-500 transition-colors"
                 >
                   ← Générer d'autres recommandations
@@ -473,101 +334,18 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
           ) : (
             <AIRecommendationSelector onGenerate={handleOpenModal} isLoading={false} />
           )}
->>>>>>> Stashed changes
         </div>
       </div>
 
-      {recentSearches.length > 0 && (
-        <div className="mb-6 md:mb-8">
-          <div className="flex items-center gap-2 mb-3 md:mb-4">
-            <History className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 text-gray-500" />
-            <h3 className="text-base md:text-lg font-medium text-gray-700">{t('recommendations.recentSearches')}</h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {recentSearches.map((search, index) => (
-              <button
-                key={index}
-                className="px-3 md:px-4 py-2 min-h-[44px] text-sm md:text-base bg-gray-50 text-gray-700 rounded-full hover:bg-orange-50 hover:text-orange-500 transition-colors"
-                aria-label={`${t('recommendations.searchAgain')} ${search}`}
-              >
-                {search}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Modal — opens directly in loading, AI generates from user data */}
+      <AIRecommendationModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        type={modalType}
+        searchParams={searchParams}
+        onProposalSelected={handleProposalSelected}
+      />
 
-<<<<<<< Updated upstream
-      <div>
-        <div className="flex items-center gap-2 mb-3 md:mb-4">
-          <Sparkles className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 text-orange-500" />
-          <h3 className="text-base md:text-lg font-medium text-gray-700">{t('recommendations.aiRecommendations')}</h3>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
-
-        {displayRecommendations.length > 0 ? (
-          <>
-            {/* Mobile: Horizontal scroll */}
-            <div className="md:hidden overflow-x-auto -mx-3 px-3 pb-2">
-              <div className="flex gap-3" style={{ width: 'max-content' }}>
-                {displayRecommendations.slice(0, 4).map((recommendation) => (
-                  <div key={recommendation.id} className="w-[280px] flex-shrink-0">
-                    <ExperienceCard
-                      image={recommendation.image}
-                      title={recommendation.title}
-                      location={recommendation.location}
-                      type={recommendation.type}
-                      duration={recommendation.description}
-                      priceRange={`${recommendation.price}`}
-                      rating={recommendation.rating}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Desktop: Grid */}
-            <div className="hidden md:grid grid-cols-2 gap-4">
-              {displayRecommendations.slice(0, 4).map((recommendation) => (
-                <ExperienceCard
-                  key={recommendation.id}
-                  image={recommendation.image}
-                  title={recommendation.title}
-                  location={recommendation.location}
-                  type={recommendation.type}
-                  duration={recommendation.description}
-                  priceRange={`${recommendation.price}`}
-                  rating={recommendation.rating}
-                />
-              ))}
-            </div>
-          </>
-        ) : (
-          <AIRecommendationSelector
-            onGenerate={handleGenerateRecommendations}
-            isLoading={isGenerating}
-          />
-        )}
-      </div>
-
-      {displayRecommendations.length > 4 && (
-        <div className="mt-4 md:mt-6 text-center">
-          <button
-            className="px-4 md:px-6 py-2.5 min-h-[48px] text-sm md:text-base font-medium bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-            aria-label={t('recommendations.viewAllCount', { count: displayRecommendations.length })}
-          >
-            {t('recommendations.viewAllCount', { count: displayRecommendations.length })}
-          </button>
-        </div>
-      )}
-    </div>
-=======
       {/* Action modal — cart vs itinerary choice after selecting a proposal */}
       <RecommendationActionModal
         isOpen={actionModalOpen}
@@ -578,7 +356,6 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
 
       <Toast visible={toast.visible} success={toast.success} message={toast.message} />
     </>
->>>>>>> Stashed changes
   );
 };
 

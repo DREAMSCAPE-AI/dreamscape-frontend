@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Plane, Home, Compass, Sparkles } from 'lucide-react'; // Sparkles used in LoadingStep
+import { X, Plane, Home, Compass, Sparkles } from 'lucide-react';
 import {
   getAllRecommendations,
   type RecommendationCategory,
