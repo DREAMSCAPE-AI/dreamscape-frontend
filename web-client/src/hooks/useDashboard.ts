@@ -159,54 +159,18 @@ export const useDashboard = () => {
   }, [isAuthenticated]);
 
   // Load recommendations
+  // NOTE: Recommendations are now handled by aiRecommendationsService (US-IA-010)
+  // This method is kept for backwards compatibility but returns empty arrays
   const loadRecommendations = useCallback(async () => {
     if (!isAuthenticated) return;
-    
-    try {
-      const [recommendations, trendingDestinations, deals] = await Promise.all([
-        dashboardService.getPersonalizedRecommendations(),
-        dashboardService.getTrendingDestinations(),
-        dashboardService.getDealsAndOffers()
-      ]);
-      updateData({ recommendations, trendingDestinations, deals });
-    } catch (error) {
-      console.error('Failed to load recommendations:', error);
-      // Use mock data
-      updateData({
-        recommendations: [
-          {
-            id: '1',
-            type: 'activity',
-            title: 'Tokyo Night Tour',
-            description: 'Explore Tokyo\'s vibrant nightlife',
-            location: 'Tokyo, Japan',
-            price: 100,
-            currency: 'USD',
-            rating: 4.8,
-            image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80',
-            tags: ['cultural', 'nightlife'],
-            validUntil: '2024-12-31',
-            confidence: 0.9
-          },
-          {
-            id: '2',
-            type: 'activity',
-            title: 'Desert Safari',
-            description: 'Adventure in the Dubai desert',
-            location: 'Dubai, UAE',
-            price: 175,
-            currency: 'USD',
-            rating: 4.9,
-            image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80',
-            tags: ['adventure', 'desert'],
-            validUntil: '2024-12-31',
-            confidence: 0.85
-          }
-        ],
-        trendingDestinations: [],
-        deals: []
-      });
-    }
+
+    // All AI recommendations are now loaded directly in RecommendationsSection
+    // using aiRecommendationsService instead of DashboardService
+    updateData({
+      recommendations: [],
+      trendingDestinations: [],
+      deals: []
+    });
   }, [isAuthenticated]);
 
   // Load flight insights

@@ -1,44 +1,11 @@
-<<<<<<< HEAD
-/**
- * AI Recommendations Service
- *
- * Service for fetching personalized recommendations from the AI service
- * for flights, accommodations, and activities.
- */
-
 import axios from 'axios';
 
-const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:3005';
-
-export type RecommendationType = 'flights' | 'accommodations' | 'activities';
-
-export interface FlightRecommendationParams {
-  userId: string;
-  origin: string;
-  destination: string;
-  departureDate: string;
-  returnDate?: string;
-  adults: number;
-  children?: number;
-  infants?: number;
-  tripPurpose?: 'LEISURE' | 'BUSINESS' | 'FAMILY' | 'ROMANTIC';
-  budgetPerPerson?: number;
-  preferDirectFlights?: boolean;
-=======
-import axios from 'axios';
-
-const resolveBaseUrl = (envValue?: string) => {
-  const trimmed = (envValue || '').trim();
-  if (trimmed) return trimmed;
-  return '/api'; // Fallback to API Gateway
-};
-
-const AI_SERVICE_URL = resolveBaseUrl(import.meta.env.VITE_AI_SERVICE_URL);
+const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL;
 
 // Create axios instance
 const aiApi = axios.create({
-  baseURL: AI_SERVICE_URL,
-  timeout: 30000, // AI operations may take longer
+  baseURL: `${AI_SERVICE_URL}/v1`,
+  timeout: 60000,
 });
 
 // Add auth token to requests
@@ -68,7 +35,22 @@ export interface RecommendationResponse {
   };
 }
 
-export interface FlightRecommendationParams {
+// Shared user-profile enrichment sent to every AI endpoint
+interface UserProfileContext {
+  budgetMin?: number;
+  budgetMax?: number;
+  currency?: string;
+  travelTypes?: string[];
+  accommodationTypes?: string[];
+  activityTypes?: string[];
+  preferredDestinations?: string[];
+  comfortLevel?: string;
+  travelStyle?: string;
+  travelGroupType?: string;
+  activityLevel?: string;
+}
+
+export interface FlightRecommendationParams extends UserProfileContext {
   userId: string;
   origin?: string;
   destination?: string;
@@ -77,60 +59,21 @@ export interface FlightRecommendationParams {
   children?: number;
   infants?: number;
   travelClass?: string;
->>>>>>> dev
   limit?: number;
 }
 
-export interface ActivityRecommendationParams {
+export interface ActivityRecommendationParams extends UserProfileContext {
   userId: string;
-<<<<<<< HEAD
-  cityCode?: string;
-  latitude?: number;
-  longitude?: number;
-  radiusKm?: number;
-  startDate?: string;
-  endDate?: string;
-  stayDuration?: number;
-  travelCompanions?: string;
-  budgetPerActivity?: number;
-=======
-  destination?: string;
+  cityCode?: string; // Backend expects cityCode (IATA code), not destination name
   startDate?: string;
   endDate?: string;
   adults?: number;
->>>>>>> dev
   limit?: number;
 }
 
-export interface AccommodationRecommendationParams {
+export interface AccommodationRecommendationParams extends UserProfileContext {
   userId: string;
-<<<<<<< HEAD
-  cityCode: string;
-  checkInDate: string;
-  checkOutDate: string;
-  adults: number;
-  children?: number;
-  rooms?: number;
-  budgetPerNight?: number;
-  limit?: number;
-}
-
-export interface RecommendationResponse<T = any> {
-  userId: string;
-  count: number;
-  recommendations: T[];
-  metadata: {
-    processingTime: number;
-    strategy: string;
-    cacheHit: boolean;
-  };
-  context?: any;
-}
-
-/**
- * Get personalized flight recommendations
-=======
-  destination?: string;
+  cityCode?: string; // Backend expects cityCode (IATA code), not destination name
   checkInDate?: string;
   checkOutDate?: string;
   adults?: number;
@@ -141,197 +84,246 @@ export interface RecommendationResponse<T = any> {
 
 /**
  * Get flight recommendations from AI service
->>>>>>> dev
  */
 export async function getFlightRecommendations(
   params: FlightRecommendationParams
 ): Promise<RecommendationResponse> {
   try {
-<<<<<<< HEAD
-    const response = await axios.get(`${AI_SERVICE_URL}/api/v1/recommendations/flights`, {
-      params,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('[AIRecommendations] Flight recommendations error:', error);
-=======
-    const response = await aiApi.get('/api/v1/recommendations/flights', { params });
-    return response.data;
-  } catch (error) {
+    console.log('[AI Service] Requesting flight recommendations:', params);
+
+    // Filter params: only send essential search params, not user profile data
+    // Backend will load user profile from database via mergeUserProfileToContext
+    const essentialParams = {
+      userId: params.userId,
+      origin: params.origin,
+      destination: params.destination,
+      departureDate: params.departureDate,
+      adults: params.adults,
+      children: params.children,
+      infants: params.infants,
+      travelClass: params.travelClass,
+      limit: params.limit,
+    };
+
+    const response = await aiApi.get('/recommendations/flights', { params: essentialParams });
+
+    // Check if response indicates a specific error strategy
+    const strategy = response.data.metadata?.strategy;
+    const error = response.data.metadata?.error;
+
+    if (strategy === 'invalid_params') {
+      throw new Error('Paramètres de recherche invalides. Veuillez vérifier vos dates et destinations.');
+    }
+
+    if (strategy === 'voyage_timeout') {
+      throw new Error('Le service de recherche de vols est temporairement indisponible. Veuillez réessayer dans quelques instants.');
+    }
+
+    if (strategy === 'voyage_error' || strategy === 'amadeus_error') {
+      throw new Error('Erreur du service de recherche de vols. Veuillez réessayer.');
+    }
+
+    if (strategy === 'failed') {
+      throw new Error(error || 'Impossible de charger les recommandations de vols. Veuillez réessayer.');
+    }
+
+    // Adapt backend response to frontend format
+    return {
+      success: true,
+      data: {
+        userId: response.data.userId,
+        recommendations: response.data.recommendations || [],
+        totalCount: response.data.count || 0,
+        metadata: {
+          generatedAt: new Date().toISOString(),
+          vectorDimensions: 8,
+          cacheHit: response.data.metadata?.cacheHit || false,
+          processingTime: response.data.metadata?.processingTime || 0,
+        }
+      }
+    };
+  } catch (error: any) {
     console.error('Error fetching flight recommendations:', error);
->>>>>>> dev
+
+    // Re-throw with user-friendly message if not already formatted
+    if (error.message && (error.message.includes('Paramètres') || error.message.includes('service'))) {
+      throw error; // Already formatted
+    }
+
+    if (error.response?.status === 400) {
+      throw new Error('Paramètres de recherche invalides. Veuillez vérifier votre origine, destination et dates.');
+    }
+
+    if (error.response?.status === 500) {
+      throw new Error('Erreur serveur. Veuillez réessayer dans quelques instants.');
+    }
+
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      throw new Error('Le serveur met trop de temps à répondre. Veuillez réessayer.');
+    }
+
     throw error;
   }
 }
 
 /**
-<<<<<<< HEAD
- * Get personalized activity recommendations
-=======
  * Get activity recommendations from AI service
->>>>>>> dev
  */
 export async function getActivityRecommendations(
   params: ActivityRecommendationParams
 ): Promise<RecommendationResponse> {
   try {
-<<<<<<< HEAD
-    const response = await axios.get(`${AI_SERVICE_URL}/api/v1/recommendations/activities`, {
-      params,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('[AIRecommendations] Activity recommendations error:', error);
-=======
-    const response = await aiApi.get('/api/v1/recommendations/activities', { params });
-    return response.data;
-  } catch (error) {
+    console.log('[AI Service] Requesting activity recommendations:', params);
+    const response = await aiApi.get('/recommendations/activities', { params });
+
+    // Check if response indicates a specific error strategy
+    const strategy = response.data.metadata?.strategy;
+    const error = response.data.metadata?.error;
+
+    if (strategy === 'invalid_city_code') {
+      throw new Error(`La destination "${params.cityCode}" n'est pas supportée. Veuillez sélectionner une destination parmi nos villes disponibles.`);
+    }
+
+    if (strategy === 'voyage_timeout') {
+      throw new Error('Le service de recherche d\'activités est temporairement indisponible. Veuillez réessayer dans quelques instants.');
+    }
+
+    if (strategy === 'voyage_error') {
+      throw new Error('Erreur du service de recherche d\'activités. Veuillez réessayer.');
+    }
+
+    if (strategy === 'failed') {
+      throw new Error(error || 'Impossible de charger les recommandations. Veuillez réessayer.');
+    }
+
+    // Adapt backend response to frontend format
+    return {
+      success: true,
+      data: {
+        userId: response.data.userId,
+        recommendations: response.data.recommendations || [],
+        totalCount: response.data.count || 0,
+        metadata: {
+          generatedAt: new Date().toISOString(),
+          vectorDimensions: 8,
+          cacheHit: response.data.metadata?.cacheHit || false,
+          processingTime: response.data.metadata?.processingTime || 0,
+        }
+      }
+    };
+  } catch (error: any) {
     console.error('Error fetching activity recommendations:', error);
->>>>>>> dev
+
+    // Re-throw with user-friendly message if not already formatted
+    if (error.message && error.message.includes('destination')) {
+      throw error; // Already formatted
+    }
+
+    if (error.response?.status === 400) {
+      throw new Error('Paramètres de recherche invalides. Veuillez vérifier votre destination.');
+    }
+
+    if (error.response?.status === 500) {
+      throw new Error('Erreur serveur. Veuillez réessayer dans quelques instants.');
+    }
+
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      throw new Error('Le serveur met trop de temps à répondre. Veuillez réessayer.');
+    }
+
     throw error;
   }
 }
 
 /**
-<<<<<<< HEAD
- * Get personalized accommodation recommendations
-=======
- * Get accommodation recommendations from AI service (placeholder for future)
->>>>>>> dev
+ * Get accommodation recommendations from AI service
  */
 export async function getAccommodationRecommendations(
   params: AccommodationRecommendationParams
 ): Promise<RecommendationResponse> {
   try {
-<<<<<<< HEAD
-    const response = await axios.get(`${AI_SERVICE_URL}/api/v1/recommendations/accommodations`, {
-      params,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('[AIRecommendations] Accommodation recommendations error:', error);
-=======
-    // TODO: Implement when accommodation recommendations endpoint is ready
-    console.warn('Accommodation recommendations not yet implemented');
+    console.log('[AI Service] Requesting accommodation recommendations:', params);
+
+    // Format array parameters as comma-separated strings for backend
+    const formattedParams = {
+      ...params,
+      travelTypes: params.travelTypes?.join(','),
+      accommodationTypes: params.accommodationTypes?.join(','),
+      activityTypes: params.activityTypes?.join(','),
+      preferredDestinations: params.preferredDestinations?.join(','),
+    };
+
+    console.log('[AI Service] Formatted params for backend:', formattedParams);
+
+    const response = await aiApi.get('/recommendations/accommodations', { params: formattedParams });
+
+    // Check if response indicates a specific error strategy
+    const strategy = response.data.metadata?.strategy;
+    const error = response.data.metadata?.error;
+
+    if (strategy === 'invalid_params') {
+      throw new Error('Paramètres de recherche invalides. Veuillez vérifier vos dates et destination.');
+    }
+
+    if (strategy === 'voyage_timeout') {
+      throw new Error('Le service de recherche d\'hébergements est temporairement indisponible. Veuillez réessayer dans quelques instants.');
+    }
+
+    if (strategy === 'voyage_error') {
+      throw new Error('Erreur du service de recherche d\'hébergements. Veuillez réessayer.');
+    }
+
+    if (strategy === 'failed') {
+      throw new Error(error || 'Impossible de charger les recommandations d\'hébergements. Veuillez réessayer.');
+    }
+
+    // Adapt backend response to frontend format
     return {
       success: true,
       data: {
-        userId: params.userId,
-        recommendations: [],
-        totalCount: 0,
+        userId: response.data.userId,
+        recommendations: response.data.recommendations || [],
+        totalCount: response.data.count || 0,
         metadata: {
           generatedAt: new Date().toISOString(),
           vectorDimensions: 8,
-          cacheHit: false,
-          processingTime: 0
+          cacheHit: response.data.metadata?.cacheHit || false,
+          processingTime: response.data.metadata?.processingTime || 0,
         }
       }
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching accommodation recommendations:', error);
->>>>>>> dev
+
+    // Re-throw with user-friendly message if not already formatted
+    if (error.message && (error.message.includes('Paramètres') || error.message.includes('service'))) {
+      throw error; // Already formatted
+    }
+
+    if (error.response?.status === 400) {
+      throw new Error('Paramètres de recherche invalides. Veuillez vérifier votre destination et vos dates.');
+    }
+
+    if (error.response?.status === 500) {
+      throw new Error('Erreur serveur. Veuillez réessayer dans quelques instants.');
+    }
+
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      throw new Error('Le serveur met trop de temps à répondre. Veuillez réessayer.');
+    }
+
     throw error;
   }
 }
 
 /**
-<<<<<<< HEAD
- * Get all recommendations (flights + accommodations + activities)
- */
-export async function getAllRecommendations(params: {
-  userId: string;
-  destination?: string;
-  origin?: string;
-  checkInDate?: string;
-  checkOutDate?: string;
-  departureDate?: string;
-  returnDate?: string;
-  adults: number;
-  children?: number;
-}): Promise<{
-  flights?: RecommendationResponse;
-  accommodations?: RecommendationResponse;
-  activities?: RecommendationResponse;
-}> {
-  try {
-    const results: any = {};
-
-    // Fetch all recommendations in parallel
-    const promises: Promise<any>[] = [];
-
-    // Flights
-    if (params.origin && params.destination && params.departureDate) {
-      promises.push(
-        getFlightRecommendations({
-          userId: params.userId,
-          origin: params.origin,
-          destination: params.destination,
-          departureDate: params.departureDate,
-          returnDate: params.returnDate,
-          adults: params.adults,
-          children: params.children,
-          limit: 10,
-        }).then(data => ({ type: 'flights', data }))
-      );
-    }
-
-    // Accommodations
-    if (params.destination && params.checkInDate && params.checkOutDate) {
-      promises.push(
-        getAccommodationRecommendations({
-          userId: params.userId,
-          cityCode: params.destination,
-          checkInDate: params.checkInDate,
-          checkOutDate: params.checkOutDate,
-          adults: params.adults,
-          children: params.children,
-          limit: 10,
-        }).then(data => ({ type: 'accommodations', data }))
-      );
-    }
-
-    // Activities
-    if (params.destination) {
-      promises.push(
-        getActivityRecommendations({
-          userId: params.userId,
-          cityCode: params.destination,
-          startDate: params.checkInDate,
-          endDate: params.checkOutDate,
-          limit: 10,
-        }).then(data => ({ type: 'activities', data }))
-      );
-    }
-
-    const responses = await Promise.allSettled(promises);
-
-    responses.forEach((response) => {
-      if (response.status === 'fulfilled') {
-        results[response.value.type] = response.value.data;
-      }
-    });
-
-    return results;
-  } catch (error) {
-    console.error('[AIRecommendations] Get all recommendations error:', error);
-    throw error;
-  }
-=======
  * Get all recommendations for selected categories
  */
 export async function getAllRecommendations(
   userId: string,
   categories: RecommendationCategory[],
   searchParams: {
+    // Search context
     origin?: string;
     destination?: string;
     departureDate?: string;
@@ -344,6 +336,18 @@ export async function getAllRecommendations(
     infants?: number;
     rooms?: number;
     travelClass?: string;
+    // User profile enrichment
+    budgetMin?: number;
+    budgetMax?: number;
+    currency?: string;
+    travelTypes?: string[];
+    accommodationTypes?: string[];
+    activityTypes?: string[];
+    preferredDestinations?: string[];
+    comfortLevel?: string;
+    travelStyle?: string;
+    travelGroupType?: string;
+    activityLevel?: string;
   }
 ): Promise<{
   flights?: RecommendationResponse;
@@ -352,6 +356,21 @@ export async function getAllRecommendations(
 }> {
   const promises: Promise<any>[] = [];
   const results: any = {};
+
+  // Shared user profile context forwarded to every AI endpoint
+  const profileCtx = {
+    budgetMin:            searchParams.budgetMin,
+    budgetMax:            searchParams.budgetMax,
+    currency:             searchParams.currency,
+    travelTypes:          searchParams.travelTypes,
+    accommodationTypes:   searchParams.accommodationTypes,
+    activityTypes:        searchParams.activityTypes,
+    preferredDestinations: searchParams.preferredDestinations,
+    comfortLevel:         searchParams.comfortLevel,
+    travelStyle:          searchParams.travelStyle,
+    travelGroupType:      searchParams.travelGroupType,
+    activityLevel:        searchParams.activityLevel,
+  };
 
   // Build promises for each category
   if (categories.includes('flights')) {
@@ -365,7 +384,8 @@ export async function getAllRecommendations(
         children: searchParams.children,
         infants: searchParams.infants,
         travelClass: searchParams.travelClass,
-        limit: 10
+        limit: 10,
+        ...profileCtx,
       }).then(data => ({ category: 'flights', data }))
     );
   }
@@ -374,26 +394,38 @@ export async function getAllRecommendations(
     promises.push(
       getActivityRecommendations({
         userId,
-        destination: searchParams.destination,
+        cityCode: searchParams.destination, // Map destination → cityCode
         startDate: searchParams.startDate || searchParams.departureDate,
         endDate: searchParams.endDate || searchParams.departureDate,
         adults: searchParams.adults,
-        limit: 10
+        limit: 10,
+        ...profileCtx,
       }).then(data => ({ category: 'activities', data }))
     );
   }
 
   if (categories.includes('accommodations')) {
+    // Calculate checkOutDate if not provided (default: checkInDate + 7 days)
+    const checkInDate = searchParams.checkInDate || searchParams.departureDate;
+    let checkOutDate = searchParams.checkOutDate;
+
+    if (!checkOutDate && checkInDate) {
+      const checkIn = new Date(checkInDate);
+      checkIn.setDate(checkIn.getDate() + 7);
+      checkOutDate = checkIn.toISOString().split('T')[0];
+    }
+
     promises.push(
       getAccommodationRecommendations({
         userId,
-        destination: searchParams.destination,
-        checkInDate: searchParams.checkInDate || searchParams.departureDate,
-        checkOutDate: searchParams.checkOutDate,
+        cityCode: searchParams.destination, // Map destination → cityCode
+        checkInDate,
+        checkOutDate,
         adults: searchParams.adults,
         children: searchParams.children,
         rooms: searchParams.rooms || 1,
-        limit: 10
+        limit: 10,
+        ...profileCtx,
       }).then(data => ({ category: 'accommodations', data }))
     );
   }
@@ -412,37 +444,12 @@ export async function getAllRecommendations(
   });
 
   return results;
->>>>>>> dev
 }
 
 /**
  * Track user interaction with a recommendation
  */
 export async function trackRecommendationInteraction(
-<<<<<<< HEAD
-  type: RecommendationType,
-  params: {
-    userId: string;
-    itemId: string;
-    interactionType: 'view' | 'click' | 'book' | 'like' | 'dislike' | 'wishlist' | 'compare' | 'save';
-  }
-): Promise<void> {
-  try {
-    const endpoints = {
-      flights: `${AI_SERVICE_URL}/api/v1/recommendations/flights/interactions`,
-      accommodations: `${AI_SERVICE_URL}/api/v1/recommendations/accommodations/interactions`,
-      activities: `${AI_SERVICE_URL}/api/v1/recommendations/activities/interactions`,
-    };
-
-    await axios.post(endpoints[type], {
-      userId: params.userId,
-      [`${type === 'flights' ? 'flight' : type === 'activities' ? 'activity' : 'accommodation'}Id`]: params.itemId,
-      type: params.interactionType,
-    });
-  } catch (error) {
-    console.error(`[AIRecommendations] Track ${type} interaction error:`, error);
-    // Don't throw - tracking should not block user experience
-=======
   category: RecommendationCategory,
   data: {
     userId: string;
@@ -453,16 +460,15 @@ export async function trackRecommendationInteraction(
 ): Promise<void> {
   try {
     const endpoints: Record<RecommendationCategory, string> = {
-      flights: '/api/v1/recommendations/flights/interactions',
-      activities: '/api/v1/recommendations/activities/interactions',
-      accommodations: '/api/v1/recommendations/accommodations/interactions'
+      flights: '/recommendations/flights/interactions',
+      activities: '/recommendations/activities/interactions',
+      accommodations: '/recommendations/accommodations/interactions'
     };
 
     await aiApi.post(endpoints[category], data);
   } catch (error) {
     console.error(`Error tracking ${category} recommendation interaction:`, error);
     // Don't throw - tracking failures shouldn't break the UI
->>>>>>> dev
   }
 }
 
@@ -471,9 +477,5 @@ export default {
   getActivityRecommendations,
   getAccommodationRecommendations,
   getAllRecommendations,
-<<<<<<< HEAD
   trackRecommendationInteraction,
-=======
-  trackRecommendationInteraction
->>>>>>> dev
 };

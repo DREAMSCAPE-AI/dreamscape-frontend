@@ -10,7 +10,7 @@ const API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_API_BASE_URL);
 
 // Create axios instance with auth interceptor
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: `${API_BASE_URL}/v1`,
   timeout: 10000,
 });
 
@@ -180,37 +180,6 @@ class DashboardService {
       return response.data.map((item: SearchHistory) => item.query);
     } catch (error) {
       console.error('Error fetching recent searches:', error);
-      return [];
-    }
-  }
-
-  // Recommendations
-  async getPersonalizedRecommendations(): Promise<TravelRecommendation[]> {
-    try {
-      const response = await api.get('/recommendations/personalized');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
-      return [];
-    }
-  }
-
-  async getTrendingDestinations(): Promise<TravelRecommendation[]> {
-    try {
-      const response = await api.get('/recommendations/trending');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching trending destinations:', error);
-      return [];
-    }
-  }
-
-  async getDealsAndOffers(): Promise<TravelRecommendation[]> {
-    try {
-      const response = await api.get('/recommendations/deals');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching deals:', error);
       return [];
     }
   }
