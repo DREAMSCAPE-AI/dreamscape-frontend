@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Baby, Heart, Star, MapPin, Clock, Users, Accessibility, Sun, Shield } from 'lucide-react';
-import type { Experience } from '../../services/api/types';
+import type { Experience } from '@/services/voyage/types';
 
 interface FamilyExperiencesProps {
   experiences: FamilyExperience[];

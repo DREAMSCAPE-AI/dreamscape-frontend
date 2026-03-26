@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import type { FlightOffer } from '../../services/api/types';
-import voyageService from '../../services/api/VoyageService';
+import type { FlightOffer } from '@/services/voyage/types';
+import voyageService from '@/services/voyage/VoyageService';
 
 interface SeatSelectionProps {
   flight: FlightOffer;
@@ -116,11 +116,15 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
         console.error('Failed to fetch seat map:', error);
         setError('Failed to load seat map. Using fallback seat layout.');
         // Generate fallback seat maps
-        setSeatMaps(generateFallbackSeatMap(flight));
+        console.log('[SeatSelection] Generating fallback seat map for flight:', flight);
+        const fallbackMaps = generateFallbackSeatMap(flight);
+        console.log('[SeatSelection] Generated fallback seat maps:', fallbackMaps);
+        setSeatMaps(fallbackMaps);
         if (returnFlight) {
           setReturnSeatMaps(generateFallbackSeatMap(returnFlight));
         }
       } finally {
+        console.log('[SeatSelection] Setting loading to false');
         setLoading(false);
       }
     };
@@ -130,8 +134,12 @@ const SeatSelection: React.FC<SeatSelectionProps> = ({
 
   // Generate fallback seat map when API fails
   const generateFallbackSeatMap = (targetFlight: FlightOffer): AmadeusSeatMap[] => {
+    console.log('[generateFallbackSeatMap] Target flight:', targetFlight);
+    console.log('[generateFallbackSeatMap] Itineraries:', targetFlight.itineraries);
+    console.log('[generateFallbackSeatMap] Segments:', targetFlight.itineraries?.[0]?.segments);
     return targetFlight.itineraries[0].segments.map((segment, index) => {
       const aircraftType = segment.aircraft?.code || 'A320';
+      console.log('[generateFallbackSeatMap] Segment', index, '- Aircraft:', aircraftType);
       const seats: AmadeusSeat[] = [];
       
       // Different configurations based on aircraft type

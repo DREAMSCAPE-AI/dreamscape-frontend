@@ -1,169 +1,183 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plane, Building2, Calendar, Users, Search, MapPin } from 'lucide-react';
-import SearchBox from './SearchBox';
-import BackgroundOverlay from './BackgroundOverlay';
+import { Search, MapPin, Calendar, Sparkles } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
-interface HeroSectionProps {
-  onDashboardClick?: () => void;
-}
-
-const HeroSection: React.FC<HeroSectionProps> = ({ onDashboardClick }) => {
+const HeroSection = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('common');
-  const [searchType, setSearchType] = useState<'destination' | 'flight' | 'hotel'>('destination');
-  const [searchParams, setSearchParams] = useState({
-    location: '',
-    dates: {
-      startDate: null as Date | null,
-      endDate: null as Date | null
-    },
-    guests: 2
-  });
+  const [query, setQuery] = useState('');
+
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 800], [0, 250]);
+  const bgScale = useTransform(scrollY, [0, 800], [1, 1.15]);
+  const contentOpacity = useTransform(scrollY, [0, 350], [1, 0]);
+  const contentY = useTransform(scrollY, [0, 350], [0, 80]);
 
   const handleSearch = () => {
-    switch (searchType) {
-      case 'flight':
-        navigate('/flights', { state: searchParams });
-        break;
-      case 'hotel':
-        navigate('/search', { 
-          state: { 
-            ...searchParams,
-            type: 'hotel'
-          }
-        });
-        break;
-      default:
-        navigate('/search', { state: searchParams });
-    }
+    navigate('/destinations', { state: { location: query } });
   };
 
   return (
-    <div className="relative min-h-[calc(100vh+80px)]">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1642427749670-f20e2e76ed8c?auto=format&fit=crop&q=80')] bg-cover bg-center">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
-          <BackgroundOverlay />
-        </div>
+    <section className="relative h-screen min-h-[750px] max-h-[1200px] flex items-center justify-center overflow-hidden bg-surface-950">
+      {/* Background image with parallax */}
+      <motion.div
+        className="absolute inset-0 will-change-transform"
+        style={{ y: bgY, scale: bgScale }}
+      >
+        <img
+          src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&q=80&w=2560"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Overlays for depth */}
+        <div className="absolute inset-0 bg-surface-950/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-transparent to-surface-950/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-surface-950/40 via-transparent to-surface-950" />
+      </motion.div>
+
+      {/* Ambient orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute w-[600px] h-[600px] rounded-full opacity-20"
+          style={{
+            background: 'radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 70%)',
+            top: '10%',
+            left: '20%',
+          }}
+          animate={{ x: [0, 80, 0], y: [0, -40, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full opacity-15"
+          style={{
+            background: 'radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 70%)',
+            bottom: '5%',
+            right: '10%',
+          }}
+          animate={{ x: [0, -60, 0], y: [0, 50, 0] }}
+          transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <div className="noise-overlay absolute inset-0" />
       </div>
-      
-      <div className="relative z-10 container mx-auto px-4 h-screen flex flex-col justify-center pt-32 md:pt-48 lg:pt-56">
-        <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-pink-600">
-          {t('hero.title')}<br />{t('hero.titleLine2')}
-        </h1>
 
-        <p className="text-base md:text-xl lg:text-2xl mb-6 md:mb-12 max-w-2xl text-cyan-100">
+      {/* Centered content */}
+      <motion.div
+        className="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto"
+        style={{ opacity: contentOpacity, y: contentY }}
+      >
+        {/* AI badge */}
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          <span className="inline-flex items-center gap-2 px-4 py-2 text-[11px] font-semibold tracking-[0.2em] uppercase rounded-full bg-white/[0.06] backdrop-blur-md text-orange-300/80 border border-white/[0.08]">
+            <Sparkles className="w-3 h-3" />
+            {t('home.poweredByAI')}
+          </span>
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight leading-[0.9]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <motion.span
+            className="block text-white"
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {t('hero.title')}
+          </motion.span>
+          <motion.span
+            className="block text-gradient mt-1"
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {t('hero.titleLine2')}
+          </motion.span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          className="mt-6 md:mt-8 text-base sm:text-lg md:text-xl text-white/45 max-w-xl mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.6 }}
+        >
           {t('hero.subtitle')}
-        </p>
+        </motion.p>
 
-        <div className="space-y-4 md:space-y-6 max-w-4xl">
-          {/* Search Type Selector */}
-          <div className="flex gap-1 md:gap-2 bg-white/10 backdrop-blur-md p-1 rounded-lg w-full md:w-fit max-w-full overflow-x-auto">
-            {[
-              { type: 'destination', label: t('nav.destinations'), icon: MapPin },
-              { type: 'flight', label: t('nav.flights'), icon: Plane },
-              { type: 'hotel', label: t('nav.hotels'), icon: Building2 }
-            ].map(({ type, label, icon: Icon }) => (
-              <button
-                key={type}
-                onClick={() => setSearchType(type as typeof searchType)}
-                className={`flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-2.5 rounded-lg transition-colors whitespace-nowrap flex-1 md:flex-initial justify-center min-h-[44px] ${
-                  searchType === type
-                    ? 'bg-white text-gray-900'
-                    : 'text-white hover:bg-white/10'
-                }`}
-              >
-                <Icon className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-                <span className="text-sm md:text-base">{label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Search Box */}
-          <div className="bg-white/10 backdrop-blur-md p-4 md:p-6 rounded-xl">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
-              {/* Location Input */}
-              <div className="md:col-span-2">
-                <label className="block text-white text-xs md:text-sm mb-1 md:mb-2">
-                  {searchType === 'flight' ? t('hero.whereTo') : t('hero.location')}
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder={
-                      searchType === 'flight'
-                        ? t('hero.placeholderFlight')
-                        : searchType === 'hotel'
-                        ? t('hero.placeholderHotel')
-                        : t('hero.placeholderDestination')
-                    }
-                    className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-3 text-sm md:text-base bg-white/10 backdrop-blur-md rounded-lg text-white placeholder-white/70 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
-                    value={searchParams.location}
-                    onChange={(e) => setSearchParams({ ...searchParams, location: e.target.value })}
-                  />
-                  <MapPin className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-white/70" />
-                </div>
-              </div>
-
-              {/* Date Selection */}
-              <div>
-                <label className="block text-white text-xs md:text-sm mb-1 md:mb-2">{t('hero.dates')}</label>
-                <button className="w-full flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2.5 md:py-3 min-h-[44px] bg-white/10 backdrop-blur-md rounded-lg text-white text-sm md:text-base border border-white/20 hover:bg-white/20 transition-colors">
-                  <Calendar className="w-4 h-4 md:w-5 md:h-5 text-white/70 flex-shrink-0" />
-                  <span className="truncate">{t('hero.selectDates')}</span>
-                </button>
-              </div>
-
-              {/* Guests/Travelers */}
-              <div>
-                <label className="block text-white text-xs md:text-sm mb-1 md:mb-2">
-                  {searchType === 'flight' ? t('hero.travelers') : t('hero.guests')}
-                </label>
-                <button className="w-full flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2.5 md:py-3 min-h-[44px] bg-white/10 backdrop-blur-md rounded-lg text-white text-sm md:text-base border border-white/20 hover:bg-white/20 transition-colors">
-                  <Users className="w-4 h-4 md:w-5 md:h-5 text-white/70 flex-shrink-0" />
-                  <span className="truncate">{searchParams.guests} {searchParams.guests === 1 ? t('hero.person') : t('hero.people')}</span>
-                </button>
-              </div>
+        {/* Compact search bar */}
+        <motion.div
+          className="mt-10 md:mt-12 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="flex items-center gap-2 p-2 rounded-2xl bg-white/[0.06] backdrop-blur-xl border border-white/[0.08] shadow-2xl">
+            {/* Destination input */}
+            <div className="flex-1 relative">
+              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+              <input
+                type="text"
+                placeholder={t('hero.placeholderDestination')}
+                className="w-full pl-10 pr-3 py-3.5 text-sm bg-transparent rounded-xl text-white placeholder-white/25 focus:outline-none"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
             </div>
 
-            {/* Search Button */}
-            <button
-              onClick={handleSearch}
-              className="mt-4 md:mt-6 w-full flex items-center justify-center gap-2 py-3 min-h-[44px] text-sm md:text-base bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
-            >
-              <Search className="w-4 h-4 md:w-5 md:h-5" />
-              <span>
-                {searchType === 'flight'
-                  ? t('hero.searchFlights')
-                  : searchType === 'hotel'
-                  ? t('hero.findHotels')
-                  : t('hero.exploreDestinations')}
-              </span>
+            {/* Dates button */}
+            <button className="hidden sm:flex items-center gap-2 px-4 py-3.5 text-sm text-white/30 hover:text-white/50 transition-colors whitespace-nowrap">
+              <Calendar className="w-4 h-4" />
+              <span>{t('hero.selectDates')}</span>
             </button>
-          </div>
 
-          {/* Quick Links */}
-          <div className="flex flex-wrap gap-3 md:gap-4">
-            <button
-              onClick={() => navigate('/planner')}
-              className="px-4 md:px-6 py-2.5 md:py-3 min-h-[44px] text-sm md:text-base bg-white/10 backdrop-blur-md text-white rounded-lg hover:bg-white/20 transition-colors"
+            {/* Divider */}
+            <div className="hidden sm:block w-px h-6 bg-white/10" />
+
+            {/* Search button */}
+            <motion.button
+              onClick={handleSearch}
+              className="flex items-center gap-2 px-6 py-3.5 min-h-[44px] text-sm font-semibold bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl whitespace-nowrap"
+              whileHover={{ scale: 1.03, boxShadow: '0 8px 30px rgba(249,115,22,0.35)' }}
+              whileTap={{ scale: 0.97 }}
             >
-              {t('hero.planYourTrip')}
-            </button>
-            {onDashboardClick && (
-              <button
-                onClick={onDashboardClick}
-                className="px-4 md:px-6 py-2.5 md:py-3 min-h-[44px] text-sm md:text-base bg-white/10 backdrop-blur-md text-white rounded-lg hover:bg-white/20 transition-colors"
-              >
-                {t('hero.accessDashboard')}
-              </button>
-            )}
+              <Search className="w-4 h-4" />
+              <span className="hidden md:inline">{t('buttons.search')}</span>
+            </motion.button>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+      >
+        <motion.div
+          className="w-5 h-8 rounded-full border border-white/15 flex justify-center pt-1.5"
+          animate={{ opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+        >
+          <motion.div
+            className="w-0.5 h-1.5 rounded-full bg-white/40"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </motion.div>
+      </motion.div>
+    </section>
   );
 };
 

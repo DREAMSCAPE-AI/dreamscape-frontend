@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Hotel, Compass, Info, X, ExternalLink } from 'lucide-react';
-import type { Experience, HotelOffer } from '../../services/api/types';
+import type { Experience, HotelOffer } from '@/services/voyage/types';
 
 interface InteractiveMapProps {
   center: {

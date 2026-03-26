@@ -86,15 +86,19 @@
     "aiRecommendations": "AI Recommendations",
     "searchAgain": "Search again:",
     "aiSelector": {
-      "title": "Generate your AI recommendations",
-      "description": "Select a type of personalized recommendation based on your preferences",
-      "generateButton": "Generate my recommendations",
-      "selectHint": "Select a category to continue",
+      "title": "Generate Your AI Recommendations",
+      "description": "Select the types of recommendations you'd like to receive",
       "categories": {
         "flights": "Flights",
-        "accommodations": "Accommodation",
-        "activities": "Activities"
-      }
+        "accommodations": "Accommodations",
+        "activities": "Activities",
+        "global": "Full Itinerary"
+      },
+      "selectCategory": "Select",
+      "deselectCategory": "Deselect",
+      "generateButton": "Generate My Recommendations",
+      "generating": "Generating...",
+      "selectHint": "Select a recommendation type to continue"
     }
   },
   "savedItineraries": {

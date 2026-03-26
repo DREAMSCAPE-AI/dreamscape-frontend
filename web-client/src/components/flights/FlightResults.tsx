@@ -1,10 +1,10 @@
 import React from 'react';
 import { Clock, Plane, Star, Shield, Leaf, Users, Wifi, Coffee, Loader } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { FlightOffer } from '@/services/api/types';
-import airlineService from '@/services/airlineService';
+import type { FlightOffer } from '@/services/voyage/types';
+import airlineService from '@/services/utility/airlineService';
 import { FavoriteButton } from '@/components/favorites';
-import { FavoriteType } from '@/services/api/FavoritesService';
+import { FavoriteType } from '@/services/user/FavoritesService';
 
 interface FlightResultsProps {
   flights: FlightOffer[];

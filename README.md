@@ -1,6 +1,8 @@
 🌐 DreamScape Frontend
 
 > **Frontend Platform** - Interface utilisateur web et gateway API
+> Status: CI/CD with package-lock.json tracking enabled
+> Latest: AI Recommendations UI with i18n (FR/EN) - Ready to deploy
 
 ## 📁 Structure des Applications
 
@@ -250,4 +252,5 @@ npm run deploy:prod        # Deploy production
 ## 📄 License
 
 Propriétaire et confidentiel © DreamScape 2025
+
 

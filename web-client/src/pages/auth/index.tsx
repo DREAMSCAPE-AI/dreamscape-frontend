@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import { useAuth } from '@/services/auth/AuthService';
-import { onboardingService } from '@/services/onboarding/onboardingService';
+import { onboardingService } from '@/services/user/OnboardingService';
 import { AlertCircle } from 'lucide-react';
 
 export default function AuthPage() {

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import UserTypeSelector from './UserTypeSelector';
-import useProfileStore from '@/services/profile/ProfileStore';
-import type { UserType } from '@/services/profile/types';
+import useProfileStore from '@/services/user/ProfileStore';
+import type { UserType } from '@/services/user/types';
 
 const ProfileSetup: React.FC = () => {
   const { t } = useTranslation('settings');

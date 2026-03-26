@@ -1,6 +1,6 @@
 import React from 'react';
 import { Briefcase, Compass, Sparkles } from 'lucide-react';
-import type { UserType } from '@/services/profile/types';
+import type { UserType } from '@/services/user/types';
 
 interface UserTypeSelectorProps {
   selectedType: UserType | null;

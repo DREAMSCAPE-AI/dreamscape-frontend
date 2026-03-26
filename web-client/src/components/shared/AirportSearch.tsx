@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plane, Search, MapPin } from 'lucide-react';
-import APIService from '@/services/api/APIService';
+import APIService from '@/services/voyage/VoyageService';
 
 interface Airport {
   iataCode: string;
@@ -17,6 +17,7 @@ interface AirportSearchProps {
   placeholder?: string;
   error?: boolean;
   className?: string;
+  id?: string;
 }
 
 const AirportSearch: React.FC<AirportSearchProps> = ({
@@ -24,7 +25,8 @@ const AirportSearch: React.FC<AirportSearchProps> = ({
   onChange,
   placeholder = "Enter city or airport",
   error = false,
-  className = ""
+  className = "",
+  id
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [airports, setAirports] = useState<Airport[]>([]);
@@ -68,8 +70,9 @@ const AirportSearch: React.FC<AirportSearchProps> = ({
     setIsLoading(true);
     try {
       const response = await APIService.searchAirports({ keyword: query });
-      const airportData = response || [];
-      
+      // L'API retourne { data: [...], meta: {...} }
+      const airportData = response?.data || [];
+
       // Filter and format airport data
       const formattedAirports: Airport[] = airportData
         .filter((item: any) => item.subType === 'AIRPORT' && item.iataCode)
@@ -151,6 +154,7 @@ const AirportSearch: React.FC<AirportSearchProps> = ({
       <div className="relative">
         <input
           ref={inputRef}
+          id={id}
           type="text"
           value={inputValue}
           onChange={handleInputChange}
@@ -161,6 +165,7 @@ const AirportSearch: React.FC<AirportSearchProps> = ({
             }
           }}
           placeholder={placeholder}
+          aria-label={placeholder}
           className={`w-full pl-10 pr-10 py-3 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 border ${
             error ? 'border-red-500' : 'border-gray-200'
           } ${className}`}

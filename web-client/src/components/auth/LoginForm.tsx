@@ -49,14 +49,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
           {/* Email Input */}
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-email" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('login.email')}
             </label>
             <div className="relative">
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={!!errors.email}
+                aria-describedby="login-email-error"
+                required
                 className={`w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.email ? 'border-red-500' : 'border-gray-200'
                 }`}
@@ -65,20 +69,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
               <Mail className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             </div>
             {errors.email && (
-              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.email}</p>
+              <p id="login-email-error" role="alert" aria-live="assertive" className="mt-1 text-xs md:text-sm text-red-500">{errors.email}</p>
             )}
           </div>
 
           {/* Password Input */}
           <div>
-            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-password" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {t('login.password')}
             </label>
             <div className="relative">
               <input
+                id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={!!errors.password}
+                aria-describedby="login-password-error"
+                required
                 className={`w-full pl-9 md:pl-10 pr-10 md:pr-12 py-2.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${
                   errors.password ? 'border-red-500' : 'border-gray-200'
                 }`}
@@ -87,6 +95,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
               <Lock className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
               <button
                 type="button"
+                aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                aria-pressed={showPassword}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-2.5 md:right-3 top-1/2 -translate-y-1/2 p-1.5 md:p-1 text-gray-400 hover:text-gray-600 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center"
               >
@@ -98,7 +108,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-xs md:text-sm text-red-500">{errors.password}</p>
+              <p id="login-password-error" role="alert" aria-live="assertive" className="mt-1 text-xs md:text-sm text-red-500">{errors.password}</p>
             )}
           </div>
 

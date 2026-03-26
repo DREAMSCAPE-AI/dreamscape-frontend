@@ -48,7 +48,7 @@ const CheckoutPage = () => {
     if (!isAuthenticated) {
       setError('Please log in to continue with checkout.');
       setLoading(false);
-      setTimeout(() => navigate('/auth/login', { state: { from: '/checkout' } }), 3000);
+      setTimeout(() => navigate('/auth', { state: { from: '/checkout' } }), 3000);
       return;
     }
 

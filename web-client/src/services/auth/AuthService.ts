@@ -81,7 +81,7 @@ class AuthApiService {
   async getUserSettings(token: string): Promise<any> {
     try {
       // Fetch from user service
-      const userServiceUrl = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_API_URL);
+      const userServiceUrl = resolveBaseUrl(import.meta.env.VITE_USER_SERVICE_URL);
       const response = await axios.get(`${userServiceUrl}/v1/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
         timeout: 5000

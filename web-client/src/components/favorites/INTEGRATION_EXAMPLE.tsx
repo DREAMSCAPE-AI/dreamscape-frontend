@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { FavoriteButton } from '@/components/favorites';
-import { FavoriteType } from '@/services/api/FavoritesService';
+import { FavoriteType } from '@/services/user/FavoritesService';
 
 // ========== EXAMPLE 1: DestinationCard with FavoriteButton ==========
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star, MapPin, Clock, DollarSign } from 'lucide-react';
-import type { Experience } from '../../services/api/types';
+import type { Experience } from '@/services/voyage/types';
 
 interface ExperienceResultsProps {
   experiences: Experience[];

@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import healthRoutes from './routes/health';
+import vrSessionRoutes from './routes/vr-sessions';
 
 const app = express();
 const PORT = process.env.GATEWAY_PORT || 3000;
@@ -26,6 +27,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/health', healthRoutes);
 app.use('/api/health', healthRoutes); // Alternative path for consistency
 
+// VR session routes - DR-574
+app.use('/api/v1/vr', vrSessionRoutes);
+
 // API Documentation endpoint
 app.get('/docs', (req, res) => {
   res.json({
@@ -35,6 +39,7 @@ app.get('/docs', (req, res) => {
     endpoints: {
       '/api/v1/auth': 'Authentication service',
       '/api/v1/users': 'User management service',
+      '/api/v1/vr/sessions': 'VR PIN sessions (DR-574)',
       '/health': 'Health check endpoint'
     }
   });
@@ -66,7 +71,12 @@ app.use('*', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Gateway server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// Only start listening if not imported as a module (for testing)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Gateway server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
+
+export default app;

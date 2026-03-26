@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { historyService } from '@/services/historyService';
+import { historyService } from '@/services/user/HistoryService';
 import { useAuth } from '@/services/auth/AuthService';
 import type { HistoryActionType, HistoryEntityType, CreateHistoryEntry } from '@/types/history';
 

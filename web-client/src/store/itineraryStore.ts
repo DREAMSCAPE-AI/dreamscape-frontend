@@ -12,7 +12,7 @@ import itineraryService, {
   type CreateItineraryItemDto,
   type UpdateItineraryItemDto,
   type ExportFormat
-} from '@/services/api/ItineraryService';
+} from '@/services/voyage/ItineraryService';
 
 interface ItineraryState {
   // State

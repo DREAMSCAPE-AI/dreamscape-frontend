@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Crown, Star, MapPin, Clock, Users, Shield, Wine, Sparkles } from 'lucide-react';
-import type { Experience } from '../../services/api/types';
+import type { Experience } from '@/services/voyage/types';
 
 interface LuxuryExperiencesProps {
   experiences: Experience[];

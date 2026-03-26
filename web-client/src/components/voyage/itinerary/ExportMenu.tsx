@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Download, FileText, Calendar, Mail, Loader2 } from 'lucide-react';
 import { useItineraryStore } from '@/store/itineraryStore';
-import type { ExportFormat } from '@/services/api/ItineraryService';
+import type { ExportFormat } from '@/services/voyage/ItineraryService';
 
 interface ExportMenuProps {
   itineraryId: string;

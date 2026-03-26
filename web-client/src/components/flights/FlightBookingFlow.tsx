@@ -9,8 +9,8 @@ import SeatSelection, { SelectedSeat } from './SeatSelection';
 import MealSelection, { SelectedMeal } from './MealSelection';
 import BaggageSelection, { SelectedBaggage } from './BaggageSelection';
 import PassengerInfo from './PassengerInfo';
-import voyageService from '@/services/api/VoyageService';
-import type { FlightOffer, UIFlightSearchParams } from '@/services/api/types';
+import voyageService from '@/services/voyage/VoyageService';
+import type { FlightOffer, UIFlightSearchParams } from '@/services/voyage/types';
 import type { SortOption, FilterState, PaginationState } from '@/types/flights';
 import {
   getFlightPrice,
@@ -386,7 +386,7 @@ const FlightBookingFlow: React.FC = () => {
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="container mx-auto px-4 py-8">
         {/* Progress Steps */}
-        <div className="max-w-4xl mx-auto mb-4 md:mb-8">
+        <div className="max-w-4xl mx-auto mb-4 md:mb-8 overflow-hidden">
           {/* Mobile: Horizontal scroll */}
           <div className="overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0 pb-2">
             <div className="flex items-center gap-3 md:gap-4 md:justify-between min-w-max md:min-w-0">

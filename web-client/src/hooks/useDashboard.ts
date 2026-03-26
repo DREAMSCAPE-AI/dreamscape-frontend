@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../services/auth/AuthService';
-import dashboardService, {
+import { useAuth } from '@/services/auth/AuthService';
+import { dashboardService } from '@/services/dashboard';
+import {
   UserProfile,
   Booking,
   SearchHistory,
   TravelRecommendation,
   FlightInsight,
   UserStats
-} from '../services/dashboardService';
+} from '@/services/dashboard';
 
 interface DashboardData {
   profile: UserProfile | null;
@@ -113,24 +114,7 @@ export const useDashboard = () => {
       updateData({ upcomingTrips, recentBookings: recentBookings.slice(0, 5) });
     } catch (error) {
       console.error('Failed to load bookings:', error);
-      // Use mock data
-      updateData({
-        upcomingTrips: [
-          {
-            id: '1',
-            type: 'flight',
-            status: 'confirmed',
-            destination: 'Paris, France',
-            departureDate: '2024-03-15',
-            returnDate: '2024-03-22',
-            totalAmount: 1200,
-            currency: 'USD',
-            createdAt: '2024-02-15',
-            details: { airline: 'Air France', flightNumber: 'AF123' }
-          }
-        ],
-        recentBookings: []
-      });
+      updateData({ upcomingTrips: [], recentBookings: [] });
     }
   }, [isAuthenticated]);
 
@@ -146,15 +130,7 @@ export const useDashboard = () => {
       updateData({ searchHistory, recentSearches });
     } catch (error) {
       console.error('Failed to load search history:', error);
-      // Use mock data
-      updateData({
-        searchHistory: [],
-        recentSearches: [
-          "Beach resorts in Bali",
-          "Cultural tours in Kyoto", 
-          "Mountain retreats in Switzerland"
-        ]
-      });
+      updateData({ searchHistory: [], recentSearches: [] });
     }
   }, [isAuthenticated]);
 
@@ -210,12 +186,12 @@ export const useDashboard = () => {
       console.error('Failed to load stats:', error);
       updateData({
         stats: {
-          totalBookings: 5,
-          totalSpent: 12500,
-          countriesVisited: 8,
-          favoriteDestination: 'Paris',
-          averageTripDuration: 7,
-          upcomingTrips: 1
+          totalBookings: 0,
+          totalSpent: 0,
+          countriesVisited: 0,
+          favoriteDestination: '',
+          averageTripDuration: 0,
+          upcomingTrips: 0
         }
       });
     }

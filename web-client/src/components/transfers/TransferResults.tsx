@@ -1,6 +1,6 @@
 import React from 'react';
 import { Car, Clock, Users, Shield, Star } from 'lucide-react';
-import type { Transfer } from '../../services/api/types';
+import type { Transfer } from '@/services/voyage/types';
 
 interface TransferResultsProps {
   transfers: Transfer[];

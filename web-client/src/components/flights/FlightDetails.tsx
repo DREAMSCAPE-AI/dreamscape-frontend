@@ -14,8 +14,8 @@ import {
   Star
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { FlightOffer } from '../../services/api/types';
-import airlineService from '../../services/airlineService';
+import type { FlightOffer } from '@/services/voyage/types';
+import airlineService from '@/services/utility/airlineService';
 
 interface FlightDetailsProps {
   flight: FlightOffer;

@@ -117,8 +117,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
       {/* User Section (if logged in) */}
       {isLoggedIn && (
         <div className="px-4 py-3 bg-gradient-to-r from-orange-50 to-pink-50 border-b border-gray-200">
-          <button
-            onClick={() => handleNavigation('/dashboard')}
+          <Link
+            to="/dashboard"
+            onClick={closeDrawer}
             className="flex items-center gap-3 w-full text-left min-h-[44px]"
           >
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white">
@@ -128,7 +129,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
               <p className="font-medium text-gray-900">{t('nav.myAccount')}</p>
               <p className="text-sm text-gray-600">{t('nav.viewProfile')}</p>
             </div>
-          </button>
+          </Link>
         </div>
       )}
 
@@ -137,9 +138,10 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
         {mainLinks.map((link) => {
           const Icon = link.icon;
           return (
-            <button
+            <Link
               key={link.name}
-              onClick={() => handleNavigation(link.path)}
+              to={link.path}
+              onClick={closeDrawer}
               className="
                 flex items-center gap-3 w-full px-4 py-3
                 text-gray-700 hover:bg-orange-50 hover:text-orange-600
@@ -149,7 +151,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
             >
               <Icon className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">{link.name}</span>
-            </button>
+            </Link>
           );
         })}
       </div>
@@ -165,6 +167,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
             min-h-[44px]
           "
           aria-expanded={activeSection === 'discover'}
+          aria-controls="discover-submenu"
         >
           <div className="flex items-center gap-3">
             <Compass className="w-5 h-5" />
@@ -179,13 +182,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
 
         {/* Discover Submenu */}
         {activeSection === 'discover' && (
-          <div className="bg-gray-50 py-1">
+          <div id="discover-submenu" className="bg-gray-50 py-1">
             {discoverItems.map((item) => {
               const Icon = item.icon;
               return (
-                <button
+                <Link
                   key={item.name}
-                  onClick={() => handleNavigation(item.path)}
+                  to={item.path}
+                  onClick={closeDrawer}
                   className="
                     flex items-center gap-3 w-full px-8 py-2.5
                     text-gray-600 hover:text-orange-600 hover:bg-orange-50
@@ -195,7 +199,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
                 >
                   <Icon className="w-4 h-4 flex-shrink-0" />
                   <span className="text-sm">{item.name}</span>
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -213,6 +217,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
             min-h-[44px]
           "
           aria-expanded={activeSection === 'tools'}
+          aria-controls="tools-submenu"
         >
           <div className="flex items-center gap-3">
             <Wrench className="w-5 h-5" />
@@ -227,13 +232,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
 
         {/* Tools Submenu */}
         {activeSection === 'tools' && (
-          <div className="bg-gray-50 py-1">
+          <div id="tools-submenu" className="bg-gray-50 py-1">
             {toolsMenuItems.map((tool) => {
               const Icon = tool.icon;
               return (
-                <button
+                <Link
                   key={tool.name}
-                  onClick={() => handleNavigation(tool.path)}
+                  to={tool.path}
+                  onClick={closeDrawer}
                   className="
                     flex items-start gap-3 w-full px-8 py-2.5
                     text-gray-600 hover:text-orange-600 hover:bg-orange-50
@@ -246,7 +252,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
                     <p className="text-sm font-medium">{tool.name}</p>
                     <p className="text-xs text-gray-500 mt-0.5">{tool.description}</p>
                   </div>
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -255,8 +261,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
 
       {/* About Section */}
       <div className="py-2 border-b border-gray-200">
-        <button
-          onClick={() => handleNavigation('/about')}
+        <Link
+          to="/about"
+          onClick={closeDrawer}
           className="
             flex items-center gap-3 w-full px-4 py-3
             text-gray-700 hover:bg-orange-50 hover:text-orange-600
@@ -266,14 +273,15 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
         >
           <HelpCircle className="w-5 h-5 flex-shrink-0" />
           <span className="font-medium">{t('nav.about')}</span>
-        </button>
+        </Link>
       </div>
 
       {/* User Actions (if logged in) */}
       {isLoggedIn && (
         <div className="py-2">
-          <button
-            onClick={() => handleNavigation('/settings')}
+          <Link
+            to="/settings"
+            onClick={closeDrawer}
             className="
               flex items-center gap-3 w-full px-4 py-3
               text-gray-700 hover:bg-orange-50 hover:text-orange-600
@@ -283,7 +291,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
           >
             <Settings className="w-5 h-5 flex-shrink-0" />
             <span className="font-medium">{t('nav.settings')}</span>
-          </button>
+          </Link>
           <button
             onClick={handleLogout}
             className="
@@ -302,9 +310,11 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
       {/* Login/Register (if not logged in) */}
       {!isLoggedIn && (
         <div className="py-4 px-4 space-y-2">
-          <button
-            onClick={() => handleNavigation('/login')}
+          <Link
+            to="/auth"
+            onClick={closeDrawer}
             className="
+              flex items-center justify-center
               w-full py-3 px-4 rounded-lg
               bg-gradient-to-r from-orange-500 to-pink-500
               text-white font-medium
@@ -314,10 +324,12 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
             "
           >
             {t('nav.login')}
-          </button>
-          <button
-            onClick={() => handleNavigation('/register')}
+          </Link>
+          <Link
+            to="/auth"
+            onClick={closeDrawer}
             className="
+              flex items-center justify-center
               w-full py-3 px-4 rounded-lg
               border-2 border-orange-500
               text-orange-600 font-medium
@@ -326,8 +338,8 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
               min-h-[44px]
             "
           >
-            {t('nav.register')}
-          </button>
+            {t('nav.signUp')}
+          </Link>
         </div>
       )}
     </nav>

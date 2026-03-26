@@ -1,14 +1,16 @@
 /**
  * Dynamic VR Viewer Page
  *
- * Ticket: DR-498 (VR-009 - QR Code Access) + DR-74 (Paris VR)
+ * Ticket: DR-498 + DR-74 (Paris VR) + DR-579 (Production URL routing)
  *
  * Page qui charge dynamiquement l'environnement VR en fonction de la destination
- * Accessible via QR code depuis la page destination
+ * Accessible via PIN code depuis la page destination
  */
 
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+
+const PANORAMA_BASE_URL = import.meta.env.VITE_PANORAMA_URL || '/panorama';
 
 // Mapping des destinations vers leurs environnements VR
 const VR_ENVIRONMENT_MAP: Record<string, string> = {
@@ -45,8 +47,7 @@ export default function VRViewerPage() {
     console.log(`🌍 Environnement VR: ${vrEnvironment}`);
 
     // Rediriger vers l'application panorama avec le bon environnement
-    // L'application panorama tourne sur le port 3006
-    const panoramaUrl = `${window.location.protocol}//${window.location.hostname}:3006?environment=${vrEnvironment}`;
+    const panoramaUrl = `${PANORAMA_BASE_URL}?environment=${vrEnvironment}`;
 
     console.log(`🚀 Redirection vers: ${panoramaUrl}`);
 

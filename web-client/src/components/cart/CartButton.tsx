@@ -16,12 +16,15 @@ export const CartButton = () => {
     <button
       onClick={toggleDrawer}
       className="relative p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-700 hover:text-orange-600 transition-colors duration-200 rounded-lg hover:bg-orange-50"
-      aria-label={t('cart.label', 'Shopping cart')}
+      aria-label={itemCount > 0 ? `Panier, ${itemCount} article${itemCount > 1 ? 's' : ''}` : 'Panier'}
     >
       <ShoppingCart className="w-6 h-6" />
 
       {itemCount > 0 && (
-        <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+        <span
+          aria-hidden="true"
+          className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse"
+        >
           {itemCount > 99 ? '99+' : itemCount}
         </span>
       )}

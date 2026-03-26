@@ -51,6 +51,22 @@ interface UserProfileContext {
 }
 
 export interface FlightRecommendationParams extends UserProfileContext {
+// Shared user-profile enrichment sent to every AI endpoint
+interface UserProfileContext {
+  budgetMin?: number;
+  budgetMax?: number;
+  currency?: string;
+  travelTypes?: string[];
+  accommodationTypes?: string[];
+  activityTypes?: string[];
+  preferredDestinations?: string[];
+  comfortLevel?: string;
+  travelStyle?: string;
+  travelGroupType?: string;
+  activityLevel?: string;
+}
+
+export interface FlightRecommendationParams extends UserProfileContext {
   userId: string;
   origin?: string;
   destination?: string;
@@ -63,6 +79,7 @@ export interface FlightRecommendationParams extends UserProfileContext {
 }
 
 export interface ActivityRecommendationParams extends UserProfileContext {
+export interface ActivityRecommendationParams extends UserProfileContext {
   userId: string;
   cityCode?: string; // Backend expects cityCode (IATA code), not destination name
   startDate?: string;
@@ -71,6 +88,7 @@ export interface ActivityRecommendationParams extends UserProfileContext {
   limit?: number;
 }
 
+export interface AccommodationRecommendationParams extends UserProfileContext {
 export interface AccommodationRecommendationParams extends UserProfileContext {
   userId: string;
   cityCode?: string; // Backend expects cityCode (IATA code), not destination name
@@ -324,6 +342,7 @@ export async function getAllRecommendations(
   categories: RecommendationCategory[],
   searchParams: {
     // Search context
+    // Search context
     origin?: string;
     destination?: string;
     departureDate?: string;
@@ -336,6 +355,18 @@ export async function getAllRecommendations(
     infants?: number;
     rooms?: number;
     travelClass?: string;
+    // User profile enrichment
+    budgetMin?: number;
+    budgetMax?: number;
+    currency?: string;
+    travelTypes?: string[];
+    accommodationTypes?: string[];
+    activityTypes?: string[];
+    preferredDestinations?: string[];
+    comfortLevel?: string;
+    travelStyle?: string;
+    travelGroupType?: string;
+    activityLevel?: string;
     // User profile enrichment
     budgetMin?: number;
     budgetMax?: number;
@@ -372,6 +403,21 @@ export async function getAllRecommendations(
     activityLevel:        searchParams.activityLevel,
   };
 
+  // Shared user profile context forwarded to every AI endpoint
+  const profileCtx = {
+    budgetMin:            searchParams.budgetMin,
+    budgetMax:            searchParams.budgetMax,
+    currency:             searchParams.currency,
+    travelTypes:          searchParams.travelTypes,
+    accommodationTypes:   searchParams.accommodationTypes,
+    activityTypes:        searchParams.activityTypes,
+    preferredDestinations: searchParams.preferredDestinations,
+    comfortLevel:         searchParams.comfortLevel,
+    travelStyle:          searchParams.travelStyle,
+    travelGroupType:      searchParams.travelGroupType,
+    activityLevel:        searchParams.activityLevel,
+  };
+
   // Build promises for each category
   if (categories.includes('flights')) {
     promises.push(
@@ -386,6 +432,8 @@ export async function getAllRecommendations(
         travelClass: searchParams.travelClass,
         limit: 10,
         ...profileCtx,
+        limit: 10,
+        ...profileCtx,
       }).then(data => ({ category: 'flights', data }))
     );
   }
@@ -398,6 +446,8 @@ export async function getAllRecommendations(
         startDate: searchParams.startDate || searchParams.departureDate,
         endDate: searchParams.endDate || searchParams.departureDate,
         adults: searchParams.adults,
+        limit: 10,
+        ...profileCtx,
         limit: 10,
         ...profileCtx,
       }).then(data => ({ category: 'activities', data }))
@@ -424,6 +474,8 @@ export async function getAllRecommendations(
         adults: searchParams.adults,
         children: searchParams.children,
         rooms: searchParams.rooms || 1,
+        limit: 10,
+        ...profileCtx,
         limit: 10,
         ...profileCtx,
       }).then(data => ({ category: 'accommodations', data }))

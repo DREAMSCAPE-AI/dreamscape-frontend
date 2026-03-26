@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cookie, Settings, X, Shield, Check } from 'lucide-react';
-import GdprService from '@/services/api/GdprService';
+import GdprService from '@/services/user/GdprService';
 
 interface CookiePreferences {
   analytics: boolean;
@@ -131,14 +131,14 @@ const CookieConsent: React.FC = () => {
                 <button
                   onClick={handleRejectAll}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 min-h-[44px] text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('cookie.rejectAll')}
                 </button>
                 <button
                   onClick={handleCustomize}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 min-h-[44px] text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Settings className="w-4 h-4" />
                   {t('cookie.customize')}
@@ -146,7 +146,7 @@ const CookieConsent: React.FC = () => {
                 <button
                   onClick={handleAcceptAll}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 min-h-[44px] text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? t('cookie.saving') : t('cookie.acceptAll')}
                 </button>
@@ -183,11 +183,18 @@ const CookieConsent: React.FC = () => {
                     </p>
                   </div>
                   <div className="ml-4 flex items-center">
-                    <div className="w-11 h-6 bg-green-500 rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-75">
+                    <button
+                      type="button"
+                      aria-label="Cookies fonctionnels (toujours actifs)"
+                      aria-pressed={true}
+                      aria-disabled="true"
+                      disabled
+                      className="w-11 h-6 bg-green-500 rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-75"
+                    >
                       <div className="w-4 h-4 bg-white rounded-full shadow flex items-center justify-center">
                         <Check className="w-3 h-3 text-green-500" />
                       </div>
-                    </div>
+                    </button>
                   </div>
                 </div>
 
@@ -201,7 +208,10 @@ const CookieConsent: React.FC = () => {
                   </div>
                   <div className="ml-4 flex items-center">
                     <button
+                      type="button"
                       onClick={() => setAnalytics(!analytics)}
+                      aria-label="Activer les cookies analytiques"
+                      aria-pressed={analytics}
                       className={`w-11 h-6 rounded-full transition-colors ${
                         analytics ? 'bg-orange-500' : 'bg-gray-300'
                       } flex items-center ${analytics ? 'justify-end' : 'justify-start'} px-1`}
@@ -221,7 +231,10 @@ const CookieConsent: React.FC = () => {
                   </div>
                   <div className="ml-4 flex items-center">
                     <button
+                      type="button"
                       onClick={() => setMarketing(!marketing)}
+                      aria-label="Activer les cookies marketing"
+                      aria-pressed={marketing}
                       className={`w-11 h-6 rounded-full transition-colors ${
                         marketing ? 'bg-orange-500' : 'bg-gray-300'
                       } flex items-center ${marketing ? 'justify-end' : 'justify-start'} px-1`}
@@ -241,7 +254,10 @@ const CookieConsent: React.FC = () => {
                   </div>
                   <div className="ml-4 flex items-center">
                     <button
+                      type="button"
                       onClick={() => setPreferences(!preferences)}
+                      aria-label="Activer les cookies de préférences"
+                      aria-pressed={preferences}
                       className={`w-11 h-6 rounded-full transition-colors ${
                         preferences ? 'bg-orange-500' : 'bg-gray-300'
                       } flex items-center ${preferences ? 'justify-end' : 'justify-start'} px-1`}
@@ -256,14 +272,14 @@ const CookieConsent: React.FC = () => {
                 <button
                   onClick={handleCloseCustomize}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 min-h-[44px] text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('cookie.preferences.cancel')}
                 </button>
                 <button
                   onClick={handleSavePreferences}
                   disabled={isLoading}
-                  className="px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 min-h-[44px] text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? t('cookie.saving') : t('cookie.preferences.save')}
                 </button>
