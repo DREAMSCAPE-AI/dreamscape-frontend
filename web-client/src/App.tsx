@@ -58,6 +58,11 @@ import PrivacyPolicyPage from '@/pages/legal/PrivacyPolicy';
 // GDPR
 import CookieConsent from '@/components/gdpr/CookieConsent';
 
+// Admin
+import AdminGuard from '@/components/admin/AdminGuard';
+import AdminLayout from '@/layouts/AdminLayout';
+import AdminDashboardPage from '@/pages/admin';
+
 // Auth checker component that runs on app mount
 // Memoized to prevent unnecessary re-renders
 const AuthChecker = React.memo(() => {
@@ -172,6 +177,11 @@ function App() {
             {/* Payment Routes */}
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment/confirmation" element={<PaymentConfirmationPage />} />
+          </Route>
+
+          {/* Admin Routes (outside RootLayout — custom sidebar layout) */}
+          <Route element={<AdminGuard><AdminLayout /></AdminGuard>}>
+            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           </Route>
           </Routes>
         </ErrorBoundary>

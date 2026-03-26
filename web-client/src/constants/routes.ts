@@ -34,6 +34,9 @@ export const ROUTES = {
   ACTIVITIES: '/activities',
   ACTIVITY: '/activities/:id',
 
+  // Admin
+  ADMIN_DASHBOARD: '/admin/dashboard',
+
   // API Components
   ANALYTICS: '/analytics',
   FLIGHT_STATUS: '/flight-status',
