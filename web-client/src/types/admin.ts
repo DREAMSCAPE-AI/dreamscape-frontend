@@ -136,12 +136,24 @@ export interface AdminBooking {
   confirmedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  destination: string | null;
   user: AdminBookingUser;
 }
 
 export interface AdminBookingDetail extends AdminBooking {
   data: Record<string, any>;
   payment: AdminPayment | null;
+}
+
+export interface CancelBookingData {
+  refund: boolean;
+  reason: string;
+}
+
+export interface ModifyBookingData {
+  totalAmount?: number;
+  notes?: string;
+  data?: Record<string, any>;
 }
 
 export interface BookingsListResponse {
