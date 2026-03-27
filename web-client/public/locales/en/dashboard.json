@@ -84,6 +84,7 @@
     "refreshRecommendations": "Refresh recommendations",
     "recentSearches": "Recent Searches",
     "aiRecommendations": "AI Recommendations",
+    "searchAgain": "Search again:",
     "aiSelector": {
       "title": "Generate Your AI Recommendations",
       "description": "Select the types of recommendations you'd like to receive",

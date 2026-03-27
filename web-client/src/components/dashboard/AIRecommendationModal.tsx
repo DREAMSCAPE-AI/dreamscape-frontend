@@ -6,7 +6,7 @@ import {
 } from '../../services/aiRecommendationsService';
 import { useAuth } from '../../services/auth/AuthService';
 
-export type ModalRecommendationType = RecommendationCategory | 'itinerary';
+export type ModalRecommendationType = RecommendationCategory;
 
 // ─── Raw recommendation shapes from the AI service ───────────────────────────
 
@@ -63,16 +63,6 @@ export interface Proposal {
   rating: number;
   image: string;
   raw: RawFlightRecommendation | RawActivityRecommendation | RawAccommodationRecommendation;
-}
-
-// Itinerary bundle: one slot = flight + hotel + activity
-export interface ItineraryBundle {
-  index: number;
-  flight?: Proposal;
-  hotel?: Proposal;
-  activity?: Proposal;
-  totalPrice: number;
-  currency: string;
 }
 
 // Search params forwarded from user's existing search history + enriched user profile
@@ -146,48 +136,143 @@ const LoadingStep: React.FC = () => {
 // ─── Proposal normalizers ─────────────────────────────────────────────────────
 
 function normalizeFlights(raws: RawFlightRecommendation[]): Proposal[] {
-  return raws.slice(0, 3).map(f => ({
-    id: f.flightOfferId,
-    type: 'flight' as ProposalType,
-    title: `${f.origin} → ${f.destination}`,
-    subtitle: `${f.airline} · ${f.duration}`,
-    location: f.destination,
-    price: f.price,
-    currency: f.currency,
-    rating: Math.min(5, (f.score ?? 0.9) * 5),
-    image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80',
-    raw: f,
-  }));
+  console.log('🛫 normalizeFlights - Raw flight data:', raws); // Debug: inspect raw API response
+
+  return raws.slice(0, 3).map((item, index) => {
+    // Backend returns: { flight: {...}, score, confidence, breakdown, reasons, rank }
+    const f = (item as any).flight || item;
+    const score = (item as any).score || 0.9;
+
+    console.log(`🛫 Flight ${index + 1} - Raw structure:`, {
+      hasRoute: !!f.route,
+      routeOrigin: f.route?.origin,
+      routeDestination: f.route?.destination,
+      airline: f.airline,
+      duration: f.duration,
+      price: f.price
+    }); // Debug: detailed structure inspection
+
+    // Extract data from nested structure (with fallbacks for empty test data)
+    // Extract city names and airport codes separately
+    const originCity = f.route?.origin?.cityName || f.route?.origin?.airportName || f.route?.origin?.cityCode || f.route?.origin?.airportCode || f.origin || 'Origin';
+    const originCode = f.route?.origin?.airportCode || '';
+    const destinationCity = f.route?.destination?.cityName || f.route?.destination?.airportName || f.route?.destination?.cityCode || f.route?.destination?.airportCode || f.destination || 'Destination';
+    const destinationCode = f.route?.destination?.airportCode || '';
+
+    // Format with airport codes in parentheses: "Paris (CDG)"
+    const origin = originCode ? `${originCity} (${originCode})` : originCity;
+    const destination = destinationCode ? `${destinationCity} (${destinationCode})` : destinationCity;
+    const airline = f.airline?.name || f.airline?.code || 'Compagnie';
+
+    // Format duration properly
+    let duration = '';
+    if (f.duration?.total && f.duration.total > 0) {
+      const hours = Math.floor(f.duration.total / 60);
+      const minutes = f.duration.total % 60;
+      duration = hours > 0 ? `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}` : `${minutes}m`;
+    } else {
+      duration = 'Durée N/A';
+    }
+
+    // Format departure and arrival times
+    let timeRange = '';
+    if (f.schedule?.departureTime && f.schedule?.arrivalTime) {
+      const formatTime = (isoString: string) => {
+        try {
+          const date = new Date(isoString);
+          return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        } catch {
+          return '';
+        }
+      };
+      const depTime = formatTime(f.schedule.departureTime);
+      const arrTime = formatTime(f.schedule.arrivalTime);
+      if (depTime && arrTime) {
+        timeRange = ` · ${depTime} - ${arrTime}`;
+      }
+    }
+
+    const price = f.price?.amount ?? f.price ?? 0;
+    const currency = f.price?.currency || f.currency || 'EUR';
+
+    console.log(`🛫 Flight ${index + 1} - Normalized:`, {
+      origin,
+      destination,
+      airline,
+      duration,
+      timeRange,
+      price,
+      currency
+    }); // Debug: final values used in UI
+
+    return {
+      id: f.flightId || f.offerReference || f.id || Math.random().toString(),
+      type: 'flight' as ProposalType,
+      title: `${origin} → ${destination}`,
+      subtitle: `${airline} · ${duration}${timeRange}`,
+      location: destinationCity, // Just the city name without airport code
+      price,
+      currency,
+      rating: Math.min(5, score * 5),
+      image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80',
+      raw: item,
+    };
+  });
 }
 
 function normalizeHotels(raws: RawAccommodationRecommendation[]): Proposal[] {
-  return raws.slice(0, 3).map(h => ({
-    id: h.id,
-    type: 'hotel' as ProposalType,
-    title: h.name,
-    subtitle: h.description ?? '',
-    location: h.location ?? '',
-    price: h.price ?? 0,
-    currency: h.currency ?? 'EUR',
-    rating: h.rating ?? 4.5,
-    image: h.imageUrl ?? 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80',
-    raw: h,
-  }));
+  return raws.slice(0, 3).map(item => {
+    // Backend returns: { accommodation: {...}, score, confidence, breakdown, reasons, rank }
+    const h = (item as any).accommodation || item;
+    const score = (item as any).score || 0.9;
+
+    // Extract data from nested structure
+    const name = h.name || '';
+    const location = h.location?.address || h.location?.cityCode || h.location || '';
+    const price = h.price?.amount ?? h.price ?? 0;
+    const currency = h.price?.currency || h.currency || 'EUR';
+    const rating = h.ratings?.overall ?? h.rating ?? 4.5;
+
+    return {
+      id: h.hotelId || h.id || Math.random().toString(),
+      type: 'hotel' as ProposalType,
+      title: name,
+      subtitle: h.description ?? '',
+      location,
+      price,
+      currency,
+      rating,
+      image: h.imageUrl ?? 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80',
+      raw: item,
+    };
+  });
 }
 
-function normalizeActivities(raws: RawActivityRecommendation[]): Proposal[] {
-  return raws.slice(0, 3).map(a => ({
-    id: a.id,
-    type: 'activity' as ProposalType,
-    title: a.name,
-    subtitle: a.shortDescription,
-    location: a.location?.address ?? a.geoCode?.label ?? '',
-    price: a.price?.amount ?? 0,
-    currency: a.price?.currencyCode ?? 'EUR',
-    rating: a.rating ?? 4.5,
-    image: a.pictures?.[0] ?? 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80',
-    raw: a,
-  }));
+function isGpsCoords(value?: string): boolean {
+  return !!value && /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(value.trim());
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function normalizeActivities(raws: any[]): Proposal[] {
+  return raws.slice(0, 3).map(item => {
+    // Backend returns: { activity: {...}, vector, score, confidence, breakdown, reasons, rank }
+    const a = item.activity || item;
+    return {
+      id: a.activityId || a.id,
+      type: 'activity' as ProposalType,
+      title: a.name,
+      subtitle: stripHtml(a.description || a.shortDescription || ''),
+      location: a.location?.name || a.location?.address || (isGpsCoords(a.geoCode?.label) ? '' : a.geoCode?.label) || '',
+      price: a.price?.amount ?? 0,
+      currency: a.price?.currency || a.price?.currencyCode || 'EUR',
+      rating: a.rating ?? 4.5,
+      image: a.images?.[0] || a.pictures?.[0] || 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80',
+      raw: a,
+    };
+  });
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -216,7 +301,6 @@ const AIRecommendationModal: React.FC<AIRecommendationModalProps> = ({
   type ModalStep = 'loading' | 'results' | 'error';
   const [step, setStep] = useState<ModalStep>('loading');
   const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [bundles, setBundles] = useState<ItineraryBundle[]>([]);
   const [errorMsg, setErrorMsg] = useState('');
 
   // Auto-generate as soon as the modal opens — no form needed
@@ -224,7 +308,6 @@ const AIRecommendationModal: React.FC<AIRecommendationModalProps> = ({
     if (!isOpen || !userId) return;
     setStep('loading');
     setProposals([]);
-    setBundles([]);
 
     const params = {
       // Search context
@@ -254,41 +337,25 @@ const AIRecommendationModal: React.FC<AIRecommendationModalProps> = ({
       activityLevel:       searchParams.activityLevel,
     };
 
-    const categories: RecommendationCategory[] =
-      type === 'itinerary' ? ['flights', 'accommodations', 'activities'] : [type as RecommendationCategory];
-
-    getAllRecommendations(userId, categories, params)
+    getAllRecommendations(userId, [type as RecommendationCategory], params)
       .then(results => {
-        if (type === 'itinerary') {
-          const flights    = results.flights?.success
-            ? normalizeFlights(results.flights.data.recommendations as RawFlightRecommendation[]) : [];
-          const hotels     = results.accommodations?.success
-            ? normalizeHotels(results.accommodations.data.recommendations as RawAccommodationRecommendation[]) : [];
-          const activities = results.activities?.success
-            ? normalizeActivities(results.activities.data.recommendations as RawActivityRecommendation[]) : [];
-
-          setBundles([0, 1, 2].map(i => ({
-            index: i,
-            flight:   flights[i],
-            hotel:    hotels[i],
-            activity: activities[i],
-            totalPrice: (flights[i]?.price ?? 0) + (hotels[i]?.price ?? 0) + (activities[i]?.price ?? 0),
-            currency: flights[i]?.currency ?? hotels[i]?.currency ?? activities[i]?.currency ?? 'EUR',
-          })));
-        } else {
-          let raw: Proposal[] = [];
-          if (type === 'flights'        && results.flights?.success)
-            raw = normalizeFlights(results.flights.data.recommendations as RawFlightRecommendation[]);
-          else if (type === 'accommodations' && results.accommodations?.success)
-            raw = normalizeHotels(results.accommodations.data.recommendations as RawAccommodationRecommendation[]);
-          else if (type === 'activities' && results.activities?.success)
-            raw = normalizeActivities(results.activities.data.recommendations as RawActivityRecommendation[]);
-          setProposals(raw.slice(0, 3));
+        console.log('[AIRecommendationModal] Received results:', results);
+        let raw: Proposal[] = [];
+        if (type === 'flights' && results.flights?.data?.recommendations)
+          raw = normalizeFlights(results.flights.data.recommendations as RawFlightRecommendation[]);
+        else if (type === 'accommodations' && results.accommodations?.data?.recommendations)
+          raw = normalizeHotels(results.accommodations.data.recommendations as RawAccommodationRecommendation[]);
+        else if (type === 'activities' && results.activities?.data?.recommendations) {
+          console.log('[AIRecommendationModal] Normalizing activities:', results.activities.data.recommendations);
+          raw = normalizeActivities(results.activities.data.recommendations);
         }
+        console.log('[AIRecommendationModal] Normalized proposals:', raw);
+        setProposals(raw.slice(0, 3));
         setStep('results');
       })
-      .catch(() => {
-        setErrorMsg('La génération a échoué. Réessayez.');
+      .catch(error => {
+        console.error('[AIRecommendationModal] Error:', error);
+        setErrorMsg(error.message || 'La génération a échoué. Réessayez.');
         setStep('error');
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -302,13 +369,11 @@ const AIRecommendationModal: React.FC<AIRecommendationModalProps> = ({
     flights:        'Recommandations de vols',
     accommodations: "Recommandations d'hébergements",
     activities:     "Recommandations d'activités",
-    itinerary:      'Itinéraire complet',
   };
   const typeIcons: Record<ModalRecommendationType, React.ReactNode> = {
-    flights:        <Plane    className="w-5 h-5 text-blue-500" />,
-    accommodations: <Home     className="w-5 h-5 text-green-500" />,
-    activities:     <Compass  className="w-5 h-5 text-purple-500" />,
-    itinerary:      <Sparkles className="w-5 h-5 text-orange-500" />,
+    flights:        <Plane   className="w-5 h-5 text-blue-500" />,
+    accommodations: <Home    className="w-5 h-5 text-green-500" />,
+    activities:     <Compass className="w-5 h-5 text-purple-500" />,
   };
 
   return (
@@ -341,7 +406,7 @@ const AIRecommendationModal: React.FC<AIRecommendationModalProps> = ({
             </div>
           )}
 
-          {step === 'results' && type !== 'itinerary' && (
+          {step === 'results' && (
             <div className="p-6 space-y-3">
               <p className="text-sm text-gray-500 mb-2">
                 Sélectionnez une proposition pour l'ajouter à votre itinéraire.
@@ -352,18 +417,6 @@ const AIRecommendationModal: React.FC<AIRecommendationModalProps> = ({
                     <ProposalCard key={p.id} proposal={p} index={i + 1}
                       onSelect={() => onProposalSelected([p])} />
                   ))}
-            </div>
-          )}
-
-          {step === 'results' && type === 'itinerary' && (
-            <div className="p-6 space-y-4">
-              <p className="text-sm text-gray-500 mb-2">
-                Sélectionnez un itinéraire complet pour l'ajouter à votre planning.
-              </p>
-              {bundles.map((b, i) => (
-                <BundleCard key={i} bundle={b} index={i + 1}
-                  onSelect={() => onProposalSelected([b.flight, b.hotel, b.activity].filter(Boolean) as Proposal[])} />
-              ))}
             </div>
           )}
         </div>
@@ -394,48 +447,6 @@ const ProposalCard: React.FC<{ proposal: Proposal; index: number; onSelect: () =
       className="self-center flex-shrink-0 px-3 py-1.5 bg-orange-500 text-white text-xs font-medium rounded-lg hover:bg-orange-600 transition-colors">
       Choisir
     </button>
-  </div>
-);
-
-// ─── Bundle card ──────────────────────────────────────────────────────────────
-
-const BundleCard: React.FC<{ bundle: ItineraryBundle; index: number; onSelect: () => void }> = ({ bundle, index, onSelect }) => (
-  <div className="border border-gray-200 rounded-xl overflow-hidden hover:border-orange-300 hover:shadow-sm transition-all">
-    <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
-      <span className="text-sm font-semibold text-gray-700">Itinéraire {index}</span>
-      <span className="text-sm font-bold text-orange-500">
-        {bundle.totalPrice > 0 ? `${bundle.totalPrice.toFixed(0)} ${bundle.currency}` : 'Prix sur demande'}
-      </span>
-    </div>
-    <div className="p-3 space-y-2">
-      {bundle.flight && (
-        <div className="flex items-center gap-2 text-xs text-gray-600">
-          <Plane   className="w-3.5 h-3.5 text-blue-500   flex-shrink-0" />
-          <span className="truncate">{bundle.flight.title}</span>
-          <span className="ml-auto flex-shrink-0 font-medium">{bundle.flight.price} {bundle.flight.currency}</span>
-        </div>
-      )}
-      {bundle.hotel && (
-        <div className="flex items-center gap-2 text-xs text-gray-600">
-          <Home    className="w-3.5 h-3.5 text-green-500  flex-shrink-0" />
-          <span className="truncate">{bundle.hotel.title}</span>
-          <span className="ml-auto flex-shrink-0 font-medium">{bundle.hotel.price} {bundle.hotel.currency}</span>
-        </div>
-      )}
-      {bundle.activity && (
-        <div className="flex items-center gap-2 text-xs text-gray-600">
-          <Compass className="w-3.5 h-3.5 text-purple-500 flex-shrink-0" />
-          <span className="truncate">{bundle.activity.title}</span>
-          <span className="ml-auto flex-shrink-0 font-medium">{bundle.activity.price} {bundle.activity.currency}</span>
-        </div>
-      )}
-    </div>
-    <div className="px-4 pb-3">
-      <button onClick={onSelect}
-        className="w-full py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors">
-        Choisir cet itinéraire
-      </button>
-    </div>
   </div>
 );
 

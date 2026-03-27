@@ -20,7 +20,7 @@ class AuthApiService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: AUTH_API_BASE_URL,
+      baseURL: `${AUTH_API_BASE_URL}/v1`,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
@@ -48,31 +48,31 @@ class AuthApiService {
   }
 
   async register(userData: RegisterData): Promise<any> {
-    const response = await this.api.post('/v1/auth/register', userData);
+    const response = await this.api.post('/auth/register', userData);
     return response.data;
   }
 
   async login(credentials: LoginCredentials): Promise<any> {
-    const response = await this.api.post('/v1/auth/login', credentials);
+    const response = await this.api.post('/auth/login', credentials);
     return response.data;
   }
 
   async getUserProfile(token: string): Promise<any> {
-    const response = await this.api.get('/v1/auth/profile', {
+    const response = await this.api.get('/auth/profile', {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
   }
 
   async updateProfile(token: string, profileData: any): Promise<any> {
-    const response = await this.api.put('/v1/auth/profile', profileData, {
+    const response = await this.api.put('/auth/profile', profileData, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
   }
 
   async verifyToken(token: string): Promise<any> {
-    const response = await this.api.post('/v1/auth/verify-token', {}, {
+    const response = await this.api.post('/auth/verify-token', {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
