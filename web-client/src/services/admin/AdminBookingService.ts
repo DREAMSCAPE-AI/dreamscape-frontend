@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import type { AdminBooking, AdminBookingDetail, BookingsListResponse } from '@/types/admin';
+import type { AdminBooking, AdminBookingDetail, BookingsListResponse, CancelBookingData, ModifyBookingData } from '@/types/admin';
 
 const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   const trimmed = (envValue || '').trim();
@@ -45,6 +45,9 @@ interface ListBookingsParams {
   endDate?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  minAmount?: number;
+  maxAmount?: number;
+  destination?: string;
 }
 
 class AdminBookingService {
@@ -66,6 +69,29 @@ class AdminBookingService {
   async bulkUpdateBookingStatus(ids: string[], status: string): Promise<{ updated: number }> {
     const response = await api.put('/v1/admin/bookings/bulk/status', { ids, status });
     return response.data.data;
+  }
+
+  async cancelBooking(id: string, data: CancelBookingData): Promise<AdminBooking> {
+    const response = await api.put(`/v1/admin/bookings/${id}/cancel`, data);
+    return response.data.data;
+  }
+
+  async modifyBooking(id: string, data: ModifyBookingData): Promise<AdminBooking> {
+    const response = await api.put(`/v1/admin/bookings/${id}/modify`, data);
+    return response.data.data;
+  }
+
+  async resendEmail(id: string): Promise<{ success: boolean }> {
+    const response = await api.post(`/v1/admin/bookings/${id}/resend-email`);
+    return response.data.data;
+  }
+
+  async exportBookings(params: ListBookingsParams = {}): Promise<Blob> {
+    const response = await api.get('/v1/admin/bookings/export', {
+      params,
+      responseType: 'blob',
+    });
+    return response.data;
   }
 }
 

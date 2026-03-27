@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import type { UsersListResponse, AdminUserDetail, UpdateUserData } from '@/types/admin';
+import type { UsersListResponse, AdminUserDetail, UpdateUserData, SuspendUserData, UserActivityResponse } from '@/types/admin';
 
 const resolveBaseUrl = (envValue?: string, fallbackPath = '/api') => {
   const trimmed = (envValue || '').trim();
@@ -40,6 +40,9 @@ interface ListUsersParams {
   limit?: number;
   search?: string;
   role?: string;
+  status?: 'active' | 'suspended';
+  startDate?: string;
+  endDate?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
 }
@@ -62,6 +65,29 @@ class AdminUserService {
 
   async deleteUser(id: string): Promise<void> {
     await api.delete(`/v1/admin/users/${id}`);
+  }
+
+  async suspendUser(id: string, data: SuspendUserData): Promise<AdminUserDetail> {
+    const response = await api.put(`/v1/admin/users/${id}/suspend`, data);
+    return response.data.data;
+  }
+
+  async reactivateUser(id: string): Promise<AdminUserDetail> {
+    const response = await api.put(`/v1/admin/users/${id}/reactivate`);
+    return response.data.data;
+  }
+
+  async getUserActivity(id: string, page = 1, limit = 20): Promise<UserActivityResponse> {
+    const response = await api.get(`/v1/admin/users/${id}/activity`, { params: { page, limit } });
+    return response.data.data;
+  }
+
+  async exportUsers(params: ListUsersParams = {}, ids?: string[]): Promise<Blob> {
+    const response = await api.get('/v1/admin/users/export', {
+      params: { ...params, ...(ids ? { ids: ids.join(',') } : {}) },
+      responseType: 'blob',
+    });
+    return response.data;
   }
 }
 
