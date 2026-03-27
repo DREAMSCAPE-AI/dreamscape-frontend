@@ -67,8 +67,8 @@ export function getVREnvironment(idOrAlias) {
     return VR_ENVIRONMENTS[normalized];
   }
 
-  // Chercher dans les alias
-  const aliasTarget = ENVIRONMENT_ALIASES[normalized];
+  // Chercher dans les alias (insensible à la casse : 'par' et 'PAR' sont équivalents)
+  const aliasTarget = ENVIRONMENT_ALIASES[normalized] || ENVIRONMENT_ALIASES[normalized.toUpperCase()];
   if (aliasTarget && VR_ENVIRONMENTS[aliasTarget]) {
     console.log(`✅ Environnement trouvé via alias: ${normalized} → ${aliasTarget}`);
     return VR_ENVIRONMENTS[aliasTarget];

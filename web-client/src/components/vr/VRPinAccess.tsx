@@ -7,10 +7,13 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { Monitor, X, Hash, RefreshCw } from 'lucide-react';
+import { Monitor, X, Hash, RefreshCw, ExternalLink } from 'lucide-react';
 
-const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:4000';
-const PANORAMA_BASE_URL = import.meta.env.VITE_PANORAMA_URL || '/panorama';
+// On local dev: set VITE_GATEWAY_URL=http://<IP>:3000 in .env
+// On staging/prod: NGINX routes /api/ → gateway, so relative path works
+const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || '';
+// Trailing slash required to match NGINX location /panorama/ block
+const PANORAMA_BASE_URL = import.meta.env.VITE_PANORAMA_URL || '/panorama/';
 
 interface VRPinAccessProps {
   /** Destination ID for VR experience */
@@ -219,7 +222,7 @@ export default function VRPinAccess({
                     2
                   </div>
                   <p className="text-gray-700">
-                    Allez sur <span className="font-mono font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{panoramaUrl}</span>
+                    Allez sur <span className="font-mono font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{panoramaUrl}</span> dans le casque pour la VR complète
                   </p>
                 </div>
                 <div className="flex items-start gap-3 text-sm">
@@ -243,6 +246,15 @@ export default function VRPinAccess({
                   <RefreshCw className="w-4 h-4" />
                   Nouveau code
                 </button>
+                <a
+                  href={pinCode ? `${PANORAMA_BASE_URL}?pin=${pinCode}` : PANORAMA_BASE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Ouvrir
+                </a>
               </div>
             )}
 
