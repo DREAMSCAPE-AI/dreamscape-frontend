@@ -241,11 +241,8 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    setIsRefreshing(true);
     setAiRecommendations([]);
-    setError(null);
     await onRefresh();
-    setIsRefreshing(false);
     setIsRefreshing(false);
   };
 

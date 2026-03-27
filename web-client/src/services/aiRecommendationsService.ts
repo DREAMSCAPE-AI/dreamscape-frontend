@@ -324,7 +324,6 @@ export async function getAllRecommendations(
   categories: RecommendationCategory[],
   searchParams: {
     // Search context
-    // Search context
     origin?: string;
     destination?: string;
     departureDate?: string;
@@ -337,18 +336,6 @@ export async function getAllRecommendations(
     infants?: number;
     rooms?: number;
     travelClass?: string;
-    // User profile enrichment
-    budgetMin?: number;
-    budgetMax?: number;
-    currency?: string;
-    travelTypes?: string[];
-    accommodationTypes?: string[];
-    activityTypes?: string[];
-    preferredDestinations?: string[];
-    comfortLevel?: string;
-    travelStyle?: string;
-    travelGroupType?: string;
-    activityLevel?: string;
     // User profile enrichment
     budgetMin?: number;
     budgetMax?: number;
