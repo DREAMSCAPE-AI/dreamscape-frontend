@@ -9,7 +9,9 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 
-const GATEWAY_URL = process.env.REACT_APP_GATEWAY_URL || 'http://localhost:4000';
+// On local dev: set REACT_APP_GATEWAY_URL=http://<IP>:3000 in .env
+// On staging/prod: leave unset → relative path routed by NGINX (/api/ → gateway)
+const GATEWAY_URL = process.env.REACT_APP_GATEWAY_URL || '';
 const PIN_LENGTH = 6;
 
 /**
@@ -23,12 +25,35 @@ export default function VRPinEntry({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const inputRefs = useRef([]);
 
-  // Auto-focus first input on mount
+  // Auto-focus first input on mount + auto-submit if ?pin= is in URL
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pinFromUrl = urlParams.get('pin');
+
+    if (pinFromUrl && /^\d{6}$/.test(pinFromUrl)) {
+      setDigits(pinFromUrl.split(''));
+      setLoading(true);
+      fetch(`${GATEWAY_URL}/api/v1/vr/sessions/${pinFromUrl}`)
+        .then(async r => {
+          const data = await r.json();
+          if (r.ok && data.success) {
+            onSuccess(data.data);
+          } else {
+            if (r.status === 404) setError('Code introuvable. Vérifiez le code et réessayez.');
+            else if (r.status === 410) setError('Code expiré. Générez un nouveau code depuis le site.');
+            else if (r.status === 409) setError('Code déjà utilisé. Générez un nouveau code.');
+            else setError(data.error || 'Erreur de validation');
+          }
+        })
+        .catch(() => setError('Impossible de contacter le serveur. Vérifiez votre connexion.'))
+        .finally(() => setLoading(false));
+      return;
+    }
+
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDigitChange = useCallback((index, value) => {
     // Accept only single digit
