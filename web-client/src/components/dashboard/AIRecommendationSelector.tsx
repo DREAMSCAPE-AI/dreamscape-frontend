@@ -3,13 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Plane, Home, Compass, Globe, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { ModalRecommendationType } from './AIRecommendationModal';
-import { useTranslation } from 'react-i18next';
-import { Plane, Home, Compass, Sparkles } from 'lucide-react';
-import type { ModalRecommendationType } from './AIRecommendationModal';
 
 interface CategoryButton {
-  id: ModalRecommendationType;
-  labelKey: string;
   id: ModalRecommendationType;
   labelKey: string;
   icon: React.ReactNode;
@@ -20,7 +15,6 @@ interface CategoryButton {
 
 interface AIRecommendationSelectorProps {
   onGenerate: (type: ModalRecommendationType) => void;
-  onGenerate: (type: ModalRecommendationType) => void;
   isLoading?: boolean;
 }
 
@@ -28,8 +22,6 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
   onGenerate,
   isLoading = false
 }) => {
-  const { t } = useTranslation('dashboard');
-  const [selected, setSelected] = React.useState<ModalRecommendationType | null>(null);
   const { t } = useTranslation('dashboard');
   const [selected, setSelected] = React.useState<ModalRecommendationType | null>(null);
 
@@ -76,11 +68,9 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
       <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6 w-full max-w-2xl px-4">
         {categories.map((category) => {
           const isSelected = selected === category.id;
-          const isSelected = selected === category.id;
           return (
             <button
               key={category.id}
-              onClick={() => setSelected(category.id)}
               onClick={() => setSelected(category.id)}
               disabled={isLoading}
               className={`
@@ -142,7 +132,5 @@ const AIRecommendationSelector: React.FC<AIRecommendationSelectorProps> = ({
 };
 
 export default AIRecommendationSelector;
-// Keep the old export name for backward compat
-export type { ModalRecommendationType as RecommendationCategory };
 // Keep the old export name for backward compat
 export type { ModalRecommendationType as RecommendationCategory };

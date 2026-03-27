@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, RefreshCw, CheckCircle, XCircle, ArrowRight, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Sparkles, RefreshCw, CheckCircle, XCircle, ArrowRight, Clock } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import ExperienceCard from '../features/ExperienceCard';
 import AIRecommendationSelector from './AIRecommendationSelector';
@@ -16,8 +16,8 @@ import { TravelRecommendation } from '@/services/dashboard';
 import { useAuth } from '../../services/auth/AuthService';
 import { useItineraryStore } from '@/store/itineraryStore';
 import axios from 'axios';
-import { onboardingService } from '@/services/onboarding/onboardingService';
-import { profileService } from '@/services/profile';
+import { onboardingService } from '@/services/user/OnboardingService';
+import { profileService } from '@/services/user';
 
 // ─── localStorage recommendation history ──────────────────────────────────────
 
@@ -52,24 +52,6 @@ interface RecommendationsSectionProps {
   onRefresh: () => Promise<void>;
 }
 
-// ─── Simple inline toast ──────────────────────────────────────────────────────
-
-interface ToastState { visible: boolean; success: boolean; message: string }
-
-const Toast: React.FC<ToastState> = ({ visible, success, message }) => (
-  <div className={`
-    fixed bottom-6 left-1/2 -translate-x-1/2 z-[60]
-    flex items-center gap-2 px-5 py-3 rounded-xl shadow-lg
-    text-sm font-medium text-white transition-all duration-300
-    ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}
-    ${success ? 'bg-green-600' : 'bg-red-500'}
-  `} role="alert" aria-live="polite">
-    {success ? <CheckCircle className="w-4 h-4 flex-shrink-0" /> : <XCircle className="w-4 h-4 flex-shrink-0" />}
-    {message}
-  </div>
-);
-
-// ─── Component ────────────────────────────────────────────────────────────────
 // ─── Simple inline toast ──────────────────────────────────────────────────────
 
 interface ToastState { visible: boolean; success: boolean; message: string }
