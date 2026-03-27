@@ -5,7 +5,7 @@
  * Called when the user selects a proposal in AIRecommendationModal.
  */
 
-import { CartItemType, type FlightItemData, type HotelItemData, type ActivityItemData } from '@/types/cart';
+import { CartItemType, type FlightItemData, type HotelItemData, type ActivityItemData, type AddToCartRequest } from '@/types/cart';
 import type { CreateItineraryItemDto } from '@/types/itinerary';
 import type { Proposal, RawFlightRecommendation, RawAccommodationRecommendation, RawActivityRecommendation } from '@/components/dashboard/AIRecommendationModal';
 
@@ -103,4 +103,18 @@ export function buildItineraryItem(proposal: Proposal): CreateItineraryItemDto |
   }
 
   return null;
+}
+
+export function buildCartItem(proposal: Proposal, userId: string): AddToCartRequest | null {
+  const dto = buildItineraryItem(proposal);
+  if (!dto) return null;
+  return {
+    userId,
+    type: dto.type,
+    itemId: dto.itemId ?? proposal.id,
+    itemData: dto.itemData,
+    price: dto.price,
+    quantity: dto.quantity ?? 1,
+    currency: dto.currency,
+  };
 }
