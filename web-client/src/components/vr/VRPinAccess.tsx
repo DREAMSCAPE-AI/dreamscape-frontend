@@ -72,10 +72,10 @@ export default function VRPinAccess({
 
   // Generate PIN when modal opens
   useEffect(() => {
-    if (showModal && !pinCode && !pinLoading) {
+    if (showModal && !pinCode && !pinLoading && !pinError) {
       generatePin();
     }
-  }, [showModal, pinCode, pinLoading, generatePin]);
+  }, [showModal, pinCode, pinLoading, pinError, generatePin]);
 
   // Countdown timer
   useEffect(() => {

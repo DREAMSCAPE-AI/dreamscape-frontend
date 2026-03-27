@@ -41,6 +41,10 @@ export interface AdminUser {
   isVerified: boolean;
   userCategory: 'LEISURE' | 'BUSINESS';
   onboardingCompleted: boolean;
+  isSuspended: boolean;
+  suspendedAt: string | null;
+  suspendedReason: string | null;
+  lastLoginAt: string | null;
   createdAt: string;
   updatedAt: string;
   _count: {
@@ -55,6 +59,8 @@ export interface AdminUserDetail extends AdminUser {
   dateOfBirth: string | null;
   nationality: string | null;
   onboardingCompletedAt: string | null;
+  revenueGenerated: number;
+  bookingsCount: number;
   _count: {
     searches: number;
     favorites: number;
@@ -82,6 +88,31 @@ export interface UpdateUserData {
   userCategory?: string;
 }
 
+export interface SuspendUserData {
+  reason?: string;
+}
+
+export interface UserActivityItem {
+  id: string;
+  type: 'history' | 'booking' | 'payment';
+  label: string;
+  detail: string;
+  status?: string;
+  amount?: number;
+  currency?: string;
+  createdAt: string;
+}
+
+export interface UserActivityResponse {
+  items: UserActivityItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
 // Bookings
 export type BookingStatus = 'DRAFT' | 'PENDING_PAYMENT' | 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'FAILED';
 export type BookingType = 'FLIGHT' | 'HOTEL' | 'ACTIVITY' | 'PACKAGE' | 'TRANSFER';
@@ -105,12 +136,24 @@ export interface AdminBooking {
   confirmedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  destination: string | null;
   user: AdminBookingUser;
 }
 
 export interface AdminBookingDetail extends AdminBooking {
   data: Record<string, any>;
   payment: AdminPayment | null;
+}
+
+export interface CancelBookingData {
+  refund: boolean;
+  reason: string;
+}
+
+export interface ModifyBookingData {
+  totalAmount?: number;
+  notes?: string;
+  data?: Record<string, any>;
 }
 
 export interface BookingsListResponse {

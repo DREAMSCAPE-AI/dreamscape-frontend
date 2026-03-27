@@ -63,7 +63,9 @@ import AdminGuard from '@/components/admin/AdminGuard';
 import AdminLayout from '@/layouts/AdminLayout';
 import AdminDashboardPage from '@/pages/admin';
 import AdminUsersPage from '@/pages/admin/users';
+import AdminUserDetailPage from '@/pages/admin/userDetail';
 import AdminBookingsPage from '@/pages/admin/bookings';
+import AdminBookingDetailPage from '@/pages/admin/bookingDetail';
 import AdminPaymentsPage from '@/pages/admin/payments';
 
 // Auth checker component that runs on app mount
@@ -186,7 +188,9 @@ function App() {
           <Route element={<AdminGuard><AdminLayout /></AdminGuard>}>
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/users/:id" element={<AdminUserDetailPage />} />
             <Route path="/admin/bookings" element={<AdminBookingsPage />} />
+            <Route path="/admin/bookings/:id" element={<AdminBookingDetailPage />} />
             <Route path="/admin/payments" element={<AdminPaymentsPage />} />
           </Route>
           </Routes>
