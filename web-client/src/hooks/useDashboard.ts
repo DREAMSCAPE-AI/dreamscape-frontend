@@ -135,20 +135,18 @@ export const useDashboard = () => {
   }, [isAuthenticated]);
 
   // Load recommendations
+  // NOTE: Recommendations are now handled by aiRecommendationsService (US-IA-010)
+  // This method is kept for backwards compatibility but returns empty arrays
   const loadRecommendations = useCallback(async () => {
     if (!isAuthenticated) return;
-    
-    try {
-      const [recommendations, trendingDestinations, deals] = await Promise.all([
-        dashboardService.getPersonalizedRecommendations(),
-        dashboardService.getTrendingDestinations(),
-        dashboardService.getDealsAndOffers()
-      ]);
-      updateData({ recommendations, trendingDestinations, deals });
-    } catch (error) {
-      console.error('Failed to load recommendations:', error);
-      updateData({ recommendations: [], trendingDestinations: [], deals: [] });
-    }
+
+    // All AI recommendations are now loaded directly in RecommendationsSection
+    // using aiRecommendationsService instead of DashboardService
+    updateData({
+      recommendations: [],
+      trendingDestinations: [],
+      deals: []
+    });
   }, [isAuthenticated]);
 
   // Load flight insights

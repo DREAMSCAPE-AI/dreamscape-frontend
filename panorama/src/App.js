@@ -632,8 +632,12 @@ function App() {
     return <PanoramaGallery onSwitchToVR={handleSwitchToVR} onSwitchTo3D={handleSwitchTo3D} destination={destination} />;
   }
 
-  // DR-575: VR unavailable screen (only in auto mode, after detection completes)
+  // DR-575: VR unavailable — auto-switch to 3D panorama when destination is loaded (PC browser or no headset)
   if (viewMode === 'auto' && !isXRSupported && !isChecking) {
+    if (destination) {
+      setTimeout(() => setViewMode('3d'), 0);
+      return null;
+    }
     return <VRUnavailableScreen xrReason={xrReason} onSwitchToGallery={handleSwitchToGallery} onSwitchTo3D={handleSwitchTo3D} />;
   }
 
