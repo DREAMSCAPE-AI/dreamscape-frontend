@@ -2,11 +2,19 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import healthRoutes from './routes/health';
 import vrSessionRoutes from './routes/vr-sessions';
 
 const app = express();
 const PORT = process.env.GATEWAY_PORT || 3000;
+
+// Upstream service URLs (injected via K8s env vars)
+const AUTH_SERVICE_URL    = process.env.AUTH_SERVICE_URL    || 'http://localhost:3001';
+const USER_SERVICE_URL    = process.env.USER_SERVICE_URL    || 'http://localhost:3002';
+const VOYAGE_SERVICE_URL  = process.env.VOYAGE_SERVICE_URL  || 'http://localhost:3003';
+const AI_SERVICE_URL      = process.env.AI_SERVICE_URL      || 'http://localhost:3005';
+const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || 'http://localhost:3004';
 
 // Security middleware
 app.use(helmet());
@@ -27,8 +35,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/health', healthRoutes);
 app.use('/api/health', healthRoutes); // Alternative path for consistency
 
-// VR session routes - DR-574
+// VR session routes (handled locally) - DR-574
 app.use('/api/v1/vr', vrSessionRoutes);
+
+// Proxy routes to backend microservices
+const proxyOptions = { changeOrigin: true, logLevel: 'warn' } as const;
+
+app.use('/api/v1/auth',    createProxyMiddleware({ target: AUTH_SERVICE_URL,    ...proxyOptions }));
+app.use('/api/v1/users',   createProxyMiddleware({ target: USER_SERVICE_URL,    ...proxyOptions }));
+app.use('/api/v1/admin',   createProxyMiddleware({ target: USER_SERVICE_URL,    ...proxyOptions }));
+app.use('/api/v1/ai',      createProxyMiddleware({ target: AI_SERVICE_URL,      ...proxyOptions }));
+app.use('/api/v1/voyage',  createProxyMiddleware({ target: VOYAGE_SERVICE_URL,  ...proxyOptions }));
+app.use('/api/v1/payment', createProxyMiddleware({ target: PAYMENT_SERVICE_URL, ...proxyOptions }));
+
+// WebSocket proxy for Socket.IO (user-service notifications)
+app.use('/socket.io',      createProxyMiddleware({ target: USER_SERVICE_URL, changeOrigin: true, ws: true, logLevel: 'warn' }));
 
 // API Documentation endpoint
 app.get('/docs', (req, res) => {
