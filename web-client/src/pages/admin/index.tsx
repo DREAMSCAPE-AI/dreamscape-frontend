@@ -23,8 +23,8 @@ const AdminDashboardPage = () => {
   const activePeriod = period === 'custom' ? 'custom' : period;
   const { data: stats, isLoading: statsLoading, error: statsError, dataUpdatedAt } = useAdminStats(activePeriod, customStart, customEnd);
   const { data: revenueData, isLoading: revenueLoading } = useRevenueChart(activePeriod, customStart, customEnd);
-  const { data: destinationsData, isLoading: destinationsLoading } = useBookingsByDestination();
-  const { data: transactionsData, isLoading: transactionsLoading } = useRecentTransactions();
+  const { data: destinationsData, isLoading: destinationsLoading } = useBookingsByDestination(5, activePeriod, customStart, customEnd);
+  const { data: transactionsData, isLoading: transactionsLoading } = useRecentTransactions(10, activePeriod, customStart, customEnd);
   const refresh = useRefreshDashboard();
 
   const handlePeriodChange = (p: PeriodType) => {

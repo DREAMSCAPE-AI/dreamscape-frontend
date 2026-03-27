@@ -50,16 +50,16 @@ class AdminDashboardService {
     return response.data.data;
   }
 
-  async getBookingsByDestination(limit: number = 5): Promise<DestinationBooking[]> {
+  async getBookingsByDestination(limit: number = 5, period?: PeriodType, startDate?: string, endDate?: string): Promise<DestinationBooking[]> {
     const response = await api.get('/v1/admin/dashboard/bookings-by-destination', {
-      params: { limit },
+      params: { limit, period, startDate, endDate },
     });
     return response.data.data;
   }
 
-  async getRecentTransactions(limit: number = 10): Promise<RecentTransaction[]> {
+  async getRecentTransactions(limit: number = 10, period?: PeriodType, startDate?: string, endDate?: string): Promise<RecentTransaction[]> {
     const response = await api.get('/v1/admin/dashboard/recent-transactions', {
-      params: { limit },
+      params: { limit, period, startDate, endDate },
     });
     return response.data.data;
   }

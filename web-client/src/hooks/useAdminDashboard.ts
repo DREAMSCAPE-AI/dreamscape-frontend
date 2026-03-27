@@ -20,18 +20,20 @@ export const useRevenueChart = (period: PeriodType, startDate?: string, endDate?
     enabled: period !== 'custom' || (!!startDate && !!endDate),
   });
 
-export const useBookingsByDestination = (limit: number = 5) =>
+export const useBookingsByDestination = (limit: number = 5, period?: PeriodType, startDate?: string, endDate?: string) =>
   useQuery({
-    queryKey: ['admin', 'bookings-by-destination', limit],
-    queryFn: () => adminDashboardService.getBookingsByDestination(limit),
+    queryKey: ['admin', 'bookings-by-destination', limit, period, startDate, endDate],
+    queryFn: () => adminDashboardService.getBookingsByDestination(limit, period, startDate, endDate),
     refetchInterval: REFETCH_INTERVAL,
+    enabled: period !== 'custom' || (!!startDate && !!endDate),
   });
 
-export const useRecentTransactions = (limit: number = 10) =>
+export const useRecentTransactions = (limit: number = 10, period?: PeriodType, startDate?: string, endDate?: string) =>
   useQuery({
-    queryKey: ['admin', 'recent-transactions', limit],
-    queryFn: () => adminDashboardService.getRecentTransactions(limit),
+    queryKey: ['admin', 'recent-transactions', limit, period, startDate, endDate],
+    queryFn: () => adminDashboardService.getRecentTransactions(limit, period, startDate, endDate),
     refetchInterval: REFETCH_INTERVAL,
+    enabled: period !== 'custom' || (!!startDate && !!endDate),
   });
 
 export const useRefreshDashboard = () => {

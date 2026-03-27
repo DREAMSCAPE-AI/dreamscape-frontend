@@ -4,6 +4,8 @@ import { useAuth } from '@/services/auth/AuthService';
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
   { label: 'Utilisateurs', path: '/admin/users', icon: '👥' },
+  { label: 'Commandes', path: '/admin/bookings', icon: '📦' },
+  { label: 'Paiements', path: '/admin/payments', icon: '💳' },
 ];
 
 const AdminLayout = () => {
