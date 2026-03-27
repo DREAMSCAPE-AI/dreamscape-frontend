@@ -1,4 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { useAuth } from '@/services/auth/AuthService';
 
 const NAV_ITEMS = [
@@ -31,6 +32,7 @@ const AdminLayout = () => {
             <NavLink
               key={item.path}
               to={item.path}
+              end={item.path === '/admin/dashboard'}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
@@ -68,6 +70,7 @@ const AdminLayout = () => {
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
+      <Toaster position="top-right" richColors />
     </div>
   );
 };
