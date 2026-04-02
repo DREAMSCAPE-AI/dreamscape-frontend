@@ -35,7 +35,7 @@ export default function VRPinAccess({
   const [expirationTime, setExpirationTime] = useState<number | null>(null);
 
   // Build the panorama URL to display to the user
-  // In dev: PANORAMA_BASE_URL is absolute (http://localhost:3008) → strip protocol
+  // In dev: PANORAMA_BASE_URL is absolute (http://<PC_IP>:3006) → strip protocol
   // In prod: PANORAMA_BASE_URL is relative (/panorama) → prepend host
   const panoramaUrl = PANORAMA_BASE_URL.startsWith('http')
     ? PANORAMA_BASE_URL.replace(/^https?:\/\//, '')
