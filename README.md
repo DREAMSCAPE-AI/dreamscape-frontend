@@ -1,256 +1,176 @@
-🌐 DreamScape Frontend
+# DreamScape Frontend
 
-> **Frontend Platform** - Interface utilisateur web et gateway API
-> Status: CI/CD with package-lock.json tracking enabled
-> Latest: AI Recommendations UI with i18n (FR/EN) - Ready to deploy
+> **Frontend Platform** — Interface utilisateur web, gateway API et expériences VR immersives
 
-## 📁 Structure des Applications
+## Structure des applications
 
-- **web-client/** - Frontend React principal (Port 5173)
-- **panorama/** - Interface panorama/VR immersive
-- **gateway/** - API Gateway & routage (Port 3000)
+| Dossier | Description | Port |
+|---------|-------------|------|
+| `web-client/` | Application React principale | 5173 (dev) |
+| `gateway/` | API Gateway & routage | 4000 (dev) / 3000 (Docker) |
+| `panorama/` | Expérience VR 360° immersive | 3006 |
 
-## 🛠️ Stack Technique
+## Stack technique
 
-### **Frontend Core**
-- **React 18** - Library UI avec hooks
-- **Vite** - Build tool & dev server rapide
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Framework CSS utilitaire
+### Web Client
+- **React 18.3** — Library UI avec hooks
+- **Vite 5.4** — Build tool & dev server rapide
+- **TypeScript 5.5** — Type safety
+- **Tailwind CSS 3.4** — Framework CSS utilitaire
+- **Zustand** — État global
+- **React Query** — Cache & synchronisation API
+- **React Context** — État d'authentification
+- **React Router v6** — Routing
+- **Framer Motion 11** — Animations
+- **@dnd-kit** — Drag & Drop
+- **Mapbox GL** — Cartographie interactive
+- **@stripe/react-stripe-js** — Paiements
 
-### **State Management**
-- **Redux Toolkit** - État global
-- **React Query** - Cache & synchronisation API
-- **Context API** - État local partagé
+### Panorama VR
+- **Three.js 0.155** — Moteur 3D WebGL
+- **@react-three/fiber** — Renderer Three.js pour React
+- **@react-three/drei** — Helpers Three.js
+- **@react-three/xr** — Support OpenXR / Meta Quest
 
-### **Expérience Immersive**
-- **Marzipano** - Vues panoramiques 360°
-- **CesiumJS** - Navigation 3D globale
-- **WebGL** - Rendu graphique haute performance
+### Gateway
+- **Express 4.18** — Framework HTTP
+- **http-proxy-middleware** — Proxy vers les microservices
+- **helmet / CORS / rate-limit** — Sécurité
+- **JWT + Redis** — Validation des tokens
+- **Swagger UI** — Documentation API
 
-### **Architecture**
-- **Component-Based** - Architecture modulaire
-- **API-First** - Communication via API Gateway
-- **Responsive Design** - Multi-plateforme
-- **PWA Ready** - Progressive Web App
+## Quick Start
 
-## 🚀 Quick Start
-
-### Développement Local
 ```bash
-# Installation des dépendances
-npm install
+# Développement — toutes les apps
+cd web-client && npm install && npm run dev     # :5173
+cd gateway    && npm install && npm run dev     # :4000
+cd panorama   && npm install && npm start       # :3006
 
-# Variables d'environnement
-cp .env.example .env.local
-
-# Démarrer le développement
-npm run dev
-
-# Ou applications individuelles
-cd web-client && npm run dev    # Frontend sur :5173
-cd gateway && npm run dev       # Gateway sur :3000
+# Build de production
+cd web-client && npm run build
+cd gateway    && npm run build
+cd panorama   && npm run build
 ```
 
-### Scripts Disponibles
-```bash
-# Développement
-npm run dev              # Toutes les apps en mode dev
-npm run build            # Build de production
-npm run preview          # Preview build locale
-
-# Qualité code
-npm run lint             # ESLint vérification
-npm run lint:fix         # Auto-correction ESLint
-npm run typecheck        # Vérification TypeScript
-
-# Tests
-npm run test             # Tests unitaires Jest
-npm run test:coverage    # Tests avec couverture
-npm run test:e2e         # Tests end-to-end Cypress
-```
-
-## 🏗️ Architecture Frontend
+## Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐
-│   Web Client    │────│   API Gateway   │
-│   React (5173)  │    │  Express (3000) │
-└─────────────────┘    └─────────────────┘
-         │                       │
-         ├─────── Auth ───────────┤
-         ├─────── API  ───────────┤
-         ├─────── Cache ──────────┤
-         │                       │
-    ┌─────────────┐          ┌─────────────┐
-    │  Panorama   │          │  Backend    │
-    │ VR Engine   │          │  Services   │
-    │ (Marzipano) │          │   (3001+)   │
-    └─────────────┘          └─────────────┘
+┌─────────────────┐    ┌──────────────────┐
+│   Web Client    │───►│   API Gateway    │
+│  React  (:5173) │    │  Express (:4000) │
+└─────────────────┘    └──────────────────┘
+         │                      │
+         │                      ▼
+    ┌──────────┐        ┌───────────────┐
+    │ Panorama │        │   Backend     │
+    │  VR/3D   │        │ Services      │
+    │  (:3006) │        │ (3001–3005)   │
+    └──────────┘        └───────────────┘
 ```
 
-## 🌟 Fonctionnalités Principales
+## Communication API
 
-### Web Client (React)
-- **Authentification** - Login/register sécurisé
-- **Recherche Voyage** - Interface intuitive de recherche
-- **Réservations** - Processus de booking fluide  
-- **Profil Utilisateur** - Gestion compte & préférences
-- **Dashboard** - Vue d'ensemble personnalisée
-- **Responsive Design** - Mobile & desktop
+Le Web Client communique exclusivement via le Gateway (`VITE_API_URL`, défaut `http://localhost:4000`) :
+
+```
+/api/v1/auth/*           → Auth Service   (3001)
+/api/v1/users/*          → User Service   (3002)
+/api/v1/voyages/*        → Voyage Service (3003)
+/api/v1/payment/*        → Payment Service (3004)
+/api/v1/recommendations/* → AI Service    (3005)
+/panoramas/*             → Panorama       (3006)
+```
+
+## Fonctionnalités principales
+
+### Web Client
+- Authentification (login/register, refresh tokens, auth context)
+- Recherche voyage — vols, hôtels, activités (Amadeus)
+- Panier & réservation multi-items
+- Profil utilisateur, préférences, onboarding IA
+- Dashboard personnalisé avec recommandations
+- Gestion RGPD (consentements, export, suppression)
+- Interface admin
+- i18n FR/EN (i18next)
+- Paiement Stripe intégré
+- Cartes Mapbox GL
 
 ### Expérience Panoramique
-- **Vues 360°** - Découverte immersive destinations
-- **Navigation 3D** - Exploration interactive
-- **Points d'Intérêt** - Markers informatifs
-- **Transitions Fluides** - Expérience seamless
-- **Media Rich** - Photos, vidéos, audio
+- Vues 360° destinations en WebGL
+- Support VR Meta Quest 3 (OpenXR)
+- Navigation immersive 3D
+- Points d'intérêt interactifs
 
 ### API Gateway
-- **Routage Intelligent** - Distribution requêtes
-- **Load Balancing** - Répartition de charge
-- **Rate Limiting** - Protection contre abus  
-- **CORS Handling** - Gestion cross-origin
-- **Health Checks** - Monitoring services
-- **Request/Response Logging** - Observabilité
+- Routage intelligent vers les microservices
+- Validation JWT avec cache Redis
+- Rate limiting
+- CORS centralisé
+- Documentation Swagger UI
 
-## 🎨 Design System
+## Tests
 
-### **Composants Réutilisables**
-```
-src/components/
-├── common/           # Composants génériques
-│   ├── Button/       # Boutons système
-│   ├── Modal/        # Modales
-│   └── Form/         # Éléments formulaires
-├── auth/            # Authentification
-├── voyage/          # Fonctions voyage
-├── panorama/        # Expérience VR
-└── profile/         # Gestion profil
-```
-
-### **Hooks Personnalisés**
-- `useAPI` - Appels API simplifiés
-- `useAuth` - État d'authentification
-- `useDashboard` - Données dashboard
-- `usePanorama` - Contrôle expérience VR
-
-## 📊 Communication API
-
-### **Endpoints Principaux**
-```typescript
-// Configuration API centralisée
-const API_BASE = process.env.VITE_API_URL || 'http://localhost:3000'
-
-// Services disponibles
-/auth/*           → Auth Service (3001)
-/users/*          → User Service (3002)
-/voyages/*        → Voyage Service (3003)
-/payments/*       → Payment Service (3004)
-/recommendations/* → AI Service (3005)
-/panoramas/*      → Panorama Service (3006)
-```
-
-### **Exemple d'Usage**
-```typescript
-import { searchFlights } from '@/services/voyageService'
-
-const SearchPage = () => {
-  const handleSearch = async (criteria) => {
-    try {
-      const results = await searchFlights(criteria)
-      // Traitement résultats
-    } catch (error) {
-      // Gestion erreurs
-    }
-  }
-  
-  return <SearchForm onSearch={handleSearch} />
-}
-```
-
-## 🧪 Tests & Qualité
-
-### **Stratégie de Test**
-- **Unit Tests** - Jest + React Testing Library
-- **Integration Tests** - MSW (Mock Service Worker)  
-- **E2E Tests** - Cypress automation
-- **Visual Tests** - Storybook + Chromatic
-- **Performance Tests** - Lighthouse CI
-
-### **Couverture Code**
 ```bash
-# Exécution avec couverture
-npm run test:coverage
+# Web Client — unitaires (Vitest)
+cd web-client && npm test
 
-# Rapports détaillés  
-open coverage/lcov-report/index.html
+# Web Client — E2E (Cypress)
+cd web-client && npm run cypress:run     # headless
+cd web-client && npm run cypress:open   # interactif
+
+# Coverage
+cd web-client && npm run test:coverage
 ```
 
-## 🚀 Déploiement
+## Variables d'environnement
 
-### **Environments**
-- **Development** - Local dev server
-- **Staging** - Preview builds
-- **Production** - Cloudflare Pages
+**Web Client** (`.env.local`) :
+```env
+VITE_API_URL=http://localhost:4000
+VITE_MAPBOX_TOKEN=pk.xxx
+VITE_STRIPE_PUBLIC_KEY=pk_test_xxx
+```
 
-### **CI/CD Pipeline**
+**Gateway** (`.env`) :
+```env
+PORT=4000
+AUTH_SERVICE_URL=http://localhost:3001
+USER_SERVICE_URL=http://localhost:3002
+VOYAGE_SERVICE_URL=http://localhost:3003
+PAYMENT_SERVICE_URL=http://localhost:3004
+AI_SERVICE_URL=http://localhost:3005
+JWT_SECRET=your-secret
+REDIS_HOST=localhost
+```
+
+## Déploiement
+
+- **Web Client** → Cloudflare Pages (build Vite)
+- **Gateway** → Docker container (image `ghcr.io/dreamscape-ai/gateway`)
+- **Panorama** → servi statiquement ou container dédié
+
 ```bash
-# Build & déploiement
-npm run build              # Production build
-npm run docker:build       # Container images
-npm run deploy:staging     # Deploy staging
-npm run deploy:prod        # Deploy production
+# Docker (depuis dreamscape-infra/)
+docker-compose -f docker/docker-compose.experience-pod.yml up -d
 ```
 
-## 🔐 Sécurité Frontend
+## Sécurité
 
-- **Content Security Policy** - Protection XSS
-- **HTTPS Enforcement** - Transport sécurisé
-- **Token Storage** - Secure localStorage/cookies
-- **API Key Protection** - Variables d'environnement
-- **Input Sanitization** - Validation côté client
+- Content Security Policy via helmet
+- HTTPS enforced en production
+- Tokens JWT stockés en `localStorage` (clé `auth-storage`)
+- Sanitisation des inputs côté client
+- Variables d'environnement pour les clés API (jamais dans le repo)
 
-## 📈 Performance
+## Contributing
 
-### **Optimisations**
-- **Code Splitting** - Chargement lazy
-- **Tree Shaking** - Bundle optimization
-- **Image Optimization** - Formats modernes
-- **Caching Strategy** - Service workers
-- **CDN Distribution** - Assets delivery
+1. Branch : `feature/frontend/description`
+2. Développement composant → test unitaire → PR
+3. Coverage cible > 80%
+4. Conventional commits (`feat:`, `fix:`, `chore:`)
+5. Code review requis avant merge
 
-### **Monitoring**
-- **Lighthouse Score** - Performance metrics
-- **Core Web Vitals** - User experience
-- **Bundle Analysis** - Size optimization
-- **Error Tracking** - Sentry integration
+---
 
-## 📱 Progressive Web App
-
-- **Service Workers** - Cache offline
-- **App Manifest** - Install prompt
-- **Push Notifications** - Engagement users
-- **Responsive Design** - Multi-device
-- **Offline Support** - Fonctionnalités critiques
-
-## 🤝 Contributing
-
-### **Development Workflow**
-1. **Feature Branch** - `feature/frontend/description`
-2. **Component Development** - Storybook first
-3. **Unit Testing** - Test coverage > 80%
-4. **E2E Testing** - Critical user journeys
-5. **Code Review** - PR approval required
-
-### **Coding Standards**
-- **TypeScript Strict** - Type safety
-- **ESLint + Prettier** - Code formatting
-- **Conventional Commits** - Git messages
-- **Component Documentation** - Props & usage
-
-## 📄 License
-
-Propriétaire et confidentiel © DreamScape 2025
-
-
+*Propriétaire et confidentiel © DreamScape 2025*

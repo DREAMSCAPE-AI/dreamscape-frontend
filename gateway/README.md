@@ -1,96 +1,145 @@
 # DreamScape API Gateway
 
-## Aperçu
-La passerelle API DreamScape sert de point d'entrée unique pour toutes les requêtes client vers la plateforme de voyage DreamScape. Elle achemine les requêtes entrantes vers les microservices appropriés, gère les préoccupations transversales comme l'authentification et la surveillance, et fournit une expérience API unifiée pour les applications frontend.
+> **Point d'entrée unique** — Proxy, authentification JWT, rate limiting et routage vers les microservices
 
-## Fonctionnalités clés
-- **Accès API unifié** : Point d'entrée unique pour les applications frontend
-- **Routage intelligent des requêtes** : Acheminement dynamique vers les microservices appropriés
-- **Authentification et autorisation** : Validation JWT et contrôle d'accès
-- **Limitation de débit** : Protection contre les abus et les attaques DDoS
-- **Agrégation des réponses** : Combine les réponses de plusieurs services lorsque nécessaire
-- **Surveillance et journalisation** : Suivi complet des requêtes et métriques de performance
-- **Documentation API** : Documentation OpenAPI centralisée pour tous les services
+- **Port** : 4000 (développement) / 3000 (Docker)
+- **Base de route** : `/api/v1/<service>`
+- **Docs Swagger** : `http://localhost:4000/docs`
 
-## Stack technique
-- **NGINX** : Technologie de base de la passerelle API
-- **Node.js** : Pour les middlewares personnalisés et la logique de routage
-- **Redis** : Pour la limitation de débit et la mise en cache
-- **Prometheus/Grafana** : Pour la surveillance et les alertes
-- **OpenAPI/Swagger** : Pour la documentation API
+## Responsabilités
+
+- Point d'entrée unique pour le web client
+- Validation des tokens JWT avec cache Redis
+- Proxy vers les microservices backend
+- Rate limiting global
+- CORS centralisé
+- Logging des requêtes
+
+## Stack
+
+| Technologie | Version | Rôle |
+|-------------|---------|------|
+| Express 4.18 | — | Framework HTTP |
+| TypeScript | — | Type safety |
+| http-proxy-middleware 2.0 | — | Proxy vers les services |
+| jsonwebtoken | — | Validation JWT |
+| Redis | — | Cache des tokens validés |
+| express-rate-limit | — | Rate limiting |
+| helmet | — | Headers de sécurité |
+| swagger-ui-express | — | Documentation API |
+
+## Routes proxifiées
+
+| Route Gateway | Service cible | Port |
+|---------------|---------------|------|
+| `/api/v1/auth/**` | auth-service | 3001 |
+| `/api/v1/users/**` | user-service | 3002 |
+| `/api/v1/voyages/**` | voyage-service | 3003 |
+| `/api/v1/payment/**` | payment-service | 3004 |
+| `/api/v1/ai/**` | ai-service | 3005 |
+| `/panoramas/**` | panorama | 3006 |
+
+## Quick Start
+
+```bash
+npm install
+cp .env.example .env
+npm run dev      # http://localhost:4000 (nodemon)
+npm run build    # Compile TypeScript
+npm start        # Production
+```
+
+## Variables d'environnement
+
+```env
+NODE_ENV=development
+PORT=4000
+
+# URLs des microservices
+AUTH_SERVICE_URL=http://localhost:3001
+USER_SERVICE_URL=http://localhost:3002
+VOYAGE_SERVICE_URL=http://localhost:3003
+PAYMENT_SERVICE_URL=http://localhost:3004
+AI_SERVICE_URL=http://localhost:3005
+PANORAMA_SERVICE_URL=http://localhost:3006
+
+# Sécurité
+JWT_SECRET=your-super-secret-jwt-key
+CORS_ORIGIN=http://localhost:5173
+
+# Redis (cache validation JWT)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
 
 ## Architecture
-La passerelle implémente le modèle de passerelle API et sert de façade pour tous les microservices sous-jacents :
-```
-Applications Frontend
-        ↓
-Passerelle API DreamScape
-        ↓
-┌───────┬───────┬────────┬─────┬──────────┐
-│ Auth  │ User  │ Voyage │ AI  │ Panorama │ ...
-└───────┴───────┴────────┴─────┴──────────┘
-```
 
-## Développement local
-### Prérequis
-- Docker et Docker Compose
-- Node.js 18+
-- Redis
-
-### Pour commencer
-1. Cloner ce dépôt
-   ```
-   git clone https://github.com/dreamscape/dreamscape-gateway.git
-   ```
-2. Installer les dépendances
-   ```
-   npm install
-   ```
-3. Configurer les variables d'environnement
-   ```
-   cp .env.example .env
-   ```
-   Éditer .env avec votre configuration
-4. Démarrer la passerelle en mode développement
-   ```
-   npm run dev
-   ```
-   La passerelle sera disponible à l'adresse http://localhost:8000
-
-### Tests
 ```
-npm test        # Exécuter les tests unitaires
-npm run test:e2e # Exécuter les tests de bout en bout
+Web Client (5173)
+      │
+      ▼
+API Gateway (4000)
+      │
+      ├─ Helmet (security headers)
+      ├─ CORS
+      ├─ Rate Limiting
+      ├─ JWT Validation (+ Redis cache)
+      │
+      ├──► Auth Service  (3001)   /api/v1/auth/**
+      ├──► User Service  (3002)   /api/v1/users/**
+      ├──► Voyage Service (3003)  /api/v1/voyages/**
+      ├──► Payment Service (3004) /api/v1/payment/**
+      ├──► AI Service    (3005)   /api/v1/ai/**
+      └──► Panorama      (3006)   /panoramas/**
 ```
 
-## Documentation API
-Lors de l'exécution en local, la documentation API est disponible à :
-- http://localhost:8000/docs
+## Authentification
 
-## Déploiement
-La passerelle est déployée à l'aide de Kubernetes. Les configurations de déploiement se trouvent dans le répertoire `k8s`.
+Le Gateway valide le JWT sur toutes les routes protégées avant de proxifier :
 
-## Contribution
-Veuillez consulter le fichier [CONTRIBUTING.md](CONTRIBUTING.md) pour plus de détails sur notre code de conduite et le processus de soumission des pull requests.
+1. Extrait le token `Authorization: Bearer <token>`
+2. Vérifie la signature avec `JWT_SECRET`
+3. Cache le résultat dans Redis (TTL = durée restante du token)
+4. Ajoute le header `x-user-id` pour les services en aval
 
-### Style de codage
-Nous utilisons ESLint et Prettier pour garantir la qualité et la cohérence du code. Veuillez exécuter les commandes suivantes avant de valider :
+Les routes publiques (login, register, health) bypasse la validation.
+
+## Health check
+
+```bash
+curl http://localhost:4000/health
+
+# Réponse
+{
+  "status": "healthy",
+  "uptime": 123.45,
+  "services": {
+    "auth": "connected",
+    "user": "connected",
+    "voyage": "connected",
+    "payment": "connected",
+    "ai": "connected"
+  },
+  "cache": "connected"
+}
 ```
+
+## Déploiement Docker
+
+```bash
+# Depuis dreamscape-infra/
+docker-compose -f docker/docker-compose.experience-pod.yml up -d
+```
+
+Image : `ghcr.io/dreamscape-ai/gateway:latest`
+
+## Tests
+
+```bash
+npm test
 npm run lint
-npm run format
 ```
 
-## Dépôts associés
-- [dreamscape-auth](https://github.com/dreamscape/dreamscape-auth)
-- [dreamscape-user](https://github.com/dreamscape/dreamscape-user)
-- [dreamscape-voyage](https://github.com/dreamscape/dreamscape-voyage)
-- [dreamscape-ai](https://github.com/dreamscape/dreamscape-ai)
-- [dreamscape-panorama](https://github.com/dreamscape/dreamscape-panorama)
-- [dreamscape-web](https://github.com/dreamscape/dreamscape-web)
+---
 
-## Contexte du projet
-Ce dépôt fait partie de la plateforme de voyage DreamScape développée avec un rythme de travail de 2 jours par semaine. La passerelle API est un composant d'infrastructure critique qui permet la communication entre les applications frontend et notre architecture de microservices.
-
-## Licence
-Ce projet est propriétaire et confidentiel. La copie, le transfert ou l'utilisation non autorisés sont strictement interdits.
-
+*Propriétaire et confidentiel © DreamScape 2025*
