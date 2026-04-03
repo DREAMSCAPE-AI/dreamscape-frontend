@@ -390,6 +390,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                           { to: '/history', icon: History, label: t('nav.userMenu.history') },
                           { to: '/settings', icon: Settings, label: t('nav.userMenu.settings') },
                           { to: '/help', icon: BookOpen, label: 'Documentation' },
+                          { to: '/faq', icon: HelpCircle, label: 'FAQ' },
                           { to: '/support', icon: HelpCircle, label: t('nav.userMenu.help') },
                         ].map((item) => (
                           <Link

@@ -288,6 +288,19 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
           <BookOpen className="w-5 h-5 flex-shrink-0" />
           <span className="font-medium">Documentation</span>
         </Link>
+        <Link
+          to="/faq"
+          onClick={closeDrawer}
+          className="
+            flex items-center gap-3 w-full px-4 py-3
+            text-gray-700 hover:bg-orange-50 hover:text-orange-600
+            transition-colors
+            min-h-[44px]
+          "
+        >
+          <HelpCircle className="w-5 h-5 flex-shrink-0" />
+          <span className="font-medium">FAQ</span>
+        </Link>
       </div>
 
       {/* User Actions (if logged in) */}

@@ -13,6 +13,7 @@ import {
   ChevronUp,
   Mail,
   ExternalLink,
+  MessageCircle,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -518,19 +519,19 @@ export default function HelpPage() {
           <p className="text-gray-500 mb-6">Notre équipe support est disponible pour vous aider.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
+              to="/faq"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Voir toutes les FAQ
+            </Link>
+            <Link
               to="/support"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 text-white font-medium hover:shadow-lg hover:shadow-orange-500/20 transition-shadow"
             >
               <Mail className="w-4 h-4" />
               Contacter le support
             </Link>
-            <a
-              href="mailto:support@dreamscape.ai"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              support@dreamscape.ai
-            </a>
           </div>
         </section>
       </div>
