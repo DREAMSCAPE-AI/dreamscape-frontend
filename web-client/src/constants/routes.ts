@@ -23,6 +23,8 @@ export const ROUTES = {
   // Settings & Support
   SETTINGS: '/settings',
   SUPPORT: '/support',
+  HELP: '/help',
+  FAQ: '/faq',
 
   // Travel services
   HOTELS: '/hotels',
@@ -56,6 +58,8 @@ export const PUBLIC_ROUTES = [
   ROUTES.HOME,
   ROUTES.AUTH,
   ROUTES.ABOUT,
+  ROUTES.HELP,
+  ROUTES.FAQ,
 ] as const;
 
 /**
@@ -65,6 +69,8 @@ export const ONBOARDING_EXEMPT_ROUTES = [
   ROUTES.ONBOARDING,
   ROUTES.AUTH,
   ROUTES.SETTINGS,
+  ROUTES.HELP,
+  ROUTES.FAQ,
 ] as const;
 
 /**

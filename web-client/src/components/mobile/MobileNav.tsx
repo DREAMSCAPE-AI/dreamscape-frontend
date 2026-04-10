@@ -28,6 +28,7 @@ import {
   Building,
   Route,
   History,
+  BookOpen,
 } from 'lucide-react';
 import { useMobileNavigation } from '@/hooks/useMobileNavigation';
 
@@ -273,6 +274,32 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLoggedIn, onLogout }) => {
         >
           <HelpCircle className="w-5 h-5 flex-shrink-0" />
           <span className="font-medium">{t('nav.about')}</span>
+        </Link>
+        <Link
+          to="/help"
+          onClick={closeDrawer}
+          className="
+            flex items-center gap-3 w-full px-4 py-3
+            text-gray-700 hover:bg-orange-50 hover:text-orange-600
+            transition-colors
+            min-h-[44px]
+          "
+        >
+          <BookOpen className="w-5 h-5 flex-shrink-0" />
+          <span className="font-medium">Documentation</span>
+        </Link>
+        <Link
+          to="/faq"
+          onClick={closeDrawer}
+          className="
+            flex items-center gap-3 w-full px-4 py-3
+            text-gray-700 hover:bg-orange-50 hover:text-orange-600
+            transition-colors
+            min-h-[44px]
+          "
+        >
+          <HelpCircle className="w-5 h-5 flex-shrink-0" />
+          <span className="font-medium">FAQ</span>
         </Link>
       </div>
 
