@@ -55,6 +55,10 @@ import BookingDetailPage from '@/pages/bookings/[reference]';
 // Legal Pages
 import PrivacyPolicyPage from '@/pages/legal/PrivacyPolicy';
 
+// Help & FAQ Pages
+import HelpPage from '@/pages/help';
+import FaqPage from '@/pages/faq';
+
 // GDPR
 import CookieConsent from '@/components/gdpr/CookieConsent';
 
@@ -167,6 +171,8 @@ function App() {
               </OnboardingGuard>
             } />
             <Route path="/support" element={<SupportPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/faq" element={<FaqPage />} />
 
             {/* Legal Routes */}
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
