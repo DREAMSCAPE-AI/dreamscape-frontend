@@ -633,7 +633,10 @@ function App() {
   }
 
   // DR-575: VR unavailable — auto-switch to 3D panorama when destination is loaded (PC browser or no headset)
-  if (viewMode === 'auto' && !isXRSupported && !isChecking) {
+  // Skip fallback when autoVR=true (deep link from VR headset) — always show VR UI with Enter VR button
+  const urlParams = new URLSearchParams(window.location.search);
+  const forceVR = urlParams.get('autoVR') === 'true';
+  if (viewMode === 'auto' && !isXRSupported && !isChecking && !forceVR) {
     if (destination) {
       setTimeout(() => setViewMode('3d'), 0);
       return null;
@@ -684,7 +687,7 @@ function App() {
           ⚠️ Placez votre image panoramique 360° nommée 'panorama-test.jpg' dans /public
         </p>
 
-        {isXRSupported && (
+        {(isXRSupported || forceVR) && (
           <VRButton
             style={{
               background: 'linear-gradient(45deg, #F97316, #DB2777)',
@@ -700,7 +703,7 @@ function App() {
           />
         )}
 
-        {isXRSupported && (
+        {(isXRSupported || forceVR) && (
           <ARButton
             style={{
               background: 'linear-gradient(45deg, #3B82F6, #22C55E)',
