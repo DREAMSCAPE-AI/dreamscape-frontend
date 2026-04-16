@@ -3,16 +3,19 @@
  *
  * Ticket: DR-574 (VR Access)
  *
- * Panneau compact sur la droite du champ de vision avec :
- * - Liste des destinations (charte DreamScape orange→rose sur actif)
- * - Toutes les scènes de la destination courante
- * - Bouton "Quitter la VR"
- * - Toggle pour masquer le panneau entièrement
+ * UX:
+ * - Toggle button (☰/✕) suit la tête de l'utilisateur en périphérie droite
+ *   (smoothly lerped pour pas être "collé") → toujours retrouvable.
+ * - Panel principal world-locked à l'ouverture (placé devant l'user au moment du clic)
+ *   → l'utilisateur peut tourner 360° librement sans que le panel le suive ni bloque la vue.
+ * - Cliquer le toggle re-positionne le panel devant la vue actuelle si déjà ouvert.
+ * - Charte DreamScape (orange→rose gradient sur actifs).
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Text } from '@react-three/drei';
 import { Interactive, useXR } from '@react-three/xr';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { listVREnvironments, VR_ENVIRONMENTS } from '../../data/environments';
 
@@ -23,16 +26,14 @@ const BRAND = {
   dark: '#0f172a',
   darkMuted: '#1e293b',
   gray: '#334155',
-  grayLight: '#64748b',
   textLight: '#f8fafc',
   textMuted: '#94a3b8',
   danger: '#dc2626',
   dangerHover: '#ef4444',
-  success: '#10b981'
 };
 
 /**
- * Crée une texture canvas avec gradient orange→rose DreamScape
+ * Texture canvas avec gradient orange→rose DreamScape
  */
 function useBrandGradientTexture(width = 512, height = 128) {
   return useMemo(() => {
@@ -52,26 +53,55 @@ function useBrandGradientTexture(width = 512, height = 128) {
 }
 
 /**
- * Bouton 3D compact interactif
- * @param {boolean} active - rendu avec gradient orange→rose si true
+ * Calcule une position dans l'espace relative à la caméra (horizontal-projected).
+ * Évite que le menu monte/descende quand l'user regarde vers le haut/bas.
+ *
+ * @param {THREE.Camera} camera
+ * @param {number} forwardDist - distance devant la caméra
+ * @param {number} rightOffset - offset à droite (négatif = gauche)
+ * @param {number} upOffset - offset vertical (relatif à hauteur caméra)
+ */
+function computeHudPosition(camera, forwardDist, rightOffset, upOffset) {
+  const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+  fwd.y = 0;
+  if (fwd.lengthSq() < 0.0001) {
+    fwd.set(0, 0, -1); // fallback si caméra regarde verticalement
+  } else {
+    fwd.normalize();
+  }
+  const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+  right.y = 0;
+  if (right.lengthSq() < 0.0001) {
+    right.set(1, 0, 0);
+  } else {
+    right.normalize();
+  }
+  const pos = new THREE.Vector3()
+    .copy(camera.position)
+    .addScaledVector(fwd, forwardDist)
+    .addScaledVector(right, rightOffset);
+  pos.y = camera.position.y + upOffset;
+  return pos;
+}
+
+/**
+ * Bouton 3D compact
  */
 function MenuButton({
   position,
   label,
   onClick,
   active = false,
-  variant = 'default', // 'default' | 'danger' | 'gradient'
-  width = 1.0,
-  height = 0.18,
-  fontSize = 0.065,
-  gradientTexture = null
+  variant = 'default',
+  width = 0.95,
+  height = 0.17,
+  fontSize = 0.062,
+  gradientTexture = null,
 }) {
   const [hovered, setHovered] = useState(false);
 
-  // Couleurs selon variante et état
   let baseColor = BRAND.darkMuted;
   let hoverColor = BRAND.gray;
-  let textColor = BRAND.textLight;
   let useGradient = false;
 
   if (variant === 'danger') {
@@ -88,14 +118,12 @@ function MenuButton({
       onBlur={() => setHovered(false)}
     >
       <group position={position}>
-        {/* Glow au hover */}
         {hovered && (
           <mesh position={[0, 0, -0.001]}>
             <planeGeometry args={[width + 0.03, height + 0.03]} />
             <meshBasicMaterial color={BRAND.orange} transparent opacity={0.5} />
           </mesh>
         )}
-        {/* Background */}
         <mesh onClick={onClick}>
           <planeGeometry args={[width, height]} />
           {useGradient && gradientTexture ? (
@@ -112,11 +140,10 @@ function MenuButton({
             />
           )}
         </mesh>
-        {/* Label */}
         <Text
           position={[0, 0, 0.01]}
           fontSize={fontSize}
-          color={textColor}
+          color={BRAND.textLight}
           anchorX="center"
           anchorY="middle"
           maxWidth={width - 0.08}
@@ -130,45 +157,60 @@ function MenuButton({
 }
 
 /**
- * Petit toggle flottant pour afficher/masquer le menu
+ * Toggle button — petit, suit la tête en périphérie droite avec lerp doux
  */
-function ToggleButton({ visible, onClick, position }) {
+function HudToggle({ visible, onClick }) {
   const [hovered, setHovered] = useState(false);
-  const size = 0.12;
+  const groupRef = useRef();
+  const { camera } = useThree();
+  const targetPos = useRef(new THREE.Vector3());
+
+  useFrame(() => {
+    if (!groupRef.current) return;
+    // Position périphérique droite, légèrement bas
+    targetPos.current.copy(
+      computeHudPosition(camera, 0.85, 0.55, -0.12)
+    );
+    // Lerp doux pour pas être "collé"
+    groupRef.current.position.lerp(targetPos.current, 0.12);
+    // Toujours regarder la caméra
+    groupRef.current.lookAt(camera.position);
+  });
 
   return (
-    <Interactive
-      onSelect={onClick}
-      onHover={() => setHovered(true)}
-      onBlur={() => setHovered(false)}
-    >
-      <group position={position}>
-        {/* Glow au hover */}
-        {hovered && (
-          <mesh position={[0, 0, -0.001]}>
-            <circleGeometry args={[size * 0.9, 32]} />
-            <meshBasicMaterial color={BRAND.orange} transparent opacity={0.5} />
+    <group ref={groupRef}>
+      <Interactive
+        onSelect={onClick}
+        onHover={() => setHovered(true)}
+        onBlur={() => setHovered(false)}
+      >
+        <group>
+          {hovered && (
+            <mesh position={[0, 0, -0.001]}>
+              <circleGeometry args={[0.075, 32]} />
+              <meshBasicMaterial color={BRAND.orange} transparent opacity={0.5} />
+            </mesh>
+          )}
+          <mesh onClick={onClick}>
+            <circleGeometry args={[0.06, 32]} />
+            <meshBasicMaterial
+              color={hovered ? BRAND.pink : BRAND.orange}
+              transparent
+              opacity={0.95}
+            />
           </mesh>
-        )}
-        <mesh onClick={onClick}>
-          <circleGeometry args={[size * 0.75, 32]} />
-          <meshBasicMaterial
-            color={hovered ? BRAND.pink : BRAND.orange}
-            transparent
-            opacity={0.95}
-          />
-        </mesh>
-        <Text
-          position={[0, 0, 0.01]}
-          fontSize={0.1}
-          color={BRAND.textLight}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {visible ? '✕' : '☰'}
-        </Text>
-      </group>
-    </Interactive>
+          <Text
+            position={[0, 0, 0.01]}
+            fontSize={0.07}
+            color={BRAND.textLight}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {visible ? '✕' : '☰'}
+          </Text>
+        </group>
+      </Interactive>
+    </group>
   );
 }
 
@@ -179,10 +221,12 @@ export default function VRMenu({
   currentDestination,
   onDestinationChange,
   currentSceneId,
-  onSceneChange
+  onSceneChange,
 }) {
   const { isPresenting, session } = useXR();
-  const [visible, setVisible] = useState(true);
+  const { camera } = useThree();
+  const [visible, setVisible] = useState(false); // caché par défaut
+  const panelRef = useRef();
   const environments = listVREnvironments();
   const gradientTexture = useBrandGradientTexture();
 
@@ -196,152 +240,151 @@ export default function VRMenu({
     }
   }, [session]);
 
-  const handleDestination = useCallback((envId) => {
-    if (envId !== currentDestination && onDestinationChange) {
-      onDestinationChange(envId);
-    }
-  }, [currentDestination, onDestinationChange]);
+  const handleDestination = useCallback(
+    (envId) => {
+      if (envId !== currentDestination && onDestinationChange) {
+        onDestinationChange(envId);
+      }
+    },
+    [currentDestination, onDestinationChange]
+  );
 
-  const handleScene = useCallback((sceneId) => {
-    if (sceneId !== currentSceneId && onSceneChange) {
-      onSceneChange(sceneId);
-    }
-  }, [currentSceneId, onSceneChange]);
+  const handleScene = useCallback(
+    (sceneId) => {
+      if (sceneId !== currentSceneId && onSceneChange) {
+        onSceneChange(sceneId);
+      }
+    },
+    [currentSceneId, onSceneChange]
+  );
 
-  const toggleVisible = useCallback(() => setVisible((v) => !v), []);
+  // Toggle: si on ouvre, repositionne le panel devant la vue actuelle
+  const toggleVisible = useCallback(() => {
+    setVisible((prev) => {
+      const next = !prev;
+      if (next && panelRef.current) {
+        // Place le panel devant l'user (un peu à droite pour pas masquer le centre)
+        const target = computeHudPosition(camera, 1.6, 0.35, 0);
+        panelRef.current.position.copy(target);
+        panelRef.current.lookAt(camera.position);
+      }
+      return next;
+    });
+  }, [camera]);
+
+  // À la première activation après isPresenting, on ne fait rien (panel caché)
+  // L'user verra le toggle et pourra l'ouvrir.
 
   if (!isPresenting) return null;
 
-  // Résolution destination (alias → canonical id)
+  // Résolution destination
   const resolvedDest = currentDestination
-    ? (VR_ENVIRONMENTS[currentDestination.toLowerCase()]
-        ? currentDestination.toLowerCase()
-        : null)
+    ? VR_ENVIRONMENTS[currentDestination.toLowerCase()]
+      ? currentDestination.toLowerCase()
+      : null
     : null;
   const currentEnv = resolvedDest ? VR_ENVIRONMENTS[resolvedDest] : null;
   const scenes = currentEnv?.scenes || [];
 
-  // Calcul dynamique hauteur panel (selon nb items)
-  const BUTTON_H = 0.22; // hauteur bouton + spacing
+  // Layout
+  const BUTTON_H = 0.22;
+  const PANEL_W = 1.05;
   const destCount = environments.length;
   const sceneCount = scenes.length;
   const panelHeight =
-    0.22 /* header */ +
-    0.12 /* dest subtitle */ +
-    destCount * BUTTON_H +
-    0.18 /* spacer */ +
-    (sceneCount > 0 ? 0.12 /* scene subtitle */ + sceneCount * BUTTON_H : 0) +
-    0.18 /* spacer */ +
-    0.26 /* exit button + margin */;
-
-  const PANEL_W = 1.05;
-  const panelY = 0; // center of panel
-
-  // Position du menu — plus périphérique qu'avant (plus à droite, plus loin, plus incliné)
-  const menuPosition = [1.55, 1.4, -1.7];
-  const menuRotation = [0, -Math.PI / 4, 0]; // 45° vers la caméra
+    0.22 + 0.12 + destCount * BUTTON_H + 0.18 +
+    (sceneCount > 0 ? 0.12 + sceneCount * BUTTON_H : 0) +
+    0.18 + 0.26;
 
   return (
-    <group position={menuPosition} rotation={menuRotation}>
-      {/* Toggle button (toujours visible — petit à gauche du menu) */}
-      <ToggleButton
-        visible={visible}
-        onClick={toggleVisible}
-        position={[-PANEL_W / 2 - 0.15, panelHeight / 2 - 0.1, 0]}
-      />
+    <>
+      {/* Toggle HUD (toujours visible, suit la tête doucement) */}
+      <HudToggle visible={visible} onClick={toggleVisible} />
 
-      {/* Panneau principal — affiché uniquement si visible */}
-      {visible && (
-        <>
-          {/* Background glassmorphism sombre */}
-          <mesh position={[0, panelY, -0.02]}>
-            <planeGeometry args={[PANEL_W, panelHeight]} />
-            <meshBasicMaterial color={BRAND.dark} transparent opacity={0.88} />
-          </mesh>
+      {/* Panel principal world-locked (positionné à l'ouverture) */}
+      <group ref={panelRef} visible={visible}>
+        {/* Background sombre translucide */}
+        <mesh position={[0, 0, -0.02]}>
+          <planeGeometry args={[PANEL_W, panelHeight]} />
+          <meshBasicMaterial color={BRAND.dark} transparent opacity={0.88} />
+        </mesh>
 
-          {/* Bordure gradient orange→rose (fine, en haut du panel comme une navbar) */}
-          <mesh position={[0, panelHeight / 2 - 0.02, -0.015]}>
-            <planeGeometry args={[PANEL_W, 0.04]} />
-            <meshBasicMaterial map={gradientTexture} transparent opacity={0.95} />
-          </mesh>
+        {/* Bandeau gradient en haut (navbar style) */}
+        <mesh position={[0, panelHeight / 2 - 0.02, -0.015]}>
+          <planeGeometry args={[PANEL_W, 0.04]} />
+          <meshBasicMaterial map={gradientTexture} transparent opacity={0.95} />
+        </mesh>
 
-          {/* Header — "🌍 DreamScape VR" */}
-          <Text
-            position={[0, panelHeight / 2 - 0.12, 0]}
-            fontSize={0.078}
-            color={BRAND.textLight}
-            anchorX="center"
-            anchorY="middle"
-            fontWeight="bold"
+        {/* Header */}
+        <Text
+          position={[0, panelHeight / 2 - 0.12, 0]}
+          fontSize={0.078}
+          color={BRAND.textLight}
+          anchorX="center"
+          anchorY="middle"
+        >
+          🌍 DreamScape
+        </Text>
+        <Text
+          position={[0, panelHeight / 2 - 0.2, 0]}
+          fontSize={0.05}
+          color={BRAND.orange}
+          anchorX="center"
+          anchorY="middle"
+        >
+          VR
+        </Text>
+
+        {/* Destinations */}
+        {(() => {
+          const subtitleY = panelHeight / 2 - 0.32;
+          return (
+            <>
+              <Text
+                position={[0, subtitleY, 0]}
+                fontSize={0.042}
+                color={BRAND.textMuted}
+                anchorX="center"
+                anchorY="middle"
+              >
+                DESTINATIONS
+              </Text>
+              {environments.map((env, idx) => {
+                const y = subtitleY - 0.14 - idx * BUTTON_H;
+                return (
+                  <MenuButton
+                    key={env.id}
+                    position={[0, y, 0]}
+                    label={env.name}
+                    onClick={() => handleDestination(env.id)}
+                    active={env.id === resolvedDest}
+                    gradientTexture={gradientTexture}
+                  />
+                );
+              })}
+            </>
+          );
+        })()}
+
+        {/* Séparateur */}
+        {sceneCount > 0 && (
+          <mesh
+            position={[
+              0,
+              panelHeight / 2 - 0.32 - 0.14 - destCount * BUTTON_H - 0.05,
+              0,
+            ]}
           >
-            🌍 DreamScape
-          </Text>
-          <Text
-            position={[0, panelHeight / 2 - 0.2, 0]}
-            fontSize={0.05}
-            color={BRAND.orange}
-            anchorX="center"
-            anchorY="middle"
-          >
-            VR
-          </Text>
+            <planeGeometry args={[PANEL_W - 0.1, 0.003]} />
+            <meshBasicMaterial color={BRAND.gray} transparent opacity={0.6} />
+          </mesh>
+        )}
 
-          {/* === Section Destinations === */}
-          {(() => {
-            let cursorY = panelHeight / 2 - 0.32; // début sous le header
-
-            return (
-              <>
-                <Text
-                  position={[0, cursorY, 0]}
-                  fontSize={0.042}
-                  color={BRAND.textMuted}
-                  anchorX="center"
-                  anchorY="middle"
-                  letterSpacing={0.1}
-                >
-                  DESTINATIONS
-                </Text>
-                {environments.map((env, idx) => {
-                  const y = cursorY - 0.14 - idx * BUTTON_H;
-                  const isActive = env.id === resolvedDest;
-                  return (
-                    <MenuButton
-                      key={env.id}
-                      position={[0, y, 0]}
-                      label={env.name}
-                      onClick={() => handleDestination(env.id)}
-                      active={isActive}
-                      gradientTexture={gradientTexture}
-                      width={0.95}
-                      height={0.17}
-                      fontSize={0.062}
-                    />
-                  );
-                })}
-              </>
-            );
-          })()}
-
-          {/* Séparateur */}
-          {sceneCount > 0 && (
-            <mesh
-              position={[
-                0,
-                panelHeight / 2 - 0.32 - 0.14 - destCount * BUTTON_H - 0.05,
-                0
-              ]}
-            >
-              <planeGeometry args={[PANEL_W - 0.1, 0.003]} />
-              <meshBasicMaterial color={BRAND.gray} transparent opacity={0.6} />
-            </mesh>
-          )}
-
-          {/* === Section Scènes === */}
-          {sceneCount > 0 && (() => {
+        {/* Scènes */}
+        {sceneCount > 0 &&
+          (() => {
             const subtitleY =
               panelHeight / 2 - 0.32 - 0.14 - destCount * BUTTON_H - 0.15;
-
             return (
               <>
                 <Text
@@ -350,23 +393,19 @@ export default function VRMenu({
                   color={BRAND.textMuted}
                   anchorX="center"
                   anchorY="middle"
-                  letterSpacing={0.1}
                 >
                   SCÈNES ({sceneCount})
                 </Text>
                 {scenes.map((scene, idx) => {
                   const y = subtitleY - 0.14 - idx * BUTTON_H;
-                  const isActive = scene.id === currentSceneId;
                   return (
                     <MenuButton
                       key={scene.id}
                       position={[0, y, 0]}
                       label={`${scene.icon || '📍'}  ${scene.name}`}
                       onClick={() => handleScene(scene.id)}
-                      active={isActive}
+                      active={scene.id === currentSceneId}
                       gradientTexture={gradientTexture}
-                      width={0.95}
-                      height={0.17}
                       fontSize={0.058}
                     />
                   );
@@ -375,18 +414,16 @@ export default function VRMenu({
             );
           })()}
 
-          {/* Bouton Quitter VR — en bas */}
-          <MenuButton
-            position={[0, -panelHeight / 2 + 0.17, 0]}
-            label="✕  Quitter la VR"
-            onClick={handleExit}
-            variant="danger"
-            width={0.95}
-            height={0.2}
-            fontSize={0.065}
-          />
-        </>
-      )}
-    </group>
+        {/* Quitter VR */}
+        <MenuButton
+          position={[0, -panelHeight / 2 + 0.17, 0]}
+          label="✕  Quitter la VR"
+          onClick={handleExit}
+          variant="danger"
+          height={0.2}
+          fontSize={0.065}
+        />
+      </group>
+    </>
   );
 }
