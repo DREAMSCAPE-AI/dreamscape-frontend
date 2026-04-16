@@ -738,6 +738,47 @@ function App() {
       </div>
       )}
 
+      {/* DR-574: Floating VR/AR buttons visible in destination mode (when controls are hidden) */}
+      {!showControls && (isXRSupported || forceVR) && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+          display: 'flex',
+          gap: '12px',
+          pointerEvents: 'auto'
+        }}>
+          <VRButton
+            style={{
+              background: 'linear-gradient(45deg, #F97316, #DB2777)',
+              color: 'white',
+              border: 'none',
+              padding: '16px 32px',
+              borderRadius: '12px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(249, 115, 22, 0.5)'
+            }}
+          />
+          <ARButton
+            style={{
+              background: 'linear-gradient(45deg, #3B82F6, #22C55E)',
+              color: 'white',
+              border: 'none',
+              padding: '16px 32px',
+              borderRadius: '12px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(59, 130, 246, 0.5)'
+            }}
+          />
+        </div>
+      )}
+
       <Canvas
         style={{
           height: '80vh',
