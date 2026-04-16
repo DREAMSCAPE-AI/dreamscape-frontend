@@ -7,7 +7,7 @@
  * Utilise les services créés dans DR-250
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Text, Html } from '@react-three/drei';
@@ -18,6 +18,11 @@ import {
   getTextureOptimizer,
   getAssetCache
 } from '../services';
+
+// DR-574 fix pixellisation : augmenter la résolution de la sphère panoramique
+// 60×40 → 128×64 réduit la distortion aux pôles et améliore le mapping UV
+const PANORAMA_SPHERE_SEGMENTS_W = 128;
+const PANORAMA_SPHERE_SEGMENTS_H = 64;
 
 /**
  * Composant VRScene
@@ -30,6 +35,7 @@ function VRScene({ scene, onSceneChange, onHotspotClick }) {
   const [texture, setTexture] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { gl: renderer } = useThree(); // Renderer pour anisotropie max GPU
 
   // Charger le panorama de la scène
   useEffect(() => {
@@ -85,8 +91,9 @@ function VRScene({ scene, onSceneChange, onHotspotClick }) {
         const loadedTexture = await loader.load(finalUrl);
 
         // Étape 4: Optimiser la texture pour la VR
+        // DR-574 : passer le renderer pour activer anisotropie max (16x sur Quest 3)
         const optimizer = getTextureOptimizer();
-        optimizer.optimizeForVR(loadedTexture);
+        optimizer.optimizeForVR(loadedTexture, renderer);
 
         if (mounted) {
           setTexture(loadedTexture);
@@ -133,8 +140,9 @@ function VRScene({ scene, onSceneChange, onHotspotClick }) {
   return (
     <>
       {/* Sphère panoramique 360° */}
+      {/* DR-574 fix pixellisation : 128×64 segments (vs 60×40) pour mapping plus fin */}
       <mesh scale={[-1, 1, 1]}>
-        <sphereGeometry args={[500, 60, 40]} />
+        <sphereGeometry args={[500, PANORAMA_SPHERE_SEGMENTS_W, PANORAMA_SPHERE_SEGMENTS_H]} />
         <meshBasicMaterial
           map={texture}
           side={THREE.BackSide}
