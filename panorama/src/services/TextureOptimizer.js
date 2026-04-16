@@ -16,12 +16,14 @@ import * as THREE from 'three';
 class TextureOptimizer {
   constructor() {
     this.defaultConfig = {
-      minFilter: THREE.LinearFilter,
+      // DR-574 fix pixellisation : mipmaps + LinearMipmapLinear pour échantillonnage net
+      // sur surfaces obliques (réduit aliasing aux pôles de la sphère panoramique)
+      minFilter: THREE.LinearMipmapLinearFilter,
       magFilter: THREE.LinearFilter,
       wrapS: THREE.RepeatWrapping,
       wrapT: THREE.ClampToEdgeWrapping,
-      anisotropy: 1, // Sera mis à jour selon le GPU
-      generateMipmaps: false // LinearFilter ne nécessite pas de mipmaps
+      anisotropy: 16, // Maximum supporté par Quest 3 / casques VR récents
+      generateMipmaps: true // Requis pour LinearMipmapLinearFilter
     };
   }
 
@@ -50,11 +52,14 @@ class TextureOptimizer {
     texture.wrapT = this.defaultConfig.wrapT; // Vertical: ClampToEdge pour éviter artefacts
     console.log('✅ Wrapping configuré: RepeatWrapping (S) / ClampToEdge (T)');
 
-    // Anisotropie si renderer disponible
+    // Anisotropie : applique la valeur par défaut (16 pour VR), clamp si renderer dispo
     if (renderer) {
       const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-      texture.anisotropy = Math.min(4, maxAnisotropy); // Limiter à 4 pour performance
-      console.log(`✅ Anisotropie configurée: ${texture.anisotropy} (max: ${maxAnisotropy})`);
+      texture.anisotropy = Math.min(this.defaultConfig.anisotropy, maxAnisotropy);
+      console.log(`✅ Anisotropie configurée: ${texture.anisotropy} (max GPU: ${maxAnisotropy})`);
+    } else {
+      texture.anisotropy = this.defaultConfig.anisotropy;
+      console.log(`⚠️ Renderer absent — anisotropie posée à ${texture.anisotropy} (peut être clampée par le GPU)`);
     }
 
     // Mipmaps
