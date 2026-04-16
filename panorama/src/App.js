@@ -24,6 +24,7 @@ import ImageResizer from './services/ImageResizer';
 import ParisEnvironment from './components/ParisEnvironment';
 import VRDestinationEnvironment from './components/VRDestinationEnvironment';
 import VRPinEntry from './components/VRPinEntry';
+import VRMenu from './components/VR/VRMenu';
 import { getVREnvironment } from './data/environments';
 
 // === COMPOSANTS DE DIAGNOSTIC ===
@@ -412,10 +413,10 @@ function TextureLoadingStatus({ isLoading, loadingState, hasTexture, progress, e
 /**
  * Composant VR Environment - Environnement Paris interactif
  */
-function VREnvironment() {
-  // Récupérer le paramètre destination depuis l'URL
+function VREnvironment({ destination: propDestination, currentSceneId, onSceneChange }) {
+  // Priorité: prop (contrôlée par App) > URL
   const searchParams = new URLSearchParams(window.location.search);
-  const destination = searchParams.get('destination');
+  const destination = propDestination || searchParams.get('destination');
   const showDiagnostics = searchParams.get('debug') === 'true';
 
   // Tous les hooks DOIVENT être appelés avant tout return conditionnel
@@ -474,7 +475,13 @@ function VREnvironment() {
   if (destination) {
     const env = getVREnvironment(destination);
     if (env) {
-      return <VRDestinationEnvironment environment={env} />;
+      return (
+        <VRDestinationEnvironment
+          environment={env}
+          controlledSceneId={currentSceneId}
+          onSceneChange={onSceneChange}
+        />
+      );
     }
   }
 
@@ -577,12 +584,32 @@ function App() {
   // Vérifier le mode debug depuis l'URL
   const searchParams = new URLSearchParams(window.location.search);
   const isDebugMode = searchParams.get('debug') === 'true';
-  const destination = searchParams.get('destination');
+  const urlDestination = searchParams.get('destination');
+
+  // DR-574: destination contrôlée par state pour switch en VR sans rechargement
+  const [destination, setDestination] = useState(urlDestination);
+  // Scène courante (contrôlée) — null = scène par défaut de l'environnement
+  const [currentSceneId, setCurrentSceneId] = useState(null);
+
   const showControls = isDebugMode || !destination; // Masquer les contrôles en mode destination (sauf debug)
 
   const [diagnosticVisible, setDiagnosticVisible] = useState(isDebugMode);
   const initialMode = searchParams.get('mode') || 'auto'; // ?mode=gallery|3d|auto
   const [viewMode, setViewMode] = useState(initialMode);
+
+  // DR-574: handlers pour le menu VR in-session
+  const handleDestinationChange = useCallback((envId) => {
+    setDestination(envId);
+    setCurrentSceneId(null); // Reset sur scène par défaut du nouvel env
+    // Mettre à jour l'URL sans rechargement (garde la session VR active)
+    const params = new URLSearchParams(window.location.search);
+    params.set('destination', envId);
+    window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+  }, []);
+
+  const handleSceneChange = useCallback((sceneId) => {
+    setCurrentSceneId(sceneId);
+  }, []);
 
   // DR-498 / DR-501 / DR-502: Deep Linking for QR Code Access
   const deepLinkState = useVRDeepLink();
@@ -804,8 +831,20 @@ function App() {
               </Text>
             }
           >
-            <VREnvironment />
+            <VREnvironment
+              destination={destination}
+              currentSceneId={currentSceneId}
+              onSceneChange={handleSceneChange}
+            />
           </Suspense>
+
+          {/* DR-574: Menu VR 3D (destinations + scènes + exit) visible en session immersive */}
+          <VRMenu
+            currentDestination={destination}
+            onDestinationChange={handleDestinationChange}
+            currentSceneId={currentSceneId}
+            onSceneChange={handleSceneChange}
+          />
 
           <OrbitControls
             enableZoom={true}

@@ -20,12 +20,20 @@ import { NavigationUI, HotspotInfoPanel, TransitionOverlay } from './ParisEnviro
  * @param {Object} props
  * @param {Object} props.environment - Configuration de l'environnement (scenes, defaultScene, name, etc.)
  */
-function VRDestinationEnvironment({ environment }) {
-  const [currentSceneId, setCurrentSceneId] = useState(environment.defaultScene);
+function VRDestinationEnvironment({ environment, controlledSceneId, onSceneChange }) {
+  // Si controlledSceneId fourni, utilise-le; sinon state local initialisé sur defaultScene
+  const [localSceneId, setLocalSceneId] = useState(environment.defaultScene);
+  const currentSceneId = controlledSceneId || localSceneId;
   const [currentScene, setCurrentScene] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sceneHistory, setSceneHistory] = useState([]);
   const [hotspotInfo, setHotspotInfo] = useState(null);
+
+  // Reset sur la scène par défaut quand l'environnement change
+  useEffect(() => {
+    setLocalSceneId(environment.defaultScene);
+    setSceneHistory([]);
+  }, [environment]);
 
   // Charger la scène actuelle depuis les données
   useEffect(() => {
@@ -42,7 +50,15 @@ function VRDestinationEnvironment({ environment }) {
 
   }, [currentSceneId, environment]);
 
-  // Changer de scène (navigation)
+  // Changer de scène (navigation) — propage vers le parent si contrôlé
+  const applySceneChange = useCallback((targetSceneId) => {
+    if (onSceneChange) {
+      onSceneChange(targetSceneId);
+    } else {
+      setLocalSceneId(targetSceneId);
+    }
+  }, [onSceneChange]);
+
   const handleSceneChange = useCallback((targetSceneId) => {
     console.log(`🚀 [${environment.name}] Navigation: ${currentSceneId} → ${targetSceneId}`);
 
@@ -54,11 +70,11 @@ function VRDestinationEnvironment({ environment }) {
 
     // Changer de scène après un court délai pour la transition
     setTimeout(() => {
-      setCurrentSceneId(targetSceneId);
+      applySceneChange(targetSceneId);
       setHotspotInfo(null); // Réinitialiser l'info hotspot
     }, 500);
 
-  }, [currentSceneId, environment.name]);
+  }, [currentSceneId, environment.name, applySceneChange]);
 
   // Revenir à la scène précédente
   const handleGoBack = useCallback(() => {
@@ -71,9 +87,9 @@ function VRDestinationEnvironment({ environment }) {
     console.log(`⬅️ Retour à: ${previousSceneId}`);
 
     setSceneHistory(prev => prev.slice(0, -1));
-    setCurrentSceneId(previousSceneId);
+    applySceneChange(previousSceneId);
 
-  }, [sceneHistory]);
+  }, [sceneHistory, applySceneChange]);
 
   // Interaction avec un hotspot
   const handleHotspotClick = useCallback((hotspot) => {
