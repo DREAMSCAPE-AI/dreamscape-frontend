@@ -16,7 +16,8 @@ import { getWebGLDetector } from './WebGLDetector.js';
 class ImageResizer {
   constructor() {
     this.targetRatio = 2; // Ratio 2:1 parfait pour panoramas équirectangulaires
-    this.jpegQuality = 0.92; // Qualité élevée mais avec compression raisonnable
+    // DR-574 fix pixellisation : qualité JPEG quasi-max pour éviter compression visible en VR
+    this.jpegQuality = 0.95;
     this.webglDetector = getWebGLDetector();
   }
 
