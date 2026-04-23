@@ -9,17 +9,10 @@ import {
   LogOut,
   Settings,
   HelpCircle,
-  Map,
   Compass,
   Route,
   Plane,
   Building2,
-  BarChart3,
-  MapPin,
-  Building,
-  Car,
-  Brain,
-  Wrench,
   Calendar,
   History,
   X,
@@ -45,8 +38,6 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showDiscoverMenu, setShowDiscoverMenu] = useState(false);
-  const [showToolsMenu, setShowToolsMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
@@ -129,29 +120,17 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
     { name: t('nav.flights'), path: '/flights', icon: Plane },
     { name: t('nav.hotels'), path: '/hotels', icon: Building2 },
     { name: t('nav.activities'), path: '/activities', icon: Route },
-    { name: t('nav.map'), path: '/map', icon: Map },
     { name: t('nav.destinations'), path: '/destinations', icon: Compass },
-  ];
-
-  const toolsMenuItems = [
-    { name: t('nav.toolsMenu.flightAnalytics'), path: '/analytics', icon: BarChart3, description: t('nav.toolsMenu.flightAnalyticsDesc') },
-    { name: t('nav.toolsMenu.flightStatus'), path: '/flight-status', icon: Plane, description: t('nav.toolsMenu.flightStatusDesc') },
-    { name: t('nav.toolsMenu.airportInfo'), path: '/airports', icon: MapPin, description: t('nav.toolsMenu.airportInfoDesc') },
-    { name: t('nav.toolsMenu.airlineLookup'), path: '/airlines', icon: Building, description: t('nav.toolsMenu.airlineLookupDesc') },
-    { name: t('nav.toolsMenu.transfers'), path: '/transfers', icon: Car, description: t('nav.toolsMenu.transfersDesc') },
-    { name: t('nav.toolsMenu.travelInsights'), path: '/insights', icon: Brain, description: t('nav.toolsMenu.travelInsightsDesc') },
   ];
 
   /* ─── Dynamic style tokens ─── */
   const textColor = isTransparent ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-orange-500';
-  const textColorActive = isTransparent ? 'text-white' : 'text-gray-800';
   const dropdownBg = isTransparent
     ? 'bg-surface-950/80 backdrop-blur-xl border border-white/10'
     : 'bg-white border border-gray-100 shadow-lg';
   const dropdownItem = isTransparent
     ? 'text-white/60 hover:text-white hover:bg-white/[0.06]'
     : 'text-gray-700 hover:text-orange-500 hover:bg-orange-50';
-  const dropdownItemDesc = isTransparent ? 'text-white/30' : 'text-gray-400';
 
   return (
     <motion.header
@@ -186,109 +165,6 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 );
               })}
 
-              {/* Discover dropdown */}
-              <div className="relative">
-                <button
-                  onMouseEnter={() => setShowDiscoverMenu(true)}
-                  onMouseLeave={() => setShowDiscoverMenu(false)}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-lg transition-colors ${textColor}`}
-                  aria-haspopup="menu"
-                  aria-expanded={showDiscoverMenu}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Escape') setShowDiscoverMenu(false);
-                    if (e.key === 'ArrowDown' || e.key === 'Enter') {
-                      e.preventDefault();
-                      setShowDiscoverMenu(true);
-                    }
-                  }}
-                >
-                  <span>{t('nav.discover')}</span>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </button>
-
-                <AnimatePresence>
-                  {showDiscoverMenu && (
-                    <motion.div
-                      onMouseEnter={() => setShowDiscoverMenu(true)}
-                      onMouseLeave={() => setShowDiscoverMenu(false)}
-                      className={`absolute top-full left-0 w-56 rounded-xl py-1.5 mt-2 ${dropdownBg}`}
-                      role="menu"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 8 }}
-                      transition={{ duration: 0.18 }}
-                    >
-                      {[
-                        { name: t('nav.discoverMenu.culture'), path: '/destinations?category=cultural', icon: Compass },
-                        { name: t('nav.discoverMenu.adventure'), path: '/destinations?category=adventure', icon: Map },
-                        { name: t('nav.discoverMenu.relaxation'), path: '/destinations?category=wellness', icon: User },
-                      ].map((cat) => (
-                        <Link
-                          key={cat.name}
-                          to={cat.path}
-                          className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${dropdownItem}`}
-                          role="menuitem"
-                        >
-                          <cat.icon className="w-4 h-4 opacity-60" />
-                          <span>{cat.name}</span>
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Tools dropdown */}
-              <div className="relative">
-                <button
-                  onMouseEnter={() => setShowToolsMenu(true)}
-                  onMouseLeave={() => setShowToolsMenu(false)}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-lg transition-colors ${textColor}`}
-                  aria-haspopup="menu"
-                  aria-expanded={showToolsMenu}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Escape') setShowToolsMenu(false);
-                    if (e.key === 'ArrowDown' || e.key === 'Enter') {
-                      e.preventDefault();
-                      setShowToolsMenu(true);
-                    }
-                  }}
-                >
-                  <Wrench className="w-3.5 h-3.5" />
-                  <span>{t('nav.tools')}</span>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </button>
-
-                <AnimatePresence>
-                  {showToolsMenu && (
-                    <motion.div
-                      onMouseEnter={() => setShowToolsMenu(true)}
-                      onMouseLeave={() => setShowToolsMenu(false)}
-                      className={`absolute top-full left-0 w-72 rounded-xl py-1.5 mt-2 ${dropdownBg}`}
-                      role="menu"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 8 }}
-                      transition={{ duration: 0.18 }}
-                    >
-                      {toolsMenuItems.map((tool) => (
-                        <Link
-                          key={tool.name}
-                          to={tool.path}
-                          className={`flex items-center gap-3 px-4 py-2.5 transition-colors ${dropdownItem}`}
-                          role="menuitem"
-                        >
-                          <tool.icon className="w-4 h-4 opacity-60 shrink-0" />
-                          <div>
-                            <div className="text-sm font-medium">{tool.name}</div>
-                            <div className={`text-[11px] ${dropdownItemDesc}`}>{tool.description}</div>
-                          </div>
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
             </div>
           </div>
 

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Search, Book, MessageCircle, HelpCircle, Leaf, Headset, Bot, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Search, Book, HelpCircle, Leaf, Headset, Bot, HeadphonesIcon } from 'lucide-react';
 import HelpSearch from './HelpSearch';
 import AIGuides from './AIGuides';
 import DynamicFAQ from './DynamicFAQ';
@@ -7,19 +9,31 @@ import BlogSection from './BlogSection';
 import VRTutorials from './VRTutorials';
 import SustainabilityInfo from './SustainabilityInfo';
 import LiveChat from './LiveChat';
+import SupportClient from './SupportClient';
 
 const SupportCenter = () => {
+  const { t } = useTranslation('support');
+  const location = useLocation();
   const [activeSection, setActiveSection] = useState('search');
   const [showChat, setShowChat] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const validSections = ['search', 'guides', 'faq', 'blog', 'vr', 'sustainability', 'contact'];
+
+  useEffect(() => {
+    const hash = location.hash.replace('#', '');
+    if (hash && validSections.includes(hash)) {
+      setActiveSection(hash);
+    }
+  }, [location]);
+
   const sections = [
-    { id: 'search', label: 'Help Center', icon: Search },
-    { id: 'guides', label: 'Travel Guides', icon: Book },
-    { id: 'faq', label: 'FAQ', icon: HelpCircle },
-    { id: 'blog', label: 'Blog', icon: MessageCircle },
-    { id: 'vr', label: 'VR Tutorials', icon: Headset },
-    { id: 'sustainability', label: 'Sustainability', icon: Leaf }
+    { id: 'search', label: t('navigation.helpCenter'), icon: Search },
+    { id: 'guides', label: t('navigation.guides'), icon: Book },
+    { id: 'faq', label: t('navigation.faq'), icon: HelpCircle },
+    { id: 'vr', label: t('navigation.vrTutorials'), icon: Headset },
+    { id: 'sustainability', label: t('navigation.sustainability'), icon: Leaf },
+    { id: 'contact', label: t('navigation.supportClient'), icon: HeadphonesIcon },
   ];
 
   const handleSearch = (query: string) => {
@@ -29,15 +43,14 @@ const SupportCenter = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
-      {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-pink-600 text-white">
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-4xl font-bold mb-4">How can we help you?</h1>
+          <h1 className="text-4xl font-bold mb-4">{t('header.title')}</h1>
           <div className="max-w-2xl">
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search for help articles..."
+                placeholder={t('header.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="w-full px-4 py-3 pl-12 bg-white/10 backdrop-blur-md rounded-lg placeholder-white/70 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
@@ -48,7 +61,6 @@ const SupportCenter = () => {
         </div>
       </div>
 
-      {/* Navigation */}
       <div className="bg-white border-b border-gray-200 sticky top-20 z-30">
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto no-scrollbar">
@@ -73,7 +85,6 @@ const SupportCenter = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
           {activeSection === 'search' && <HelpSearch initialQuery={searchQuery} />}
@@ -82,22 +93,19 @@ const SupportCenter = () => {
           {activeSection === 'blog' && <BlogSection />}
           {activeSection === 'vr' && <VRTutorials />}
           {activeSection === 'sustainability' && <SustainabilityInfo />}
+          {activeSection === 'contact' && <SupportClient />}
         </div>
       </div>
 
-      {/* Live Chat Button */}
       <button
         onClick={() => setShowChat(true)}
         className="fixed bottom-6 right-6 p-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-full shadow-lg hover:opacity-90 transition-opacity flex items-center gap-2"
       >
         <Bot className="w-6 h-6" />
-        <span className="hidden md:inline">Need Help?</span>
+        <span className="hidden md:inline">{t('liveChat.button')}</span>
       </button>
 
-      {/* Live Chat Widget */}
-      {showChat && (
-        <LiveChat onClose={() => setShowChat(false)} />
-      )}
+      {showChat && <LiveChat onClose={() => setShowChat(false)} />}
     </div>
   );
 };
