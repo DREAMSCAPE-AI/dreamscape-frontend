@@ -45,6 +45,7 @@ app.use('/api/v1/auth',    createProxyMiddleware({ target: AUTH_SERVICE_URL,    
 app.use('/api/v1/users',   createProxyMiddleware({ target: USER_SERVICE_URL,    ...proxyOptions }));
 app.use('/api/v1/admin',   createProxyMiddleware({ target: USER_SERVICE_URL,    ...proxyOptions }));
 app.use('/api/v1/ai',      createProxyMiddleware({ target: AI_SERVICE_URL,      ...proxyOptions }));
+app.use('/api/v1/recommendations', createProxyMiddleware({ target: AI_SERVICE_URL, ...proxyOptions }));
 app.use('/api/v1/voyage',  createProxyMiddleware({ target: VOYAGE_SERVICE_URL,  ...proxyOptions }));
 app.use('/api/v1/payment', createProxyMiddleware({ target: PAYMENT_SERVICE_URL, ...proxyOptions }));
 
