@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Rocket,
   Search,
@@ -12,7 +12,6 @@ import {
   ChevronDown,
   ChevronUp,
   Mail,
-  ExternalLink,
   MessageCircle,
 } from 'lucide-react';
 
@@ -424,6 +423,18 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 export default function HelpPage() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    const hash = location.hash;
+    if (!hash) return;
+    const guideId = hash.replace('#section-', '');
+    if (!guides.some((g) => g.id === guideId)) return;
+    setActiveSection(guideId);
+    setTimeout(() => {
+      document.getElementById(`section-${guideId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+  }, [location]);
 
   const handleGuideClick = (id: string) => {
     const next = id === activeSection ? null : id;
@@ -502,7 +513,7 @@ export default function HelpPage() {
         </section>
 
         {/* FAQ */}
-        <section className="mb-14">
+        <section id="faq" className="mb-14">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Questions fréquentes</h2>
           <div className="space-y-3">
             {faqs.map((faq) => (

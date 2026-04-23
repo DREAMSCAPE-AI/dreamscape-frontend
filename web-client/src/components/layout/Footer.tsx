@@ -1,7 +1,7 @@
-import React from 'react';
-import { Plane, Instagram, Twitter, Facebook, Youtube, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Plane, Linkedin, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import LanguageSelector from '@/components/common/LanguageSelector';
+
 
 const Footer = () => {
   const { t } = useTranslation('common');
@@ -21,15 +21,14 @@ const Footer = () => {
               {t('footer.description')}
             </p>
             <div className="flex gap-4">
-              {[Instagram, Twitter, Facebook, Youtube].map((Icon, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-r from-orange-400/10 to-pink-600/10 hover:from-orange-400 hover:to-pink-600 group transition-all duration-300"
-                >
-                  <Icon className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" />
-                </a>
-              ))}
+              <a
+                href="https://www.linkedin.com/company/dreamscape-ai/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-r from-orange-400/10 to-pink-600/10 hover:from-orange-400 hover:to-pink-600 group transition-all duration-300"
+              >
+                <Linkedin className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" />
+              </a>
             </div>
           </div>
 
@@ -45,9 +44,9 @@ const Footer = () => {
                 { key: 'hiddenGems', label: t('footer.hiddenGems') }
               ].map((item) => (
                 <li key={item.key}>
-                  <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">
+                  <Link to="/destinations" className="text-gray-600 hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -57,16 +56,16 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6 text-gray-800">{t('footer.resources')}</h3>
             <ul className="space-y-3">
               {[
-                { key: 'travelGuide', label: t('footer.travelGuide') },
-                { key: 'faqs', label: t('footer.faqs') },
-                { key: 'customerSupport', label: t('footer.customerSupport') },
-                { key: 'travelInsurance', label: t('footer.travelInsurance') },
-                { key: 'blog', label: t('footer.blog') }
+                { key: 'travelGuide', label: t('footer.travelGuide'), to: '/help#section-prise-en-main' },
+                { key: 'faqs', label: t('footer.faqs'), to: '/faq' },
+                { key: 'customerSupport', label: t('footer.customerSupport'), to: '/support' },
+                { key: 'travelInsurance', label: t('footer.travelInsurance'), to: '/help#section-paiement' },
+                { key: 'blog', label: t('footer.blog'), to: '/blog' }
               ].map((item) => (
                 <li key={item.key}>
-                  <a href="#" className="text-gray-600 hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">
+                  <Link to={item.to} className="text-gray-600 hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -95,14 +94,11 @@ const Footer = () => {
       {/* Bottom Bar */}
       <div className="border-t border-gray-200">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex flex-wrap gap-6 text-sm text-gray-600">
-              <a href="#" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.privacyPolicy')}</a>
-              <a href="#" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.termsOfService')}</a>
-              <a href="#" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.cookieSettings')}</a>
-              <span>{t('footer.copyright')}</span>
-            </div>
-            <LanguageSelector variant="full" />
+          <div className="flex flex-wrap gap-6 text-sm text-gray-600">
+            <Link to="/help#section-rgpd" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.privacyPolicy')}</Link>
+            <Link to="/help#section-rgpd" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.termsOfService')}</Link>
+            <Link to="/help#section-rgpd" className="hover:text-orange-500 transition-colors focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none rounded">{t('footer.cookieSettings')}</Link>
+            <span>{t('footer.copyright', { year: new Date().getFullYear() })}</span>
           </div>
         </div>
       </div>
