@@ -132,7 +132,7 @@ export default function DestinationsPage() {
       DXB: { name: 'Dubai', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=800', description: t('descriptions.dubai') },
       JFK: { name: 'New York', image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=800', description: t('descriptions.newYork') },
       LHR: { name: 'London', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=800', description: t('descriptions.london') },
-      BKK: { name: 'Bangkok', image: 'https://images.unsplash.com/photo-1563492065-1a4e2d0b4b5a?auto=format&fit=crop&q=80&w=800', description: t('descriptions.bangkok') },
+      BKK: { name: 'Bangkok', image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&q=80&w=800', description: t('descriptions.bangkok') },
     };
     return cityMap[cityCode] || {
       name: getDefaultCityName(cityCode),
@@ -153,7 +153,7 @@ export default function DestinationsPage() {
       DXB: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=800',
       JFK: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=800',
       LHR: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=800',
-      BKK: 'https://images.unsplash.com/photo-1563492065-1a4e2d0b4b5a?auto=format&fit=crop&q=80&w=800',
+      BKK: 'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&q=80&w=800',
     };
     return images[cityCode] || 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&q=80&w=800';
   };
