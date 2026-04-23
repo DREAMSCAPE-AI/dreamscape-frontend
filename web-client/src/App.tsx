@@ -59,6 +59,10 @@ import PrivacyPolicyPage from '@/pages/legal/PrivacyPolicy';
 import HelpPage from '@/pages/help';
 import FaqPage from '@/pages/faq';
 
+// Password Reset Pages
+import ForgotPasswordPage from '@/pages/forgot-password';
+import ResetPasswordPage from '@/pages/reset-password';
+
 // GDPR
 import CookieConsent from '@/components/gdpr/CookieConsent';
 
@@ -173,6 +177,8 @@ function App() {
             <Route path="/support" element={<SupportPage />} />
             <Route path="/help" element={<HelpPage />} />
             <Route path="/faq" element={<FaqPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             {/* Legal Routes */}
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />

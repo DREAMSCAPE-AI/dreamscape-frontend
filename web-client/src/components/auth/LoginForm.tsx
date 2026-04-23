@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -114,12 +115,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSwitchToSignup, isLoa
 
           {/* Forgot Password */}
           <div className="flex items-center justify-end">
-            <button
-              type="button"
-              className="text-xs md:text-sm text-orange-500 hover:text-orange-600 min-h-[44px] md:min-h-0 py-2 md:py-0"
+            <Link
+              to="/forgot-password"
+              className="text-xs md:text-sm text-orange-500 hover:text-orange-600 py-2 md:py-0"
             >
               {t('login.forgotPassword')}
-            </button>
+            </Link>
           </div>
 
           {/* Submit Button */}

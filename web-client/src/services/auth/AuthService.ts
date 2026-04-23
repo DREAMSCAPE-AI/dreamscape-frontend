@@ -78,6 +78,16 @@ class AuthApiService {
     return response.data;
   }
 
+  async forgotPassword(email: string): Promise<any> {
+    const response = await this.api.post('/auth/forgot-password', { email });
+    return response.data;
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<any> {
+    const response = await this.api.put('/auth/reset-password', { token, newPassword });
+    return response.data;
+  }
+
   async getUserSettings(token: string): Promise<any> {
     try {
       // Fetch from user service
