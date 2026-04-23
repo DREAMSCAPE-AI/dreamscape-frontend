@@ -39,7 +39,8 @@
     "dubai": "Dubaï",
     "newYork": "New York",
     "london": "Londres",
-    "bangkok": "Bangkok"
+    "bangkok": "Bangkok",
+    "barcelona": "Barcelone"
   },
   "descriptions": {
     "paris": "La Ville Lumière vous attend avec ses monuments emblématiques et son charme romantique",
@@ -48,6 +49,7 @@
     "newYork": "La ville qui ne dort jamais offre des possibilités infinies et des sites emblématiques",
     "london": "Explorez des siècles d'histoire dans cette capitale dynamique et riche culturellement",
     "bangkok": "Plongez dans la vie de rue animée et le riche patrimoine culturel",
+    "barcelona": "Découvrez les chefs-d'œuvre de Gaudí et le charme méditerranéen de la capitale catalane",
     "default": "Découvrez des expériences incroyables dans cette belle destination"
   },
   "filters": {
@@ -62,5 +64,66 @@
     "loadFailed": "Échec du chargement des destinations",
     "noResults": "Aucune destination trouvée",
     "tryAgain": "Réessayer"
+  },
+  "detail": {
+    "back": "Retour",
+    "loading": "Chargement de la destination...",
+    "notFoundTitle": "Destination introuvable",
+    "notFoundMessage": "La destination que vous cherchez n'existe pas.",
+    "browseDestinations": "Parcourir les destinations",
+    "partialDetails": "Certains détails de la destination peuvent être limités",
+    "stats": {
+      "rating": "Note",
+      "bestTime": "Meilleure période",
+      "duration": "Durée",
+      "startingAt": "À partir de"
+    },
+    "sections": {
+      "highlights": "Points forts",
+      "gallery": "Galerie",
+      "popularActivities": "Activités populaires",
+      "travelInfo": "Infos voyage"
+    },
+    "highlights": {
+      "landmarks": "Monuments historiques et architecture",
+      "museums": "Musées et galeries de classe mondiale",
+      "culture": "Culture locale et gastronomie animées",
+      "parks": "Parcs et jardins magnifiques"
+    },
+    "info": {
+      "bestTimeToVisit": "Meilleure période pour visiter",
+      "defaultBestTime": "Avril à octobre",
+      "recommendedDuration": "Durée recommandée",
+      "defaultDuration": "3 à 5 jours recommandés",
+      "shortDuration": "3-5 jours",
+      "reviews": "Avis",
+      "verifiedTravelers": "{{count}} voyageurs vérifiés"
+    },
+    "booking": {
+      "perPerson": "/ personne",
+      "bookTrip": "Réserver ce voyage",
+      "searchFlights": "Rechercher des vols"
+    },
+    "actions": {
+      "vrAccess": "Accès VR",
+      "gallery2d": "Galerie 2D"
+    },
+    "description": {
+      "fallback": "Découvrez la beauté et la culture de {{name}}. Vivez des attractions locales, une gastronomie unique et des moments inoubliables."
+    },
+    "activity": {
+      "defaultName": "Expérience locale",
+      "defaultDescription": "Découvrez les attractions locales",
+      "defaultDuration": "2 à 3 heures"
+    },
+    "countries": {
+      "paris": "France",
+      "tokyo": "Japon",
+      "dubai": "Émirats arabes unis",
+      "newYork": "États-Unis",
+      "london": "Royaume-Uni",
+      "bangkok": "Thaïlande",
+      "barcelona": "Espagne"
+    }
   }
 }

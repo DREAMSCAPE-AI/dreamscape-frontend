@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Monitor, X, Hash, RefreshCw, ExternalLink } from 'lucide-react';
 
 // On local dev: set VITE_GATEWAY_URL=http://<IP>:3000 in .env
@@ -26,6 +27,7 @@ export default function VRPinAccess({
   destinationId,
   expirationMinutes = 10
 }: VRPinAccessProps) {
+  const { t } = useTranslation('destinations');
   const [showModal, setShowModal] = useState(false);
   const [pinCode, setPinCode] = useState<string | null>(null);
   const [pinLoading, setPinLoading] = useState(false);
@@ -112,7 +114,7 @@ export default function VRPinAccess({
         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg"
       >
         <Monitor className="w-5 h-5" />
-        <span>VR Access</span>
+        <span>{t('detail.actions.vrAccess')}</span>
       </button>
 
       {/* PIN Code Modal */}
