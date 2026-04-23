@@ -94,9 +94,10 @@ export default function DestinationPage() {
           }
         }
 
-        const displayName = catalogEntry?.cityName
-          ?? locationResult?.data?.[0]?.name
-          ?? id.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+        const displayName = catalogEntry
+          ? t(`cities.${catalogEntry.i18nKey}`, { defaultValue: catalogEntry.cityName })
+          : (locationResult?.data?.[0]?.name
+            ?? id.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase()));
 
         const country = catalogEntry
           ? t(`detail.countries.${catalogEntry.i18nKey}`, { defaultValue: catalogEntry.country })
