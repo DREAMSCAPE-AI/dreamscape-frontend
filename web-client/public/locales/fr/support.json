@@ -9,7 +9,8 @@
     "faq": "FAQ",
     "blog": "Blog",
     "vrTutorials": "Tutoriels VR",
-    "sustainability": "Durabilité"
+    "sustainability": "Éco-responsabilité",
+    "supportClient": "Support client"
   },
   "liveChat": {
     "button": "Besoin d'aide ?",
@@ -62,7 +63,115 @@
   },
   "categories": {
     "planning": "Planification",
-    "policies": "Politiques",
+    "policies": "Conditions",
     "features": "Fonctionnalités"
+  },
+  "guides": {
+    "generatorTitle": "Générer un guide personnalisé",
+    "destinationLabel": "Destination",
+    "destinationPlaceholder": "Où allez-vous ?",
+    "interestsLabel": "Centres d'intérêt",
+    "generateButton": "Générer le guide",
+    "featuredTitle": "Guides à la une",
+    "interests": {
+      "culture": "Culture",
+      "food": "Gastronomie",
+      "adventure": "Aventure",
+      "nature": "Nature",
+      "history": "Histoire",
+      "shopping": "Shopping"
+    },
+    "items": [
+      { "title": "Les trésors cachés de Paris", "description": "Découvrez des endroits méconnus et les coups de cœur des locaux", "tags": ["Culture", "Histoire"] },
+      { "title": "Tokyo Tech Tour", "description": "Explorez le futur dans la capitale du Japon", "tags": ["Technologie", "Culture"] }
+    ]
+  },
+  "blog": {
+    "readMore": "Lire la suite",
+    "featured": {
+      "title": "L'avenir du voyage : IA et Réalité Virtuelle",
+      "excerpt": "Découvrez comment les technologies émergentes transforment la façon dont nous explorons et vivons nos destinations..."
+    },
+    "posts": [
+      { "title": "Les joyaux cachés d'Asie du Sud-Est", "excerpt": "Découvrez des destinations méconnues offrant des expériences culturelles uniques et des paysages à couper le souffle...", "author": "Sarah Johnson", "date": "15 fév. 2024", "tags": ["Aventure", "Culture"] },
+      { "title": "Guide du voyage durable 2024", "excerpt": "Apprenez à réduire votre impact environnemental tout en explorant le monde...", "author": "Mike Chen", "date": "12 fév. 2024", "tags": ["Éco-responsable", "Conseils"] },
+      { "title": "Utiliser l'IA pour planifier le voyage parfait", "excerpt": "Comment l'intelligence artificielle révolutionne la façon dont nous planifions et vivons nos voyages...", "author": "Emma Davis", "date": "10 fév. 2024", "tags": ["Technologie", "Planification"] }
+    ]
+  },
+  "vr": {
+    "quickStartTitle": "Guide de démarrage rapide",
+    "tutorialsTitle": "Vidéos tutorielles",
+    "downloadResources": "Télécharger les ressources",
+    "levels": { "beginner": "Débutant", "intermediate": "Intermédiaire" },
+    "steps": [
+      { "title": "Configurer votre appareil", "description": "Connectez votre casque VR ou activez la vue 360°" },
+      { "title": "Lancer l'expérience", "description": "Démarrez votre voyage virtuel en un clic" },
+      { "title": "Suivre le tutoriel", "description": "Apprenez les bases avec notre guide interactif" }
+    ],
+    "tutorials": [
+      { "title": "Débuter avec la VR", "duration": "5 min", "level": "beginner", "description": "Apprenez les bases de nos fonctionnalités VR pour des expériences de voyage immersives" },
+      { "title": "Navigation VR avancée", "duration": "8 min", "level": "intermediate", "description": "Maîtrisez la navigation dans les destinations virtuelles et les fonctionnalités interactives" }
+    ]
+  },
+  "sustainability": {
+    "bannerTitle": "Notre engagement pour l'éco-responsabilité",
+    "bannerText": "Nous croyons en un tourisme responsable qui préserve les destinations pour les générations futures. Découvrez nos initiatives pour rendre le voyage plus durable et respectueux de l'environnement.",
+    "impactTitle": "Notre impact",
+    "tipsTitle": "Conseils de voyage durable",
+    "initiatives": [
+      { "title": "Programme de compensation carbone", "description": "Nous collaborons avec des organisations environnementales pour compenser l'empreinte carbone de vos voyages" },
+      { "title": "Partenaires éco-responsables", "description": "Nous travaillons exclusivement avec des hébergements et des opérateurs engagés dans des pratiques durables" },
+      { "title": "Soutien aux communautés locales", "description": "Une partie de chaque réservation est reversée directement au soutien des communautés locales" }
+    ],
+    "stats": [
+      { "value": "50K+", "label": "Arbres plantés" },
+      { "value": "100K", "label": "CO₂ compensé (tonnes)" },
+      { "value": "200+", "label": "Communautés locales" },
+      { "value": "85%", "label": "Partenaires éco-certifiés" }
+    ],
+    "tips": [
+      "Choisissez des hébergements éco-responsables",
+      "Soutenez les commerces et artisans locaux",
+      "Utilisez les transports en commun autant que possible",
+      "Réduisez vos déchets plastiques en voyage"
+    ]
+  },
+  "contact": {
+    "channelsTitle": "Nos canaux de support",
+    "formTitle": "Envoyer un message",
+    "formSubtitle": "Notre équipe vous répondra dans les 24 heures.",
+    "nameLabel": "Nom complet",
+    "namePlaceholder": "Jean Dupont",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "jean@exemple.fr",
+    "subjectLabel": "Sujet",
+    "subjectPlaceholder": "Sélectionnez un sujet…",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Décrivez votre problème ou votre question en détail…",
+    "submitButton": "Envoyer le message",
+    "successTitle": "Message envoyé !",
+    "successText": "Nous avons bien reçu votre demande et vous répondrons dans les plus brefs délais.",
+    "sendAnother": "Envoyer un autre message",
+    "responseTitle": "Délais de réponse estimés",
+    "responseSubtitle": "Nous faisons notre maximum pour répondre dans les délais suivants.",
+    "subjects": [
+      "Problème de réservation",
+      "Question sur un paiement",
+      "Remboursement ou annulation",
+      "Problème technique",
+      "Compte et connexion",
+      "Expérience VR",
+      "Autre"
+    ],
+    "channels": [
+      { "title": "Chat en direct", "desc": "Réponse instantanée avec un conseiller", "detail": "Disponible lun–ven · 9h–19h", "badge": "En ligne" },
+      { "title": "E-mail", "desc": "Envoyez-nous votre demande par écrit", "detail": "support@dreamscape.travel", "badge": "< 24 h" },
+      { "title": "Téléphone", "desc": "Parlez directement à un conseiller", "detail": "+33 1 80 XX XX XX · lun–ven 9h–18h", "badge": "Rappel gratuit" }
+    ],
+    "responseTimes": [
+      { "value": "~2 min", "label": "Chat" },
+      { "value": "< 24h", "label": "E-mail" },
+      { "value": "< 5 min", "label": "Téléphone" }
+    ]
   }
 }

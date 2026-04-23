@@ -173,7 +173,7 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
     "cookieSettings": "Cookie Settings",
-    "copyright": "© 2024 DreamScape. All rights reserved."
+    "copyright": "© {{year}} DreamScape. All rights reserved."
   },
   "buttons": {
     "save": "Save",

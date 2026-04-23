@@ -9,7 +9,8 @@
     "faq": "FAQ",
     "blog": "Blog",
     "vrTutorials": "VR Tutorials",
-    "sustainability": "Sustainability"
+    "sustainability": "Eco-responsibility",
+    "supportClient": "Customer Support"
   },
   "liveChat": {
     "button": "Need Help?",
@@ -64,5 +65,113 @@
     "planning": "Planning",
     "policies": "Policies",
     "features": "Features"
+  },
+  "guides": {
+    "generatorTitle": "Generate Custom Guide",
+    "destinationLabel": "Destination",
+    "destinationPlaceholder": "Where are you going?",
+    "interestsLabel": "Interests",
+    "generateButton": "Generate Guide",
+    "featuredTitle": "Featured Guides",
+    "interests": {
+      "culture": "Culture",
+      "food": "Food",
+      "adventure": "Adventure",
+      "nature": "Nature",
+      "history": "History",
+      "shopping": "Shopping"
+    },
+    "items": [
+      { "title": "Hidden Gems of Paris", "description": "Discover lesser-known spots and local favorites", "tags": ["Culture", "History"] },
+      { "title": "Tokyo Tech Tour", "description": "Explore the future in Japan's capital", "tags": ["Technology", "Culture"] }
+    ]
+  },
+  "blog": {
+    "readMore": "Read More",
+    "featured": {
+      "title": "The Future of Travel: AI and Virtual Reality",
+      "excerpt": "Explore how emerging technologies are transforming the way we discover and experience destinations..."
+    },
+    "posts": [
+      { "title": "Top Hidden Gems in Southeast Asia", "excerpt": "Discover lesser-known destinations that offer unique cultural experiences and breathtaking views...", "author": "Sarah Johnson", "date": "Feb 15, 2024", "tags": ["Adventure", "Culture"] },
+      { "title": "Sustainable Travel Guide 2024", "excerpt": "Learn how to minimize your environmental impact while exploring the world...", "author": "Mike Chen", "date": "Feb 12, 2024", "tags": ["Eco-Friendly", "Tips"] },
+      { "title": "Using AI to Plan Your Perfect Trip", "excerpt": "How artificial intelligence is revolutionizing the way we plan and experience travel...", "author": "Emma Davis", "date": "Feb 10, 2024", "tags": ["Technology", "Planning"] }
+    ]
+  },
+  "vr": {
+    "quickStartTitle": "Quick Start Guide",
+    "tutorialsTitle": "Tutorial Videos",
+    "downloadResources": "Download Resources",
+    "levels": { "beginner": "Beginner", "intermediate": "Intermediate" },
+    "steps": [
+      { "title": "Setup Your Device", "description": "Connect your VR headset or enable 360° view" },
+      { "title": "Launch Experience", "description": "Start your virtual journey with one click" },
+      { "title": "Follow Tutorial", "description": "Learn the basics with our interactive guide" }
+    ],
+    "tutorials": [
+      { "title": "Getting Started with VR", "duration": "5 min", "level": "beginner", "description": "Learn the basics of using our VR features for immersive travel experiences" },
+      { "title": "Advanced VR Navigation", "duration": "8 min", "level": "intermediate", "description": "Master the art of navigating virtual destinations and interactive features" }
+    ]
+  },
+  "sustainability": {
+    "bannerTitle": "Our Commitment to Sustainability",
+    "bannerText": "We believe in responsible tourism that preserves destinations for future generations. Learn about our initiatives to make travel more sustainable and environmentally conscious.",
+    "impactTitle": "Our Impact",
+    "tipsTitle": "Sustainable Travel Tips",
+    "initiatives": [
+      { "title": "Carbon Offset Program", "description": "We partner with environmental organizations to offset the carbon footprint of your travels" },
+      { "title": "Eco-Friendly Partners", "description": "We work exclusively with accommodations and tour operators committed to sustainable practices" },
+      { "title": "Local Community Support", "description": "A portion of every booking goes directly to supporting local communities" }
+    ],
+    "stats": [
+      { "value": "50K+", "label": "Trees Planted" },
+      { "value": "100K", "label": "CO₂ Offset (tons)" },
+      { "value": "200+", "label": "Local Communities" },
+      { "value": "85%", "label": "Eco-Certified Partners" }
+    ],
+    "tips": [
+      "Choose eco-friendly accommodations",
+      "Support local businesses and artisans",
+      "Use public transportation when possible",
+      "Minimize plastic waste while traveling"
+    ]
+  },
+  "contact": {
+    "channelsTitle": "Our Support Channels",
+    "formTitle": "Send a Message",
+    "formSubtitle": "Our team will get back to you within 24 hours.",
+    "namePlaceholder": "John Doe",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "john@example.com",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Select a subject…",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Describe your issue or question in detail…",
+    "submitButton": "Send Message",
+    "successTitle": "Message sent!",
+    "successText": "We have received your request and will get back to you as soon as possible.",
+    "sendAnother": "Send another message",
+    "responseTitle": "Estimated response times",
+    "responseSubtitle": "We do our best to respond within the following timeframes.",
+    "subjects": [
+      "Booking Issue",
+      "Payment Question",
+      "Refund or Cancellation",
+      "Technical Problem",
+      "Account & Login",
+      "VR Experience",
+      "Other"
+    ],
+    "channels": [
+      { "title": "Live Chat", "desc": "Instant response from an advisor", "detail": "Available Mon–Fri · 9am–7pm", "badge": "Online" },
+      { "title": "Email", "desc": "Send us your request in writing", "detail": "support@dreamscape.travel", "badge": "< 24h" },
+      { "title": "Phone", "desc": "Speak directly with an advisor", "detail": "+33 1 80 XX XX XX · Mon–Fri 9am–6pm", "badge": "Free callback" }
+    ],
+    "responseTimes": [
+      { "value": "~2 min", "label": "Chat" },
+      { "value": "< 24h", "label": "Email" },
+      { "value": "< 5 min", "label": "Phone" }
+    ]
   }
 }
