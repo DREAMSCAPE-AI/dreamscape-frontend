@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useAuth } from '@/services/auth/AuthService';
+import ScrollToTop from '@/components/shared/ScrollToTop';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
@@ -20,6 +21,7 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
+      <ScrollToTop />
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-200">

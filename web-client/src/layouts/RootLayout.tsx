@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart';
+import ScrollToTop from '@/components/shared/ScrollToTop';
 import { useAuth } from '@/services/auth/AuthService';
 import { useLanguageSync } from '@/i18n/useLanguageSync';
 
@@ -29,6 +30,7 @@ export default function RootLayout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-orange-500 focus:text-white focus:rounded-lg focus:font-medium"
