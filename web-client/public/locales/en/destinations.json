@@ -39,7 +39,8 @@
     "dubai": "Dubai",
     "newYork": "New York",
     "london": "London",
-    "bangkok": "Bangkok"
+    "bangkok": "Bangkok",
+    "barcelona": "Barcelona"
   },
   "descriptions": {
     "paris": "The City of Light awaits with its iconic landmarks and romantic charm",
@@ -48,6 +49,7 @@
     "newYork": "The city that never sleeps offers endless possibilities and iconic sights",
     "london": "Explore centuries of history in this vibrant and culturally rich capital",
     "bangkok": "Immerse yourself in the vibrant street life and rich cultural heritage",
+    "barcelona": "Discover Gaudí's masterpieces and Mediterranean charm in Catalonia's vibrant capital",
     "default": "Discover amazing experiences in this beautiful destination"
   },
   "filters": {
@@ -62,5 +64,66 @@
     "loadFailed": "Failed to load destinations",
     "noResults": "No destinations found",
     "tryAgain": "Try again"
+  },
+  "detail": {
+    "back": "Back",
+    "loading": "Loading destination...",
+    "notFoundTitle": "Destination Not Found",
+    "notFoundMessage": "The destination you're looking for doesn't exist.",
+    "browseDestinations": "Browse Destinations",
+    "partialDetails": "Some destination details may be limited",
+    "stats": {
+      "rating": "Rating",
+      "bestTime": "Best Time",
+      "duration": "Duration",
+      "startingAt": "Starting at"
+    },
+    "sections": {
+      "highlights": "Highlights",
+      "gallery": "Gallery",
+      "popularActivities": "Popular Activities",
+      "travelInfo": "Travel Info"
+    },
+    "highlights": {
+      "landmarks": "Historic landmarks and architecture",
+      "museums": "World-class museums and galleries",
+      "culture": "Vibrant local culture and cuisine",
+      "parks": "Beautiful parks and gardens"
+    },
+    "info": {
+      "bestTimeToVisit": "Best time to visit",
+      "defaultBestTime": "April to October",
+      "recommendedDuration": "Recommended duration",
+      "defaultDuration": "3-5 days recommended",
+      "shortDuration": "3-5 days",
+      "reviews": "Reviews",
+      "verifiedTravelers": "{{count}} verified travelers"
+    },
+    "booking": {
+      "perPerson": "/ person",
+      "bookTrip": "Book This Trip",
+      "searchFlights": "Search Flights"
+    },
+    "actions": {
+      "vrAccess": "VR Access",
+      "gallery2d": "2D Gallery"
+    },
+    "description": {
+      "fallback": "Discover the beauty and culture of {{name}}. Experience local attractions, cuisine, and unforgettable moments."
+    },
+    "activity": {
+      "defaultName": "Local Experience",
+      "defaultDescription": "Discover local attractions",
+      "defaultDuration": "2-3 hours"
+    },
+    "countries": {
+      "paris": "France",
+      "tokyo": "Japan",
+      "dubai": "United Arab Emirates",
+      "newYork": "United States",
+      "london": "United Kingdom",
+      "bangkok": "Thailand",
+      "barcelona": "Spain"
+    }
   }
 }
